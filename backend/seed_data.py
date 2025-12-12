@@ -142,23 +142,24 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # PIZZA Category - COMPLETE
+    # PIZZA Category - COMPLETE (16 items)
     pizzas = [
         {"name": "Margherita", "desc": "Tomatensauce, Gouda-Käse", "p_m": 7.49, "p_l": 9.79, "img": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800"},
+        {"name": "L.A", "desc": "Tomatensauce, Salami, Gouda-Käse", "p_m": 8.59, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
         {"name": "Las Vegas", "desc": "Tomatensauce, Schinken, Gouda-Käse", "p_m": 8.59, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"},
-        {"name": "Salami", "desc": "Tomatensauce, Salami, Gouda-Käse", "p_m": 9.69, "p_l": 12.99, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
-        {"name": "Tonno", "desc": "Tomatensauce, Thunfisch, Zwiebeln, Gouda-Käse", "p_m": 10.79, "p_l": 14.09, "img": "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=800"},
-        {"name": "Funghi", "desc": "Tomatensauce, Champignons, Gouda-Käse", "p_m": 8.59, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
         {"name": "São Paulo", "desc": "Tomatensauce, Schinken, Salami, Champignons, Gouda-Käse", "p_m": 12.39, "p_l": 15.79, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
         {"name": "Hawaii", "desc": "Tomatensauce, Schinken, Ananas, Gouda-Käse", "p_m": 9.69, "p_l": 13.19, "img": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800"},
-        {"name": "Calzone", "desc": "Tomatensauce, Schinken, Salami, Champignons, Paprika, Gouda-Käse", "p_m": 12.39, "p_l": 15.79, "img": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=800"},
-        {"name": "Diavolo", "desc": "Tomatensauce, Salami, Peperoni, Jalapeños, Gouda-Käse", "p_m": 11.49, "p_l": 14.89, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
-        {"name": "Vegetaria", "desc": "Tomatensauce, Champignons, Paprika, Zwiebeln, Oliven, Gouda-Käse", "p_m": 10.79, "p_l": 14.09, "img": "https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=800"},
-        {"name": "BBQ Chicken", "desc": "BBQ-Sauce, Hähnchenbrust, rote Zwiebeln, Gouda-Käse", "p_m": 12.39, "p_l": 15.79, "img": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"},
-        {"name": "Mista", "desc": "Tomatensauce, Schinken, Salami, Thunfisch, Champignons, Gouda-Käse", "p_m": 13.49, "p_l": 16.89, "img": "https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=800"},
-        {"name": "ZOZO Special", "desc": "Tomatensauce, Hackfleisch, Bacon, Jalapeños, Mais, BBQ-Sauce, Gouda-Käse", "p_m": 13.69, "p_l": 16.99, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
-        {"name": "Little Italy", "desc": "Tomatensauce, rote Zwiebeln, Gouda-Käse, Rucola, Grana Padano, Serrano-Schinken", "p_m": 12.59, "p_l": 15.89, "img": "https://images.unsplash.com/photo-1595708812500-7f82e1a89b92?w=800"},
-        {"name": "Quattro Formaggi", "desc": "Tomatensauce, Gouda, Mozzarella, Gorgonzola, Parmesan", "p_m": 11.49, "p_l": 14.89, "img": "https://images.unsplash.com/photo-1571066811602-716837d681de?w=800"},
+        {"name": "Greenwood (Veggie)", "desc": "Tomatensauce, Champignons, Broccoli, Mais, Cocktail-Tomaten, Gouda-Käse", "p_m": 11.89, "p_l": 15.19, "img": "https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=800"},
+        {"name": "Little Italy", "desc": "Tomatensauce, rote Zwiebeln, Gouda-Käse, Grana Padano, Serrano-Schinken", "p_m": 12.59, "p_l": 15.89, "img": "https://images.unsplash.com/photo-1595708812500-7f82e1a89b92?w=800"},
+        {"name": "Chicago", "desc": "Tomatensauce, Cocktail Tomaten, Mozzarella, Gouda-Käse", "p_m": 11.29, "p_l": 14.19, "img": "https://images.unsplash.com/photo-1571066811602-716837d681de?w=800"},
+        {"name": "ZOZO Special", "desc": "Tomatensauce, Hackfleisch, Bacon, Jalapeños, Broccoli, Mais, Gouda-Käse", "p_m": 13.69, "p_l": 16.99, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
+        {"name": "Toronto", "desc": "Tomatensauce, Thunfisch, rote Zwiebeln, Gouda-Käse", "p_m": 10.39, "p_l": 13.69, "img": "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=800"},
+        {"name": "New York", "desc": "Tomatensauce, Schinken, Broccoli, Gouda-Käse", "p_m": 10.39, "p_l": 13.69, "img": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"},
+        {"name": "Boston", "desc": "Tomatensauce, Baconstreifen, Zwiebeln, Paprika, Gouda-Käse", "p_m": 11.45, "p_l": 14.75, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "Alanya", "desc": "Tomatensauce, Knoblauchwurst, Zwiebeln, Paprika, Hirtenkäse, Gouda-Käse", "p_m": 11.89, "p_l": 15.19, "img": "https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=800"},
+        {"name": "Detroit", "desc": "Tomatensauce, Salami, Zwiebeln, Champignons, Gouda-Käse", "p_m": 12.99, "p_l": 14.19, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
+        {"name": "Bronx", "desc": "Tomatensauce, Hähnchenbruststreifen, Zwiebeln, Jalapeños, BBQ-Sauce, Gouda-Käse", "p_m": 10.99, "p_l": 14.49, "img": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"},
+        {"name": "Dallas", "desc": "Tomatensauce, Hackfleisch, Bacon, Jalapeños, Mais, BBQ-Sauce, Gouda-Käse", "p_m": 13.49, "p_l": 16.69, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
     ]
     
     for item in pizzas:
