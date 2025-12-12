@@ -32,6 +32,17 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   // Get product-specific removable ingredients and extras
   const removableIngredients = item.removable_ingredients || [];
   const availableExtras = parseExtras(item.available_extras || []);
+  
+  // Check if this is a burger (but not a Smash Burger) - requires bun selection
+  const requiresBunSelection = item.name && 
+    (item.name.toLowerCase().includes('burger') && 
+     !item.name.toLowerCase().includes('smash'));
+  
+  // Available bun types
+  const bunTypes = [
+    { id: 'brioche', name: 'Briochebrötchen' },
+    { id: 'semolina', name: 'Semolinabrötchen' }
+  ];
 
   // Menu upgrade options (sides with prices)
   const sides = [
