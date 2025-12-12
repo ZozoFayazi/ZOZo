@@ -1,34 +1,129 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Custom animations and utilities */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.App-link {
-    color: #61dafb;
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.animate-slide-in {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* Parallax effect */
+.parallax-image {
+  transition: transform 0.3s ease-out;
+}
+
+.parallax-image:hover {
+  transform: translateY(-6px);
+}
+
+/* Premium button styles */
+.btn-primary {
+  @apply bg-primary text-primary-foreground rounded-[10px] px-6 py-3 font-medium;
+  @apply transition-all duration-200 ease-out;
+  @apply hover:bg-[#990000] hover:shadow-[0_6px_28px_rgba(176,0,32,0.35)];
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}
+
+.btn-secondary {
+  @apply border border-border bg-transparent text-foreground rounded-[10px] px-6 py-3 font-medium;
+  @apply transition-all duration-200 ease-out;
+  @apply hover:bg-secondary hover:border-primary/40;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 ease-out;
+  @apply hover:border-primary/40 hover:shadow-lg;
+}
+
+/* Image overlay effect */
+.image-overlay {
+  @apply relative overflow-hidden;
+}
+
+.image-overlay::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10;
+  @apply opacity-0 transition-opacity duration-300;
+}
+
+.image-overlay:hover::before {
+  @apply opacity-100;
+}
+
+/* Noise texture overlay for hero sections */
+.noise-overlay {
+  position: relative;
+}
+
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Typography utilities */
+.heading-1 {
+  @apply font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1];
+}
+
+.heading-2 {
+  @apply font-serif text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-[1.15];
+}
+
+.eyebrow {
+  @apply font-sans text-xs tracking-[0.22em] uppercase text-muted-foreground;
+}
+
+/* Grid layouts */
+.container-custom {
+  @apply max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8;
 }
