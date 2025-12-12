@@ -296,18 +296,20 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
               <div className="flex flex-wrap gap-2">
                 {removableIngredients.map((removal) => {
                   const isSelected = selectedRemovals.includes(removal);
+                  const icon = getIngredientIcon(removal);
                   return (
                     <button
                       key={removal}
                       onClick={() => toggleRemoval(removal)}
-                      className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                      className={`px-3 py-1.5 rounded-full text-sm transition-all flex items-center gap-2 ${
                         isSelected
                           ? 'bg-destructive/20 text-destructive border-2 border-destructive'
                           : 'bg-secondary text-foreground border-2 border-transparent hover:border-border'
                       }`}
                       data-testid={`remove-${removal.toLowerCase().replace(/\s+/g, '-')}`}
                     >
-                      {isSelected && '− '}Ohne {removal}
+                      <span className="text-lg">{icon}</span>
+                      <span>{isSelected && '− '}Ohne {removal}</span>
                     </button>
                   );
                 })}
