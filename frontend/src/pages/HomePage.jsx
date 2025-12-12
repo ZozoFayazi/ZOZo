@@ -54,6 +54,16 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
     navigate('/menu');
   };
 
+  const handleOrderTypeComplete = ({ orderType, location }) => {
+    // Store order type and location
+    setSelectedLocation(location);
+    localStorage.setItem('orderType', orderType);
+    
+    // Close dialog and navigate to menu
+    setShowOrderTypeDialog(false);
+    navigate('/menu');
+  };
+
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Hero Section - Ultra Modern */}
