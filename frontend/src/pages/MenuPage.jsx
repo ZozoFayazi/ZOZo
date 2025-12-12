@@ -14,8 +14,6 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [customizerOpen, setCustomizerOpen] = useState(false);
   const [customizingItem, setCustomizingItem] = useState(null);
   const [customizingSize, setCustomizingSize] = useState(null);
-  const [menuUpgradeOpen, setMenuUpgradeOpen] = useState(false);
-  const [upgradingItem, setUpgradingItem] = useState(null);
   const [upsellDialogOpen, setUpsellDialogOpen] = useState(false);
   const [upsellCategory, setUpsellCategory] = useState(null);
 
