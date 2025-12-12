@@ -5,11 +5,11 @@
   },
   {
     "content": "Phase 4: Deals/Promotions - Backend API for deals management",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 4: Deals/Promotions - Frontend display on homepage and menu",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 4: Deals/Promotions - Admin UI for creating/editing deals",
@@ -17,7 +17,7 @@
   },
   {
     "content": "Phase 4: Quick Reorder - Backend order history API",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 4: Quick Reorder - Frontend reorder button and flow",
