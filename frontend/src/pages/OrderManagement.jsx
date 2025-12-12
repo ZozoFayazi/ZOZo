@@ -1,0 +1,282 @@
+import React, { useState, useEffect } from 'react';
+import { Package, Clock, CheckCircle, Truck, MapPin, X, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
+
+function OrderManagement() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all'); // all, confirmed, preparing, ready, on_the_way, completed
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
+  const loadOrders = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/orders`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to fetch orders');
+
+      const data = await response.json();
+      setOrders(data);
+    } catch (error) {
+      console.error('Error loading orders:', error);
+      toast.error('Fehler beim Laden der Bestellungen');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/orders/${orderId}/status`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to update status');
+
+      toast.success('Status aktualisiert');
+      loadOrders();
+      setSelectedOrder(null);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast.error('Fehler beim Aktualisieren');
+    }
+  };
+
+  const getStatusInfo = (status) => {
+    const statusMap = {
+      confirmed: { label: 'Bestätigt', icon: CheckCircle, color: 'bg-blue-500/10 text-blue-500' },
+      preparing: { label: 'In Vorbereitung', icon: Package, color: 'bg-orange-500/10 text-orange-500' },
+      ready: { label: 'Bereit', icon: MapPin, color: 'bg-green-500/10 text-green-500' },
+      on_the_way: { label: 'Unterwegs', icon: Truck, color: 'bg-purple-500/10 text-purple-500' },
+      completed: { label: 'Abgeschlossen', icon: CheckCircle, color: 'bg-green-600/10 text-green-600' },
+      cancelled: { label: 'Storniert', icon: X, color: 'bg-red-500/10 text-red-500' }
+    };
+    return statusMap[status] || { label: status, icon: Package, color: 'bg-gray-500/10 text-gray-500' };
+  };
+
+  const filteredOrders = filter === 'all' ? orders : orders.filter(order => order.status === filter);
+
+  return (
+    <div className="min-h-screen bg-background py-8">
+      <div className="container-custom">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-serif font-bold">Bestellverwaltung</h1>
+            <p className="text-sm text-muted-foreground">
+              {filteredOrders.length} {filteredOrders.length === 1 ? 'Bestellung' : 'Bestellungen'}
+            </p>
+          </div>
+          <button
+            onClick={loadOrders}
+            className="btn-secondary flex items-center gap-2"
+            data-testid="refresh-orders-button"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Aktualisieren
+          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {[
+            { value: 'all', label: 'Alle' },
+            { value: 'confirmed', label: 'Bestätigt' },
+            { value: 'preparing', label: 'In Vorbereitung' },
+            { value: 'ready', label: 'Bereit' },
+            { value: 'on_the_way', label: 'Unterwegs' },
+            { value: 'completed', label: 'Abgeschlossen' }
+          ].map((item) => (
+            <button
+              key={item.value}
+              onClick={() => setFilter(item.value)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                filter === item.value
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-foreground hover:bg-secondary/80'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Orders List */}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p className="mt-4 text-muted-foreground">Lade Bestellungen...</p>
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="bg-accent rounded-lg p-12 text-center">
+            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground">Keine Bestellungen gefunden</p>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {filteredOrders.map((order) => {
+              const statusInfo = getStatusInfo(order.status);
+              return (
+                <div
+                  key={order.id}
+                  className="bg-card border border-border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => setSelectedOrder(order)}
+                  data-testid={`order-card-${order.order_number}`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-semibold">{order.order_number}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
+                          {statusInfo.label}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {order.is_pickup ? '📦 Abholung' : '🚚 Lieferung'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">{order.customer.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(order.created_at).toLocaleString('de-DE')}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-primary">€{order.total.toFixed(2)}</p>
+                      <p className="text-xs text-muted-foreground">{order.items.length} Artikel</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Order Detail Modal */}
+      {selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-card border border-border rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold mb-1">{selectedOrder.order_number}</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(selectedOrder.created_at).toLocaleString('de-DE')}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="p-2 hover:bg-secondary rounded-lg transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Customer Info */}
+              <div className="bg-accent rounded-lg p-4 mb-4">
+                <h3 className="font-semibold mb-2">Kunde</h3>
+                <p className="text-sm">{selectedOrder.customer.name}</p>
+                <p className="text-sm text-muted-foreground">{selectedOrder.customer.phone}</p>
+                {selectedOrder.customer.email && (
+                  <p className="text-sm text-muted-foreground">{selectedOrder.customer.email}</p>
+                )}
+                {!selectedOrder.is_pickup && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {selectedOrder.customer.address}, {selectedOrder.customer.postal_code}{' '}
+                    {selectedOrder.customer.city}
+                  </p>
+                )}
+              </div>
+
+              {/* Items */}
+              <div className="mb-4">
+                <h3 className="font-semibold mb-2">Bestellte Artikel</h3>
+                <div className="space-y-2">
+                  {selectedOrder.items.map((item, index) => (
+                    <div key={index} className="flex justify-between text-sm">
+                      <span>
+                        {item.quantity}x {item.name}
+                        {item.size && ` (${item.size})`}
+                      </span>
+                      <span>€{(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-border mt-3 pt-3">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span>Zwischensumme</span>
+                    <span>€{selectedOrder.subtotal.toFixed(2)}</span>
+                  </div>
+                  {selectedOrder.delivery_fee > 0 && (
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Liefergebühr</span>
+                      <span>€{selectedOrder.delivery_fee.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-bold">
+                    <span>Gesamt</span>
+                    <span className="text-primary">€{selectedOrder.total.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Actions */}
+              <div>
+                <h3 className="font-semibold mb-3">Status ändern</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: 'confirmed', label: 'Bestätigt', icon: CheckCircle },
+                    { value: 'preparing', label: 'In Vorbereitung', icon: Package },
+                    {
+                      value: selectedOrder.is_pickup ? 'ready' : 'on_the_way',
+                      label: selectedOrder.is_pickup ? 'Bereit' : 'Unterwegs',
+                      icon: selectedOrder.is_pickup ? MapPin : Truck
+                    },
+                    { value: 'completed', label: 'Abgeschlossen', icon: CheckCircle }
+                  ].map((status) => (
+                    <button
+                      key={status.value}
+                      onClick={() => updateOrderStatus(selectedOrder.id, status.value)}
+                      disabled={selectedOrder.status === status.value}
+                      className={`p-3 rounded-lg border-2 transition-all text-left flex items-center gap-2 ${
+                        selectedOrder.status === status.value
+                          ? 'border-primary bg-primary/10 cursor-not-allowed'
+                          : 'border-border hover:border-primary hover:bg-accent'
+                      }`}
+                    >
+                      <status.icon className="h-5 w-5" />
+                      <span className="text-sm font-medium">{status.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default OrderManagement;
