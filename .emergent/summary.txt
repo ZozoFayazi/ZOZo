@@ -1,0 +1,171 @@
+<analysis>**original_problem_statement:**
+Du bist ein autonom arbeitender, erfahrener Web-Designer, UX-Architekt, SEO- und GEO-Experte mit Fokus auf moderne Food-Brands und Lieferservices.
+
+Erstelle eine einzigartige, hochmoderne Website für den Burger-Lieferservice ZOZO Burger mit starkem Wow-Effekt.
+Die Website soll dunkel, hochwertig, emotional und extrem professionell wirken. Kein Standard-Restaurant-Design, sondern ein visuelles Erlebnis, das sich klar von allen bekannten Burger-Websites abhebt.
+
+**PRODUCT REQUIREMENTS:**
+- **Unternehmen:** ZOZO Burger mit zwei Filialen (Rellingen und Henstedt-Ulzburg).
+- **Ziele:** Maximale Bestell-Conversion, starke Markenwirkung, mobile Performance, lokale SEO-Dominanz.
+- **Design:** Dunkler Hintergrund, hochwertige Food-Visuals, klare Typografie, performante Animationen.
+- **Seitenstruktur:** Startseite, interaktives Menü, Standortseiten, Online-Bestellung, Über uns, Bewertungen, Kontakt.
+- **User-Requested Features:**
+    - Eigenes Bestellsystem mit Admin-Dashboard pro Filiale zur Menü- und Konfigurationsverwaltung.
+    - Integration mit Kassensystem ExpertOrder.
+    - Automatische Filialzuordnung basierend auf Kunden-Postleitzahl.
+    - Konfigurierbare Liefergebiete, Mindestbestellwerte und Lieferkosten pro Filiale.
+    - Video-Hero-Sektion.
+    - Deals/Promotions-Sektion.
+    - Quick Reorder-Funktion.
+    - Product Customizer zur Auswahl von Zutaten, inklusive abwählbarer Zutaten und Upselling-Optionen.
+    - Smartes Upsell-Feature beim Hinzufügen von Burgern zum Warenkorb (Mach es doch als Menü).
+
+**User's preferred language**: German
+
+**what currently exists?**
+A full-stack FARM (FastAPI, React, MongoDB) application for ZOZO Burger. The previous agent has completed several major development phases:
+- The full menu, including categories, items, sizes (medium/large), prices, and product-specific removable ingredients, has been scraped from the user's existing Foodbooking website and seeded into the database.
+- A sophisticated product customization flow has been implemented, including a  dialog for removing ingredients and adding extras, a  for upselling burgers to a full menu, and a  for cross-selling items.
+- A full backend integration with the ExpertOrder POS system has been developed. This includes API clients, database models for storing API keys, admin UI for configuration, and an automated order push upon customer checkout. The integration has been successfully tested against the ExpertOrder test endpoint.
+
+**Last working item**:
+- **Last item agent was working:** The user requested to streamline the user experience by combining the multiple dialogs (Product Customizer, Menu Upgrade) into a single, unified dialog. The agent agreed and was about to start the implementation.
+    - **Reasoning:** The current flow presents the user with up to three consecutive dialogs after adding an item to the cart, which is not ideal. The user suggested a more integrated approach where the  itself would contain the options for removing ingredients, adding extras, and upgrading to a menu, simplifying the flow to a maximum of two steps (customization, then a final upsell).
+- **Status:** NOT STARTED
+- **Agent Testing Done:** N
+- **Which testing method agent to use?** Frontend testing agent
+- **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1: Streamline the Order Flow Dialogs (P0)**
+
+**Issues Detail:**
+- **Issue 1:**
+    - **Description:** The current order flow can show up to three separate dialogs:  (for ingredients),  (for making it a menu), and  (for sidekicks/desserts). The user has requested to combine the first two into a single, more efficient  dialog.
+    - **Attempted fixes:** None yet. The agent has just received confirmation from the user to proceed.
+    - **Next debug checklist:**
+        1.  Modify  to include the logic and UI from .
+        2.  The new dialog should allow the user to remove ingredients, add paid extras, and select a make it a menu option, which then reveals selectors for side dishes and drinks.
+        3.  Update the  logic in  to only open the new, combined  and then the .
+        4.  Remove the now-redundant  component and its imports.
+    - **Why fix this issue and what will be achieved with the fix?** To improve the user experience by reducing the number of clicks and dialogs, which should increase order conversion rate as requested by the user.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** N
+    - **Should Test frontend/backend/both after fix?** Frontend
+    - **Blocked on other issue:** None.
+
+**In progress Task List**:
+- **Task 1: Combine Customization and Menu Upgrade Dialogs (P0)**
+  - **Where to resume:** Begin by modifying  to merge functionalities.
+  - **What will be achieved with this?** A smoother, more intuitive user flow for customizing products and upgrading to a menu.
+  - **Status:** NOT STARTED
+  - **Should Test frontend/backend/both after fix?** Frontend
+  - **Blocked on something:** None.
+
+**Upcoming and Future Tasks**
+- **Upcoming Tasks:**
+    - **P1: Implement Real Product Images:** The agent used stock photos due to difficulties scraping the user's site. The user wants their real product images. The next agent should discuss the proposed options with the user: creating an admin upload interface (recommended), attempting to scrape from Wolt/Uber Eats, or keeping the stock photos.
+- **Future Tasks:**
+    - **P2: Lieferando/Wolt/Uber Eats Integration:** Develop webhook endpoints to receive orders from these platforms and push them to ExpertOrder.
+    - **P3: Telephony (CTI) Integration:** Integrate with a phone system for caller ID recognition and faster phone orders.
+    - **P4: iPad Kitchen/Cashier Dashboard:** Develop a dedicated, iPad-optimized dashboard for order management.
+
+**Completed work in this session**
+- **Menu Data Seeding:** The full menu (112+ items) was extracted from the user's Foodbooking page and seeded into the database, replacing all previous test data.
+- **Burger Size Correction:** Fixed a bug where medium/large size options for burgers were missing.
+- **Product-Specific Customization:** Implemented the logic for abwählbare (removable) ingredients on a per-product basis (e.g., Bacon Burger allows bacon to be removed, Hamburger does not).
+- **Upselling Features:** Implemented a Menu Upgrade dialog and a category-specific upsell dialog (Dein Essen braucht einen Sidekick!).
+- **Bug Fixes:**
+    - Resolved an issue where the Deals section wasn't visible by adding a public API endpoint.
+    - Fixed multiple bugs in the  that prevented the product customizer from appearing correctly.
+- **ExpertOrder POS Integration:**
+    - Added backend logic (, new endpoints in ) to push orders to the ExpertOrder API.
+    - Created an admin UI () to manage API keys and settings per location.
+    - Successfully tested the end-to-end flow from placing an order on the website to the order being sent to the ExpertOrder test endpoint.
+
+**Earlier issues found/mentioned but not fixed**
+- **Issue 1: Product Images are Stock Photos**
+    - **Debug checklist:** The user's Foodbooking site loads images dynamically and slowly, making scraping difficult. The agent proposed three solutions: 1) build a manual image upload feature in the admin panel, 2) try to get images from Wolt/Lieferando (potential copyright issues), 3) keep the high-quality stock photos. This needs a decision from the user.
+    - **Why to solve this issue and what will be achieved with this?** To align the website's visual representation with the user's actual products and brand identity.
+    - **Should Test frontend/backend/both after fix:** Frontend
+    - **Is recurring issue?** N
+
+**Known issue recurrence from previous fork**
+-   **Issue recurrence in previous fork:** None
+-   **Recurrence count:** 0
+-   **Status:** NA
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Backend:** FastAPI, Motor, Pydantic, JWT Auth.
+-   **Frontend:** React, Vite, Axios, , Shadcn components, Sonner for toasts.
+-   **Integration:** REST API communication with a third-party POS system (ExpertOrder) using an API key.
+-   **Data Seeding:** Python scripts to scrape a website and populate a MongoDB database.
+-   **UX/UI:** Complex, multi-step dialog flows for product customization and upselling.
+
+**key DB schema**
+-   **locations**: 
+-   **menu_items**: 
+-   **categories**: 
+-   **orders**: 
+
+**changes in tech stack**
+-   ****: Added to the backend dependencies () for making asynchronous HTTP requests to the ExpertOrder API.
+
+**All files of reference**
+-   : The core component for the upcoming task. It needs to be refactored.
+-   : The component whose functionality will be merged into .
+-   : The main page that orchestrates the display of all items and the triggering of customization/upsell dialogs. Its logic will need significant changes.
+-   : The source of truth for all menu data. May need further adjustments.
+-   : Contains the logic for communicating with the external POS system.
+-   : Contains the endpoint that triggers the ExpertOrder push.
+
+**Critical Info for New Agent**
+- The immediate and highest priority task is to refactor the frontend dialogs as requested by the user. Combine the ingredient customization and menu-upgrade features into a single, unified  dialog.
+- The user is very detail-oriented and expects the application to mirror the functionality of their existing Foodbooking page 1:1, including all product options, sizes, and removable ingredients.
+- The topic of product images is still open. Re-engage the user on this and propose building an image upload feature in the admin panel as the most robust solution.
+
+**documents created in this job**
+- 
+- 
+- 
+- 
+- 
+- 
+
+**Last 10 User Messages and any pending user messages**
+1.  **User:** Asks if the agent will also implement upselling for every category. (IN PROGRESS)
+2.  **User:** Confirms the agent should implement the upsell with phrases like Dein Essen braucht einen Sidekick. (DONE)
+3.  **Agent:** Implements the category-wide upsell feature.
+4.  **User:** Reports that the removable ingredients feature is not working. (PENDING)
+5.  **Agent:** Identifies the bug (customize button wasn't being triggered correctly) and fixes it.
+6.  **User:** Suggests a better flow: first open the customization dialog, and after confirmation, ask about upgrading to a menu. Or asks for the agent's recommendation. (PENDING)
+7.  **Agent:** Proposes an even better flow: combining everything (ingredient removal, extras, menu upgrade) into a single, streamlined dialog to reduce clicks.
+8.  **User:** Ja okay (Agrees to the agent's proposal). (PENDING)
+9.  **Agent:** Acknowledges the user's confirmation and states they will start implementing the combined dialog.
+10. **(No further user messages)**
+
+**Project Health Check:**
+-   **Mocked:** The ExpertOrder integration is currently using a test API key and points to the  endpoint. This will need to be switched to production keys and the real endpoint after user provides the credentials.
+
+**3rd Party Integrations**
+-   **ExpertOrder (POS System):** Integrated via a backend-to-backend REST API call. Uses a per-location API key stored in the database.
+-   **Lieferando / Wolt / Uber Eats (Planned):** User has expressed a desire to integrate these platforms in the future.
+
+**Testing status**
+-   **Testing agent used after significant changes:** YES (after initial feature completion).
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None in this session.
+-   **Known regressions:** None. All reported bugs were fixed. The upcoming refactoring is a planned change, not a regression.
+
+**Credentials to test flow:**
+Admin credentials were seeded and remain the same:
+-   **Owner:**  / 
+-   **Rellingen Admin:**  / 
+-   **Henstedt-Ulzburg Admin:**  / 
+
+**What agent forgot to execute**
+- The agent initially forgot to implement different sizes (Medium/Large) for burgers and had to correct this after the user pointed it out.
+- The agent implemented multiple separate dialogs for the ordering flow before the user suggested a more streamlined, combined approach. This could have been anticipated and planned as a single, unified component from the start.</analysis>

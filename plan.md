@@ -1,6 +1,6 @@
 # ZOZO Burger Ordering Platform — Plan
 
-Preview URL: https://gourmet-burgers-33.preview.emergentagent.com
+Preview URL: https://burger-dialog-ux.preview.emergentagent.com
 
 ## 1) Objectives (North Star)
 - Build a dark, premium, high-conversion website with a custom multi-location ordering system.
