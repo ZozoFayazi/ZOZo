@@ -5,15 +5,15 @@
   },
   {
     "content": "Phase 3: Backend - Add delivery zone configuration per location",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 3: Backend - Add min order value and delivery fee per location",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 3: Frontend - Implement modern WOW design with glassmorphism",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 3: Frontend - Add address-based location detection",
