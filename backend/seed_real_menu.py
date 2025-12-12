@@ -78,6 +78,7 @@ def seed_real_menu():
                 "slug": cat_data["slug"],
                 "location_id": location_id,
                 "order": cat_data["order"],
+                "active": True,
                 "created_at": datetime.utcnow()
             }
             categories.append(cat_doc)
