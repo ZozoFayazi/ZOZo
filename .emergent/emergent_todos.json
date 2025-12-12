@@ -1,11 +1,11 @@
 [
   {
     "content": "Phase 4: Video-Hero - Replace static image with looping video",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 4: Deals/Promotions - Backend API for deals management",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 4: Deals/Promotions - Frontend display on homepage and menu",

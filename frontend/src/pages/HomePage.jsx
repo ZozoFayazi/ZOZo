@@ -124,22 +124,34 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
               </div>
             </div>
 
-            {/* Hero Image - Right Side with 3D Effect */}
+            {/* Hero Video - Right Side with 3D Effect */}
             <div className="lg:col-span-6 opacity-0 animate-scale-in animation-delay-200">
               <div className="relative">
-                {/* Main Image */}
+                {/* Main Video/Image */}
                 <div className="parallax-wrapper rounded-3xl overflow-hidden shadow-2xl">
                   <div 
-                    className="parallax-image"
+                    className="parallax-image relative"
                     style={{
                       transform: `translate(${mousePosition.x * 0.5}px, ${mousePosition.y * 0.5}px)`
                     }}
                   >
-                    <img
-                      src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=900&fit=crop&q=90"
-                      alt="Premium ZOZO Burger"
+                    {/* Video Background */}
+                    <video
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
                       className="w-full h-auto object-cover"
-                    />
+                      poster="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=900&fit=crop&q=90"
+                    >
+                      <source src="https://cdn.pixabay.com/video/2022/01/18/104620-667158651_large.mp4" type="video/mp4" />
+                      {/* Fallback to image if video doesn't load */}
+                      <img
+                        src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=900&fit=crop&q=90"
+                        alt="Premium ZOZO Burger"
+                        className="w-full h-auto object-cover"
+                      />
+                    </video>
                   </div>
                 </div>
                 
