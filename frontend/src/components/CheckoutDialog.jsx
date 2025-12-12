@@ -1,0 +1,261 @@
+import React, { useState } from 'react';
+import { X, CheckCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { createOrder } from '../api';
+
+function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, selectedLocation, clearCart, onCloseCart }) {
+  const [loading, setLoading] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderNumber, setOrderNumber] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    postal_code: '',
+    city: '',
+    notes: '',
+    payment_method: 'cash'
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const orderData = {
+        location_id: selectedLocation.id,
+        items: cart.map(item => ({
+          menu_item_id: item.menu_item_id,
+          name: item.name,
+          price: item.price,
+          size: item.size,
+          quantity: item.quantity
+        })),
+        customer: {
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email || undefined,
+          address: formData.address,
+          postal_code: formData.postal_code,
+          city: formData.city,
+          notes: formData.notes || undefined
+        },
+        payment_method: formData.payment_method
+      };
+
+      const response = await createOrder(orderData);
+      setOrderNumber(response.order_number);
+      setOrderPlaced(true);
+      clearCart();
+      toast.success('Bestellung erfolgreich aufgegeben!');
+    } catch (error) {
+      console.error('Order error:', error);
+      toast.error('Fehler bei der Bestellung. Bitte versuche es erneut.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setFormData({
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      postal_code: '',
+      city: '',
+      notes: '',
+      payment_method: 'cash'
+    });
+    setOrderPlaced(false);
+    setOrderNumber('');
+    onClose();
+    if (orderPlaced) {
+      onCloseCart();
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+      {/* Overlay */}
+      <div
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in"
+        onClick={handleClose}
+      />
+
+      {/* Dialog */}
+      <div className="relative bg-card border border-border rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
+        {orderPlaced ? (
+          // Success Screen
+          <div className="p-8 text-center">
+            <CheckCircle className="h-16 w-16 mx-auto mb-4 text-success" />
+            <h2 className="heading-2 mb-2">Vielen Dank!</h2>
+            <p className="text-muted-foreground mb-4">
+              Deine Bestellung wurde erfolgreich aufgegeben.
+            </p>
+            <div className="bg-background border border-border rounded-lg p-4 mb-6">
+              <p className="text-sm text-muted-foreground mb-1">Bestellnummer</p>
+              <p className="text-2xl font-bold text-primary">{orderNumber}</p>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6">
+              Du erhältst deine Bestellung in 30-45 Minuten.
+            </p>
+            <button
+              onClick={handleClose}
+              className="btn-primary w-full"
+            >
+              Schließen
+            </button>
+          </div>
+        ) : (
+          // Checkout Form
+          <>
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <h2 className="text-lg font-semibold">Bestellung abschließen</h2>
+              <button
+                onClick={handleClose}
+                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Name *</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Telefon *</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">E-Mail (optional)</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Adresse *</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">PLZ *</label>
+                  <input
+                    type="text"
+                    name="postal_code"
+                    value={formData.postal_code}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Stadt *</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Anmerkungen (optional)</label>
+                <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  placeholder="z.B. bitte klingeln"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Zahlungsmethode</label>
+                <select
+                  name="payment_method"
+                  value={formData.payment_method}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="cash">Barzahlung</option>
+                  <option value="card">Kartenzahlung</option>
+                </select>
+              </div>
+
+              {/* Summary */}
+              <div className="bg-background border border-border rounded-lg p-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Zwischensumme</span>
+                  <span>€{cartTotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Liefergebühr</span>
+                  <span>{deliveryFee === 0 ? 'Kostenlos' : `€${deliveryFee.toFixed(2)}`}</span>
+                </div>
+                <div className="flex justify-between text-lg font-semibold pt-2 border-t border-border">
+                  <span>Gesamt</span>
+                  <span className="text-primary">€{total.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full disabled:opacity-50"
+              >
+                {loading ? 'Wird bearbeitet...' : 'Jetzt bestellen'}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default CheckoutDialog;
