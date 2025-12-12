@@ -44,8 +44,8 @@ function ExpertOrderSettings() {
   };
 
   const loadSettings = async (locationId) => {
-    try {
-      const token = localStorage.getItem('token');
+    try:
+      const token = localStorage.getItem('zozoAuthToken');
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/expertorder-settings/${locationId}`,
         { headers: { 'Authorization': `Bearer ${token}` } }
