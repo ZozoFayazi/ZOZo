@@ -61,8 +61,13 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   const canUpgradeToMenu = item.can_upgrade_to_menu && menuUpgradePrice > 0;
 
   const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
+  
+  // Calculate side surcharge (if menu and premium side selected)
+  const selectedSideObj = sides.find(s => s.id === selectedSide);
+  const sideSurcharge = upgradeToMenu && selectedSideObj ? selectedSideObj.price : 0;
+  
   const itemPrice = upgradeToMenu ? menuUpgradePrice : basePrice;
-  const totalPrice = (itemPrice + extrasTotal) * quantity;
+  const totalPrice = (itemPrice + extrasTotal + sideSurcharge) * quantity;
 
   const toggleExtra = (extra) => {
     if (selectedExtras.find(e => e.name === extra.name)) {
