@@ -302,12 +302,20 @@ async def create_order(order: OrderCreate):
         "items": [item.dict() for item in order.items],
         "subtotal": round(subtotal, 2),
         "delivery_fee": round(delivery_fee, 2),
+        "discount": 0.0,
         "total": round(total, 2),
         "customer": order.customer.dict(),
-        "status": "new",
+        "is_pickup": getattr(order, 'is_pickup', False),
+        "status": "confirmed",
         "payment_method": order.payment_method,
+        "estimated_time": 30,
         "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
+        "updated_at": datetime.utcnow(),
+        "status_history": [{
+            "status": "confirmed",
+            "timestamp": datetime.utcnow().isoformat(),
+            "note": "Bestellung wurde bestätigt"
+        }]
     }
     
     result = await db.orders.insert_one(order_doc)
