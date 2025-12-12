@@ -199,13 +199,10 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # CLASSICS Category (Schnitzel, Croques)
+    # CLASSICS Category (2 items)
     classics = [
-        {"name": "Schnitzel Classic", "desc": "Knuspriges Schnitzel mit Pommes", "price": 10.99, "img": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800"},
-        {"name": "Schnitzel Jäger Art", "desc": "Schnitzel mit Champignon-Rahmsauce", "price": 12.49, "img": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800"},
-        {"name": "Chicken Nuggets", "desc": "10 Stück mit Pommes und Dip", "price": 8.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
-        {"name": "Croque Classic", "desc": "Schinken, Käse, Remoulade", "price": 7.49, "img": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800"},
-        {"name": "Croque Hawaii", "desc": "Schinken, Ananas, Käse", "price": 7.99, "img": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800"},
+        {"name": "Rinder-Currywurst mit Pommes", "desc": "Currywurst vom Rind serviert mit Pommes", "price": 8.99, "img": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=800"},
+        {"name": "Hähnchen-Schnitzel mit Pommes", "desc": "Knuspriges Hähnchen-Schnitzel mit Pommes", "price": 8.99, "img": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800"},
     ]
     
     for item in classics:
