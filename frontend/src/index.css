@@ -4,34 +4,20 @@
 
 @layer base {
   :root, .dark {
-    /* Base Colors */
     --background: 240 6% 4%; /* #0D0D0F */
     --foreground: 0 0% 96%; /* #F5F5F5 */
     --card: 240 6% 6%; /* #121214 */
     --card-foreground: 0 0% 96%;
     --popover: 240 6% 6%;
     --popover-foreground: 0 0% 96%;
-    
-    /* Brand Primary (Crimson Red) */
     --primary: 351 100% 35%; /* #B00020 */
     --primary-foreground: 0 0% 98%;
-    
-    /* Secondary & Muted */
     --secondary: 240 5% 16%; /* #2A2A2E */
     --secondary-foreground: 0 0% 96%;
     --muted: 240 4% 14%; /* #232326 */
     --muted-foreground: 0 0% 72%; /* #B6B6B6 */
     --accent: 240 5% 8%;  /* #1A1A1C */
     --accent-foreground: 0 0% 96%;
-    
-    /* Semantic Colors - NEW! */
-    --info: 210 92% 56%;
-    --success: 152 63% 43%;
-    --warning: 38 92% 58%;
-    --highlight: 351 100% 42%;
-    --gold: 44 92% 60%; /* Luxury Gold Accent */
-    
-    /* System */
     --destructive: 358 76% 60%; /* #E5484D */
     --destructive-foreground: 0 0% 98%;
     --border: 240 5% 14%;
