@@ -36,19 +36,24 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   // Ingredient icons mapping
   const getIngredientIcon = (ingredient) => {
     const lower = ingredient.toLowerCase();
-    if (lower.includes('tomat')) return '🍅';
-    if (lower.includes('zwiebel')) return '🧅';
-    if (lower.includes('gurke') || lower.includes('pickle')) return '🥒';
-    if (lower.includes('salat')) return '🥬';
-    if (lower.includes('käse') || lower.includes('cheese')) return '🧀';
-    if (lower.includes('bacon') || lower.includes('speck')) return '🥓';
-    if (lower.includes('beef') || lower.includes('patty') || lower.includes('fleisch')) return '🥩';
-    if (lower.includes('spiegelei') || lower.includes('fried egg')) return '🍳';
-    if (lower.includes('ei') || lower.includes('egg')) return '🥚';
-    if (lower.includes('jalapeño') || lower.includes('chili')) return '🌶️';
-    if (lower.includes('pilz') || lower.includes('champignon')) return '🍄';
-    if (lower.includes('paprika')) return '🫑';
-    return '🍴'; // Default icon
+    if (lower.includes('tomat')) return { type: 'emoji', icon: '🍅' };
+    if (lower.includes('zwiebel')) return { type: 'emoji', icon: '🧅' };
+    if (lower.includes('gurke') || lower.includes('pickle')) return { type: 'emoji', icon: '🥒' };
+    if (lower.includes('salat')) return { type: 'emoji', icon: '🥬' };
+    if (lower.includes('käse') || lower.includes('cheese')) return { type: 'emoji', icon: '🧀' };
+    if (lower.includes('bacon') || lower.includes('speck')) return { type: 'emoji', icon: '🥓' };
+    if (lower.includes('beef') || lower.includes('patty') || lower.includes('fleisch')) {
+      return { 
+        type: 'image', 
+        icon: 'https://customer-assets.emergentagent.com/job_gourmet-bites-15/artifacts/gxkjc9an_IMG_1232.png' 
+      };
+    }
+    if (lower.includes('spiegelei') || lower.includes('fried egg')) return { type: 'emoji', icon: '🍳' };
+    if (lower.includes('ei') || lower.includes('egg')) return { type: 'emoji', icon: '🥚' };
+    if (lower.includes('jalapeño') || lower.includes('chili')) return { type: 'emoji', icon: '🌶️' };
+    if (lower.includes('pilz') || lower.includes('champignon')) return { type: 'emoji', icon: '🍄' };
+    if (lower.includes('paprika')) return { type: 'emoji', icon: '🫑' };
+    return { type: 'emoji', icon: '🍴' }; // Default icon
   };
   
   // Check if this is a burger (but not a Smash Burger) - requires bun selection
