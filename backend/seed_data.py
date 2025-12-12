@@ -328,17 +328,23 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # FINGERFOOD Category - COMPLETE
+    # FINGERFOOD Category - COMPLETE (16 items)
     fingerfoods = [
+        {"name": "Mozzarella Sticks", "desc": "ca. 6 Stück + Dip nach Wahl", "price": 6.39, "img": "https://images.unsplash.com/photo-1531749668029-2db88e4276c7?w=800"},
+        {"name": "Spicy Chicken Stripes", "desc": "ca. 8 Stück + Dip nach Wahl", "price": 7.29, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Chicken Nuggets 6 Stück", "desc": "ca. 6 Stück + Dip nach Wahl", "price": 6.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Chicken Wings 6 Stück", "desc": "ca. 6 Stück + Dip nach Wahl", "price": 7.99, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
+        {"name": "Crunchy Wings 6 Stück", "desc": "ca. 6 Stück + Dip nach Wahl", "price": 8.49, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
+        {"name": "Crunchy Wings 18 Stück", "desc": "ca. 18 Stück + 2 Dips nach Wahl", "price": 13.99, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
+        {"name": "Fire Wings 6 Stück (scharf)", "desc": "ca. 6 Stück + Dip nach Wahl", "price": 8.49, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
+        {"name": "Fire Wings 18 Stück (scharf)", "desc": "ca. 18 Stück + 2 Dips nach Wahl", "price": 13.99, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
+        {"name": "Chili Cheese Nuggets", "desc": "ca. 8 Stück + Dip nach Wahl", "price": 6.89, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Onion Rings", "desc": "ca. 8 Stück + Dip nach Wahl", "price": 5.99, "img": "https://images.unsplash.com/photo-1639024471283-03518883512d?w=800"},
         {"name": "French Fries", "desc": "Knusprige Pommes Frites", "price": 4.99, "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800"},
         {"name": "Sweet Potato Fries", "desc": "Süßkartoffel Pommes", "price": 5.49, "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800"},
-        {"name": "Chicken Nuggets 6 Stück", "desc": "6 Stück + Dip nach Wahl", "price": 6.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
-        {"name": "Chicken Nuggets 9 Stück", "desc": "9 Stück + Dip nach Wahl", "price": 8.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
-        {"name": "Chicken Wings 6 Stück", "desc": "6 Stück + Dip nach Wahl", "price": 7.99, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
-        {"name": "Chicken Wings 9 Stück", "desc": "9 Stück + Dip nach Wahl", "price": 10.99, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
-        {"name": "Onion Rings", "desc": "8 Stück + Dip nach Wahl", "price": 5.99, "img": "https://images.unsplash.com/photo-1639024471283-03518883512d?w=800"},
-        {"name": "Mozzarella Sticks", "desc": "6 Stück mit Dip", "price": 6.49, "img": "https://images.unsplash.com/photo-1531749668029-2db88e4276c7?w=800"},
-        {"name": "Chili Cheese Nuggets", "desc": "8 Stück mit Dip", "price": 6.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Twister", "desc": "Twister Pommes", "price": 5.39, "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800"},
+        {"name": "Country Potatoes (Kartoffelecken)", "desc": "Kartoffelecken", "price": 5.49, "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800"},
+        {"name": "Fingerfood-Box", "desc": "15 Stück: 3 Fingerfood Artikel (je 5 Stück) nach Wahl + 2 Dips. Wählbar: Chili Cheese Nuggets, Mozzarella Sticks, Chicken Wings, Onion Rings, Chicken Nuggets, Spicy Chicken Stripes", "price": 12.39, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
     ]
     
     for item in fingerfoods:
