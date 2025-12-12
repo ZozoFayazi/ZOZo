@@ -117,27 +117,30 @@ def seed_real_menu():
                 "created_at": datetime.utcnow()
             })
         
-        # === BURGER ===
+        # === BURGER (mit Medium/Large Größen) ===
         burgers = [
-            {"name": "Hamburger", "desc": "Beef Burger mit Tomaten, Salat, Zwiebeln und Gewürzgurken", "price": 7.99, "menu_price": 13.89, "img": IMG_BURGER},
-            {"name": "Cheeseburger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Käse", "price": 9.19, "menu_price": 15.09, "img": IMG_CHEESEBURGER},
-            {"name": "Bacon Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Bacon, BBQ-Sauce, Röstzwiebeln", "price": 11.49, "menu_price": 16.39, "img": IMG_BACON_BURGER},
-            {"name": "Chili-Cheese Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Cheese-Sauce, Jalapeños", "price": 9.49, "menu_price": 15.39, "img": IMG_CHEESEBURGER},
-            {"name": "Champion Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Champignons", "price": 8.69, "menu_price": 13.59, "img": IMG_BURGER},
-            {"name": "Farmers", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Spiegelei", "price": 8.79, "menu_price": 14.69, "img": IMG_BURGER},
-            {"name": "Greek Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Hirtenkäse, Peperoni, Oliven", "price": 9.49, "menu_price": 15.39, "img": IMG_BURGER},
-            {"name": "Italy Burger", "desc": "Beef, Tomaten, Rucola, Zwiebeln, Gewürzgurken, Grana Padano, Serrano Schinken", "price": 9.99, "menu_price": 15.89, "img": IMG_BURGER},
-            {"name": "Chili Bacon Burger", "desc": "Beef, Bacon, Jalapeños, BBQ Sauce, Tomaten, Salat, Gewürzgurken, Röstzwiebeln", "price": 9.59, "menu_price": 15.49, "img": IMG_BACON_BURGER},
-            {"name": "Monster Bacon Burger", "desc": "Burger mit Beef, Ei, Champignons, Bacon, Salat, Tomaten, Zwiebeln, Gewürzgurken und Käse", "price": 12.99, "menu_price": 19.89, "img": IMG_BACON_BURGER},
-            {"name": "Chicken Nugget Burger", "desc": "Burger mit Chicken Nuggets, Salat, Tomaten, Gewürzgurken und Zwiebeln", "price": 8.09, "menu_price": 13.99, "img": IMG_NUGGETS},
-            {"name": "Crunchy Chickenburger", "desc": "Crunchy Chicken, Tomate, Salat, Zwiebeln, Gewürzgurke, Käse", "price": 9.49, "menu_price": 15.39, "img": IMG_CHICKEN_BURGER},
-            {"name": "Veggie Burger", "desc": "Veggie Patty, Tomaten, Salat, Zwiebeln, Gewürzgurken", "price": 7.69, "menu_price": 13.59, "img": IMG_VEGGIE_BURGER},
-            {"name": "Two Hundred Fifty Burger", "desc": "2x 125 g Beef, Salat, Tomaten, Zwiebeln, Gurken und Käse", "price": 13.99, "menu_price": 19.89, "img": IMG_CHEESEBURGER},
-            {"name": "Three Hundred Sixty Burger", "desc": "2x 180 g Beef, Salat, Tomaten, Zwiebeln, Gurken und Käse", "price": 17.49, "menu_price": 23.39, "img": IMG_CHEESEBURGER},
-            {"name": "Avocado Dream Burger", "desc": "mit Rucola Salat, Tomaten, Zwiebeln, Guacamole und Spiegelei", "price": 9.49, "menu_price": 15.39, "img": IMG_VEGGIE_BURGER},
-            {"name": "Tex As Burger", "desc": "Beef, BBQ Sauce, Gewürzgurken, Röstzwiebeln, Bacon, panierte Zwiebelringe, Salat, Tomaten", "price": 11.99, "menu_price": None, "img": IMG_BACON_BURGER},
-            {"name": "Bacon Burger Deluxe", "desc": "2x 125g Beef, Bacon, Röstzwiebeln, Gewürzgurken, BBQ-Sauce und Käse", "price": 14.49, "menu_price": 20.39, "img": IMG_BACON_BURGER},
-            {"name": "The Double Crunchy Burger", "desc": "2x Crunchy Chicken, Tomaten, Salat, Zwiebeln, Gewürzgurke, Käse", "price": 12.99, "menu_price": None, "img": IMG_CHICKEN_BURGER},
+            # Burger mit 2 Größen (Medium 125g / Large 180g)
+            {"name": "Hamburger", "desc": "Beef Burger mit Tomaten, Salat, Zwiebeln und Gewürzgurken", "price_m": 7.99, "price_l": 11.19, "menu_m": 13.89, "menu_l": 17.09, "has_sizes": True, "img": IMG_BURGER},
+            {"name": "Cheeseburger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Käse", "price_m": 9.19, "price_l": 12.29, "menu_m": 15.09, "menu_l": 18.19, "has_sizes": True, "img": IMG_CHEESEBURGER},
+            {"name": "Bacon Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Bacon, BBQ-Sauce, Röstzwiebeln", "price_m": 11.49, "price_l": 14.29, "menu_m": 17.39, "menu_l": 20.19, "has_sizes": True, "img": IMG_BACON_BURGER},
+            {"name": "Chili-Cheese Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Cheese-Sauce, Jalapeños", "price_m": 9.49, "price_l": 11.89, "menu_m": 15.39, "menu_l": 17.79, "has_sizes": True, "img": IMG_CHEESEBURGER},
+            {"name": "Champion Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Champignons", "price_m": 8.69, "price_l": 11.49, "menu_m": 14.59, "menu_l": 17.39, "has_sizes": True, "img": IMG_BURGER},
+            {"name": "Farmers", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Spiegelei", "price_m": 8.79, "price_l": 11.29, "menu_m": 14.69, "menu_l": 17.19, "has_sizes": True, "img": IMG_BURGER},
+            {"name": "Greek Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Hirtenkäse, Peperoni, Oliven", "price_m": 9.49, "price_l": 11.89, "menu_m": 15.39, "menu_l": 17.79, "has_sizes": True, "img": IMG_BURGER},
+            {"name": "Italy Burger", "desc": "Beef, Tomaten, Rucola, Zwiebeln, Gewürzgurken, Grana Padano, Serrano Schinken", "price_m": 9.99, "price_l": 12.59, "menu_m": 15.89, "menu_l": 18.49, "has_sizes": True, "img": IMG_BURGER},
+            {"name": "Chili Bacon Burger", "desc": "Beef, Bacon, Jalapeños, BBQ Sauce, Tomaten, Salat, Gewürzgurken, Röstzwiebeln", "price_m": 9.99, "price_l": 13.99, "menu_m": 15.89, "menu_l": 19.89, "has_sizes": True, "img": IMG_BACON_BURGER},
+            {"name": "Monster Bacon Burger", "desc": "Burger mit Beef, Ei, Champignons, Bacon, Salat, Tomaten, Zwiebeln, Gewürzgurken und Käse", "price_m": 9.49, "price_l": 12.59, "menu_m": 15.39, "menu_l": 18.49, "has_sizes": True, "img": IMG_BACON_BURGER},
+            {"name": "Avocado Dream Burger", "desc": "mit Rucola Salat, Tomaten, Zwiebeln, Guacamole und Spiegelei", "price_m": 9.49, "price_l": 11.89, "menu_m": 15.39, "menu_l": 17.79, "has_sizes": True, "img": IMG_VEGGIE_BURGER},
+            {"name": "Bacon Burger Deluxe", "desc": "2x 125g Beef, Bacon, Röstzwiebeln, Gewürzgurken, BBQ-Sauce und Käse", "price_m": 14.49, "price_l": 20.39, "menu_m": 20.39, "menu_l": 26.29, "has_sizes": True, "img": IMG_BACON_BURGER},
+            
+            # Burger mit nur EINER Größe
+            {"name": "Chicken Nugget Burger", "desc": "Burger mit Chicken Nuggets, Salat, Tomaten, Gewürzgurken und Zwiebeln", "price": 8.09, "menu_price": 13.99, "has_sizes": False, "img": IMG_NUGGETS},
+            {"name": "Crunchy Chickenburger", "desc": "Crunchy Chicken, Tomate, Salat, Zwiebeln, Gewürzgurke, Käse", "price": 8.09, "menu_price": 13.99, "has_sizes": False, "img": IMG_CHICKEN_BURGER},
+            {"name": "Crunchy Chicken Bacon Burger", "desc": "Crunchy Chicken, Bacon, Jalapeños, Tomaten, Salat, BBQ-Sauce, Gewürzgurken, Röstzwiebeln", "price": 10.39, "menu_price": 16.29, "has_sizes": False, "img": IMG_CHICKEN_BURGER},
+            {"name": "Veggie Burger", "desc": "Veggie Patty, Tomaten, Salat, Zwiebeln, Gewürzgurken", "price": 7.69, "menu_price": 13.59, "has_sizes": False, "img": IMG_VEGGIE_BURGER},
+            {"name": "Two Hundred Fifty Burger", "desc": "2x 125 g Beef, Salat, Tomaten, Zwiebeln, Gurken und Käse", "price": 9.59, "menu_price": 15.49, "has_sizes": False, "img": IMG_CHEESEBURGER},
+            {"name": "Three Hundred Sixty Burger", "desc": "2x 180 g Beef, Salat, Tomaten, Zwiebeln, Gurken und Käse", "price": 10.39, "menu_price": 16.29, "has_sizes": False, "img": IMG_CHEESEBURGER},
+            {"name": "The Double Crunchy Burger", "desc": "2x Crunchy Chicken, Tomaten, Salat, Zwiebeln, Gewürzgurke, Käse", "price": 12.99, "menu_price": None, "has_sizes": False, "img": IMG_CHICKEN_BURGER},
         ]
         
         for item in burgers:
