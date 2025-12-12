@@ -317,9 +317,14 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
                           }`}
                           data-testid={`side-${side.id}`}
                         >
-                          <div className="flex items-center gap-2">
-                            {selectedSide === side.id && <Check className="h-4 w-4 text-primary" />}
-                            <span className="text-sm">{side.name}</span>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              {selectedSide === side.id && <Check className="h-4 w-4 text-primary" />}
+                              <span className="text-sm">{side.name}</span>
+                            </div>
+                            {side.price > 0 && (
+                              <span className="text-xs text-primary font-semibold">+€{side.price.toFixed(2)}</span>
+                            )}
                           </div>
                         </button>
                       ))}
