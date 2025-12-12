@@ -698,6 +698,70 @@ async def update_location_settings(
     updated_location = await db.locations.find_one({"_id": parse_object_id(location_id)})
     return serialize_doc(updated_location)
 
+# ExpertOrder Settings Management
+@api_router.get("/admin/expertorder-settings/{location_id}")
+async def get_expertorder_settings(
+    location_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get ExpertOrder settings for a location"""
+    # Check access
+    if current_user.get('role') == 'manager':
+        if location_id != current_user.get('location_id'):
+            raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get or create settings
+    settings = await db.location_settings.find_one({"location_id": location_id})
+    if not settings:
+        # Create default settings
+        settings = {
+            "location_id": location_id,
+            "expertorder_api_key": "",
+            "expertorder_enabled": False,
+            "expertorder_test_mode": True,
+            "created_at": datetime.utcnow()
+        }
+        await db.location_settings.insert_one(settings)
+    
+    return serialize_doc(settings)
+
+@api_router.patch("/admin/expertorder-settings/{location_id}")
+async def update_expertorder_settings(
+    location_id: str,
+    settings: ExpertOrderSettings,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update ExpertOrder settings for a location (owner only)"""
+    if current_user.get('role') != 'owner':
+        raise HTTPException(status_code=403, detail="Only owners can update ExpertOrder settings")
+    
+    # Get or create settings
+    existing = await db.location_settings.find_one({"location_id": location_id})
+    
+    update_data = {
+        "updated_at": datetime.utcnow()
+    }
+    
+    if settings.expertorder_api_key is not None:
+        update_data["expertorder_api_key"] = settings.expertorder_api_key
+    if settings.expertorder_enabled is not None:
+        update_data["expertorder_enabled"] = settings.expertorder_enabled
+    if settings.expertorder_test_mode is not None:
+        update_data["expertorder_test_mode"] = settings.expertorder_test_mode
+    
+    if existing:
+        await db.location_settings.update_one(
+            {"location_id": location_id},
+            {"$set": update_data}
+        )
+    else:
+        update_data["location_id"] = location_id
+        update_data["created_at"] = datetime.utcnow()
+        await db.location_settings.insert_one(update_data)
+    
+    updated = await db.location_settings.find_one({"location_id": location_id})
+    return serialize_doc(updated)
+
 # Deal Management (Admin)
 @api_router.get("/admin/deals")
 async def get_all_deals(current_user: dict = Depends(get_current_user)):
