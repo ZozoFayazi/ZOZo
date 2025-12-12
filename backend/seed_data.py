@@ -237,14 +237,13 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # PASTA Category - COMPLETE
+    # PASTA Category - COMPLETE (5 items)
     pastas = [
-        {"name": "Pasta Tomato Sauce", "desc": "Pasta nach Wahl, Tomatensauce", "price": 9.99, "img": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800"},
-        {"name": "Pasta Bolognese", "desc": "Pasta nach Wahl, Hackfleischsauce", "price": 11.49, "img": "https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=800"},
-        {"name": "Pasta Carbonara", "desc": "Pasta nach Wahl, Speck, Ei, Sahne, Parmesan", "price": 11.99, "img": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800"},
-        {"name": "Pasta Cream Chicken", "desc": "Pasta nach Wahl, Hähnchenbrust-Würfel, Sahne, Broccoli, Cherry Tomaten, Paprika", "price": 13.49, "img": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800"},
-        {"name": "Pasta Tomato Gambas", "desc": "Pasta nach Wahl, Garnelen, Knoblauch, Oliven, Tomatensauce", "price": 15.99, "img": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800"},
-        {"name": "Pasta Arrabiata", "desc": "Pasta nach Wahl, scharfe Tomatensauce, Knoblauch", "price": 10.49, "img": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800"},
+        {"name": "Pasta Tomato Sauce", "desc": "Pasta nach Wahl (Spaghetti, Penne, Tagliatelle), Tomatensauce. Inklusive 3 Brötchen", "price": 9.99, "img": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800"},
+        {"name": "Pasta Tomato Gambas", "desc": "Pasta nach Wahl, Garnelen, Knoblauch, Oliven, Tomatensauce. Inklusive 3 Brötchen", "price": 15.99, "img": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800"},
+        {"name": "Pasta Cream Gambas", "desc": "Pasta nach Wahl, Garnelen, Knoblauch, Sahnesauce. Inklusive 3 Brötchen", "price": 15.99, "img": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800"},
+        {"name": "Pasta Cream Chicken", "desc": "Pasta nach Wahl, Hähnchenbrust-Würfel, Sahne, Broccoli, Cherry Tomaten, Paprika. Inklusive 3 Brötchen", "price": 13.49, "img": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800"},
+        {"name": "Pasta Curry Cream Chicken", "desc": "Pasta nach Wahl, Hähnchenbrust-Würfel, Curry-Sahnesauce, Broccoli, Mais. Inklusive 3 Brötchen", "price": 13.49, "img": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800"},
     ]
     
     for item in pastas:
