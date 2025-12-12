@@ -300,8 +300,8 @@ class ZOZOBurgerAPITester:
     def test_location_manager_login(self):
         """Test location manager login"""
         credentials = {
-            "email": "rellingen@zozoburger.de",
-            "password": "rellingen123"
+            "email": "rellingen@zozo.com",
+            "password": "manager_password"
         }
         
         success, response = self.run_test(
