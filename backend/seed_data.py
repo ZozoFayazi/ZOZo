@@ -280,11 +280,16 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # PIZZABUNS Category
+    # PIZZABUNS Category - COMPLETE (8 items)
     pizzabuns = [
-        {"name": "Pizzabun Margherita", "desc": "Tomatensauce, Käse", "price": 4.99, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
-        {"name": "Pizzabun Salami", "desc": "Tomatensauce, Salami, Käse", "price": 5.49, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
-        {"name": "Pizzabun Veggie", "desc": "Tomatensauce, Gemüse, Käse", "price": 5.29, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "6 Pizzabrötchen", "desc": "6 Pizzabrötchen ohne Belag", "price": 5.95, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "6 Pizzabrötchen mit Käse überbacken", "desc": "6 Pizzabrötchen mit Gouda-Käse überbacken", "price": 6.99, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "8 Pizzabrötchen Ham", "desc": "mit Schinken, Gouda-Käse", "price": 6.99, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "8 Pizzabrötchen Salami", "desc": "mit Salami, Gouda-Käse", "price": 6.99, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "8 Pizzabrötchen Chicken", "desc": "mit Hähnchen, Gouda-Käse", "price": 7.49, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "8 Pizzabrötchen Sucuk", "desc": "mit Knoblauchwurst, Gouda-Käse", "price": 7.49, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "8 Pizzabrötchen Tom-Moz", "desc": "Tomaten, Mozzarella, Gouda-Käse", "price": 7.49, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "8 Pizzabrötchen Johnny Ringo", "desc": "mit Hackfleisch und Jalapeños", "price": 7.79, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
     ]
     
     for item in pizzabuns:
