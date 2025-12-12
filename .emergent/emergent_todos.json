@@ -1,0 +1,50 @@
+[
+  {
+    "content": "Phase 1: POC - Create database models and seed data with menu from PDF",
+    "status": "in_progress"
+  },
+  {
+    "content": "Phase 1: POC - Build minimal backend APIs for multi-location ordering",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: POC - Create minimal frontend for testing order flow",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: POC - Write and run test_core.py to validate multi-location ordering",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: All user stories covered and POC validated",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Get design guidelines from design_agent",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Backend - Full API implementation with JWT auth",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Frontend - Complete customer website with WOW design",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Admin dashboards for location management",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: SEO optimization with Schema.org markup",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: All user stories covered in Development",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: End to End Testing using Testing Agent",
+    "status": "pending"
+  }
+]
