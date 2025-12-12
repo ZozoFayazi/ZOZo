@@ -25,8 +25,8 @@ function ExpertOrderSettings() {
   }, [selectedLocation]);
 
   const loadLocations = async () => {
-    try {
-      const token = localStorage.getItem('token');
+    try:
+      const token = localStorage.getItem('zozoAuthToken');
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/location-settings`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
