@@ -686,6 +686,135 @@ async def upload_product_image(
         "filename": unique_filename
     }
 
+# Discount Codes Management
+@api_router.post("/admin/discount-codes")
+async def create_discount_code(
+    code_data: DiscountCodeCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create a new discount code"""
+    # Check if code already exists
+    existing = await db.discount_codes.find_one({"code": code_data.code.upper()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Code already exists")
+    
+    # Prepare document
+    code_doc = {
+        "id": str(uuid.uuid4()),
+        "code": code_data.code.upper(),
+        "description": code_data.description,
+        "discount_type": code_data.discount_type,
+        "discount_value": code_data.discount_value,
+        "min_order_value": code_data.min_order_value or 0,
+        "order_type": code_data.order_type,
+        "max_uses": code_data.max_uses,
+        "current_uses": 0,
+        "valid_from": code_data.valid_from,
+        "valid_until": code_data.valid_until,
+        "location_ids": code_data.location_ids,
+        "active": code_data.active,
+        "created_by": current_user.get('email'),
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    await db.discount_codes.insert_one(code_doc)
+    return serialize_doc(code_doc)
+
+@api_router.get("/admin/discount-codes")
+async def get_discount_codes(
+    current_user: dict = Depends(get_current_user)
+):
+    """Get all discount codes"""
+    cursor = db.discount_codes.find().sort("created_at", -1)
+    codes = await cursor.to_list(length=1000)
+    return serialize_doc(codes)
+
+@api_router.patch("/admin/discount-codes/{code_id}")
+async def update_discount_code(
+    code_id: str,
+    code_data: DiscountCodeUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update a discount code"""
+    update_data = {k: v for k, v in code_data.dict().items() if v is not None}
+    
+    if "code" in update_data:
+        update_data["code"] = update_data["code"].upper()
+    
+    await db.discount_codes.update_one(
+        {"id": code_id},
+        {"$set": update_data}
+    )
+    
+    updated_code = await db.discount_codes.find_one({"id": code_id})
+    return serialize_doc(updated_code)
+
+@api_router.delete("/admin/discount-codes/{code_id}")
+async def delete_discount_code(
+    code_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Delete a discount code"""
+    result = await db.discount_codes.delete_one({"id": code_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Code not found")
+    return {"success": True}
+
+# Validate Discount Code (Public)
+@api_router.post("/validate-discount-code")
+async def validate_discount_code(validation: DiscountCodeValidate):
+    """Validate a discount code"""
+    code = await db.discount_codes.find_one({"code": validation.code.upper(), "active": True})
+    
+    if not code:
+        return {"valid": False, "message": "Ungültiger Rabattcode"}
+    
+    # Check valid dates
+    now = datetime.now(timezone.utc)
+    if code.get("valid_from") and now < code["valid_from"]:
+        return {"valid": False, "message": "Code ist noch nicht gültig"}
+    if code.get("valid_until") and now > code["valid_until"]:
+        return {"valid": False, "message": "Code ist abgelaufen"}
+    
+    # Check usage limit
+    if code.get("max_uses") and code.get("current_uses", 0) >= code["max_uses"]:
+        return {"valid": False, "message": "Code wurde bereits zu oft verwendet"}
+    
+    # Check minimum order value
+    if validation.order_total < code.get("min_order_value", 0):
+        return {
+            "valid": False, 
+            "message": f"Mindestbestellwert von €{code['min_order_value']:.2f} nicht erreicht"
+        }
+    
+    # Check order type (pickup/delivery)
+    if code.get("order_type") and code["order_type"] != validation.order_type:
+        order_type_text = "Abholung" if code["order_type"] == "pickup" else "Lieferung"
+        return {"valid": False, "message": f"Code nur für {order_type_text} gültig"}
+    
+    # Check location
+    if code.get("location_ids") and len(code["location_ids"]) > 0:
+        if validation.location_id not in code["location_ids"]:
+            return {"valid": False, "message": "Code nicht für diesen Standort gültig"}
+    
+    # Calculate discount
+    if code["discount_type"] == "percentage":
+        discount_amount = (validation.order_total * code["discount_value"]) / 100
+    else:  # fixed
+        discount_amount = code["discount_value"]
+    
+    # Don't discount more than order total
+    discount_amount = min(discount_amount, validation.order_total)
+    
+    return {
+        "valid": True,
+        "code_id": code["id"],
+        "discount_type": code["discount_type"],
+        "discount_value": code["discount_value"],
+        "discount_amount": discount_amount,
+        "message": f"Rabatt angewendet: €{discount_amount:.2f}"
+    }
+
 # Dashboard Stats
 @api_router.get("/admin/stats")
 async def get_dashboard_stats(
