@@ -138,6 +138,13 @@ function AdminDashboard() {
             </div>
             <div className="flex items-center gap-2">
               <button
+                onClick={() => navigate('/admin/deals')}
+                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
+              >
+                <Package className="h-4 w-4" />
+                <span>Deals</span>
+              </button>
+              <button
                 onClick={() => navigate('/admin/settings')}
                 className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
               >

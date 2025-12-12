@@ -8,6 +8,7 @@ import LocationsPage from './pages/LocationsPage';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import LocationSettings from './pages/LocationSettings';
+import DealsManagement from './pages/DealsManagement';
 import './App.css';
 
 function App() {
@@ -108,6 +109,7 @@ function App() {
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/settings" element={<LocationSettings />} />
+          <Route path="/admin/deals" element={<DealsManagement />} />
         </Routes>
         <Toaster
           position="bottom-right"
