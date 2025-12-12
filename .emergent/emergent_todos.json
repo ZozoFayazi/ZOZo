@@ -21,6 +21,10 @@
   },
   {
     "content": "Phase 2: Get design guidelines from design_agent",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 2: Install required dependencies (frontend and backend)",
     "status": "in_progress"
   },
   {
