@@ -41,13 +41,11 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
   const checkDeliveryAvailability = async (postalCode) => {
     setCheckingDelivery(true);
     try {
-      const response = await axios.post(`${API_URL}/api/check-delivery`, {
-        postal_code: postalCode
-      });
+      const response = await axios.get(`${API_URL}/api/check-delivery-zone?postal_code=${postalCode}`);
       
       setDeliveryCheck(response.data);
       
-      if (response.data.can_deliver && response.data.available_locations.length > 0) {
+      if (response.data.available && response.data.location) {
         const suggestedLocation = response.data.available_locations[0].location;
         setDetectedLocation(suggestedLocation);
         
