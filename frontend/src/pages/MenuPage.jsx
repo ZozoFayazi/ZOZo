@@ -150,13 +150,25 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
               <p className="text-muted-foreground">Wähle deine Favoriten</p>
             </div>
 
-            {/* Location Info (Read-only) */}
+            {/* Location Info (Read-only) with Status */}
             {selectedLocation && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-accent rounded-lg border border-border" data-testid="location-info">
+              <div className="flex items-center gap-3 px-4 py-2 bg-accent rounded-lg border border-border" data-testid="location-info">
                 <MapPin className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium">
                   {selectedLocation.name.replace('ZOZO Burger ', '')}
                 </span>
+                {selectedLocation.opening_status && (
+                  <span 
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      selectedLocation.opening_status.is_open 
+                        ? 'bg-green-500/10 text-green-500' 
+                        : 'bg-red-500/10 text-red-500'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${selectedLocation.opening_status.is_open ? 'bg-green-500' : 'bg-red-500'}`} />
+                    {selectedLocation.opening_status.is_open ? 'Geöffnet' : 'Geschlossen'}
+                  </span>
+                )}
               </div>
             )}
           </div>
