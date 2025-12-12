@@ -6,9 +6,16 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 # MongoDB connection
+from dotenv import load_dotenv
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
+
 MONGO_URL = os.environ.get('MONGO_URL')
+DB_NAME = os.environ.get('DB_NAME', 'test_database')
 client = MongoClient(MONGO_URL)
-db = client.get_database()
+db = client[DB_NAME]
 
 def clear_database():
     """Clear all collections"""
