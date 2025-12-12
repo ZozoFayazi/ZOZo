@@ -17,6 +17,21 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [upsellDialogOpen, setUpsellDialogOpen] = useState(false);
   const [upsellCategory, setUpsellCategory] = useState(null);
 
+  // Helper function: Check if category should show upsell
+  const shouldShowUpsell = (categorySlug) => {
+    if (!categorySlug) return false;
+    
+    const slug = categorySlug.toLowerCase();
+    
+    // Show upsell ONLY for these categories
+    return (
+      slug.includes('burger') ||
+      slug.includes('pizza') ||
+      slug.includes('imbiss') ||
+      slug.includes('salat')
+    );
+  };
+
   useEffect(() => {
     loadLocations();
   }, []);
