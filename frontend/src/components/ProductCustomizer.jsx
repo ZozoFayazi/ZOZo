@@ -2,24 +2,18 @@ import React, { useState } from 'react';
 import { X, Plus, Minus, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Common extras and removals for customization
-const COMMON_EXTRAS = [
-  { name: 'Extra Käse', price: 1.50 },
-  { name: 'Extra Bacon', price: 2.00 },
-  { name: 'Extra Patty', price: 3.50 },
-  { name: 'Avocado', price: 2.00 },
-  { name: 'Jalapeños', price: 0.50 },
-  { name: 'Röstzwiebeln', price: 1.00 },
-];
-
-const COMMON_REMOVALS = [
-  'Zwiebeln',
-  'Tomaten',
-  'Salat',
-  'Gewürzgurken',
-  'Käse',
-  'Soße'
-];
+// Parse extras from string format "Extra Käse (+€1.50)" to object
+const parseExtras = (extrasArray) => {
+  if (!extrasArray || !Array.isArray(extrasArray)) return [];
+  
+  return extrasArray.map(extra => {
+    const match = extra.match(/^(.+?)\s*\(\+€([\d.]+)\)$/);
+    if (match) {
+      return { name: match[1].trim(), price: parseFloat(match[2]) };
+    }
+    return { name: extra, price: 0 };
+  });
+};
 
 function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   const [quantity, setQuantity] = useState(1);
