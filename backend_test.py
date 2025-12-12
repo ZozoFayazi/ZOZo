@@ -521,6 +521,17 @@ class ZOZOBurgerAPITester:
         self.test_get_menu_items_admin()
         self.test_get_location_settings()
         self.test_update_location_settings()
+        
+        # Deals endpoints (premium feature)
+        print("\n📌 DEALS & PROMOTIONS (Premium Feature)")
+        print("-" * 70)
+        self.test_get_deals()
+        self.test_create_deal()
+        
+        # Order history for quick reorder (premium feature)
+        print("\n📌 QUICK REORDER (Premium Feature)")
+        print("-" * 70)
+        self.test_get_order_history()
 
         # Print summary
         print("\n" + "=" * 70)
