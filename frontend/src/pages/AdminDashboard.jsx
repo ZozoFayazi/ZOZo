@@ -151,6 +151,16 @@ function AdminDashboard() {
                 <Settings className="h-4 w-4" />
                 <span>Einstellungen</span>
               </button>
+              {user?.role === 'owner' && (
+                <button
+                  onClick={() => navigate('/admin/expertorder')}
+                  className="flex items-center space-x-2 px-4 py-2 text-sm bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors"
+                  data-testid="expertorder-link"
+                >
+                  <Package className="h-4 w-4" />
+                  <span>ExpertOrder</span>
+                </button>
+              )}
               <button
                 onClick={handleLogout}
                 className="flex items-center space-x-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
