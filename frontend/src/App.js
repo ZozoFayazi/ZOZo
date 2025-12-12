@@ -111,6 +111,7 @@ function App() {
             path="/locations"
             element={<LocationsPage setSelectedLocation={setSelectedLocation} />}
           />
+          <Route path="/order-tracking" element={<OrderTracking />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/settings" element={<LocationSettings />} />
@@ -118,6 +119,7 @@ function App() {
           <Route path="/admin/expertorder" element={<ExpertOrderSettings />} />
           <Route path="/admin/menu" element={<MenuManagement />} />
           <Route path="/admin/discount-codes" element={<DiscountCodes />} />
+          <Route path="/admin/orders" element={<OrderManagement />} />
         </Routes>
         <Toaster
           position="bottom-right"
