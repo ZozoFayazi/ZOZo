@@ -1,34 +1,38 @@
 [
   {
-    "content": "Phase 3: Redesign with WOW-factor - Get new design guidelines",
-    "status": "completed"
+    "content": "Phase 4: Video-Hero - Replace static image with looping video",
+    "status": "in_progress"
   },
   {
-    "content": "Phase 3: Backend - Add delivery zone configuration per location",
-    "status": "completed"
+    "content": "Phase 4: Deals/Promotions - Backend API for deals management",
+    "status": "pending"
   },
   {
-    "content": "Phase 3: Backend - Add min order value and delivery fee per location",
-    "status": "completed"
+    "content": "Phase 4: Deals/Promotions - Frontend display on homepage and menu",
+    "status": "pending"
   },
   {
-    "content": "Phase 3: Frontend - Implement modern WOW design with glassmorphism",
-    "status": "completed"
+    "content": "Phase 4: Deals/Promotions - Admin UI for creating/editing deals",
+    "status": "pending"
   },
   {
-    "content": "Phase 3: Frontend - Add address-based location detection",
-    "status": "completed"
+    "content": "Phase 4: Quick Reorder - Backend order history API",
+    "status": "pending"
   },
   {
-    "content": "Phase 3: Frontend - Add delivery zone validation in checkout",
-    "status": "completed"
+    "content": "Phase 4: Quick Reorder - Frontend reorder button and flow",
+    "status": "pending"
   },
   {
-    "content": "Phase 3: Admin - Add location settings management UI",
-    "status": "completed"
+    "content": "Phase 4: Product Customizer - Backend support for extras/removals",
+    "status": "pending"
   },
   {
-    "content": "Phase 3: Testing - Comprehensive testing of new features",
-    "status": "completed"
+    "content": "Phase 4: Product Customizer - Frontend customizer dialog",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 4: Testing - Comprehensive testing of all new features",
+    "status": "pending"
   }
 ]
