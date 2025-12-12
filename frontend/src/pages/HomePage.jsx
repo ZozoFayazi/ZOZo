@@ -13,7 +13,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
 
   const loadLocations = async () => {
     try {
-      const data = await getLocations();
+      const data = await getLocations(true); // Include opening status
       setLocations(data);
     } catch (error) {
       console.error('Error loading locations:', error);
