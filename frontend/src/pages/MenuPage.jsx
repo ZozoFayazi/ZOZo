@@ -360,9 +360,16 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                               €{(item.price_normal || 0).toFixed(2)}
                             </span>
                             <button
-                              onClick={() => handleAddToCart(item)}
+                              onClick={() => {
+                                // For burgers, open customizer to select ingredients
+                                if (category.slug === 'burger') {
+                                  handleCustomize(item, null);
+                                } else {
+                                  handleAddToCart(item);
+                                }
+                              }}
                               className="px-4 py-2 bg-primary/10 hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors font-medium text-sm flex items-center gap-2"
-                              data-testid="add-to-cart-button"
+                              data-testid="add-to-cart-btn"
                             >
                               <Plus className="h-4 w-4" />
                               Hinzufügen
