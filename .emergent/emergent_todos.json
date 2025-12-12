@@ -1,54 +1,34 @@
 [
   {
-    "content": "Phase 1: POC - Create database models and seed data with menu from PDF",
+    "content": "Phase 3: Redesign with WOW-factor - Get new design guidelines",
     "status": "completed"
   },
   {
-    "content": "Phase 1: POC - Build minimal backend APIs for multi-location ordering",
-    "status": "completed"
+    "content": "Phase 3: Backend - Add delivery zone configuration per location",
+    "status": "in_progress"
   },
   {
-    "content": "Phase 1: POC - Create minimal frontend for testing order flow",
-    "status": "completed"
+    "content": "Phase 3: Backend - Add min order value and delivery fee per location",
+    "status": "pending"
   },
   {
-    "content": "Phase 1: POC - Write and run test_core.py to validate multi-location ordering",
-    "status": "completed"
+    "content": "Phase 3: Frontend - Implement modern WOW design with glassmorphism",
+    "status": "pending"
   },
   {
-    "content": "Phase 1: All user stories covered and POC validated",
-    "status": "completed"
+    "content": "Phase 3: Frontend - Add address-based location detection",
+    "status": "pending"
   },
   {
-    "content": "Phase 2: Get design guidelines from design_agent",
-    "status": "completed"
+    "content": "Phase 3: Frontend - Add delivery zone validation in checkout",
+    "status": "pending"
   },
   {
-    "content": "Phase 2: Install required dependencies (frontend and backend)",
-    "status": "completed"
+    "content": "Phase 3: Admin - Add location settings management UI",
+    "status": "pending"
   },
   {
-    "content": "Phase 2: Backend - Full API implementation with JWT auth",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: Frontend - Complete customer website with WOW design",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: Admin dashboards for location management",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: SEO optimization with Schema.org markup",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: All user stories covered in Development",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: End to End Testing using Testing Agent",
-    "status": "completed"
+    "content": "Phase 3: Testing - Comprehensive testing of new features",
+    "status": "pending"
   }
 ]
