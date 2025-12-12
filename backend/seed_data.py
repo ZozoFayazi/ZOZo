@@ -304,16 +304,24 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # DRINKS Category - COMPLETE
+    # DRINKS Category - COMPLETE (17 items)
     drinks = [
-        {"name": "Coca Cola 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
-        {"name": "Coca Cola Zero 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800"},
-        {"name": "Fanta 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=800"},
-        {"name": "Sprite 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=800"},
-        {"name": "Mezzo Mix 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
         {"name": "Vio Still 0,5l", "price": 2.49, "img": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800"},
-        {"name": "Vio Spritzig 0,5l", "price": 2.49, "img": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800"},
-        {"name": "Red Bull 0,25l", "price": 3.49, "img": "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=800"},
+        {"name": "Coca Cola 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
+        {"name": "Coca Cola 1,0l", "price": 3.89, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
+        {"name": "Coca Cola Zero 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800"},
+        {"name": "Coca Cola Zero 1,0l", "price": 3.89, "img": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800"},
+        {"name": "Fanta 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=800"},
+        {"name": "Fanta 1,0l", "price": 3.89, "img": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=800"},
+        {"name": "Mezzo Mix 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
+        {"name": "Mezzo Mix 1,0l", "price": 3.89, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
+        {"name": "Sprite 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=800"},
+        {"name": "Sprite 1,0l", "price": 3.89, "img": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=800"},
+        {"name": "Vio Apfelschorle 0,5l", "price": 2.89, "img": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800"},
+        {"name": "Vio Rhabarberschorle 0,5l", "price": 2.89, "img": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800"},
+        {"name": "Vio Johannisbeer-Schorle 0,5l", "price": 2.89, "img": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800"},
+        {"name": "Fuze Tea Pfirsich 0,4l", "price": 2.89, "img": "https://images.unsplash.com/photo-1556881286-fc6915169721?w=800"},
+        {"name": "Fuze Tea Zitrone 0,4l", "price": 2.89, "img": "https://images.unsplash.com/photo-1556881286-fc6915169721?w=800"},
     ]
     
     for item in drinks:
