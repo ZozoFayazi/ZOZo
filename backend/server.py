@@ -15,8 +15,9 @@ load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
+db_name = os.environ.get('DB_NAME', 'test_database')
 client = AsyncIOMotorClient(mongo_url)
-db = client.get_database()
+db = client[db_name]
 
 # Create the main app without a prefix
 app = FastAPI()
