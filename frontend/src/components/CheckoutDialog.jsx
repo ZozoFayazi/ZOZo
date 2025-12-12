@@ -258,16 +258,24 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                   {checkingDelivery && (
                     <p className="text-xs text-muted-foreground mt-1">Prüfe Liefergebiet...</p>
                   )}
-                  {deliveryCheck && !deliveryCheck.can_deliver && (
+                  {deliveryCheck && !deliveryCheck.available && (
                     <div className="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-xs text-destructive flex items-start gap-2">
                       <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
                       <span>{deliveryCheck.message}</span>
                     </div>
                   )}
-                  {detectedLocation && (
-                    <div className="mt-2 p-2 bg-primary/10 border border-primary/20 rounded text-xs text-primary flex items-start gap-2">
-                      <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                      <span>Lieferung von: {detectedLocation.name.replace('ZOZO Burger ', '')}</span>
+                  {deliveryCheck && deliveryCheck.available && (
+                    <div className="mt-2 p-3 bg-primary/10 border border-primary/20 rounded-lg text-xs space-y-1">
+                      <div className="flex items-center gap-2 text-primary font-semibold">
+                        <CheckCircle className="h-4 w-4" />
+                        <span>Lieferung möglich!</span>
+                      </div>
+                      <div className="text-foreground space-y-0.5 ml-6">
+                        <p><span className="font-medium">Standort:</span> {detectedLocation?.name.replace('ZOZO Burger ', '')}</p>
+                        <p><span className="font-medium">Mindestbestellwert:</span> €{deliveryCheck.min_order_value.toFixed(2)}</p>
+                        <p><span className="font-medium">Lieferkosten:</span> €{deliveryCheck.delivery_fee.toFixed(2)}</p>
+                        <p className="text-primary"><span className="font-medium">Gratis ab:</span> €{deliveryCheck.free_delivery_threshold.toFixed(2)}</p>
+                      </div>
                     </div>
                   )}
                 </div>
