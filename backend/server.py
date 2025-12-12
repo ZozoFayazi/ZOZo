@@ -155,9 +155,32 @@ async def create_order(order: OrderCreate):
     if not location:
         raise HTTPException(status_code=404, detail="Location not found")
     
-    # Calculate totals
+    # Check if delivery zone is configured
+    delivery_zone = location.get('delivery_zone', {})
+    customer_postal_code = order.customer.postal_code
+    
+    # Validate postal code is in delivery zone
+    if delivery_zone and customer_postal_code not in delivery_zone.get('postal_codes', []):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Wir liefern leider nicht nach {customer_postal_code}. Bitte wähle einen anderen Standort oder prüfe deine Postleitzahl."
+        )
+    
+    # Calculate totals using location-specific settings
     subtotal = sum(item.price * item.quantity for item in order.items)
-    delivery_fee = 2.50 if subtotal < 15 else 0.0
+    min_order_value = delivery_zone.get('min_order_value', 0.0) if delivery_zone else 0.0
+    delivery_fee_amount = delivery_zone.get('delivery_fee', 2.50) if delivery_zone else 2.50
+    free_delivery_threshold = delivery_zone.get('free_delivery_threshold', 15.0) if delivery_zone else 15.0
+    
+    # Check minimum order value
+    if subtotal < min_order_value:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Mindestbestellwert: €{min_order_value:.2f}. Deine Bestellung: €{subtotal:.2f}"
+        )
+    
+    # Calculate delivery fee
+    delivery_fee = delivery_fee_amount if subtotal < free_delivery_threshold else 0.0
     total = subtotal + delivery_fee
     
     # Generate order number
