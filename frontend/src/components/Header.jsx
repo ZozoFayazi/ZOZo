@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import CartDrawer from './CartDrawer';
-import QuickReorder from './QuickReorder';
 
-function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation, addToCart }) {
+function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const location = useLocation();
@@ -15,15 +14,15 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
 
   return (
     <>
-      <header className="sticky top-0 z-50 glass border-b border-border/50">
+      <header className="sticky top-0 z-50 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 border-b border-border">
         <nav className="container-custom">
-          <div className="flex items-center justify-between h-18 py-3">
-            {/* Logo with Subtle Scale Animation */}
-            <Link to="/" className="flex items-center space-x-3 group" data-testid="header-logo">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-3" data-testid="header-logo">
               <img
                 src="https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg"
                 alt="ZOZO Burger"
-                className="h-12 w-auto group-hover:scale-105 transition-transform"
+                className="h-10 w-auto"
               />
             </Link>
 
@@ -55,8 +54,8 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               </Link>
             </div>
 
-            {/* Right side: Location, Quick Reorder & Cart */}
-            <div className="flex items-center space-x-2 md:space-x-4">
+            {/* Right side: Location & Cart */}
+            <div className="flex items-center space-x-4">
               {/* Selected Location Indicator */}
               {selectedLocation && (
                 <div className="hidden sm:flex items-center space-x-2 text-xs text-muted-foreground">
@@ -65,15 +64,10 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 </div>
               )}
 
-              {/* Quick Reorder */}
-              <div className="hidden md:block">
-                <QuickReorder onReorder={addToCart} />
-              </div>
-
-              {/* Cart Button - Enhanced */}
+              {/* Cart Button */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative p-3 glass hover:glass-premium rounded-xl transition-all hover:scale-105"
+                className="relative p-2 hover:bg-secondary rounded-lg transition-colors"
                 data-testid="cart-open-button"
               >
                 <ShoppingCart className="h-5 w-5" />
