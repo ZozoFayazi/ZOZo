@@ -153,8 +153,8 @@ class ZOZOBurgerAPITester:
                 "name": "Test Customer",
                 "phone": "+49 123 456789",
                 "address": "Test Street 123",
-                "postal_code": "12345",
-                "city": "Test City",
+                "postal_code": "25462",  # Valid Rellingen postal code
+                "city": "Rellingen",
                 "notes": "Test order"
             },
             "payment_method": "cash"
