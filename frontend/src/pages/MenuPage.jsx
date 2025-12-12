@@ -3,7 +3,6 @@ import { getLocations, getMenu } from '../api';
 import { Search, Plus, MapPin, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import ProductCustomizer from '../components/ProductCustomizer';
-import MenuUpgradeDialog from '../components/MenuUpgradeDialog';
 import CategoryUpsellDialog from '../components/CategoryUpsellDialog';
 
 function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
