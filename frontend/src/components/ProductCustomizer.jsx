@@ -21,6 +21,10 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   const [selectedRemovals, setSelectedRemovals] = useState([]);
   const [specialInstructions, setSpecialInstructions] = useState('');
 
+  // Get product-specific removable ingredients and extras
+  const removableIngredients = item.removable_ingredients || [];
+  const availableExtras = parseExtras(item.available_extras || []);
+
   const basePrice = size === 'medium' && item.price_medium 
     ? item.price_medium 
     : size === 'large' && item.price_large 
