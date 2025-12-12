@@ -29,32 +29,40 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
-# Helper functions
-def serialize_doc(doc):
-    """Convert MongoDB document to JSON-serializable dict"""
-    if doc is None:
-        return None
-    if isinstance(doc, list):
-        return [serialize_doc(d) for d in doc]
-    if isinstance(doc, dict):
-        result = {}
-        for key, value in doc.items():
-            if key == '_id':
-                result['id'] = str(value)
-            elif isinstance(value, ObjectId):
-                result[key] = str(value)
-            elif isinstance(value, datetime):
-                result[key] = value.isoformat()
-            elif isinstance(value, dict):
-                result[key] = serialize_doc(value)
-            elif isinstance(value, list):
-                result[key] = [serialize_doc(item) if isinstance(item, (dict, list)) else item for item in value]
-            else:
-                result[key] = value
-        return result
-    return doc
-
 # Request/Response Models
+# Auth Models
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: dict
+
+# Menu Item Models
+class MenuItemCreate(BaseModel):
+    category_id: str
+    name: str
+    description: Optional[str] = None
+    price_medium: Optional[float] = None
+    price_large: Optional[float] = None
+    price_normal: Optional[float] = None
+    image_url: Optional[str] = None
+    allergens: Optional[str] = None
+    active: bool = True
+
+class MenuItemUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price_medium: Optional[float] = None
+    price_large: Optional[float] = None
+    price_normal: Optional[float] = None
+    image_url: Optional[str] = None
+    allergens: Optional[str] = None
+    active: Optional[bool] = None
+
+# Order Models
 class OrderItem(BaseModel):
     menu_item_id: str
     name: str
