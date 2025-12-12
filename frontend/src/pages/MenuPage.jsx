@@ -236,22 +236,23 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
 
                       {/* Content */}
                       <div className="p-5 space-y-3">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="font-semibold text-lg mb-1 flex-1">{item.name}</h3>
-                          {/* Customize button for customizable items (Burger, Pizza, Pasta) */}
-                          {(category.slug === 'burger' || category.slug === 'pizza' || category.slug === 'pasta') && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCustomize(item, item.price_medium ? 'medium' : null);
-                              }}
-                              className="p-2 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors"
-                              title="Anpassen"
-                            >
-                              <Settings className="h-4 w-4" />
-                            </button>
-                          )}
-                        </div>
+                        <div>
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="font-semibold text-lg mb-1 flex-1">{item.name}</h3>
+                            {/* Customize button for customizable items (Burger, Pizza, Pasta) */}
+                            {(category.slug === 'burger' || category.slug === 'pizza' || category.slug === 'pasta') && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCustomize(item, item.price_medium ? 'medium' : null);
+                                }}
+                                className="p-2 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors"
+                                title="Anpassen"
+                              >
+                                <Settings className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
                           {item.description && (
                             <p className="text-sm text-muted-foreground line-clamp-2">
                               {item.description}
