@@ -359,11 +359,12 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # KIDS MENU Category
+    # KIDS MENU Category - COMPLETE (1 item with 4 variants)
     kids = [
-        {"name": "Kids Burger", "desc": "Kleiner Burger mit Pommes", "price": 6.99, "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"},
-        {"name": "Kids Nuggets", "desc": "4 Nuggets mit Pommes", "price": 6.49, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
-        {"name": "Kids Schnitzel", "desc": "Kleines Schnitzel mit Pommes", "price": 7.49, "img": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800"},
+        {"name": "Kiddy Box (Hamburger)", "desc": "Kiddy Hamburger: Beef, Gewürzgurken, Ketchup, dazu Bambini Pommes. Inklusive Getränk und Spielzeug", "price": 9.49, "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"},
+        {"name": "Kiddy Box (Cheeseburger)", "desc": "Kiddy Cheeseburger: Beef, Gewürzgurken, Käse, Ketchup, dazu Bambini Pommes. Inklusive Getränk und Spielzeug", "price": 9.49, "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"},
+        {"name": "Kiddy Box (Nuggets Burger)", "desc": "Kiddy Nuggets Burger: Chicken Nuggets, Gewürzgurken, Ketchup, dazu Bambini Pommes. Inklusive Getränk und Spielzeug", "price": 9.49, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Kiddy Box (Chicken Nuggets)", "desc": "4 Chicken Nuggets, dazu Bambini Pommes. Inklusive Getränk und Spielzeug", "price": 9.49, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
     ]
     
     for item in kids:
