@@ -51,19 +51,6 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
     }
   }, [selectedLocation]);
 
-  const loadLocations = async () => {
-    try {
-      const data = await getLocations();
-      setLocations(data);
-      if (data.length > 0 && !selectedLocation) {
-        setSelectedLocation(data[0]);
-      }
-    } catch (error) {
-      console.error('Error loading locations:', error);
-      toast.error('Fehler beim Laden der Standorte');
-    }
-  };
-
   const loadMenu = async (locationId) => {
     setLoading(true);
     try {
