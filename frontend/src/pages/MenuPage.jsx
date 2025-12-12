@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getLocations, getMenu } from '../api';
-import { Search, Plus, MapPin } from 'lucide-react';
+import { Search, Plus, MapPin, Settings } from 'lucide-react';
 import { toast } from 'sonner';
+import ProductCustomizer from '../components/ProductCustomizer';
 
 function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [locations, setLocations] = useState([]);
@@ -9,6 +10,9 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [customizerOpen, setCustomizerOpen] = useState(false);
+  const [customizingItem, setCustomizingItem] = useState(null);
+  const [customizingSize, setCustomizingSize] = useState(null);
 
   useEffect(() => {
     loadLocations();
@@ -46,9 +50,21 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
     }
   };
 
-  const handleAddToCart = (item, size = null) => {
+  const handleCustomize = (item, size = null) => {
+    setCustomizingItem(item);
+    setCustomizingSize(size);
+    setCustomizerOpen(true);
+  };
+
+  const handleAddToCart = (item, size = null, customize = false) => {
     if (!selectedLocation) {
       toast.error('Bitte wähle zuerst einen Standort');
+      return;
+    }
+
+    // If customize is requested, open customizer instead
+    if (customize) {
+      handleCustomize(item, size);
       return;
     }
 
@@ -220,8 +236,22 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
 
                       {/* Content */}
                       <div className="p-5 space-y-3">
-                        <div>
-                          <h3 className="font-semibold text-lg mb-1">{item.name}</h3>
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-semibold text-lg mb-1 flex-1">{item.name}</h3>
+                          {/* Customize button for customizable items (Burger, Pizza, Pasta) */}
+                          {(category.slug === 'burger' || category.slug === 'pizza' || category.slug === 'pasta') && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCustomize(item, item.price_medium ? 'medium' : null);
+                              }}
+                              className="p-2 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors"
+                              title="Anpassen"
+                            >
+                              <Settings className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
                           {item.description && (
                             <p className="text-sm text-muted-foreground line-clamp-2">
                               {item.description}
@@ -298,6 +328,20 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
           </div>
         )}
       </div>
+
+      {/* Product Customizer */}
+      {customizerOpen && customizingItem && (
+        <ProductCustomizer
+          item={customizingItem}
+          size={customizingSize}
+          onAddToCart={addToCart}
+          onClose={() => {
+            setCustomizerOpen(false);
+            setCustomizingItem(null);
+            setCustomizingSize(null);
+          }}
+        />
+      )}
     </div>
   );
 }

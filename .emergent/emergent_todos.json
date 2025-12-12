@@ -9,11 +9,11 @@
   },
   {
     "content": "Phase 4: Deals/Promotions - Frontend display on homepage and menu",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 4: Deals/Promotions - Admin UI for creating/editing deals",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 4: Quick Reorder - Backend order history API",
@@ -21,15 +21,15 @@
   },
   {
     "content": "Phase 4: Quick Reorder - Frontend reorder button and flow",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 4: Product Customizer - Backend support for extras/removals",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 4: Product Customizer - Frontend customizer dialog",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 4: Testing - Comprehensive testing of all new features",
