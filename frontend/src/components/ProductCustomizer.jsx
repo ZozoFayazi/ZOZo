@@ -114,6 +114,14 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
 
     let customizedName = upgradeToMenu ? `${item.name} Menü` : item.name;
     
+    // Add bun type to name if selected
+    if (selectedBun) {
+      const bunName = bunTypes.find(b => b.id === selectedBun)?.name;
+      if (bunName) {
+        customizedName += ` (${bunName})`;
+      }
+    }
+    
     // Build extras array including menu components
     const allExtras = [...selectedExtras];
     
