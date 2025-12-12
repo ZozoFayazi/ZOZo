@@ -285,7 +285,15 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-xl">{icon}</span>
+                          {icon.type === 'image' ? (
+                            <img 
+                              src={icon.icon} 
+                              alt="" 
+                              className="w-6 h-6 object-contain"
+                            />
+                          ) : (
+                            <span className="text-xl">{icon.icon}</span>
+                          )}
                           <div>
                             <p className="text-sm font-medium">{extra.name}</p>
                             <p className="text-xs text-muted-foreground">+€{extra.price.toFixed(2)}</p>
