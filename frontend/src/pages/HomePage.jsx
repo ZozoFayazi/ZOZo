@@ -116,7 +116,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in-up animation-delay-400">
                 <button
-                  onClick={() => navigate('/menu')}
+                  onClick={() => setShowOrderTypeDialog(true)}
                   className="btn-primary glow-primary group"
                   data-testid="hero-primary-cta-button"
                 >
