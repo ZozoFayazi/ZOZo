@@ -1,14 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Clock, Phone, ArrowRight } from 'lucide-react';
+import { MapPin, Clock, Phone, ArrowRight, Sparkles, Zap, Heart } from 'lucide-react';
 import { getLocations } from '../api';
 
 function HomePage({ selectedLocation, setSelectedLocation }) {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     loadLocations();
+    
+    // Subtle mouse tracking for parallax
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth - 0.5) * 20,
+        y: (e.clientY / window.innerHeight - 0.5) * 20
+      });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   const loadLocations = async () => {
@@ -26,34 +38,65 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative noise-overlay bg-gradient-to-br from-background via-background to-accent py-20 md:py-32 overflow-hidden">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* Text Content */}
-            <div className="lg:col-span-5 space-y-6 animate-fade-in">
-              <p className="eyebrow" data-testid="hero-eyebrow">
-                Rellingen • Henstedt-Ulzburg
-              </p>
-              <h1 className="heading-1 text-foreground">
-                ZOZO BURGER
-              </h1>
-              <p className="text-lg sm:text-xl text-primary font-serif tracking-wide uppercase">
-                BURGER · PIZZA · PASTA & MORE
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Premium Qualität, frisch zubereitet und in 30-45 Minuten bei dir. 
-                Genieße beste Zutaten und authentischen Geschmack.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+    <div className="min-h-screen overflow-hidden">
+      {/* Hero Section - Ultra Modern */}
+      <section className="relative min-h-[90vh] flex items-center noise-overlay gradient-bg">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div 
+            className="absolute top-20 right-20 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse"
+            style={{ 
+              transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)`,
+              transition: 'transform 0.3s ease-out'
+            }}
+          />
+          <div 
+            className="absolute bottom-20 left-20 w-80 h-80 bg-primary/10 rounded-full blur-[120px]"
+            style={{ 
+              transform: `translate(${-mousePosition.x}px, ${-mousePosition.y}px)`,
+              transition: 'transform 0.3s ease-out'
+            }}
+          />
+        </div>
+
+        <div className="container-custom relative z-10">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            {/* Text Content - Left Side */}
+            <div className="lg:col-span-6 space-y-8">
+              <div className="space-y-6 opacity-0 animate-fade-in-up">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <p className="eyebrow text-primary" data-testid="hero-eyebrow">
+                    Rellingen • Henstedt-Ulzburg
+                  </p>
+                </div>
+                
+                <h1 className="heading-1">
+                  <span className="block mb-2">ZOZO</span>
+                  <span className="block gradient-text">BURGER</span>
+                </h1>
+                
+                <p className="text-xl sm:text-2xl text-primary/90 font-serif tracking-wide uppercase font-semibold">
+                  BURGER · PIZZA · PASTA & MORE
+                </p>
+                
+                <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
+                  Erlebe Premium-Qualität, frisch zubereitet mit Leidenschaft. 
+                  In nur 30-45 Minuten direkt zu dir – heiß, lecker und unwiderstehlich.
+                </p>
+              </div>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in-up animation-delay-400">
                 <button
                   onClick={() => navigate('/menu')}
-                  className="btn-primary"
+                  className="btn-primary glow-primary group"
                   data-testid="hero-primary-cta-button"
                 >
-                  Jetzt bestellen
-                  <ArrowRight className="inline-block ml-2 h-5 w-5" />
+                  <span className="flex items-center justify-center gap-2">
+                    Jetzt bestellen
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </button>
                 <button
                   onClick={() => navigate('/menu')}
@@ -63,114 +106,207 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                   Speisekarte ansehen
                 </button>
               </div>
+
+              {/* Quick Stats */}
+              <div className="flex flex-wrap gap-8 pt-8 opacity-0 animate-fade-in-up animation-delay-600">
+                <div>
+                  <div className="text-3xl font-bold text-foreground mb-1">30-45</div>
+                  <div className="text-sm text-muted-foreground">Minuten Lieferzeit</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-foreground mb-1">2</div>
+                  <div className="text-sm text-muted-foreground">Standorte</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-foreground mb-1">50+</div>
+                  <div className="text-sm text-muted-foreground">Gerichte</div>
+                </div>
+              </div>
             </div>
 
-            {/* Hero Image */}
-            <div className="lg:col-span-7">
-              <div className="relative parallax-image">
+            {/* Hero Image - Right Side with 3D Effect */}
+            <div className="lg:col-span-6 opacity-0 animate-scale-in animation-delay-200">
+              <div className="relative">
+                {/* Main Image */}
+                <div className="parallax-wrapper rounded-3xl overflow-hidden shadow-2xl">
+                  <div 
+                    className="parallax-image"
+                    style={{
+                      transform: `translate(${mousePosition.x * 0.5}px, ${mousePosition.y * 0.5}px)`
+                    }}
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=900&fit=crop&q=90"
+                      alt="Premium ZOZO Burger"
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                </div>
+                
+                {/* Floating Badge */}
+                <div className="absolute -bottom-6 -left-6 glass rounded-2xl p-6 shadow-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Zap className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold">Blitzschnell</div>
+                      <div className="text-xs text-muted-foreground">Heiß geliefert</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Categories - Bento Grid */}
+      <section className="py-20 md:py-32 bg-background relative">
+        <div className="container-custom">
+          <div className="text-center mb-16">
+            <p className="eyebrow mb-4">Unsere Spezialitäten</p>
+            <h2 className="heading-2 mb-6">Von Saftig bis Knusprig</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Entdecke unsere vielfältige Auswahl – jedes Gericht mit Liebe zubereitet
+            </p>
+          </div>
+
+          {/* Asymmetric Bento Grid */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Large Feature Card - Burger */}
+            <div 
+              className="md:col-span-2 group relative overflow-hidden rounded-2xl bg-card border border-border card-tilt cursor-pointer h-[400px]"
+              onClick={() => navigate('/menu')}
+            >
+              <div className="absolute inset-0">
                 <img
-                  src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=800&fit=crop"
+                  src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=900&h=600&fit=crop&q=90"
                   alt="Premium Burger"
-                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Categories */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 mb-4">Unsere Spezialitäten</h2>
-            <p className="text-muted-foreground">Von saftig bis knusprig – für jeden Geschmack</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Burger */}
-            <div className="group relative overflow-hidden rounded-xl bg-card border border-border card-hover cursor-pointer" onClick={() => navigate('/menu')}>
-              <div className="aspect-[4/3] overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&h=450&fit=crop"
-                  alt="Burger"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-serif font-semibold mb-2">Burger</h3>
-                <p className="text-muted-foreground text-sm">Saftige Patties, frische Zutaten</p>
+              <div className="relative z-10 h-full flex flex-col justify-end p-8">
+                <div className="glass-light rounded-xl p-4 inline-block">
+                  <h3 className="text-3xl font-serif font-bold mb-2">Burger</h3>
+                  <p className="text-muted-foreground">Saftige Patties, frische Premium-Zutaten</p>
+                </div>
               </div>
             </div>
 
-            {/* Pizza */}
-            <div className="group relative overflow-hidden rounded-xl bg-card border border-border card-hover cursor-pointer" onClick={() => navigate('/menu')}>
-              <div className="aspect-[4/3] overflow-hidden">
+            {/* Pizza Card */}
+            <div 
+              className="group relative overflow-hidden rounded-2xl bg-card border border-border card-tilt cursor-pointer h-[400px]"
+              onClick={() => navigate('/menu')}
+            >
+              <div className="absolute inset-0">
                 <img
-                  src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=450&fit=crop"
+                  src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=600&fit=crop&q=90"
                   alt="Pizza"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-serif font-semibold mb-2">Pizza</h3>
-                <p className="text-muted-foreground text-sm">Knuspriger Teig, reichhaltig belegt</p>
+              <div className="relative z-10 h-full flex flex-col justify-end p-6">
+                <div className="glass-light rounded-xl p-4">
+                  <h3 className="text-2xl font-serif font-bold mb-2">Pizza</h3>
+                  <p className="text-sm text-muted-foreground">Knuspriger Teig, reichhaltig belegt</p>
+                </div>
               </div>
             </div>
 
-            {/* Pasta */}
-            <div className="group relative overflow-hidden rounded-xl bg-card border border-border card-hover cursor-pointer" onClick={() => navigate('/menu')}>
-              <div className="aspect-[4/3] overflow-hidden">
+            {/* Pasta Card */}
+            <div 
+              className="group relative overflow-hidden rounded-2xl bg-card border border-border card-tilt cursor-pointer h-[300px]"
+              onClick={() => navigate('/menu')}
+            >
+              <div className="absolute inset-0">
                 <img
-                  src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=450&fit=crop"
+                  src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=400&fit=crop&q=90"
                   alt="Pasta"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-serif font-semibold mb-2">Pasta</h3>
-                <p className="text-muted-foreground text-sm">Italienische Klassiker, frisch gekocht</p>
+              <div className="relative z-10 h-full flex flex-col justify-end p-6">
+                <div className="glass-light rounded-xl p-4">
+                  <h3 className="text-2xl font-serif font-bold mb-2">Pasta</h3>
+                  <p className="text-sm text-muted-foreground">Italienische Klassiker</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Fingerfood Card */}
+            <div 
+              className="md:col-span-2 group relative overflow-hidden rounded-2xl bg-card border border-border card-tilt cursor-pointer h-[300px]"
+              onClick={() => navigate('/menu')}
+            >
+              <div className="absolute inset-0">
+                <img
+                  src="https://images.unsplash.com/photo-1562967914-608f82629710?w=900&h=400&fit=crop&q=90"
+                  alt="Fingerfood"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              </div>
+              <div className="relative z-10 h-full flex flex-col justify-end p-6">
+                <div className="glass-light rounded-xl p-4 inline-block">
+                  <h3 className="text-2xl font-serif font-bold mb-2">Fingerfood & More</h3>
+                  <p className="text-muted-foreground">Perfekt zum Teilen oder Snacken</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Locations Section */}
-      <section className="py-16 md:py-24 bg-accent">
+      {/* Locations Section - Modern Cards */}
+      <section className="py-20 md:py-32 bg-accent/30">
         <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 mb-4">Unsere Standorte</h2>
-            <p className="text-muted-foreground">Wähle deinen bevorzugten Standort</p>
+          <div className="text-center mb-16">
+            <p className="eyebrow mb-4">Unsere Standorte</p>
+            <h2 className="heading-2 mb-6">Wähle deinen Standort</h2>
+            <p className="text-lg text-muted-foreground">
+              Schnelle Lieferung in deiner Nähe
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {locations.map((location) => (
               <div
                 key={location.id}
-                className="bg-card border border-border rounded-xl p-8 space-y-4 card-hover"
+                className="glass rounded-3xl p-8 space-y-6 card-tilt"
                 data-testid={location.slug === 'rellingen' ? 'rellingen-card' : 'henstedt-card'}
               >
-                <h3 className="text-2xl font-serif font-semibold">{location.name}</h3>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-2xl font-serif font-bold mb-2">{location.name}</h3>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                      <Sparkles className="h-3 w-3" />
+                      Jetzt verfügbar
+                    </div>
+                  </div>
+                </div>
                 
-                <div className="space-y-3 text-muted-foreground">
-                  <div className="flex items-start space-x-3">
-                    <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <div className="space-y-4 text-muted-foreground">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 mt-0.5 flex-shrink-0 text-primary" />
                     <div>
-                      <p>{location.address}</p>
+                      <p className="text-foreground">{location.address}</p>
                       <p>{location.postal_code} {location.city}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-3">
-                    <Clock className="h-5 w-5 flex-shrink-0" />
-                    <p>{location.opening_hours}</p>
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-5 w-5 flex-shrink-0 text-primary" />
+                    <p className="text-foreground">{location.opening_hours}</p>
                   </div>
                   
                   {location.phone && (
-                    <div className="flex items-center space-x-3">
-                      <Phone className="h-5 w-5 flex-shrink-0" />
-                      <a href={`tel:${location.phone}`} className="hover:text-primary transition-colors">
+                    <div className="flex items-center gap-3">
+                      <Phone className="h-5 w-5 flex-shrink-0 text-primary" />
+                      <a href={`tel:${location.phone}`} className="hover:text-primary transition-colors text-foreground">
                         {location.phone}
                       </a>
                     </div>
@@ -179,9 +315,10 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
 
                 <button
                   onClick={() => handleOrder(location)}
-                  className="btn-primary w-full mt-4"
+                  className="btn-primary w-full"
                 >
                   Hier bestellen
+                  <ArrowRight className="inline-block ml-2 h-5 w-5" />
                 </button>
               </div>
             ))}
@@ -189,36 +326,38 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 md:py-24 bg-background">
+      {/* Features Section - Modern Icons */}
+      <section className="py-20 md:py-32 bg-background">
         <div className="container-custom">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="space-y-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
-                <Clock className="h-8 w-8" />
+          <div className="grid md:grid-cols-3 gap-12">
+            <div className="text-center space-y-4">
+              <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 group hover:scale-110 transition-transform">
+                <Clock className="h-10 w-10 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold">Schnelle Lieferung</h3>
-              <p className="text-muted-foreground text-sm">30-45 Minuten direkt zu dir nach Hause</p>
+              <h3 className="text-xl font-semibold">Blitzschnell</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                30-45 Minuten direkt zu dir – frisch und heiß
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
-                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="text-center space-y-4">
+              <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 group hover:scale-110 transition-transform">
+                <Zap className="h-10 w-10 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold">Frische Zutaten</h3>
-              <p className="text-muted-foreground text-sm">Nur beste Qualität für unsere Gerichte</p>
+              <h3 className="text-xl font-semibold">Premium Qualität</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Nur beste Zutaten für unsere Gerichte
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
-                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
+            <div className="text-center space-y-4">
+              <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 group hover:scale-110 transition-transform">
+                <Heart className="h-10 w-10 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold">Mit Liebe gemacht</h3>
-              <p className="text-muted-foreground text-sm">Jedes Gericht wird mit Sorgfalt zubereitet</p>
+              <h3 className="text-xl font-semibold">Mit Liebe gemacht</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Jedes Gericht mit Sorgfalt zubereitet
+              </p>
             </div>
           </div>
         </div>
