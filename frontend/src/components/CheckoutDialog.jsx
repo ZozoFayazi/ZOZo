@@ -46,11 +46,13 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       setDeliveryCheck(response.data);
       
       if (response.data.available && response.data.location) {
-        const suggestedLocation = response.data.available_locations[0].location;
-        setDetectedLocation(suggestedLocation);
+        setDetectedLocation(response.data.location);
         
-        // Show success message with detected location
-        toast.success(`Lieferung nach ${postalCode} möglich! Standort: ${suggestedLocation.name.replace('ZOZO Burger ', '')}`);
+        // Show success message with fees
+        const { min_order_value, delivery_fee, free_delivery_threshold } = response.data;
+        toast.success(
+          `Lieferung nach ${postalCode} möglich! Mindestbestellwert: €${min_order_value.toFixed(2)}, Lieferkosten: €${delivery_fee.toFixed(2)} (ab €${free_delivery_threshold.toFixed(2)} kostenlos)`
+        );
       } else {
         toast.error(response.data.message || 'Lieferung zu dieser PLZ nicht verfügbar');
       }
