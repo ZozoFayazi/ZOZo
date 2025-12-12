@@ -291,16 +291,77 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Zahlungsmethode</label>
-                <select
-                  name="payment_method"
-                  value={formData.payment_method}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="cash">Barzahlung</option>
-                  <option value="card">Kartenzahlung</option>
-                </select>
+                <label className="block text-sm font-medium mb-2">Zahlungsmethode *</label>
+                <div className="space-y-3">
+                  {/* PayPal Option */}
+                  <label
+                    className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      formData.payment_method === 'paypal'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment_method"
+                      value="paypal"
+                      checked={formData.payment_method === 'paypal'}
+                      onChange={handleChange}
+                      className="w-4 h-4 text-primary"
+                      data-testid="payment-paypal"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium">PayPal</p>
+                      <p className="text-xs text-muted-foreground">Online bezahlen mit PayPal</p>
+                    </div>
+                  </label>
+
+                  {/* Cash Option */}
+                  <label
+                    className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      formData.payment_method === 'cash'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment_method"
+                      value="cash"
+                      checked={formData.payment_method === 'cash'}
+                      onChange={handleChange}
+                      className="w-4 h-4 text-primary"
+                      data-testid="payment-cash"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium">Barzahlung vor Ort</p>
+                      <p className="text-xs text-muted-foreground">Bei Abholung oder Lieferung bar bezahlen</p>
+                    </div>
+                  </label>
+
+                  {/* Card Option */}
+                  <label
+                    className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      formData.payment_method === 'card'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment_method"
+                      value="card"
+                      checked={formData.payment_method === 'card'}
+                      onChange={handleChange}
+                      className="w-4 h-4 text-primary"
+                      data-testid="payment-card"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium">Kartenzahlung vor Ort</p>
+                      <p className="text-xs text-muted-foreground">Bei Abholung oder Lieferung mit Karte bezahlen</p>
+                    </div>
+                  </label>
+                </div>
               </div>
 
               {/* Summary */}
