@@ -33,8 +33,17 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   };
 
   useEffect(() => {
-    loadLocations();
+    loadLocationsWithStatus();
   }, []);
+
+  const loadLocationsWithStatus = async () => {
+    try {
+      const data = await getLocations(true); // Include status
+      setLocations(data);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+    }
+  };
 
   useEffect(() => {
     if (selectedLocation) {
