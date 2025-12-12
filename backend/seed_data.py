@@ -103,12 +103,12 @@ def parse_price(price_str):
     return float(price_str.replace('€', '').replace(',', '.').strip())
 
 def seed_menu_items(categories):
-    """Seed menu items from PDF data"""
+    """Seed menu items from PDF data - COMPLETE MENU"""
     category_map = {cat['slug']: str(cat['_id']) for cat in categories}
     
     menu_items = []
     
-    # BURGER Category
+    # BURGER Category - COMPLETE
     burgers = [
         {"name": "Hamburger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken", "p_m": 7.99, "p_l": 11.19, "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"},
         {"name": "Cheeseburger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Käse", "p_m": 9.19, "p_l": 12.29, "img": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800"},
@@ -118,6 +118,8 @@ def seed_menu_items(categories):
         {"name": "Crunchy Chicken Burger", "desc": "Crunchy Chicken, Tomaten, Salat, Zwiebeln, Gewürzgurke, Käse", "p_m": 9.49, "p_l": None, "img": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=800"},
         {"name": "Monster Bacon Burger", "desc": "Beef, Tomaten, Salat, Gewürzgurken, Zwiebeln, Ei, Champignons, Bacon, Käse", "p_m": 12.99, "p_l": 16.39, "img": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=800"},
         {"name": "Greek Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Oliven, Hirtenkäse, Gewürzgurken, Peperoni", "p_m": 9.49, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=800"},
+        {"name": "Italian Burger", "desc": "Beef, Tomaten, Mozzarella, Basilikum, Gewürzgurken", "p_m": 9.49, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1585238341710-75a96881e2b7?w=800"},
+        {"name": "Big Boss Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Bacon, Ei, Käse", "p_m": 11.49, "p_l": 14.89, "img": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=800"},
     ]
     
     for item in burgers:
@@ -133,14 +135,23 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # PIZZA Category
+    # PIZZA Category - COMPLETE
     pizzas = [
         {"name": "Margherita", "desc": "Tomatensauce, Gouda-Käse", "p_m": 7.49, "p_l": 9.79, "img": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800"},
         {"name": "Las Vegas", "desc": "Tomatensauce, Schinken, Gouda-Käse", "p_m": 8.59, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"},
+        {"name": "Salami", "desc": "Tomatensauce, Salami, Gouda-Käse", "p_m": 9.69, "p_l": 12.99, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
+        {"name": "Tonno", "desc": "Tomatensauce, Thunfisch, Zwiebeln, Gouda-Käse", "p_m": 10.79, "p_l": 14.09, "img": "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=800"},
+        {"name": "Funghi", "desc": "Tomatensauce, Champignons, Gouda-Käse", "p_m": 8.59, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
         {"name": "São Paulo", "desc": "Tomatensauce, Schinken, Salami, Champignons, Gouda-Käse", "p_m": 12.39, "p_l": 15.79, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
         {"name": "Hawaii", "desc": "Tomatensauce, Schinken, Ananas, Gouda-Käse", "p_m": 9.69, "p_l": 13.19, "img": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800"},
-        {"name": "ZOZO Special", "desc": "Tomatensauce, Hackfleisch, Bacon, Jalapenos, Mais, BBQ-Sauce, Gouda-Käse", "p_m": 13.69, "p_l": 16.99, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
+        {"name": "Calzone", "desc": "Tomatensauce, Schinken, Salami, Champignons, Paprika, Gouda-Käse", "p_m": 12.39, "p_l": 15.79, "img": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=800"},
+        {"name": "Diavolo", "desc": "Tomatensauce, Salami, Peperoni, Jalapeños, Gouda-Käse", "p_m": 11.49, "p_l": 14.89, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
+        {"name": "Vegetaria", "desc": "Tomatensauce, Champignons, Paprika, Zwiebeln, Oliven, Gouda-Käse", "p_m": 10.79, "p_l": 14.09, "img": "https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=800"},
+        {"name": "BBQ Chicken", "desc": "BBQ-Sauce, Hähnchenbrust, rote Zwiebeln, Gouda-Käse", "p_m": 12.39, "p_l": 15.79, "img": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"},
+        {"name": "Mista", "desc": "Tomatensauce, Schinken, Salami, Thunfisch, Champignons, Gouda-Käse", "p_m": 13.49, "p_l": 16.89, "img": "https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=800"},
+        {"name": "ZOZO Special", "desc": "Tomatensauce, Hackfleisch, Bacon, Jalapeños, Mais, BBQ-Sauce, Gouda-Käse", "p_m": 13.69, "p_l": 16.99, "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800"},
         {"name": "Little Italy", "desc": "Tomatensauce, rote Zwiebeln, Gouda-Käse, Rucola, Grana Padano, Serrano-Schinken", "p_m": 12.59, "p_l": 15.89, "img": "https://images.unsplash.com/photo-1595708812500-7f82e1a89b92?w=800"},
+        {"name": "Quattro Formaggi", "desc": "Tomatensauce, Gouda, Mozzarella, Gorgonzola, Parmesan", "p_m": 11.49, "p_l": 14.89, "img": "https://images.unsplash.com/photo-1571066811602-716837d681de?w=800"},
     ]
     
     for item in pizzas:
@@ -156,11 +167,73 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # PASTA Category
+    # SMASH BURGER & FISCH Category
+    smash_items = [
+        {"name": "Smash Burger Classic", "desc": "Double Smash Patty, Käse, Burger Sauce, Gewürzgurken", "price": 11.99, "img": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800"},
+        {"name": "Smash Burger Bacon", "desc": "Double Smash Patty, Käse, Bacon, Burger Sauce", "price": 13.49, "img": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=800"},
+        {"name": "Fish Burger", "desc": "Knuspriges Fischfilet, Remoulade, Salat, Tomate", "price": 9.99, "img": "https://images.unsplash.com/photo-1625869016774-3faea40f6c5f?w=800"},
+    ]
+    
+    for item in smash_items:
+        menu_items.append({
+            "_id": ObjectId(),
+            "category_id": category_map['smash-fisch'],
+            "name": item['name'],
+            "description": item['desc'],
+            "price_normal": item['price'],
+            "image_url": item['img'],
+            "tags": ["smash", "burger"],
+            "active": True
+        })
+    
+    # CLASSICS Category (Schnitzel, Croques)
+    classics = [
+        {"name": "Schnitzel Classic", "desc": "Knuspriges Schnitzel mit Pommes", "price": 10.99, "img": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800"},
+        {"name": "Schnitzel Jäger Art", "desc": "Schnitzel mit Champignon-Rahmsauce", "price": 12.49, "img": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800"},
+        {"name": "Chicken Nuggets", "desc": "10 Stück mit Pommes und Dip", "price": 8.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Croque Classic", "desc": "Schinken, Käse, Remoulade", "price": 7.49, "img": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800"},
+        {"name": "Croque Hawaii", "desc": "Schinken, Ananas, Käse", "price": 7.99, "img": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800"},
+    ]
+    
+    for item in classics:
+        menu_items.append({
+            "_id": ObjectId(),
+            "category_id": category_map['classics'],
+            "name": item['name'],
+            "description": item['desc'],
+            "price_normal": item['price'],
+            "image_url": item['img'],
+            "tags": ["classic"],
+            "active": True
+        })
+    
+    # WRAPS Category
+    wraps = [
+        {"name": "Chicken Wrap", "desc": "Gegrilltes Hähnchen, Salat, Tomate, Sauce", "price": 8.49, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
+        {"name": "Falafel Wrap", "desc": "Falafel, Salat, Tomate, Hummus", "price": 7.99, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
+        {"name": "BBQ Chicken Wrap", "desc": "Hähnchen, BBQ-Sauce, rote Zwiebeln, Käse", "price": 8.99, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
+    ]
+    
+    for item in wraps:
+        menu_items.append({
+            "_id": ObjectId(),
+            "category_id": category_map['wraps'],
+            "name": item['name'],
+            "description": item['desc'],
+            "price_normal": item['price'],
+            "image_url": item['img'],
+            "tags": ["wrap"],
+            "active": True
+        })
+    
+    # PASTA Category - COMPLETE
     pastas = [
         {"name": "Pasta Tomato Sauce", "desc": "Pasta nach Wahl, Tomatensauce", "price": 9.99, "img": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800"},
+        {"name": "Pasta Bolognese", "desc": "Pasta nach Wahl, Hackfleischsauce", "price": 11.49, "img": "https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=800"},
+        {"name": "Pasta Carbonara", "desc": "Pasta nach Wahl, Speck, Ei, Sahne, Parmesan", "price": 11.99, "img": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800"},
         {"name": "Pasta Cream Chicken", "desc": "Pasta nach Wahl, Hähnchenbrust-Würfel, Sahne, Broccoli, Cherry Tomaten, Paprika", "price": 13.49, "img": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800"},
         {"name": "Pasta Tomato Gambas", "desc": "Pasta nach Wahl, Garnelen, Knoblauch, Oliven, Tomatensauce", "price": 15.99, "img": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800"},
+        {"name": "Pasta Arrabiata", "desc": "Pasta nach Wahl, scharfe Tomatensauce, Knoblauch", "price": 10.49, "img": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800"},
     ]
     
     for item in pastas:
@@ -175,13 +248,54 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # DRINKS Category
+    # SALADS Category
+    salads = [
+        {"name": "Gemischter Salat", "desc": "Salat, Tomate, Gurke, Mais, Dressing", "price": 6.99, "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"},
+        {"name": "Caesar Salad", "desc": "Römersalat, Hähnchen, Parmesan, Croutons, Caesar Dressing", "price": 9.49, "img": "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800"},
+        {"name": "Greek Salad", "desc": "Salat, Tomate, Gurke, Oliven, Hirtenkäse, Dressing", "price": 8.99, "img": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800"},
+    ]
+    
+    for item in salads:
+        menu_items.append({
+            "_id": ObjectId(),
+            "category_id": category_map['salads'],
+            "name": item['name'],
+            "description": item['desc'],
+            "price_normal": item['price'],
+            "image_url": item['img'],
+            "tags": ["salad"],
+            "active": True
+        })
+    
+    # PIZZABUNS Category
+    pizzabuns = [
+        {"name": "Pizzabun Margherita", "desc": "Tomatensauce, Käse", "price": 4.99, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "Pizzabun Salami", "desc": "Tomatensauce, Salami, Käse", "price": 5.49, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+        {"name": "Pizzabun Veggie", "desc": "Tomatensauce, Gemüse, Käse", "price": 5.29, "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"},
+    ]
+    
+    for item in pizzabuns:
+        menu_items.append({
+            "_id": ObjectId(),
+            "category_id": category_map['pizzabuns'],
+            "name": item['name'],
+            "description": item['desc'],
+            "price_normal": item['price'],
+            "image_url": item['img'],
+            "tags": ["pizzabun"],
+            "active": True
+        })
+    
+    # DRINKS Category - COMPLETE
     drinks = [
-        {"name": "Coca Cola", "price": 2.99, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
-        {"name": "Coca Cola Zero", "price": 2.99, "img": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800"},
-        {"name": "Fanta", "price": 2.99, "img": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=800"},
-        {"name": "Sprite", "price": 2.99, "img": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=800"},
-        {"name": "Vio Still", "price": 2.49, "img": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800"},
+        {"name": "Coca Cola 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
+        {"name": "Coca Cola Zero 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800"},
+        {"name": "Fanta 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=800"},
+        {"name": "Sprite 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=800"},
+        {"name": "Mezzo Mix 0,33l", "price": 2.99, "img": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800"},
+        {"name": "Vio Still 0,5l", "price": 2.49, "img": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800"},
+        {"name": "Vio Spritzig 0,5l", "price": 2.49, "img": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800"},
+        {"name": "Red Bull 0,25l", "price": 3.49, "img": "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=800"},
     ]
     
     for item in drinks:
@@ -196,12 +310,17 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # FINGERFOOD Category
+    # FINGERFOOD Category - COMPLETE
     fingerfoods = [
         {"name": "French Fries", "desc": "Knusprige Pommes Frites", "price": 4.99, "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800"},
-        {"name": "Chicken Nuggets", "desc": "ca. 6 Stück + Dip nach Wahl", "price": 6.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
-        {"name": "Chicken Wings", "desc": "ca. 6 Stück + Dip nach Wahl", "price": 7.99, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
-        {"name": "Onion Rings", "desc": "ca. 8 Stück + Dip nach Wahl", "price": 5.99, "img": "https://images.unsplash.com/photo-1639024471283-03518883512d?w=800"},
+        {"name": "Sweet Potato Fries", "desc": "Süßkartoffel Pommes", "price": 5.49, "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800"},
+        {"name": "Chicken Nuggets 6 Stück", "desc": "6 Stück + Dip nach Wahl", "price": 6.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Chicken Nuggets 9 Stück", "desc": "9 Stück + Dip nach Wahl", "price": 8.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Chicken Wings 6 Stück", "desc": "6 Stück + Dip nach Wahl", "price": 7.99, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
+        {"name": "Chicken Wings 9 Stück", "desc": "9 Stück + Dip nach Wahl", "price": 10.99, "img": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=800"},
+        {"name": "Onion Rings", "desc": "8 Stück + Dip nach Wahl", "price": 5.99, "img": "https://images.unsplash.com/photo-1639024471283-03518883512d?w=800"},
+        {"name": "Mozzarella Sticks", "desc": "6 Stück mit Dip", "price": 6.49, "img": "https://images.unsplash.com/photo-1531749668029-2db88e4276c7?w=800"},
+        {"name": "Chili Cheese Nuggets", "desc": "8 Stück mit Dip", "price": 6.99, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
     ]
     
     for item in fingerfoods:
@@ -213,6 +332,48 @@ def seed_menu_items(categories):
             "price_normal": item['price'],
             "image_url": item['img'],
             "tags": ["fingerfood"],
+            "active": True
+        })
+    
+    # KIDS MENU Category
+    kids = [
+        {"name": "Kids Burger", "desc": "Kleiner Burger mit Pommes", "price": 6.99, "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"},
+        {"name": "Kids Nuggets", "desc": "4 Nuggets mit Pommes", "price": 6.49, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Kids Schnitzel", "desc": "Kleines Schnitzel mit Pommes", "price": 7.49, "img": "https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800"},
+    ]
+    
+    for item in kids:
+        menu_items.append({
+            "_id": ObjectId(),
+            "category_id": category_map['kids'],
+            "name": item['name'],
+            "description": item['desc'],
+            "price_normal": item['price'],
+            "image_url": item['img'],
+            "tags": ["kids"],
+            "active": True
+        })
+    
+    # DIPS Category
+    dips = [
+        {"name": "Ketchup", "price": 0.50},
+        {"name": "Mayo", "price": 0.50},
+        {"name": "BBQ Sauce", "price": 0.80},
+        {"name": "Curry Sauce", "price": 0.80},
+        {"name": "Knoblauch Sauce", "price": 0.80},
+        {"name": "Cocktail Sauce", "price": 0.80},
+        {"name": "Sweet Chili", "price": 0.80},
+    ]
+    
+    for item in dips:
+        menu_items.append({
+            "_id": ObjectId(),
+            "category_id": category_map['dips'],
+            "name": item['name'],
+            "description": "",
+            "price_normal": item['price'],
+            "image_url": "",
+            "tags": ["dip"],
             "active": True
         })
     
