@@ -117,10 +117,11 @@ def seed_real_menu():
                 "created_at": datetime.utcnow()
             })
         
-        # === BURGER (mit Medium/Large Größen) ===
+        # === BURGER (mit Medium/Large Größen + abwählbaren Zutaten) ===
         burgers = [
             # Burger mit 2 Größen (Medium 125g / Large 180g)
-            {"name": "Hamburger", "desc": "Beef Burger mit Tomaten, Salat, Zwiebeln und Gewürzgurken", "price_m": 7.99, "price_l": 11.19, "menu_m": 13.89, "menu_l": 17.09, "has_sizes": True, "img": IMG_BURGER},
+            {"name": "Hamburger", "desc": "Beef Burger mit Tomaten, Salat, Zwiebeln und Gewürzgurken", "price_m": 7.99, "price_l": 11.19, "menu_m": 13.89, "menu_l": 17.09, "has_sizes": True, "img": IMG_BURGER,
+             "removable": ["Tomaten", "Salat", "Zwiebeln", "Gewürzgurken"]},
             {"name": "Cheeseburger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Käse", "price_m": 9.19, "price_l": 12.29, "menu_m": 15.09, "menu_l": 18.19, "has_sizes": True, "img": IMG_CHEESEBURGER},
             {"name": "Bacon Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Bacon, BBQ-Sauce, Röstzwiebeln", "price_m": 11.49, "price_l": 14.29, "menu_m": 17.39, "menu_l": 20.19, "has_sizes": True, "img": IMG_BACON_BURGER},
             {"name": "Chili-Cheese Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Cheese-Sauce, Jalapeños", "price_m": 9.49, "price_l": 11.89, "menu_m": 15.39, "menu_l": 17.79, "has_sizes": True, "img": IMG_CHEESEBURGER},
