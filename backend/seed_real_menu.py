@@ -144,20 +144,43 @@ def seed_real_menu():
         ]
         
         for item in burgers:
-            doc = {
-                "_id": ObjectId(),
-                "name": item["name"],
-                "description": item["desc"],
-                "category_id": cat_map["burger"],
-                "location_id": location_id,
-                "price_normal": item["price"],
-                "image_url": item["img"],
-                "available": True,
-                "is_menu": False,
-                "menu_upgrade_price": item.get("menu_price"),
-                "can_upgrade_to_menu": item.get("menu_price") is not None,
-                "created_at": datetime.utcnow()
-            }
+            if item.get("has_sizes"):
+                # Burger mit 2 Größen (Medium/Large)
+                doc = {
+                    "_id": ObjectId(),
+                    "name": item["name"],
+                    "description": item["desc"],
+                    "category_id": cat_map["burger"],
+                    "location_id": location_id,
+                    "price_medium": item["price_m"],
+                    "price_large": item["price_l"],
+                    "has_sizes": True,
+                    "image_url": item["img"],
+                    "available": True,
+                    "active": True,
+                    "is_menu": False,
+                    "menu_upgrade_price_medium": item.get("menu_m"),
+                    "menu_upgrade_price_large": item.get("menu_l"),
+                    "can_upgrade_to_menu": item.get("menu_m") is not None,
+                    "created_at": datetime.utcnow()
+                }
+            else:
+                # Burger mit nur 1 Größe
+                doc = {
+                    "_id": ObjectId(),
+                    "name": item["name"],
+                    "description": item["desc"],
+                    "category_id": cat_map["burger"],
+                    "location_id": location_id,
+                    "price_normal": item["price"],
+                    "image_url": item["img"],
+                    "available": True,
+                    "active": True,
+                    "is_menu": False,
+                    "menu_upgrade_price": item.get("menu_price"),
+                    "can_upgrade_to_menu": item.get("menu_price") is not None,
+                    "created_at": datetime.utcnow()
+                }
             menu_items.append(doc)
         
         # === SMASH BURGER ===
