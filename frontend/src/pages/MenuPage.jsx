@@ -363,6 +363,21 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
             }}
           />
         )}
+
+        {/* Menu Upgrade Dialog */}
+        {menuUpgradeOpen && upgradingItem && (
+          <MenuUpgradeDialog
+            item={upgradingItem}
+            onClose={() => {
+              setMenuUpgradeOpen(false);
+              setUpgradingItem(null);
+            }}
+            onAddToCart={(cartItem) => {
+              addToCart(cartItem);
+              toast.success(`${cartItem.name} zum Warenkorb hinzugefügt`);
+            }}
+          />
+        )}
       </div>
     </div>
   );
