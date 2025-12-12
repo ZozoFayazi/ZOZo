@@ -27,52 +27,111 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative noise-overlay bg-gradient-to-br from-background via-background to-accent py-20 md:py-32 overflow-hidden">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* Text Content */}
-            <div className="lg:col-span-5 space-y-6 animate-fade-in">
-              <p className="eyebrow" data-testid="hero-eyebrow">
-                Rellingen • Henstedt-Ulzburg
-              </p>
-              <h1 className="heading-1 text-foreground">
-                ZOZO BURGER
-              </h1>
-              <p className="text-lg sm:text-xl text-primary font-serif tracking-wide uppercase">
-                BURGER · PIZZA · PASTA & MORE
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Premium Qualität, frisch zubereitet und in 30-45 Minuten bei dir. 
+      {/* Hero Section - Redesigned */}
+      <section className="relative noise-overlay bg-gradient-to-br from-background via-accent/30 to-background py-24 md:py-36 overflow-hidden">
+        {/* Subtle Glow Effects */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
+        </div>
+
+        <div className="container-custom relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Text Content - Left */}
+            <div className="space-y-8 animate-fade-in">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-primary/20">
+                <MapPin className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium tracking-wide">RELLINGEN • HENSTEDT-ULZBURG</span>
+              </div>
+
+              {/* Main Headline */}
+              <div className="space-y-4">
+                <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-bold leading-none tracking-tight">
+                  ZOZO<br />
+                  <span className="text-primary">BURGER</span>
+                </h1>
+                <div className="flex items-center gap-3 text-muted-foreground text-sm tracking-[0.2em] uppercase">
+                  <span className="w-12 h-px bg-primary" />
+                  <span>Burger · Pizza · Pasta & More</span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-lg text-foreground/80 leading-relaxed max-w-lg">
+                Premium Qualität, frisch zubereitet und in <span className="text-primary font-semibold">30-45 Minuten</span> bei dir. 
                 Genieße beste Zutaten und authentischen Geschmack.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+
+              {/* Stats/Features */}
+              <div className="grid grid-cols-3 gap-6 pt-4">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-primary">4.9</p>
+                  <p className="text-xs text-muted-foreground mt-1">★★★★★</p>
+                </div>
+                <div className="text-center border-x border-border px-2">
+                  <p className="text-3xl font-bold text-primary">30min</p>
+                  <p className="text-xs text-muted-foreground mt-1">Lieferzeit</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-primary">100%</p>
+                  <p className="text-xs text-muted-foreground mt-1">Frisch</p>
+                </div>
+              </div>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <button
-                  onClick={() => navigate('/menu')}
-                  className="btn-primary"
+                  onClick={() => setShowOrderTypeDialog(true)}
+                  className="btn-primary group relative overflow-hidden shadow-lg shadow-primary/30"
                   data-testid="hero-primary-cta-button"
                 >
-                  Jetzt bestellen
-                  <ArrowRight className="inline-block ml-2 h-5 w-5" />
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    Jetzt bestellen
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </button>
                 <button
                   onClick={() => navigate('/menu')}
-                  className="btn-secondary"
+                  className="btn-secondary group"
                   data-testid="hero-secondary-cta-button"
                 >
-                  Speisekarte ansehen
+                  <span className="flex items-center justify-center gap-2">
+                    Speisekarte ansehen
+                    <Sparkles className="h-5 w-5" />
+                  </span>
                 </button>
               </div>
             </div>
 
-            {/* Hero Image */}
-            <div className="lg:col-span-7">
-              <div className="relative parallax-image">
-                <img
-                  src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=800&fit=crop"
-                  alt="Premium Burger"
-                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
-                />
+            {/* Hero Image - Right */}
+            <div className="relative animate-fade-in animation-delay-200">
+              {/* Main Image */}
+              <div className="relative">
+                <div className="aspect-square rounded-3xl overflow-hidden glass-premium">
+                  <img
+                    src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop"
+                    alt="Premium Burger"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                
+                {/* Floating Badge - Top Right */}
+                <div className="absolute -top-4 -right-4 glass-premium px-6 py-4 rounded-2xl border border-primary/20 shadow-xl">
+                  <p className="text-xs text-muted-foreground mb-1">Ab nur</p>
+                  <p className="text-2xl font-bold text-primary">€7.99</p>
+                </div>
+
+                {/* Floating Badge - Bottom Left */}
+                <div className="absolute -bottom-4 -left-4 glass-premium px-6 py-4 rounded-2xl border border-primary/20 shadow-xl">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Lieferung in</p>
+                      <p className="text-lg font-bold">30-45 Min</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
