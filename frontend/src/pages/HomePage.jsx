@@ -457,6 +457,15 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
           </div>
         </div>
       </section>
+
+      {/* Order Type Selection Dialog */}
+      {showOrderTypeDialog && (
+        <OrderTypeSelection
+          locations={locations}
+          onComplete={handleOrderTypeComplete}
+          onClose={() => setShowOrderTypeDialog(false)}
+        />
+      )}
     </div>
   );
 }
