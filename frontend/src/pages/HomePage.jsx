@@ -6,6 +6,7 @@ import { getLocations } from '../api';
 function HomePage({ selectedLocation, setSelectedLocation }) {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
+  const [deals, setDeals] = useState([]);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -31,6 +32,20 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
       console.error('Error loading locations:', error);
     }
   };
+
+  const loadDeals = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api/deals`);
+      const data = await response.json();
+      setDeals(data);
+    } catch (error) {
+      console.error('Error loading deals:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadDeals();
+  }, []);
 
   const handleOrder = (location) => {
     setSelectedLocation(location);
@@ -172,6 +187,62 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
           </div>
         </div>
       </section>
+
+      {/* Deals Section */}
+      {deals.length > 0 && (
+        <section className="py-16 md:py-24 bg-primary/5 relative overflow-hidden">
+          {/* Background Decoration */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
+          
+          <div className="container-custom relative z-10">
+            <div className="text-center mb-12">
+              <p className="eyebrow mb-4 text-primary">Aktuelle Angebote</p>
+              <h2 className="heading-2 mb-6">Spare Jetzt!</h2>
+              <p className="text-lg text-muted-foreground">
+                Exklusive Deals nur für kurze Zeit
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {deals.map((deal) => (
+                <div
+                  key={deal.id}
+                  className="glass rounded-2xl overflow-hidden card-tilt cursor-pointer"
+                  onClick={() => navigate('/menu')}
+                >
+                  {deal.image_url && (
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={deal.image_url}
+                        alt={deal.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6 space-y-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold uppercase tracking-wide">
+                      <Sparkles className="h-3 w-3" />
+                      {deal.discount_type === 'percentage' 
+                        ? `${deal.discount_value}% Rabatt`
+                        : `€${deal.discount_value} Rabatt`}
+                    </div>
+                    <h3 className="text-xl font-serif font-semibold">{deal.title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{deal.description}</p>
+                    {deal.min_order_value && (
+                      <p className="text-xs text-muted-foreground">
+                        Ab €{deal.min_order_value} Bestellwert
+                      </p>
+                    )}
+                    <button className="btn-primary w-full text-sm py-2">
+                      Jetzt bestellen <ArrowRight className="inline h-4 w-4 ml-1" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Categories - Bento Grid */}
       <section className="py-20 md:py-32 bg-background relative">
