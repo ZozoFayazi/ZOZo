@@ -177,12 +177,25 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                   )}
                 </div>
 
-                <button
-                  onClick={() => handleOrder(location)}
-                  className="btn-primary w-full mt-4"
-                >
-                  Hier bestellen
-                </button>
+                <div className="flex gap-3 mt-4">
+                  <button
+                    onClick={() => handleOrder(location)}
+                    className="btn-primary flex-1"
+                    data-testid={`order-${location.slug}`}
+                  >
+                    Hier bestellen
+                  </button>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address + ', ' + location.postal_code + ' ' + location.city)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-secondary flex items-center justify-center gap-2 px-6"
+                    data-testid={`route-${location.slug}`}
+                  >
+                    <MapPin className="h-4 w-4" />
+                    Route
+                  </a>
+                </div>
               </div>
             ))}
           </div>
