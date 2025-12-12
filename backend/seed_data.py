@@ -379,15 +379,17 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # DIPS Category
+    # DIPS Category - COMPLETE (7 items)
     dips = [
-        {"name": "Ketchup", "price": 0.50},
-        {"name": "Mayo", "price": 0.50},
-        {"name": "BBQ Sauce", "price": 0.80},
-        {"name": "Curry Sauce", "price": 0.80},
-        {"name": "Knoblauch Sauce", "price": 0.80},
-        {"name": "Cocktail Sauce", "price": 0.80},
-        {"name": "Sweet Chili", "price": 0.80},
+        {"name": "Ketchup", "price": 0.69},
+        {"name": "Mayonnaise", "price": 0.69},
+        {"name": "Sweet Chilisauce", "price": 0.69},
+        {"name": "BBQ Sauce", "price": 1.19},
+        {"name": "Sour Creme", "price": 1.19},
+        {"name": "Remoulade", "price": 1.19},
+        {"name": "Knoblauchsauce", "price": 1.19},
+        {"name": "Chilisauce", "price": 1.19},
+        {"name": "Sweet & Sour Sauce", "price": 0.79},
     ]
     
     for item in dips:
