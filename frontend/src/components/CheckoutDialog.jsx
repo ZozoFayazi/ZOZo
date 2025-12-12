@@ -21,7 +21,7 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
     postal_code: '',
     city: '',
     notes: '',
-    payment_method: 'cash'
+    payment_method: 'paypal' // Default to PayPal
   });
 
   const handleChange = (e) => {
