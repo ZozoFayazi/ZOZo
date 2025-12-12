@@ -359,7 +359,7 @@ async def test_expertorder_connection(
         ordertime=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z"),
         deliverytime=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z"),
         customerinfo="Test-Bestellung von ZOZO Website",
-        orderprice=10.50,
+        orderprice=13.00,  # Items (10.50) + Delivery (2.50) = 13.00
         orderdiscount=0,
         notification=False,
         deliverycost=2.50,
