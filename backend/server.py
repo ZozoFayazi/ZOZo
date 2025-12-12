@@ -132,11 +132,22 @@ async def root():
 
 # Locations
 @api_router.get("/locations")
-async def get_locations():
-    """Get all active locations"""
+async def get_locations(include_status: bool = Query(False, description="Include opening status")):
+    """Get all active locations with optional opening status"""
+    from opening_hours_checker import get_opening_status_for_location
+    
     cursor = db.locations.find({"active": True})
     locations = await cursor.to_list(length=100)
-    return serialize_doc(locations)
+    
+    result = serialize_doc(locations)
+    
+    # Add opening status if requested
+    if include_status:
+        for location in result:
+            status = get_opening_status_for_location(location)
+            location['opening_status'] = status
+    
+    return result
 
 # Delivery Zone Check
 @api_router.get("/check-delivery-zone")
