@@ -1,306 +1,417 @@
 {
-  "brand_meta": {
-    "project": "ZOZO Burger",
-    "tagline": "BURGER · PIZZA · PASTA & MORE",
-    "brand_attributes": ["premium", "bold", "cinematic", "German-local", "fast yet refined"],
-    "wow_strategy": "Fuse editorial magazine aesthetics with boutique fashion polish: near-black canvas, high-contrast off‑white type, disciplined red accents, moody food photography, and subtle parallax."
+  "version": "1.0",
+  "project": "ZOZO Burger – Million‑Dollar Dark Premium Redesign",
+  "brand_attributes": [
+    "cinematic",
+    "premium",
+    "bold",
+    "edgy",
+    "trustworthy",
+    "fast"
+  ],
+  "design_personality": {
+    "fusion_style": "Luxury Brutalism x Glassmorphism x Cinematic Depth",
+    "explanation": "Use a raw, high-contrast grid and oversized type (brutalist cues), layered with frosted-glass surfaces for cards, modals and nav. Add cinematic light falloffs, subtle radial glows, and parallax depth using existing .glass, .gradient-bg, .card-tilt, and noise overlays."
   },
-  "palette": {
-    "primary_red": "#B00020",
-    "primary_red_alt": "#990000",
-    "bg_near_black": "#0D0D0F",
-    "bg_elevated": "#121214",
-    "fg_off_white": "#F5F5F5",
-    "fg_muted": "#B6B6B6",
-    "border": "#232326",
-    "success": "#2FB67B",
-    "warning": "#E6A700",
-    "error": "#E5484D",
-    "accent_warm_gray": "#2A2A2E",
-    "accent_coal": "#1A1A1C",
-    "gradient_accent": ["#0B0B0C", "#131315", "#0F0F11"],
-    "notes": [
-      "Red is used only for primary CTAs, prices, active states, and small highlights.",
-      "Keep reading areas on solid near‑black. Gradients only for hero/section dividers (<=20% viewport).",
-      "Respect GRADIENT RESTRICTION RULE (no purple/pink, no saturated stacks)."
-    ]
+  "color_system": {
+    "base_tokens_hsl": {
+      "--background": "240 6% 4%",
+      "--foreground": "0 0% 96%",
+      "--card": "240 6% 6%",
+      "--card-foreground": "0 0% 96%",
+      "--popover": "240 6% 6%",
+      "--popover-foreground": "0 0% 96%",
+      "--primary": "351 100% 35%",
+      "--primary-foreground": "0 0% 98%",
+      "--secondary": "240 5% 16%",
+      "--secondary-foreground": "0 0% 96%",
+      "--muted": "240 4% 14%",
+      "--muted-foreground": "0 0% 72%",
+      "--accent": "240 5% 8%",
+      "--accent-foreground": "0 0% 96%",
+      "--destructive": "358 76% 60%",
+      "--destructive-foreground": "0 0% 98%",
+      "--border": "240 5% 14%",
+      "--input": "240 5% 14%",
+      "--ring": "351 100% 35%",
+      "--radius": "0.6rem"
+    },
+    "semantic": {
+      "info": "210 92% 56%",
+      "success": "152 63% 43%",
+      "warning": "38 92% 58%",
+      "highlight": "351 100% 42%",
+      "gold_accent": "44 92% 60%"
+    },
+    "usage": {
+      "primary": "Brand crimson (HSL 351/100/35) for CTAs, price badges, active states.",
+      "secondary": "Panels, headers, and nav backgrounds.",
+      "accent": "Backdrops behind glass panels; use with noise overlay.",
+      "muted": "Dividers, lines, and quiet UI.",
+      "gold_accent": "Subtle luxury hint for details (tiny borders, icons) only."
+    },
+    "contrast": "Minimum 4.5:1 for text; buttons must meet AA."
   },
-  "css_design_tokens": {
-    "instructions": "Place in /app/frontend/src/index.css under @layer base to override theme tokens. Keep .dark values identical to root for this site (always dark).",
-    "root_variables": "@layer base {\n  :root, .dark {\n    --background: 240 6% 4%; /* #0D0D0F */\n    --foreground: 0 0% 96%; /* #F5F5F5 */\n    --card: 240 6% 6%; /* #121214 */\n    --card-foreground: 0 0% 96%;\n    --popover: 240 6% 6%;\n    --popover-foreground: 0 0% 96%;\n    --primary: 351 100% 35%; /* #B00020 */\n    --primary-foreground: 0 0% 98%;\n    --secondary: 240 5% 16%; /* #2A2A2E */\n    --secondary-foreground: 0 0% 96%;\n    --muted: 240 4% 14%; /* #232326 */\n    --muted-foreground: 0 0% 72%; /* #B6B6B6 */\n    --accent: 240 5% 8%;  /* #1A1A1C */\n    --accent-foreground: 0 0% 96%;\n    --destructive: 358 76% 60%; /* #E5484D */\n    --destructive-foreground: 0 0% 98%;\n    --border: 240 5% 14%;\n    --input: 240 5% 14%;\n    --ring: 351 100% 35%; /* red ring for focus */\n    --radius: 0.6rem;\n  }\n}\n",
-    "utilities": [
-      "Apply subtle noise overlay to large sections: bg-[radial-gradient(60%_120%_at_50%_0%,rgba(255,255,255,0.04),rgba(0,0,0,0))] before:content-[''] before:absolute before:inset-0 before:bg-[url('/noise.png')] before:opacity-20 before:pointer-events-none",
-      "Never use transition: all; restrict per-property (colors, opacity, box-shadow)."
-    ]
+  "gradients": {
+    "allowed": [
+      "Hero radial background glow using brand crimson at 10–15% opacity over dark charcoal",
+      "Section separators as very subtle diagonal washes (opacity < 0.12)",
+      "Large decorative shapes only (no text areas)"
+    ],
+    "prohibited": [
+      "Any dark/saturated gradient combos like purple→pink, green→blue, red→pink",
+      "Gradients on small UI (<100px) or text-heavy blocks",
+      "Gradient logos, testimonials, or footer backgrounds",
+      ">20% viewport gradient coverage"
+    ],
+    "enforcement": "If a gradient risks readability or exceeds 20% viewport, replace with solid tokens and keep noise overlay for richness."
   },
   "typography": {
-    "pairing": {
-      "headings": "Playfair Display",
-      "body_ui": "Chivo"
+    "fonts": {
+      "display_serif": "'Playfair Display', Georgia, serif",
+      "body_sans": "'Chivo', system-ui, -apple-system, sans-serif",
+      "numeric_alt": "'Space Grotesk', ui-sans-serif, system-ui"
     },
-    "import": "Use Google Fonts. Example in index.html: <link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Chivo:wght@300;400;500;700&display=swap\" rel=\"stylesheet\">",
-    "tailwind_presets": {
-      "classes": {
-        "h1": "font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1]",
-        "h2": "font-serif text-base sm:text-lg font-semibold tracking-wide uppercase text-muted-foreground",
-        "body": "font-sans text-base sm:text-sm leading-relaxed text-foreground",
-        "eyebrow": "font-sans text-xs tracking-[0.22em] uppercase text-muted-foreground"
-      },
-      "notes": "Headings use Playfair Display with dramatic tight leading; UI elements use Chivo for clarity and German diacritics."
+    "load_via_google": [
+      "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap",
+      "https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;600;700&display=swap",
+      "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
+    ],
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl",
+      "h2": "text-base sm:text-lg",
+      "body": "text-sm sm:text-base",
+      "small": "text-xs sm:text-sm"
+    },
+    "usage": {
+      "h1": "Use heading-1 utility from App.css on hero titles.",
+      "h2": "Use heading-2 for section leads and category headers.",
+      "numerals": "Use Space Grotesk for prices and counts via font-[\'Space_Grotesk\'] if added, otherwise keep Chivo."
     }
+  },
+  "tokens": {
+    "elevations": {
+      "e-0": "shadow-none",
+      "e-1": "shadow-[0_2px_10px_rgba(0,0,0,0.25)]",
+      "e-2": "shadow-[0_8px_30px_rgba(0,0,0,0.35)]",
+      "e-3": "shadow-[0_16px_60px_rgba(0,0,0,0.45)]"
+    },
+    "radii": {
+      "sm": "0.5rem",
+      "md": "0.6rem",
+      "lg": "1rem",
+      "xl": "1.25rem"
+    },
+    "spacing": "Use 1.5x–2x default Tailwind spacing relative to typical app UIs. Section padding: py-14 md:py-20; card gap: gap-6 md:gap-8; grid gutters: gap-x-6 gap-y-10."
   },
   "layout_grid": {
-    "container": "max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8",
-    "grid_system": [
-      "Mobile-first. Use 4-col grid on mobile (gap-4), 8-col on md, 12-col on lg.",
-      "Hero: split layout with editorial text column (5/12) and parallax image stack (7/12) on lg; single column on mobile.",
-      "Menu: bento grid with asymmetric spans: lg:grid-cols-12; feature cards col-span-6, standard items col-span-3-4."
-    ],
-    "spacing": "Use 2x perceived spacing: section py-16 md:py-24; between blocks gap-10 md:gap-14."
-  },
-  "page_structure": {
-    "routes": ["/", "/menu", "/locations", "/about", "/order", "/admin"],
+    "mobile_first": true,
+    "containers": {
+      "default": "container-custom",
+      "full_bleed": "w-full"
+    },
     "hero": {
-      "style": "Dark editorial with cinematic photography, subtle diagonal gradient and noise (<=20% viewport).",
-      "content": [
-        "Top-left: eyebrow 'Rellingen • Henstedt-Ulzburg'",
-        "H1: 'ZOZO BURGER' in Playfair Display",
-        "H2 subline: 'BURGER · PIZZA · PASTA & MORE'",
-        "Primary CTA: 'Jetzt bestellen' (red) + Secondary: 'Speisekarte ansehen' (ghost)"
-      ],
-      "micro_interactions": [
-        "Parallax on hero images (slight translateY 6–14px)",
-        "CTA hover: color/shadow only (no scale beyond 1.02)",
-        "Noise overlay fade-in on load"
-      ]
+      "structure": "grid grid-cols-1 lg:grid-cols-12 gap-8 items-center",
+      "left": "lg:col-span-6 space-y-5",
+      "right": "lg:col-span-6"
     },
-    "menu": {
-      "filters": ["Tabs: Burger, Pizza, Pasta, Specials", "Search: Command palette", "Location toggle: Rellingen / Henstedt-Ulzburg"],
-      "cards": "Large feature cards for hero dishes; standard product cards with imagery, price, spicy/veg badges, add-to-cart.",
-      "empty_state": "Muted card with 'Gericht nicht gefunden' and a 'Alle anzeigen' button"
+    "menu_bento": {
+      "structure": "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6",
+      "card": "glass card-tilt gradient-border p-4 sm:p-5"
     },
-    "locations": {
-      "structure": ["Map + address + opening hours", "Delivery zones with tags", "Order CTA per location"],
-      "maps": "react-leaflet with dark tiles; fallback to Google Maps embed"
+    "product_grid": {
+      "structure": "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8",
+      "card": "glass-light border rounded-xl overflow-hidden hover:border-primary/40 transition-colors"
     },
-    "about": {
-      "story": "Short brand story focused on craft and ingredients; accordion for sourcing and values",
-      "media": "Carousel of photography with lazy loading"
+    "checkout": {
+      "structure": "grid grid-cols-1 lg:grid-cols-3 gap-8",
+      "form": "lg:col-span-2",
+      "summary": "lg:col-span-1"
+    }
+  },
+  "buttons": {
+    "style": "Luxury / Elegant",
+    "radius": "8–12px",
+    "variants": {
+      "primary": "btn-primary glow-primary",
+      "secondary": "btn-secondary",
+      "ghost": "px-4 py-3 rounded-xl border border-transparent text-muted-foreground hover:text-foreground hover:border-border transition-colors"
     },
-    "order_flow": [
-      "Step 1: Location select (Sheet or Dialog)",
-      "Step 2: Choose items (menu grid)",
-      "Step 3: Cart drawer (Sheet right) with upsells",
-      "Step 4: Checkout (Dialog or dedicated page)"
-    ],
-    "admin": [
-      "Orders table with tabs (Open, In-Progress, Delivered)",
-      "Product management with Dialog forms",
-      "Analytics mini-cards and charts (Recharts or D3 minimal)"
-    ]
+    "sizes": {
+      "sm": "px-4 py-2 text-sm",
+      "md": "px-6 py-3 text-base",
+      "lg": "px-8 py-4 text-base"
+    },
+    "focus": "ring-2 ring-[hsl(var(--ring))] ring-offset-2 ring-offset-[hsl(var(--background))]",
+    "accessibility": "All buttons must include a data-testid that describes action, e.g., data-testid=\"add-to-cart-button\"."
   },
   "components": {
-    "header_nav": {
-      "use": ["/app/frontend/src/components/ui/navigation-menu.jsx", "/app/frontend/src/components/ui/sheet.jsx", "/app/frontend/src/components/ui/button.jsx"],
-      "notes": "Sticky top, backdrop-blur, thin bottom border. Mobile uses Sheet for off-canvas nav.",
-      "classes": "sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-black/30 border-b border-border",
-      "data_testid": "header-nav"
+    "navigation": {
+      "paths": [
+        "./components/ui/navigation-menu",
+        "./components/ui/drawer",
+        "./components/ui/button\n"
+      ],
+      "pattern": "Split branding left, actions (Location, Order Type, Cart) right. Mobile: Drawer opens a glass sheet with large targets.",
+      "classes": "sticky top-0 z-40 backdrop-blur-xl glass border-b",
+      "micro": [
+        "Logo subtle scale-in on load (animate-scale-in)",
+        "Underline reveal on hover with border-primary/50"
+      ],
+      "testing": [
+        "data-testid=\"nav-logo-link\"",
+        "data-testid=\"nav-location-button\"",
+        "data-testid=\"nav-cart-button\""
+      ]
     },
-    "hero_cta": {
-      "use": ["/app/frontend/src/components/ui/button.jsx", "/app/frontend/src/components/ui/badge.jsx"],
-      "primary_button": "btn-primary: bg-primary text-primary-foreground rounded-[10px] shadow-[0_6px_28px_rgba(176,0,32,0.35)] hover:bg-[#990000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-      "secondary_button": "btn-ghost: border border-border text-foreground/90 hover:bg-secondary",
-      "data_testids": ["hero-primary-cta-button", "hero-secondary-cta-button"]
+    "hero": {
+      "content": "Oversized headline, short subcopy, primary CTA, and supporting CTA. Right side: parallax food photography in .parallax-wrapper with noise overlay.",
+      "classes": "relative gradient-bg noise-overlay py-16 sm:py-20 lg:py-28",
+      "testing": [
+        "data-testid=\"hero-title\"",
+        "data-testid=\"hero-primary-cta-button\"",
+        "data-testid=\"hero-secondary-cta-button\""
+      ]
     },
-    "menu_filters": {
-      "use": ["/app/frontend/src/components/ui/tabs.jsx", "/app/frontend/src/components/ui/command.jsx", "/app/frontend/src/components/ui/toggle-group.jsx"],
-      "pattern": "Tabs for category with underline indicator; Command for fuzzy search; ToggleGroup for location.",
-      "data_testids": ["menu-tabs", "menu-search", "location-toggle"]
+    "menu_categories_bento": {
+      "paths": [
+        "./components/ui/card",
+        "./components/ui/tabs",
+        "./components/ui/badge"
+      ],
+      "pattern": "Bento grid of categories: Burger, Pizza, Pasta, Sides, Salads, Desserts. Each card shows photograph overlay with glass label; hover lifts (card-tilt).",
+      "testing": [
+        "data-testid=\"category-card-burger\"",
+        "data-testid=\"category-card-pizza\"",
+        "data-testid=\"category-card-pasta\""
+      ]
     },
-    "menu_card": {
-      "use": ["/app/frontend/src/components/ui/card.jsx", "/app/frontend/src/components/ui/badge.jsx", "/app/frontend/src/components/ui/button.jsx", "/app/frontend/src/components/ui/tooltip.jsx"],
-      "layout": "Image top with 3:2 ratio (aspect-ratio), name and short copy, price aligned right, Add button.",
-      "classes": "group relative overflow-hidden bg-card border border-border rounded-xl hover:border-primary/40 transition-colors",
-      "micro": "On hover: image translate-y-[-2px] brightness-110; badge subtle glow",
-      "data_testids": ["menu-item-card", "add-to-cart-button"]
+    "product_card": {
+      "paths": ["./components/ui/card", "./components/ui/button", "./components/ui/badge"],
+      "pattern": "Image top with image-overlay, title + description, price on right, Add button.",
+      "testing": [
+        "data-testid=\"product-card\"",
+        "data-testid=\"product-add-button\"",
+        "data-testid=\"product-price\""
+      ]
     },
-    "cart_drawer": {
-      "use": ["/app/frontend/src/components/ui/sheet.jsx", "/app/frontend/src/components/ui/scroll-area.jsx", "/app/frontend/src/components/ui/separator.jsx", "/app/frontend/src/components/ui/button.jsx", "/app/frontend/src/components/ui/input.jsx", "/app/frontend/src/components/ui/sonner.jsx"],
-      "pattern": "Right-aligned Sheet with line items, quantity steppers, voucher input, subtotal, delivery note.",
-      "data_testids": ["cart-open-button", "cart-sheet", "checkout-button"]
+    "customizer": {
+      "paths": [
+        "./components/ui/dialog",
+        "./components/ui/radio-group",
+        "./components/ui/slider",
+        "./components/ui/select",
+        "./components/ui/checkbox",
+        "./components/ui/tabs",
+        "./components/ui/scroll-area"
+      ],
+      "pattern": "Dialog with tabs (Bun, Patty, Cheese, Extras, Menu Upgrade). Radio and checkbox groups; sliders for heat/sauce. Summary footer with sticky glass bar for price and Add to cart.",
+      "testing": [
+        "data-testid=\"customizer-dialog\"",
+        "data-testid=\"customizer-tab-bun\"",
+        "data-testid=\"customizer-add-to-cart-button\""
+      ]
     },
-    "locations_block": {
-      "use": ["/app/frontend/src/components/ui/card.jsx", "/app/frontend/src/components/ui/button.jsx"],
-      "pattern": "Two cards with map embeds; CTA per location.",
-      "data_testids": ["rellingen-card", "henstedt-card", "map-embed"]
+    "cart": {
+      "paths": ["./components/ui/sheet", "./components/ui/button", "./components/ui/scroll-area"],
+      "pattern": "Right Sheet shows items with quantity controls, price breakdown, delivery fee, promo code input, Checkout button.",
+      "testing": [
+        "data-testid=\"cart-sheet\"",
+        "data-testid=\"cart-checkout-button\""
+      ]
     },
-    "about_media": {
-      "use": ["/app/frontend/src/components/ui/carousel.jsx", "/app/frontend/src/components/ui/accordion.jsx"],
-      "data_testids": ["about-carousel", "about-accordion"]
+    "checkout": {
+      "paths": [
+        "./components/ui/form",
+        "./components/ui/input",
+        "./components/ui/select",
+        "./components/ui/radio-group",
+        "./components/ui/calendar",
+        "./components/ui/textarea",
+        "./components/ui/sonner"
+      ],
+      "pattern": "Multi-step form (Address → Delivery Time → Payment). Use shadcn Calendar when scheduling. Show live summary card.",
+      "testing": [
+        "data-testid=\"checkout-form\"",
+        "data-testid=\"checkout-submit-button\"",
+        "data-testid=\"payment-method-radio\""
+      ]
     },
-    "admin_tables": {
-      "use": ["/app/frontend/src/components/ui/table.jsx", "/app/frontend/src/components/ui/tabs.jsx", "/app/frontend/src/components/ui/select.jsx", "/app/frontend/src/components/ui/popover.jsx", "/app/frontend/src/components/ui/calendar.jsx", "/app/frontend/src/components/ui/dialog.jsx", "/app/frontend/src/components/ui/toast.jsx"],
-      "data_testids": ["orders-table", "orders-status-tabs", "product-dialog"]
-    },
-    "feedback": {
-      "use": ["/app/frontend/src/components/ui/sonner.jsx", "/app/frontend/src/components/ui/skeleton.jsx", "/app/frontend/src/components/ui/progress.jsx"],
-      "notes": "Use sonner for toasts; skeletons for image/card loading; progress during order placement.",
-      "data_testids": ["toast-success", "toast-error", "loading-skeleton"]
+    "toasts": {
+      "paths": ["./components/ui/sonner"],
+      "usage": "Use for add-to-cart success, errors, and network retry."
     }
   },
-  "micro_interactions_and_motion": {
-    "lib": "framer-motion",
-    "install": "npm i framer-motion @studio-freight/lenis",
+  "microinteractions_and_motion": {
+    "library": "framer-motion",
     "principles": [
-      "Entrance: fade + 12–24px translate over 420–560ms, ease-out",
-      "Hover: subtle lift (translate-y-[-2px]) and shadow/brightness shift; avoid aggressive scale",
-      "Parallax: use small ranges (6–14px) for hero layers with Lenis smooth scroll",
-      "Focus states: 2px red ring with ring-offset for all actionable elements"
+      "Entrance: 250–600ms, bezier (0.16, 1, 0.3, 1)",
+      "Hover: 120–200ms, subtle lift and shadow",
+      "Press: 80ms depress, scale 0.98",
+      "Scroll: mild parallax on hero imagery",
+      "No universal transition: only per element (color, opacity, shadow)"
     ],
-    "example_jsx": "// Hero image motion snippet (use .jsx)\nimport { motion } from 'framer-motion'\n\nexport const ParallaxImage = ({ src, alt }) => (\n  <motion.img\n    src={src}\n    alt={alt}\n    className=\"rounded-xl shadow-2xl\"\n    initial={{ opacity: 0, y: 16 }}\n    animate={{ opacity: 1, y: 0 }}\n    transition={{ duration: 0.56, ease: 'easeOut' }}\n    whileHover={{ y: -2, filter: 'brightness(1.05)' }}\n  />\n)\n"
-  },
-  "navigation_and_ctas": {
-    "primary_cta_label": "Jetzt bestellen",
-    "secondary_cta_label": "Speisekarte ansehen",
-    "nav_items": [
-      {"label": "Menu", "href": "/menu"},
-      {"label": "Standorte", "href": "/locations"},
-      {"label": "Über uns", "href": "/about"},
-      {"label": "Kontakt", "href": "/#contact"}
-    ],
-    "testing_ids": ["nav-menu-link", "nav-standorte-link", "nav-ueber-link", "nav-kontakt-link", "nav-cart-button"]
-  },
-  "accessibility_and_seo": {
-    "a11y": [
-      "WCAG AA contrast on all text; test red on black with at least 4.5:1",
-      "Keyboard: all menus/dialogs/sheets must trap focus and be escapable",
-      "ARIA labels for cart, search, and map embeds; alt text for all images",
-      "Reduced motion: respect prefers-reduced-motion (disable parallax)"
-    ],
-    "seo": [
-      "Semantic landmarks: header, nav, main, section, footer",
-      "H1 only on hero, structured H2s for sections",
-      "JSON-LD: Restaurant + LocalBusiness for both locations",
-      "Optimized <img> with width/height and loading=lazy"
-    ]
-  },
-  "testing_attributes": {
-    "rule": "All interactive and key informational elements must include data-testid in kebab-case describing role.",
-    "examples": [
-      "data-testid=\"menu-search-input\"",
-      "data-testid=\"rellingen-order-cta-button\"",
-      "data-testid=\"cart-line-item-qty-increase\"",
-      "data-testid=\"checkout-confirmation-text\""
-    ]
-  },
-  "images_and_media": {
-    "logo": "https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg",
-    "hero_notes": "Use one large burger image + stacked pizza/pasta thumbnails for parity. Keep images moody against black. Compress with next-gen formats.",
-    "image_urls": [
-      {
-        "category": "hero-burger",
-        "description": "Cinematic stacked cheeseburger on dark background",
-        "url": "https://images.unsplash.com/photo-1603508102983-99b101395d1a?auto=format&q=85"
-      },
-      {
-        "category": "feature-burger",
-        "description": "Black-bun burger with bacon, glossy reflection",
-        "url": "https://images.unsplash.com/photo-1582196016295-f8c8bd4b3a99?auto=format&q=85"
-      },
-      {
-        "category": "pizza",
-        "description": "Pizza being sliced on dark table, dramatic light",
-        "url": "https://images.unsplash.com/photo-1616141032335-7e6b413f93ec?auto=format&q=85"
-      },
-      {
-        "category": "pizza-oven",
-        "description": "Pizza in oven, low light, warm contrast",
-        "url": "https://images.unsplash.com/photo-1609281038144-726352964256?auto=format&q=85"
-      }
-    ],
-    "placement": [
-      {"section": "hero", "use": "hero-burger"},
-      {"section": "menu-specials", "use": "feature-burger"},
-      {"section": "menu-pizza", "use": "pizza"},
-      {"section": "about-carousel", "use": "pizza-oven"}
-    ]
-  },
-  "component_path": {
-    "button": "/app/frontend/src/components/ui/button.jsx",
-    "card": "/app/frontend/src/components/ui/card.jsx",
-    "tabs": "/app/frontend/src/components/ui/tabs.jsx",
-    "command": "/app/frontend/src/components/ui/command.jsx",
-    "badge": "/app/frontend/src/components/ui/badge.jsx",
-    "sheet": "/app/frontend/src/components/ui/sheet.jsx",
-    "navigation_menu": "/app/frontend/src/components/ui/navigation-menu.jsx",
-    "accordion": "/app/frontend/src/components/ui/accordion.jsx",
-    "carousel": "/app/frontend/src/components/ui/carousel.jsx",
-    "table": "/app/frontend/src/components/ui/table.jsx",
-    "select": "/app/frontend/src/components/ui/select.jsx",
-    "dialog": "/app/frontend/src/components/ui/dialog.jsx",
-    "toast": "/app/frontend/src/components/ui/toast.jsx",
-    "sonner": "/app/frontend/src/components/ui/sonner.jsx",
-    "calendar": "/app/frontend/src/components/ui/calendar.jsx",
-    "skeleton": "/app/frontend/src/components/ui/skeleton.jsx",
-    "progress": "/app/frontend/src/components/ui/progress.jsx",
-    "tooltip": "/app/frontend/src/components/ui/tooltip.jsx",
-    "input": "/app/frontend/src/components/ui/input.jsx",
-    "separator": "/app/frontend/src/components/ui/separator.jsx",
-    "scroll_area": "/app/frontend/src/components/ui/scroll-area.jsx"
-  },
-  "example_components_js": {
-    "Header.jsx": "import React from 'react'\nimport { Button } from './components/ui/button'\nimport { NavigationMenu } from './components/ui/navigation-menu'\n\nexport const Header = () => {\n  return (\n    <header className=\"sticky top-0 z-50 border-b border-border bg-background/70 backdrop-blur\" data-testid=\"header-nav\">\n      <div className=\"max-w-[1200px] mx-auto px-4 h-16 flex items-center justify-between\">\n        <a href=\"/\" className=\"flex items-center gap-3\" data-testid=\"brand-home-link\">\n          <img src=\"/logo.svg\" alt=\"ZOZO Burger\" className=\"h-7 w-auto\" />\n        </a>\n        <nav className=\"hidden md:flex items-center gap-6\">\n          <a href=\"/menu\" className=\"text-sm hover:text-primary\" data-testid=\"nav-menu-link\">Menu</a>\n          <a href=\"/locations\" className=\"text-sm hover:text-primary\" data-testid=\"nav-standorte-link\">Standorte</a>\n          <a href=\"/about\" className=\"text-sm hover:text-primary\" data-testid=\"nav-ueber-link\">Über uns</a>\n          <a href=\"/#contact\" className=\"text-sm hover:text-primary\" data-testid=\"nav-kontakt-link\">Kontakt</a>\n        </nav>\n        <Button className=\"bg-primary hover:bg-[#990000]\" data-testid=\"nav-cart-button\">Warenkorb</Button>\n      </div>\n    </header>\n  )\n}\n",
-    "MenuCard.jsx": "import React from 'react'\nimport { Card, CardContent } from './components/ui/card'\nimport { Button } from './components/ui/button'\nimport { Badge } from './components/ui/badge'\n\nexport const MenuCard = ({ item, onAdd }) => {\n  return (\n    <Card className=\"group overflow-hidden bg-card border border-border rounded-xl hover:border-primary/40 transition-colors\" data-testid=\"menu-item-card\">\n      <div className=\"aspect-[3/2] overflow-hidden\">\n        <img src={item.image} alt={item.name} className=\"h-full w-full object-cover group-hover:brightness-110 transition-[filter] duration-300\"/>\n      </div>\n      <CardContent className=\"p-4\">\n        <div className=\"flex items-start justify-between\">\n          <div>\n            <h3 className=\"font-serif text-lg leading-tight\">{item.name}</h3>\n            <p className=\"text-sm text-muted-foreground mt-1\">{item.description}</p>\n            <div className=\"mt-2 flex gap-2\">\n              {item.spicy && <Badge variant=\"secondary\">Scharf</Badge>}\n              {item.veg && <Badge variant=\"secondary\">Vegetarisch</Badge>}\n            </div>\n          </div>\n          <span className=\"text-foreground font-medium\">€{item.price}</span>\n        </div>\n        <Button\n          onClick={() => onAdd(item)}\n          className=\"mt-4 w-full bg-primary hover:bg-[#990000]\"\n          data-testid=\"add-to-cart-button\"\n        >Hinzufügen</Button>\n      </CardContent>\n    </Card>\n  )\n}\n",
-    "CartDrawer.jsx": "import React from 'react'\nimport { Sheet, SheetContent } from './components/ui/sheet'\nimport { Button } from './components/ui/button'\nimport { Separator } from './components/ui/separator'\nimport { ScrollArea } from './components/ui/scroll-area'\n\nexport const CartDrawer = ({ open, onOpenChange, items, onCheckout }) => {\n  const subtotal = items.reduce((s, it) => s + it.price * it.qty, 0)\n  return (\n    <Sheet open={open} onOpenChange={onOpenChange}>\n      <SheetContent side=\"right\" className=\"w-[420px] max-w-[100vw]\" data-testid=\"cart-sheet\">\n        <h3 className=\"font-serif text-xl\">Warenkorb</h3>\n        <Separator className=\"my-4\"/>\n        <ScrollArea className=\"h-[60vh]\">\n          <ul className=\"space-y-4\">\n            {items.map((it) => (\n              <li key={it.id} className=\"flex justify-between items-start\">\n                <div>\n                  <p className=\"font-medium\">{it.name} × {it.qty}</p>\n                  <p className=\"text-sm text-muted-foreground\">€{it.price.toFixed(2)}</p>\n                </div>\n                <div className=\"text-right\">€{(it.price * it.qty).toFixed(2)}</div>\n              </li>\n            ))}\n          </ul>\n        </ScrollArea>\n        <Separator className=\"my-4\"/>\n        <div className=\"flex items-center justify-between\">\n          <span className=\"text-muted-foreground\">Zwischensumme</span>\n          <span className=\"font-semibold\">€{subtotal.toFixed(2)}</span>\n        </div>\n        <Button className=\"mt-4 w-full bg-primary hover:bg-[#990000]\" onClick={onCheckout} data-testid=\"checkout-button\">Zur Kasse</Button>\n      </SheetContent>\n    </Sheet>\n  )\n}\n"
-  },
-  "libraries": {
-    "install_commands": [
-      "npm i framer-motion @studio-freight/lenis",
-      "npm i react-leaflet leaflet",
-      "npm i recharts"
-    ],
-    "map_usage_note": "For react-leaflet, include leaflet CSS in index.html. Use dark tiles (e.g., https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png). Provide <noscript> Google Maps link as fallback.",
-    "charts_usage_note": "Use Recharts for admin KPIs: tiny area/line charts with muted grid lines; avoid heavy animations."
-  },
-  "gradient_and_texture": {
-    "allowed": "Only section backgrounds. Example: bg-[radial-gradient(100%_80%_at_50%_0%,#131315,rgba(19,19,21,0))] with a noise overlay.",
-    "forbidden": "No saturated purple/pink/blue stacks; never on text blocks; do not exceed 20% viewport coverage; never on small UI elements."
-  },
-  "buttons_guideline": {
-    "style": "Luxury / Elegant",
-    "radius": "10px",
-    "shadow": "0 6px 28px rgba(176,0,32,0.35)",
-    "variants": {
-      "primary": "bg-primary text-primary-foreground hover:bg-[#990000] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-      "secondary": "border border-border text-foreground/90 hover:bg-secondary",
-      "ghost": "text-foreground/80 hover:bg-secondary/60"
-    },
-    "sizes": {"sm": "h-9 px-4", "md": "h-11 px-6", "lg": "h-12 px-8"}
-  },
-  "unified_spacing_and_shadows": {
-    "section_padding": "py-16 md:py-24",
-    "card_radius": "rounded-xl",
-    "shadow_elevations": {
-      "low": "shadow-[0_4px_16px_rgba(0,0,0,0.25)]",
-      "med": "shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
-      "glow_red": "shadow-[0_6px_28px_rgba(176,0,32,0.35)]"
+    "examples": {
+      "fade_and_lift": "<motion.div initial={{opacity:0, y:24}} whileInView={{opacity:1, y:0}} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] }} />",
+      "hover_lift": "className=\"card-tilt\" plus whileHover={{ y: -6, scale: 1.02 }}"
     }
+  },
+  "accessibility": {
+    "focus": "Use focus-visible rings; maintain 4.5:1 contrast.",
+    "touch_targets": ">= 44x44px on mobile",
+    "reduced_motion": "Respect prefers-reduced-motion; disable parallax and heavy animations",
+    "screen_reader": "Use aria-labels for buttons/icons; images require alt text"
+  },
+  "libraries_and_setup": {
+    "install": [
+      "npm i framer-motion",
+      "npm i lenis --save  # optional smooth scroll",
+      "npm i @react-three/fiber @react-three/drei three --save  # optional 3D hero asset"
+    ],
+    "usage_notes": [
+      "Prefer framer-motion for controlled entrance/hover. Limit Three.js to one lightweight scene if used.",
+      "Use ./components/ui/sonner for toasts (already present)."
+    ]
+  },
+  "example_code_snippets": {
+    "hero_section.jsx": "import React from 'react';\nimport { Button } from './components/ui/button';\nimport { motion } from 'framer-motion';\n\nexport default function Hero() {\n  return (\n    <section className=\"relative gradient-bg noise-overlay\" aria-label=\"ZOZO Burger hero\">\n      <div className=\"container-custom py-16 sm:py-20 lg:py-28\">\n        <div className=\"grid grid-cols-1 lg:grid-cols-12 gap-8 items-center\">\n          <div className=\"lg:col-span-6 space-y-5\">\n            <p className=\"eyebrow\">Rellingen • Henstedt-Ulzburg</p>\n            <h1 className=\"heading-1\" data-testid=\"hero-title\">Burgers that hit different.</h1>\n            <p className=\"text-base text-muted-foreground max-w-xl\">Crafted buns, flame-kissed patties, and cinematic flavors. Order now for delivery or pickup.</p>\n            <div className=\"flex items-center gap-3\">\n              <Button className=\"btn-primary glow-primary\" data-testid=\"hero-primary-cta-button\">Order Now</Button>\n              <Button variant=\"outline\" className=\"btn-secondary\" data-testid=\"hero-secondary-cta-button\">Explore Menu</Button>\n            </div>\n          </div>\n\n          <div className=\"lg:col-span-6\">\n            <div className=\"parallax-wrapper rounded-2xl overflow-hidden border border-white/5\">\n              <motion.img\n                initial={{ scale: 1.02, opacity: 0 }}\n                animate={{ scale: 1, opacity: 1 }}\n                transition={{ duration: 0.8, ease: [0.16,1,0.3,1] }}\n                src=\"REPLACE_WITH_HERO_BURGER_URL\"\n                alt=\"Signature burger on dark background\"\n                className=\"parallax-image w-full h-full object-cover\"\n                data-testid=\"hero-image\"\n              />\n            </div>\n          </div>\n        </div>\n      </div>\n    </section>\n  );\n}",
+    "menu_card.jsx": "import React from 'react';\nimport { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';\nimport { Button } from './components/ui/button';\n\nexport function ProductCard({ product }) {\n  return (\n    <Card className=\"glass-light border rounded-xl overflow-hidden\" data-testid=\"product-card\">\n      <div className=\"image-overlay\">\n        <img src={product.image} alt={product.name} className=\"w-full h-48 object-cover\" />\n      </div>\n      <CardHeader className=\"flex flex-row items-start justify-between p-5\">\n        <CardTitle className=\"text-lg font-semibold\">{product.name}</CardTitle>\n        <span className=\"text-foreground font-semibold\" data-testid=\"product-price\">€{product.price}</span>\n      </CardHeader>\n      <CardContent className=\"p-5 pt-0\">\n        <p className=\"text-sm text-muted-foreground line-clamp-2\">{product.description}</p>\n        <div className=\"mt-4\">\n          <Button className=\"btn-primary w-full\" data-testid=\"product-add-button\">Customize & Add</Button>\n        </div>\n      </CardContent>\n    </Card>\n  );\n}",
+    "customizer_dialog.jsx": "import React from 'react';\nimport { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog';\nimport { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs';\nimport { RadioGroup, RadioGroupItem } from './components/ui/radio-group';\nimport { Checkbox } from './components/ui/checkbox';\nimport { Slider } from './components/ui/slider';\nimport { ScrollArea } from './components/ui/scroll-area';\nimport { Button } from './components/ui/button';\n\nexport function CustomizerDialog({ open, onOpenChange }) {\n  return (\n    <Dialog open={open} onOpenChange={onOpenChange}>\n      <DialogContent className=\"glass max-w-2xl\" data-testid=\"customizer-dialog\">\n        <DialogHeader>\n          <DialogTitle>Build your Burger</DialogTitle>\n        </DialogHeader>\n        <Tabs defaultValue=\"bun\" className=\"mt-2\">\n          <TabsList>\n            <TabsTrigger value=\"bun\" data-testid=\"customizer-tab-bun\">Bun</TabsTrigger>\n            <TabsTrigger value=\"patty\">Patty</TabsTrigger>\n            <TabsTrigger value=\"extras\">Extras</TabsTrigger>\n            <TabsTrigger value=\"menu\">Menu</TabsTrigger>\n          </TabsList>\n\n          <TabsContent value=\"bun\">\n            <RadioGroup defaultValue=\"brioche\" className=\"grid grid-cols-2 gap-3 mt-4\">\n              <label className=\"flex items-center gap-2 border rounded-lg p-3\">\n                <RadioGroupItem value=\"brioche\" />\n                <span>Brioche</span>\n              </label>\n              <label className=\"flex items-center gap-2 border rounded-lg p-3\">\n                <RadioGroupItem value=\"glutenfree\" />\n                <span>Gluten Free</span>\n              </label>\n            </RadioGroup>\n          </TabsContent>\n\n          <TabsContent value=\"extras\">\n            <ScrollArea className=\"h-56 mt-4\">\n              <label className=\"flex items-center gap-2 py-2\">\n                <Checkbox />\n                <span>Double Cheese</span>\n              </label>\n              <label className=\"flex items-center gap-2 py-2\">\n                <Checkbox />\n                <span>Crispy Bacon</span>\n              </label>\n              <div className=\"mt-4\">\n                <p className=\"text-sm text-muted-foreground\">Heat</p>\n                <Slider defaultValue={[20]} max={100} step={10} />\n              </div>\n            </ScrollArea>\n          </TabsContent>\n        </Tabs>\n\n        <div className=\"sticky bottom-0 mt-4 -mx-6 px-6 py-4 glass-light border-t backdrop-blur\">\n          <div className=\"flex items-center justify-between\">\n            <span className=\"font-semibold\">€12.90</span>\n            <Button className=\"btn-primary\" data-testid=\"customizer-add-to-cart-button\">Add to cart</Button>\n          </div>\n        </div>\n      </DialogContent>\n    </Dialog>\n  );\n}",
+    "cart_sheet.jsx": "import React from 'react';\nimport { Sheet, SheetContent, SheetHeader, SheetTitle } from './components/ui/sheet';\nimport { ScrollArea } from './components/ui/scroll-area';\nimport { Button } from './components/ui/button';\n\nexport function CartSheet({ open, onOpenChange, items = [] }) {\n  return (\n    <Sheet open={open} onOpenChange={onOpenChange}>\n      <SheetContent side=\"right\" className=\"glass w-[420px] max-w-full\" data-testid=\"cart-sheet\">\n        <SheetHeader>\n          <SheetTitle>Your order</SheetTitle>\n        </SheetHeader>\n        <ScrollArea className=\"h-[60vh] mt-4\">\n          {items.length === 0 ? (\n            <p className=\"text-muted-foreground\">Your cart is empty.</p>\n          ) : (\n            <ul className=\"space-y-4\">\n              {items.map((it) => (\n                <li key={it.id} className=\"flex items-center justify-between\">\n                  <div>\n                    <p className=\"font-medium\">{it.name}</p>\n                    <p className=\"text-sm text-muted-foreground\">x{it.qty}</p>\n                  </div>\n                  <span>€{(it.price * it.qty).toFixed(2)}</span>\n                </li>\n              ))}\n            </ul>\n          )}\n        </ScrollArea>\n        <div className=\"mt-6\">\n          <Button className=\"btn-primary w-full\" data-testid=\"cart-checkout-button\">Checkout</Button>\n        </div>\n      </SheetContent>\n    </Sheet>\n  );\n}",
+    "toast_usage.js": "import { Toaster, toast } from './components/ui/sonner';\n\nexport function AppToaster() {\n  return <Toaster richColors position=\"top-right\" />;\n}\n\nexport function notifyAdded(name) {\n  toast.success(`${name} added to cart`, { duration: 1800 });\n}"
+  },
+  "testing_ids_policy": {
+    "rule": "All interactive and key informational elements MUST include data-testid using kebab-case describing the element's role.",
+    "examples": [
+      "data-testid=\"nav-cart-button\"",
+      "data-testid=\"menu-category-tabs\"",
+      "data-testid=\"product-add-button\"",
+      "data-testid=\"checkout-submit-button\"",
+      "data-testid=\"error-message\""
+    ]
+  },
+  "image_urls": [
+    {
+      "category": "hero",
+      "use": "Primary hero burger image (right column parallax)",
+      "url": "https://images.unsplash.com/photo-1634737119182-4d09e1305ba7?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Signature burger with knife on dark background"
+    },
+    {
+      "category": "burger-feature",
+      "use": "Category tile or promo banner",
+      "url": "https://images.unsplash.com/photo-1603508102983-99b101395d1a?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Burger close-up on dark surface"
+    },
+    {
+      "category": "pizza-category",
+      "use": "Pizza category tile",
+      "url": "https://images.unsplash.com/photo-1612040906977-1110aa1bdb6f?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Black dough pizza on black plate"
+    },
+    {
+      "category": "pizza-alt",
+      "use": "Secondary pizza banner",
+      "url": "https://images.unsplash.com/photo-1624900183034-338974e68033?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Rustic pizza with greens on dark"
+    },
+    {
+      "category": "pasta-category",
+      "use": "Pasta category tile",
+      "url": "https://images.unsplash.com/photo-1532939624-3af1308db9a5?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Pasta twirled on fork over dark background"
+    }
+  ],
+  "component_path": {
+    "button": "./components/ui/button",
+    "card": "./components/ui/card",
+    "tabs": "./components/ui/tabs",
+    "badge": "./components/ui/badge",
+    "dialog": "./components/ui/dialog",
+    "radio_group": "./components/ui/radio-group",
+    "slider": "./components/ui/slider",
+    "select": "./components/ui/select",
+    "checkbox": "./components/ui/checkbox",
+    "scroll_area": "./components/ui/scroll-area",
+    "sheet": "./components/ui/sheet",
+    "form": "./components/ui/form",
+    "input": "./components/ui/input",
+    "textarea": "./components/ui/textarea",
+    "calendar": "./components/ui/calendar",
+    "navigation_menu": "./components/ui/navigation-menu",
+    "sonner": "./components/ui/sonner"
   },
   "instructions_to_main_agent": [
-    "1) Update /app/frontend/src/index.css tokens with css_design_tokens.root_variables (keep @layer).",
-    "2) Add Google Fonts link tags for Playfair Display and Chivo to index.html and set tailwind font-family mapping (font-serif to Playfair, font-sans to Chivo).",
-    "3) Build Header.jsx, Hero.jsx, MenuCard.jsx, CartDrawer.jsx using provided scaffolds and shadcn components only (no native selects/alerts).",
-    "4) Implement hero layout: editorial left column + ParallaxImage stack right. Respect gradient_and_texture rules.",
-    "5) Menu page: Tabs + Command search + responsive bento grid. Ensure every interactive item has data-testid.",
-    "6) Locations page: two cards with react-leaflet maps and clear CTAs per location.",
-    "7) About page: Carousel + Accordion storytelling.",
-    "8) Order flow: use Sheet as cart drawer and Dialog for checkout; use Sonner for success/error messages.",
-    "9) Admin: Table + Tabs + Select + Calendar filters; Sonner for operations.",
-    "10) Motion: add framer-motion entrance and hover animations. Do not use transition: all; specify properties.",
-    "11) Accessibility: focus-visible states, aria labels, reduced motion fallback (disable parallax).",
-    "12) Performance: compress images, lazy-load non-critical sections, prefetch menu images on hover.",
-    "13) SEO: semantic headings, JSON-LD for each location, title/meta per page.",
-    "14) Enforce gradient restriction + dark premium palette."
-  ],
-  "general_ui_ux_design_guidelines_raw": "- You must **not** apply universal transition. Eg: `transition: all`. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms\n    - You must **not** center align the app container, ie do not add `.App { text-align: center; }` in the css file. This disrupts the human natural reading flow of text\n   - NEVER: use AI assistant Emoji characters like`🤖🧠💭💡🔮🎯📚🎭🎬🎪🎉🎊🎁🎀🎂🍰🎈🎨🎰💰💵💳🏦💎🪙💸🤑📊📈📉💹🔢🏆🥇 etc for icons. Always use **FontAwesome cdn** or **lucid-react** library already installed in the package.json\n\n **GRADIENT RESTRICTION RULE**\nNEVER use dark/saturated gradient combos (e.g., purple/pink) on any UI element.  Prohibited gradients: blue-500 to purple 600, purple 500 to pink-500, green-500 to blue-500, red to pink etc\nNEVER use dark gradients for logo, testimonial, footer etc\nNEVER let gradients cover more than 20% of the viewport.\nNEVER apply gradients to text-heavy content or reading areas.\nNEVER use gradients on small UI elements (<100px width).\nNEVER stack multiple gradient layers in the same viewport.\n\n**ENFORCEMENT RULE:**\n    • Id gradient area exceeds 20% of viewport OR affects readability, **THEN** use solid colors\n\n**How and where to use:**\n   • Section backgrounds (not content backgrounds)\n   • Hero section header content. Eg: dark to light to dark color\n   • Decorative overlays and accent elements only\n   • Hero section with 2-3 mild color\n   • Gradients creation can be done for any angle say horizontal, vertical or diagonal\n\n- For AI chat, voice application, **do not use purple color. Use color like light green, ocean blue, peach orange etc**\n\n</Font Guidelines>\n\n- Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead. \n   \n- Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.\n\n- Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.\n   \n- Before generating UI, infer the visual style from the problem statement (palette, contrast, mood, motion) and immediately instantiate it by setting global design tokens (primary, secondary/accent, background, foreground, ring, state colors), rather than relying on any library defaults. Don't make the background dark as a default step, always understand problem first and define colors accordingly\n    Eg: - if it implies playful/energetic, choose a colorful scheme\n           - if it implies monochrome/minimal, choose a black–white/neutral scheme\n\n**Component Reuse:**\n\t- Prioritize using pre-existing components from src/components/ui when applicable\n\t- Create new components that match the style and conventions of existing components when needed\n\t- Examine existing components to understand the project's component patterns before creating new ones\n\n**IMPORTANT**: Do not use HTML based component like dropdown, calendar, toast etc. You **MUST** always use `/app/frontend/src/components/ui/ ` only as a primary components as these are modern and stylish component\n\n**Best Practices:**\n\t- Use Shadcn/UI as the primary component library for consistency and accessibility\n\t- Import path: ./components/[component-name]\n\n**Export Conventions:**\n\t- Components MUST use named exports (export const ComponentName = ...)\n\t- Pages MUST use default exports (export default function PageName() {...})\n\n**Toasts:**\n  - Use `sonner` for toasts\"\n  - Sonner component are located in `/app/src/components/ui/sonner.tsx`\n\nUse 2–4 color gradients, subtle textures/noise overlays, or CSS-based noise to avoid flat visuals."
+    "Keep the dark premium palette from index.css. Do not globally center the app container. Use container-custom for widths.",
+    "Use shadcn components only for interactive primitives (no raw HTML dropdowns, menus, toasts, calendars).",
+    "Adhere to gradient restriction: use only subtle hero/section background washes (<=20% viewport).",
+    "Every actionable element must receive data-testid reflecting its role.",
+    "Adopt the provided grid/layouts and spacing. Mobile-first first, then enhance on md/lg.",
+    "Animate entrances with framer-motion and existing App.css animation utilities. Avoid transition: all; animate specific properties only.",
+    "Use .glass and .glass-light surfaces for hero panels, cards, nav, drawers. Combine with .noise-overlay for richness.",
+    "Cart lives in a right Sheet. Checkout is a 2/3 + 1/3 grid on desktop.",
+    "Use Calendar in checkout when scheduling delivery/pickup.",
+    "Include <AppToaster/> at App root and use toast.success/info/error for feedback.",
+    "Images: use the provided URLs for hero and category tiles. Keep alt text descriptive."
+  ]
 }
+
+
+<General UI UX Design Guidelines>  
+    - You must **not** apply universal transition. Eg: `transition: all`. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms
+    - You must **not** center align the app container, ie do not add `.App { text-align: center; }` in the css file. This disrupts the human natural reading flow of text
+   - NEVER: use AI assistant Emoji characters like`🤖🧠💭💡🔮🎯📚🎭🎬🎪🎉🎊🎁🎀🎂🍰🎈🎨🎰💰💵💳🏦💎🪙💸🤑📊📈📉💹🔢🏆🥇 etc for icons. Always use **FontAwesome cdn** or **lucid-react** library already installed in the package.json
+
+ **GRADIENT RESTRICTION RULE**
+NEVER use dark/saturated gradient combos (e.g., purple/pink) on any UI element.  Prohibited gradients: blue-500 to purple 600, purple 500 to pink-500, green-500 to blue-500, red to pink etc
+NEVER use dark gradients for logo, testimonial, footer etc
+NEVER let gradients cover more than 20% of the viewport.
+NEVER apply gradients to text-heavy content or reading areas.
+NEVER use gradients on small UI elements (<100px width).
+NEVER stack multiple gradient layers in the same viewport.
+
+**ENFORCEMENT RULE:**
+    • Id gradient area exceeds 20% of viewport OR affects readability, **THEN** use solid colors
+
+**How and where to use:**
+   • Section backgrounds (not content backgrounds)
+   • Hero section header content. Eg: dark to light to dark color
+   • Decorative overlays and accent elements only
+   • Hero section with 2-3 mild color
+   • Gradients creation can be done for any angle say horizontal, vertical or diagonal
+
+- For AI chat, voice application, **do not use purple color. Use color like light green, ocean blue, peach orange etc**
+
+</Font Guidelines>
+
+- Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead. 
+   
+- Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.
+
+- Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.
+   
+- Before generating UI, infer the visual style from the problem statement (palette, contrast, mood, motion) and immediately instantiate it by setting global design tokens (primary, secondary/accent, background, foreground, ring, state colors), rather than relying on any library defaults. Don't make the background dark as a default step, always understand problem first and define colors accordingly
+    Eg: - if it implies playful/energetic, choose a colorful scheme
+           - if it implies monochrome/minimal, choose a black–white/neutral scheme
+
+**Component Reuse:**
+	- Prioritize using pre-existing components from src/components/ui when applicable
+	- Create new components that match the style and conventions of existing components when needed
+	- Examine existing components to understand the project's component patterns before creating new ones
+
+**IMPORTANT**: Do not use HTML based component like dropdown, calendar, toast etc. You **MUST** always use `/app/frontend/src/components/ui/ ` only as a primary components as these are modern and stylish component
+
+**Best Practices:**
+	- Use Shadcn/UI as the primary component library for consistency and accessibility
+	- Import path: ./components/[component-name]
+
+**Export Conventions:**
+	- Components MUST use named exports (export const ComponentName = ...)
+	- Pages MUST use default exports (export default function PageName() {...})
+
+**Toasts:**
+  - Use `sonner` for toasts" 
+  - Sonner component are located in `/app/src/components/ui/sonner.tsx`
+
+Use 2–4 color gradients, subtle textures/noise overlays, or CSS-based noise to avoid flat visuals.
+</General UI UX Design Guidelines>
