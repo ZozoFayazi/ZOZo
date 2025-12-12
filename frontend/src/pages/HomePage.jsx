@@ -335,6 +335,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         </div>
       </section>
     </div>
+    </>
   );
 }
 
