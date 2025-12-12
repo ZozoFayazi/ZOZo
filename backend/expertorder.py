@@ -112,7 +112,6 @@ class ExpertOrderClient:
                     return [remove_empty_strings(item) for item in d]
                 return d
             order_dict = remove_empty_strings(order_dict)
-            print(f"[DEBUG] Sending order JSON: {order_dict}")
             
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.put(
