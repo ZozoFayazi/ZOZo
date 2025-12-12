@@ -154,27 +154,30 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
           </div>
 
           {/* Removals */}
-          <div>
-            <h3 className="font-semibold mb-3">Zutaten entfernen</h3>
-            <div className="flex flex-wrap gap-2">
-              {COMMON_REMOVALS.map((removal) => {
-                const isSelected = selectedRemovals.includes(removal);
-                return (
-                  <button
-                    key={removal}
-                    onClick={() => toggleRemoval(removal)}
-                    className={`px-3 py-1.5 rounded-full text-sm transition-all ${
-                      isSelected
-                        ? 'bg-destructive/20 text-destructive border-2 border-destructive'
-                        : 'bg-secondary text-foreground border-2 border-transparent hover:border-border'
-                    }`}
-                  >
-                    {isSelected && '− '}{removal}
-                  </button>
-                );
-              })}
+          {removableIngredients.length > 0 && (
+            <div>
+              <h3 className="font-semibold mb-3">Zutaten entfernen</h3>
+              <div className="flex flex-wrap gap-2">
+                {removableIngredients.map((removal) => {
+                  const isSelected = selectedRemovals.includes(removal);
+                  return (
+                    <button
+                      key={removal}
+                      onClick={() => toggleRemoval(removal)}
+                      className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                        isSelected
+                          ? 'bg-destructive/20 text-destructive border-2 border-destructive'
+                          : 'bg-secondary text-foreground border-2 border-transparent hover:border-border'
+                      }`}
+                      data-testid={`remove-${removal.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      {isSelected && '− '}Ohne {removal}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Special Instructions */}
           <div>
