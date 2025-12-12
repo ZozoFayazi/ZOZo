@@ -37,24 +37,24 @@ def seed_admin_users():
     admin_users = [
         {
             "_id": ObjectId(),
-            "email": "owner@zozoburger.de",
-            "password_hash": get_password_hash("owner123"),
+            "email": "owner@zozo.com",
+            "password_hash": get_password_hash("owner_password"),
             "location_id": None,  # Owner has access to all locations
             "role": "owner",
             "active": True
         },
         {
             "_id": ObjectId(),
-            "email": "rellingen@zozoburger.de",
-            "password_hash": get_password_hash("rellingen123"),
+            "email": "rellingen@zozo.com",
+            "password_hash": get_password_hash("manager_password"),
             "location_id": str(rellingen['_id']),
             "role": "manager",
             "active": True
         },
         {
             "_id": ObjectId(),
-            "email": "henstedt@zozoburger.de",
-            "password_hash": get_password_hash("henstedt123"),
+            "email": "henstedt@zozo.com",
+            "password_hash": get_password_hash("manager_password"),
             "location_id": str(henstedt['_id']),
             "role": "manager",
             "active": True
@@ -63,17 +63,17 @@ def seed_admin_users():
     
     result = db.admin_users.insert_many(admin_users)
     
-    print("\\n✅ Admin users seeded successfully!")
-    print("\\n📧 Login credentials:")
-    print("\\n1. Owner (all locations):")
-    print("   Email: owner@zozoburger.de")
-    print("   Password: owner123")
-    print("\\n2. Rellingen Manager:")
-    print("   Email: rellingen@zozoburger.de")
-    print("   Password: rellingen123")
-    print("\\n3. Henstedt-Ulzburg Manager:")
-    print("   Email: henstedt@zozoburger.de")
-    print("   Password: henstedt123")
+    print("\n✅ Admin users seeded successfully!")
+    print("\n📧 Login credentials:")
+    print("\n1. Owner (all locations):")
+    print("   Email: owner@zozo.com")
+    print("   Password: owner_password")
+    print("\n2. Rellingen Manager:")
+    print("   Email: rellingen@zozo.com")
+    print("   Password: manager_password")
+    print("\n3. Henstedt-Ulzburg Manager:")
+    print("   Email: henstedt@zozo.com")
+    print("   Password: manager_password")
     print()
 
 if __name__ == "__main__":
