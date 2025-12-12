@@ -410,6 +410,43 @@ async def get_dashboard_stats(
         "location_id": location_id
     }
 
+# Delivery Check Endpoint (Public)
+@api_router.post("/check-delivery")
+async def check_delivery(request: DeliveryCheckRequest):
+    """Check if delivery is available for a postal code"""
+    postal_code = request.postal_code
+    
+    # Find all locations that deliver to this postal code
+    locations = await db.locations.find({"active": True}).to_list(length=100)
+    
+    available_locations = []
+    for location in locations:
+        delivery_zone = location.get('delivery_zone', {})
+        postal_codes = delivery_zone.get('postal_codes', [])
+        
+        if postal_code in postal_codes:
+            available_locations.append({
+                "location": serialize_doc(location),
+                "delivery_fee": delivery_zone.get('delivery_fee', 2.50),
+                "min_order_value": delivery_zone.get('min_order_value', 0.0),
+                "free_delivery_threshold": delivery_zone.get('free_delivery_threshold', 15.0)
+            })
+    
+    if available_locations:
+        return {
+            "can_deliver": True,
+            "postal_code": postal_code,
+            "available_locations": available_locations,
+            "message": f"Lieferung nach {postal_code} verfügbar!"
+        }
+    else:
+        return {
+            "can_deliver": False,
+            "postal_code": postal_code,
+            "available_locations": [],
+            "message": f"Leider liefern wir nicht nach {postal_code}. Bitte prüfe deine Postleitzahl oder wähle einen anderen Standort."
+        }
+
 # Location Settings Management
 @api_router.get("/admin/location-settings")
 async def get_location_settings(current_user: dict = Depends(get_current_user)):
