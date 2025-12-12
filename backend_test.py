@@ -420,6 +420,72 @@ class ZOZOBurgerAPITester:
             return True
         return success
 
+    def test_get_deals(self):
+        """Test getting all deals (admin)"""
+        if not self.token:
+            print("   ⚠️  Skipping - No auth token available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Deals (Admin)",
+            "GET",
+            "admin/deals",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, list):
+                print(f"   🎁 Found {len(response)} deals")
+                return True
+        return success
+
+    def test_create_deal(self):
+        """Test creating a new deal"""
+        if not self.token:
+            print("   ⚠️  Skipping - No auth token available")
+            return False
+        
+        deal_data = {
+            "title": "Test Deal - 20% Off",
+            "description": "Test promotion for automated testing",
+            "discount_type": "percentage",
+            "discount_value": 20.0,
+            "min_order_value": 15.0,
+            "location_ids": [],
+            "image_url": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"
+        }
+        
+        success, response = self.run_test(
+            "Create Deal",
+            "POST",
+            "admin/deals",
+            200,
+            data=deal_data
+        )
+        
+        if success and response:
+            deal_id = response.get('id')
+            title = response.get('title')
+            print(f"   🎁 Deal created: {title} (ID: {deal_id})")
+            return True
+        return success
+
+    def test_get_order_history(self):
+        """Test getting order history for quick reorder"""
+        # Use the test customer phone from the order we created
+        success, response = self.run_test(
+            "Get Order History",
+            "GET",
+            "orders/history?customer_phone=%2B49%20123%20456789",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, list):
+                print(f"   📜 Found {len(response)} orders in history")
+                return True
+        return success
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("=" * 70)
