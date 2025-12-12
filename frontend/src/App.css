@@ -1,9 +1,10 @@
-/* Custom animations and utilities */
+/* Modern WOW-Factor Design for ZOZO Burger */
 
-@keyframes fadeIn {
+/* Advanced Animations */
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -11,119 +12,275 @@
   }
 }
 
-@keyframes slideIn {
+@keyframes slideInLeft {
   from {
-    transform: translateX(-20px);
     opacity: 0;
+    transform: translateX(-40px);
   }
   to {
-    transform: translateX(0);
     opacity: 1;
+    transform: translateX(0);
   }
 }
 
 @keyframes scaleIn {
   from {
-    transform: scale(0.95);
     opacity: 0;
+    transform: scale(0.9);
   }
   to {
-    transform: scale(1);
     opacity: 1;
+    transform: scale(1);
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 
-.animate-slide-in {
-  animation: slideIn 0.4s ease-out forwards;
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(176, 0, 32, 0.3), 0 0 40px rgba(176, 0, 32, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(176, 0, 32, 0.5), 0 0 60px rgba(176, 0, 32, 0.2);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.3s ease-out forwards;
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Parallax effect */
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animation-delay-600 {
+  animation-delay: 600ms;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(18, 18, 20, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient Effects */
+.gradient-text {
+  background: linear-gradient(135deg, #F5F5F5 0%, #B00020 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  position: relative;
+  background: hsl(var(--card));
+  border-radius: 0.75rem;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(176, 0, 32, 0.5), rgba(176, 0, 32, 0.1));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Card Hover Effects */
+.card-tilt {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.card-tilt:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(176, 0, 32, 0.3);
+}
+
+/* Parallax Image Effect */
+.parallax-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
 .parallax-image {
-  transition: transform 0.3s ease-out;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
-.parallax-image:hover {
-  transform: translateY(-6px);
+.parallax-wrapper:hover .parallax-image {
+  transform: scale(1.08) translateY(-4px);
 }
 
-/* Premium button styles */
+/* Button Styles */
 .btn-primary {
-  @apply bg-primary text-primary-foreground rounded-[10px] px-6 py-3 font-medium;
-  @apply transition-all duration-200 ease-out;
-  @apply hover:bg-[#990000] hover:shadow-[0_6px_28px_rgba(176,0,32,0.35)];
+  @apply bg-primary text-primary-foreground rounded-xl px-8 py-4 font-semibold text-base;
+  @apply transition-all duration-300 ease-out;
+  @apply hover:bg-[#990000] hover:shadow-[0_8px_32px_rgba(176,0,32,0.4)];
+  @apply hover:-translate-y-1;
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  @apply active:translate-y-0;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
 }
 
 .btn-secondary {
-  @apply border border-border bg-transparent text-foreground rounded-[10px] px-6 py-3 font-medium;
-  @apply transition-all duration-200 ease-out;
-  @apply hover:bg-secondary hover:border-primary/40;
+  @apply border-2 border-border bg-transparent text-foreground rounded-xl px-8 py-4 font-semibold text-base;
+  @apply transition-all duration-300 ease-out;
+  @apply hover:bg-secondary/50 hover:border-primary/50 hover:shadow-[0_4px_20px_rgba(176,0,32,0.2)];
+  @apply hover:-translate-y-0.5;
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
 }
 
-/* Card hover effects */
-.card-hover {
-  @apply transition-all duration-300 ease-out;
-  @apply hover:border-primary/40 hover:shadow-lg;
+/* Glow Effect for CTAs */
+.glow-primary {
+  animation: glow 2s ease-in-out infinite;
 }
 
-/* Image overlay effect */
+/* Image Overlay Effects */
 .image-overlay {
-  @apply relative overflow-hidden;
+  position: relative;
+  overflow: hidden;
 }
 
-.image-overlay::before {
+.image-overlay::after {
   content: '';
-  @apply absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10;
-  @apply opacity-0 transition-opacity duration-300;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.image-overlay:hover::before {
-  @apply opacity-100;
+.image-overlay:hover::after {
+  opacity: 1;
 }
 
-/* Noise texture overlay for hero sections */
+/* Noise Texture Overlay */
 .noise-overlay {
   position: relative;
 }
 
-.noise-overlay::after {
+.noise-overlay::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
   pointer-events: none;
   mix-blend-mode: overlay;
 }
 
-/* Smooth scroll */
+/* Gradient Background */
+.gradient-bg {
+  background: radial-gradient(circle at 20% 50%, rgba(176, 0, 32, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(176, 0, 32, 0.1) 0%, transparent 50%),
+              hsl(var(--background));
+}
+
+/* Smooth Scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Typography utilities */
+/* Typography Utilities */
 .heading-1 {
-  @apply font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1];
+  @apply font-serif text-5xl sm:text-6xl lg:text-7xl tracking-tight leading-[1.05] font-bold;
 }
 
 .heading-2 {
-  @apply font-serif text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-[1.15];
+  @apply font-serif text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-[1.15] font-semibold;
+}
+
+.heading-3 {
+  @apply font-serif text-2xl sm:text-3xl tracking-tight leading-[1.2] font-semibold;
 }
 
 .eyebrow {
-  @apply font-sans text-xs tracking-[0.22em] uppercase text-muted-foreground;
+  @apply font-sans text-xs tracking-[0.25em] uppercase text-muted-foreground font-medium;
 }
 
-/* Grid layouts */
+/* Container */
 .container-custom {
   @apply max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full;
+  border: 3px solid hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground;
+}
+
+/* Loading Shimmer */
+.shimmer {
+  background: linear-gradient(90deg, 
+    hsl(var(--muted)) 0%, 
+    hsl(var(--muted-foreground) / 0.2) 50%, 
+    hsl(var(--muted)) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Focus Visible Styles */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
 }
