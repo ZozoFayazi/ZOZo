@@ -248,8 +248,113 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
               placeholder="z.B. extra scharf, gut durchgebraten..."
               rows={3}
               className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+              data-testid="special-instructions-input"
             />
           </div>
+
+          {/* Menu Upgrade Section */}
+          {canUpgradeToMenu && (
+            <div className="space-y-4 p-4 bg-accent rounded-xl border border-border">
+              <h3 className="font-semibold text-lg">🍔 Als Menü upgraden?</h3>
+              
+              <div className="grid grid-cols-2 gap-3">
+                {/* Als Burger */}
+                <button
+                  onClick={() => setUpgradeToMenu(false)}
+                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                    !upgradeToMenu
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-primary/40'
+                  }`}
+                  data-testid="option-burger-only"
+                >
+                  <div>
+                    <h4 className="font-medium mb-1">Nur Burger</h4>
+                    <p className="text-sm text-muted-foreground">€{basePrice.toFixed(2)}</p>
+                  </div>
+                </button>
+
+                {/* Als Menü */}
+                <button
+                  onClick={() => setUpgradeToMenu(true)}
+                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                    upgradeToMenu
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-primary/40'
+                  }`}
+                  data-testid="option-as-menu"
+                >
+                  <div>
+                    <h4 className="font-medium mb-1">Als Menü</h4>
+                    <p className="text-sm text-muted-foreground">€{menuUpgradePrice.toFixed(2)}</p>
+                    <p className="text-xs text-primary font-semibold mt-1">
+                      +€{(menuUpgradePrice - basePrice).toFixed(2)}
+                    </p>
+                  </div>
+                </button>
+              </div>
+
+              {/* Menu Options: Beilage & Getränk */}
+              {upgradeToMenu && (
+                <div className="space-y-4 mt-4 pt-4 border-t border-border">
+                  {/* Beilage Selection */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Wähle deine Beilage:</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {sides.map((side) => (
+                        <button
+                          key={side.id}
+                          onClick={() => setSelectedSide(side.id)}
+                          className={`p-3 rounded-lg border-2 transition-all text-left ${
+                            selectedSide === side.id
+                              ? 'border-primary bg-primary/20'
+                              : 'border-border hover:border-primary/40'
+                          }`}
+                          data-testid={`side-${side.id}`}
+                        >
+                          <div className="flex items-center gap-2">
+                            {selectedSide === side.id && <Check className="h-4 w-4 text-primary" />}
+                            <span className="text-sm">{side.name}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Getränk Selection */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Wähle dein Getränk:</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {drinks.map((drink) => (
+                        <button
+                          key={drink.id}
+                          onClick={() => setSelectedDrink(drink.id)}
+                          className={`p-3 rounded-lg border-2 transition-all text-left ${
+                            selectedDrink === drink.id
+                              ? 'border-primary bg-primary/20'
+                              : 'border-border hover:border-primary/40'
+                          }`}
+                          data-testid={`drink-${drink.id}`}
+                        >
+                          <div className="flex items-center gap-2">
+                            {selectedDrink === drink.id && <Check className="h-4 w-4 text-primary" />}
+                            <span className="text-sm">{drink.name}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Validation Message */}
+                  {(!selectedSide || !selectedDrink) && (
+                    <p className="text-sm text-destructive">
+                      Bitte wähle eine Beilage und ein Getränk
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Quantity and Total */}
           <div className="flex items-center justify-between p-4 bg-background rounded-lg border border-border">
