@@ -104,7 +104,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
       if (side) {
         allExtras.push({
           name: `Beilage: ${side.name}`,
-          price: 0
+          price: side.price // 0 for Pommes, 0.99 for premium sides
         });
       }
       if (drink) {
