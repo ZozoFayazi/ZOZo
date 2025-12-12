@@ -357,6 +357,30 @@ async def create_order(order: OrderCreate):
     
     return serialize_doc(order_doc)
 
+@api_router.get("/order-status/{order_number}")
+async def get_order_status(order_number: str):
+    """Public endpoint: Get order status by order number"""
+    order = await db.orders.find_one({"order_number": order_number})
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Bestellung nicht gefunden")
+    
+    # Get location info
+    location = await db.locations.find_one({"_id": ObjectId(order['location_id'])})
+    location_name = location.get('name', 'Unknown') if location else 'Unknown'
+    
+    # Return public order info (hide sensitive data)
+    return {
+        "order_number": order['order_number'],
+        "status": order['status'],
+        "is_pickup": order.get('is_pickup', False),
+        "estimated_time": order.get('estimated_time', 30),
+        "created_at": order['created_at'].isoformat() if isinstance(order['created_at'], datetime) else order['created_at'],
+        "location_name": location_name,
+        "total": order['total'],
+        "status_history": order.get('status_history', [])
+    }
+
 # ExpertOrder Integration
 @api_router.post("/admin/orders/{order_id}/send-to-expertorder")
 async def send_order_to_expertorder(
