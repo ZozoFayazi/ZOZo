@@ -138,6 +138,34 @@ async def get_locations():
     locations = await cursor.to_list(length=100)
     return serialize_doc(locations)
 
+# Delivery Zone Check
+@api_router.get("/check-delivery-zone")
+async def check_delivery_zone(postal_code: str = Query(..., description="Customer postal code")):
+    """Check if postal code is in any delivery zone and return location + fees"""
+    # Find location that serves this postal code
+    location = await db.locations.find_one({
+        "active": True,
+        "delivery_zone.postal_codes": postal_code
+    })
+    
+    if not location:
+        return {
+            "available": False,
+            "message": f"Leider beliefern wir die Postleitzahl {postal_code} aktuell nicht."
+        }
+    
+    delivery_zone = location.get('delivery_zone', {})
+    
+    return {
+        "available": True,
+        "location": serialize_doc(location),
+        "postal_code": postal_code,
+        "min_order_value": delivery_zone.get('min_order_value', 0),
+        "delivery_fee": delivery_zone.get('delivery_fee', 0),
+        "free_delivery_threshold": delivery_zone.get('free_delivery_threshold', 0),
+        "message": f"Lieferung nach {postal_code} möglich!"
+    }
+
 # Menu
 @api_router.get("/menu")
 async def get_menu(location_id: str = Query(...)):
