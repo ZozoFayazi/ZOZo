@@ -112,9 +112,9 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
     addToCart(cartItem);
     toast.success(`${item.name} zum Warenkorb hinzugefügt`);
     
-    // Show category upsell dialog (not for burger category as they have menu upgrade)
+    // Show category upsell for specific categories only
     const category = menu.find(cat => cat.items.some(i => i.id === item.id));
-    if (category && !category.slug.includes('burger') && !category.slug.includes('getraenke') && !category.slug.includes('dip') && !category.slug.includes('dessert')) {
+    if (category && shouldShowUpsell(category.slug)) {
       setUpsellCategory(category.name);
       setUpsellDialogOpen(true);
     }
