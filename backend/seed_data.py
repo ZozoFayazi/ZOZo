@@ -258,11 +258,14 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # SALADS Category
+    # SALADS Category - COMPLETE (6 items)
     salads = [
-        {"name": "Gemischter Salat", "desc": "Salat, Tomate, Gurke, Mais, Dressing", "price": 6.99, "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"},
-        {"name": "Caesar Salad", "desc": "Römersalat, Hähnchen, Parmesan, Croutons, Caesar Dressing", "price": 9.49, "img": "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800"},
-        {"name": "Greek Salad", "desc": "Salat, Tomate, Gurke, Oliven, Hirtenkäse, Dressing", "price": 8.99, "img": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800"},
+        {"name": "Mix Salad", "desc": "Salat Mix, Cocktail-Tomaten, Karotten, Mais. Dressingsauswahl: Hausdressing, French oder Joghurt", "price": 7.99, "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"},
+        {"name": "Caesar Salad", "desc": "Salat Mix, Cocktail-Tomaten, Karotten, Mais, Grana Padano, Croutons", "price": 9.19, "img": "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800"},
+        {"name": "Italy Salad", "desc": "Salat Mix, Cocktail-Tomaten, Karotten, Mais, Rucola, Grana Padano, Serrano Schinken", "price": 11.79, "img": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800"},
+        {"name": "Greek Salad", "desc": "Salat Mix, Cocktail-Tomaten, Karotten, Mais, Oliven, Peperoni, Hirtenkäse", "price": 11.79, "img": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800"},
+        {"name": "Chicken Salad", "desc": "Salat Mix, Cocktail-Tomaten, Karotten, Mais, Hähnchenstreifen", "price": 11.79, "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"},
+        {"name": "Pure Burger Salad", "desc": "Salat Mix, Cocktail-Tomaten, Karotten, Mais, Pure Beef Burger", "price": 11.79, "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"},
     ]
     
     for item in salads:
