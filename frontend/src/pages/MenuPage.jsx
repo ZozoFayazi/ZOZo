@@ -366,30 +366,25 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
           <ProductCustomizer
             item={customizingItem}
             size={customizingSize}
-            onAddToCart={addToCart}
+            onAddToCart={(cartItem) => {
+              addToCart(cartItem);
+              
+              // Close customizer
+              setCustomizerOpen(false);
+              setCustomizingItem(null);
+              setCustomizingSize(null);
+              
+              // Show category upsell after adding item
+              const category = menu.find(cat => cat.items.some(i => i.id === customizingItem.id));
+              if (category && !category.slug.includes('getraenke') && !category.slug.includes('dip') && !category.slug.includes('dessert')) {
+                setUpsellCategory(category.name);
+                setUpsellDialogOpen(true);
+              }
+            }}
             onClose={() => {
               setCustomizerOpen(false);
               setCustomizingItem(null);
               setCustomizingSize(null);
-            }}
-          />
-        )}
-
-        {/* Menu Upgrade Dialog */}
-        {menuUpgradeOpen && upgradingItem && (
-          <MenuUpgradeDialog
-            item={upgradingItem}
-            onClose={() => {
-              setMenuUpgradeOpen(false);
-              setUpgradingItem(null);
-            }}
-            onAddToCart={(cartItem) => {
-              addToCart(cartItem);
-              toast.success(`${cartItem.name} zum Warenkorb hinzugefügt`);
-              
-              // Show upsell after menu upgrade too
-              setUpsellCategory('Burger');
-              setUpsellDialogOpen(true);
             }}
           />
         )}
