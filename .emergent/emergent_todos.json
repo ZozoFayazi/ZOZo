@@ -1,11 +1,11 @@
 [
   {
     "content": "Phase 1: POC - Create database models and seed data with menu from PDF",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 1: POC - Build minimal backend APIs for multi-location ordering",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 1: POC - Create minimal frontend for testing order flow",
