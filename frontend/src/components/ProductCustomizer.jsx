@@ -20,16 +20,45 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [selectedRemovals, setSelectedRemovals] = useState([]);
   const [specialInstructions, setSpecialInstructions] = useState('');
+  
+  // Menu upgrade state
+  const [upgradeToMenu, setUpgradeToMenu] = useState(false);
+  const [selectedSide, setSelectedSide] = useState('');
+  const [selectedDrink, setSelectedDrink] = useState('');
 
   // Get product-specific removable ingredients and extras
   const removableIngredients = item.removable_ingredients || [];
   const availableExtras = parseExtras(item.available_extras || []);
+
+  // Menu upgrade options
+  const sides = [
+    { id: 'fries', name: 'Pommes' },
+    { id: 'sweet-potato', name: 'Sweet Potato Fries' },
+    { id: 'twister', name: 'Twister Fries' },
+    { id: 'country', name: 'Country Potatoes' },
+  ];
+
+  const drinks = [
+    { id: 'cola', name: 'Coca Cola 0,5l' },
+    { id: 'cola-zero', name: 'Coca Cola Zero 0,5l' },
+    { id: 'fanta', name: 'Fanta 0,5l' },
+    { id: 'mezzo', name: 'Mezzo Mix 0,5l' },
+    { id: 'sprite', name: 'Sprite 0,5l' },
+    { id: 'water', name: 'ViO Still 0,5l' },
+  ];
 
   const basePrice = size === 'medium' && item.price_medium 
     ? item.price_medium 
     : size === 'large' && item.price_large 
     ? item.price_large 
     : item.price_normal || 0;
+  
+  // Menu upgrade price
+  const menuUpgradePrice = size === 'large' && item.menu_upgrade_price_large
+    ? item.menu_upgrade_price_large
+    : item.menu_upgrade_price || item.menu_upgrade_price_medium || 0;
+  
+  const canUpgradeToMenu = item.can_upgrade_to_menu && menuUpgradePrice > 0;
 
   const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
   const totalPrice = (basePrice + extrasTotal) * quantity;
