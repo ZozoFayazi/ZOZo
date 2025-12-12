@@ -25,6 +25,9 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   const [upgradeToMenu, setUpgradeToMenu] = useState(false);
   const [selectedSide, setSelectedSide] = useState('');
   const [selectedDrink, setSelectedDrink] = useState('');
+  
+  // Bun selection state (for burgers)
+  const [selectedBun, setSelectedBun] = useState('');
 
   // Get product-specific removable ingredients and extras
   const removableIngredients = item.removable_ingredients || [];
