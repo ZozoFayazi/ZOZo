@@ -133,7 +133,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
     onAddToCart({
       menu_item_id: item.id,
       name: customizedName,
-      price: itemPrice + extrasTotal,
+      price: itemPrice + extrasTotal + sideSurcharge,
       size: size || null,
       quantity: quantity,
       extras: allExtras,
