@@ -559,10 +559,19 @@ async def update_order_status(
         if order['location_id'] != current_user.get('location_id'):
             raise HTTPException(status_code=403, detail="Access denied")
     
-    # Update order
+    # Update order with status history
+    status_entry = {
+        "status": update.status,
+        "timestamp": datetime.utcnow().isoformat(),
+        "note": f"Status geändert zu {update.status}"
+    }
+    
     result = await db.orders.update_one(
         {"_id": parse_object_id(order_id)},
-        {"$set": {"status": update.status, "updated_at": datetime.utcnow()}}
+        {
+            "$set": {"status": update.status, "updated_at": datetime.utcnow()},
+            "$push": {"status_history": status_entry}
+        }
     )
     
     if result.matched_count == 0:
