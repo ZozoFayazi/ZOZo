@@ -14,65 +14,87 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
 
   return (
     <>
-      <header className="sticky top-0 z-50 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 border-b border-border">
+      <header className="sticky top-0 z-50 glass border-b border-border/50">
         <nav className="container-custom">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3" data-testid="header-logo">
-              <img
-                src="https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg"
-                alt="ZOZO Burger"
-                className="h-10 w-auto"
-              />
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
+          <div className="flex items-center justify-between h-20 py-4">
+            {/* LEFT: Navigation Links */}
+            <div className="hidden md:flex items-center space-x-8 flex-1">
               <Link
                 to="/"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/') ? 'text-primary' : 'text-foreground/80 hover:text-foreground'
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/') ? 'text-primary' : 'text-foreground/70'
                 }`}
               >
-                Home
+                HOME
               </Link>
               <Link
                 to="/menu"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/menu') ? 'text-primary' : 'text-foreground/80 hover:text-foreground'
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/menu') ? 'text-primary' : 'text-foreground/70'
                 }`}
               >
-                Speisekarte
-              </Link>
-              <Link
-                to="/locations"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/locations') ? 'text-primary' : 'text-foreground/80 hover:text-foreground'
-                }`}
-              >
-                Standorte
+                SPEISEKARTE
               </Link>
             </div>
 
-            {/* Right side: Location & Cart */}
-            <div className="flex items-center space-x-4">
-              {/* Selected Location Indicator */}
+            {/* CENTER: Logo (Larger & Prominent) */}
+            <Link 
+              to="/" 
+              className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 md:relative md:left-auto md:transform-none" 
+              data-testid="header-logo"
+            >
+              <img
+                src="https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg"
+                alt="ZOZO Burger"
+                className="h-14 w-auto hover:scale-105 transition-transform"
+              />
+            </Link>
+
+            {/* RIGHT: Location & Cart */}
+            <div className="hidden md:flex items-center space-x-8 flex-1 justify-end">
+              <Link
+                to="/locations"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/locations') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                STANDORTE
+              </Link>
+
+              {/* Location Badge */}
               {selectedLocation && (
-                <div className="hidden sm:flex items-center space-x-2 text-xs text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  <span>{selectedLocation.name.replace('ZOZO Burger ', '')}</span>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-accent rounded-lg border border-border/50">
+                  <MapPin className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-xs font-medium">{selectedLocation.name.replace('ZOZO Burger ', '')}</span>
                 </div>
               )}
 
-              {/* Cart Button */}
+              {/* Cart Button - Prominent */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative p-2 hover:bg-secondary rounded-lg transition-colors"
+                className="relative px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-primary/20"
                 data-testid="cart-open-button"
               >
                 <ShoppingCart className="h-5 w-5" />
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-primary text-primary-foreground text-xs font-medium flex items-center justify-center rounded-full">
+                  <span className="font-semibold">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Mobile: Cart & Menu */}
+            <div className="md:hidden flex items-center space-x-2 ml-auto">
+              {/* Mobile Cart */}
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative p-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all"
+                data-testid="cart-button"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-foreground text-background text-xs font-bold flex items-center justify-center rounded-full">
                     {cartItemCount}
                   </span>
                 )}
@@ -81,7 +103,7 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 hover:bg-secondary rounded-lg transition-colors"
+                className="p-3 hover:bg-secondary rounded-lg transition-colors"
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
