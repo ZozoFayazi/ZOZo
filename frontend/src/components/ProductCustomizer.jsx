@@ -30,12 +30,12 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   const removableIngredients = item.removable_ingredients || [];
   const availableExtras = parseExtras(item.available_extras || []);
 
-  // Menu upgrade options
+  // Menu upgrade options (sides with prices)
   const sides = [
-    { id: 'fries', name: 'Pommes' },
-    { id: 'sweet-potato', name: 'Sweet Potato Fries' },
-    { id: 'twister', name: 'Twister Fries' },
-    { id: 'country', name: 'Country Potatoes' },
+    { id: 'fries', name: 'Pommes', price: 0 },
+    { id: 'sweet-potato', name: 'Sweet Potato Fries', price: 0.99 },
+    { id: 'twister', name: 'Twister Fries', price: 0.99 },
+    { id: 'country', name: 'Country Potatoes', price: 0.99 },
   ];
 
   const drinks = [
