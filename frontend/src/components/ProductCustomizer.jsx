@@ -81,12 +81,39 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   };
 
   const handleAddToCart = () => {
-    let customizedName = item.name;
+    // Validation for menu upgrade
+    if (upgradeToMenu && (!selectedSide || !selectedDrink)) {
+      toast.error('Bitte wähle eine Beilage und ein Getränk für das Menü');
+      return;
+    }
+
+    let customizedName = upgradeToMenu ? `${item.name} Menü` : item.name;
     
-    if (selectedExtras.length > 0 || selectedRemovals.length > 0) {
+    // Build extras array including menu components
+    const allExtras = [...selectedExtras];
+    
+    if (upgradeToMenu) {
+      const side = sides.find(s => s.id === selectedSide);
+      const drink = drinks.find(d => d.id === selectedDrink);
+      
+      if (side) {
+        allExtras.push({
+          name: `Beilage: ${side.name}`,
+          price: 0
+        });
+      }
+      if (drink) {
+        allExtras.push({
+          name: `Getränk: ${drink.name}`,
+          price: 0
+        });
+      }
+    }
+    
+    if (allExtras.length > 0 || selectedRemovals.length > 0) {
       const modifications = [];
-      if (selectedExtras.length > 0) {
-        modifications.push(`+ ${selectedExtras.map(e => e.name).join(', ')}`);
+      if (allExtras.length > 0) {
+        modifications.push(`+ ${allExtras.map(e => e.name).join(', ')}`);
       }
       if (selectedRemovals.length > 0) {
         modifications.push(`- ${selectedRemovals.join(', ')}`);
@@ -101,12 +128,14 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
     onAddToCart({
       menu_item_id: item.id,
       name: customizedName,
-      price: basePrice + extrasTotal,
+      price: itemPrice + extrasTotal,
       size: size || null,
-      quantity: quantity
+      quantity: quantity,
+      extras: allExtras,
+      removed: selectedRemovals
     });
 
-    toast.success(`${item.name} zum Warenkorb hinzugefügt`);
+    toast.success(`${customizedName} zum Warenkorb hinzugefügt`);
     onClose();
   };
 
