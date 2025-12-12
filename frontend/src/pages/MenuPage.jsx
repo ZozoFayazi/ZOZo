@@ -71,6 +71,24 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
       return;
     }
 
+    // Check if this is a burger that can be upgraded to menu
+    if (item.can_upgrade_to_menu && item.menu_upgrade_price) {
+      // Store item with size info for upgrade dialog
+      const itemWithPrice = {
+        ...item,
+        price_normal: size === 'medium' && item.price_medium 
+          ? item.price_medium 
+          : size === 'large' && item.price_large 
+          ? item.price_large 
+          : item.price_normal || item.price_medium || item.price_large,
+        selected_size: size
+      };
+      setUpgradingItem(itemWithPrice);
+      setMenuUpgradeOpen(true);
+      return;
+    }
+
+    // Normal add to cart (no menu upgrade)
     let price;
     let sizeName;
     
