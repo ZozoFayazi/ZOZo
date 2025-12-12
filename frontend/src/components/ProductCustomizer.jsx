@@ -32,6 +32,22 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   // Get product-specific removable ingredients and extras
   const removableIngredients = item.removable_ingredients || [];
   const availableExtras = parseExtras(item.available_extras || []);
+
+  // Ingredient icons mapping
+  const getIngredientIcon = (ingredient) => {
+    const lower = ingredient.toLowerCase();
+    if (lower.includes('tomat')) return '🍅';
+    if (lower.includes('zwiebel')) return '🧅';
+    if (lower.includes('gurke') || lower.includes('pickle')) return '🥒';
+    if (lower.includes('salat')) return '🥬';
+    if (lower.includes('käse') || lower.includes('cheese')) return '🧀';
+    if (lower.includes('bacon') || lower.includes('speck')) return '🥓';
+    if (lower.includes('ei')) return '🥚';
+    if (lower.includes('jalapeño') || lower.includes('chili')) return '🌶️';
+    if (lower.includes('pilz') || lower.includes('champignon')) return '🍄';
+    if (lower.includes('paprika')) return '🫑';
+    return '🍴'; // Default icon
+  };
   
   // Check if this is a burger (but not a Smash Burger) - requires bun selection
   const requiresBunSelection = item.name && 
