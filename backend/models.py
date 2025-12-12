@@ -124,12 +124,16 @@ class Order(BaseModel):
     items: List[OrderItem]
     subtotal: float
     delivery_fee: float = 0.0
+    discount: float = 0.0
     total: float
     customer: CustomerInfo
-    status: str = "new"  # new, accepted, preparing, out_for_delivery, completed, cancelled
-    payment_method: str = "cash"  # cash, card
+    is_pickup: bool = False  # True = pickup, False = delivery
+    status: str = "confirmed"  # confirmed, preparing, ready, on_the_way, completed, cancelled
+    payment_method: str = "cash"  # cash, card, paypal
+    estimated_time: Optional[int] = 30  # Estimated time in minutes
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+    status_history: List[dict] = []  # Track status changes with timestamp
 
     class Config:
         allow_population_by_field_name = True
