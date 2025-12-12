@@ -24,8 +24,11 @@ function MenuUpgradeDialog({ item, onClose, onAddToCart }) {
     { id: 'water', name: 'ViO Still 0,5l', price: 0 },
   ];
 
+  // Determine the correct prices based on selected size
   const burgerPrice = item.price_normal || item.price_medium || 0;
-  const menuPrice = item.menu_upgrade_price || 0;
+  const menuPrice = item.has_sizes && item.selected_size === 'large'
+    ? item.menu_upgrade_price_large 
+    : item.menu_upgrade_price || item.menu_upgrade_price_medium || 0;
   const upgradeCost = menuPrice - burgerPrice;
 
   const handleAddToCart = () => {
