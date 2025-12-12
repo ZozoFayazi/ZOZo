@@ -79,6 +79,26 @@ class MenuItem(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
+# Deal/Promotion Models
+class Deal(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    title: str
+    description: str
+    discount_type: str  # "percentage", "fixed_amount", "free_item"
+    discount_value: float  # percentage (10 for 10%) or fixed amount (5.00 for €5)
+    min_order_value: Optional[float] = None
+    valid_from: datetime = Field(default_factory=datetime.utcnow)
+    valid_until: Optional[datetime] = None
+    location_ids: List[str] = []  # Empty list means valid for all locations
+    image_url: Optional[str] = None
+    active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
+
 # Order Models
 class OrderItem(BaseModel):
     menu_item_id: str

@@ -97,6 +97,28 @@ class DeliveryZoneUpdate(BaseModel):
 class DeliveryCheckRequest(BaseModel):
     postal_code: str
 
+# Deal Models
+class DealCreate(BaseModel):
+    title: str
+    description: str
+    discount_type: str
+    discount_value: float
+    min_order_value: Optional[float] = None
+    valid_until: Optional[datetime] = None
+    location_ids: List[str] = []
+    image_url: Optional[str] = None
+
+class DealUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    discount_type: Optional[str] = None
+    discount_value: Optional[float] = None
+    min_order_value: Optional[float] = None
+    valid_until: Optional[datetime] = None
+    location_ids: Optional[List[str]] = None
+    image_url: Optional[str] = None
+    active: Optional[bool] = None
+
 # Routes
 @api_router.get("/")
 async def root():
