@@ -264,6 +264,12 @@ html {
   @apply font-sans text-xs tracking-[0.25em] uppercase text-muted-foreground font-medium;
 }
 
+/* Space Grotesk for Numbers & Prices */
+.font-numeric {
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: 'tnum' on, 'lnum' on;
+}
+
 /* Container */
 .container-custom {
   @apply max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8;
