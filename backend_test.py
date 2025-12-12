@@ -423,7 +423,7 @@ class ZOZOBurgerAPITester:
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("=" * 70)
-        print("🧪 ZOZO Burger Backend API Test Suite")
+        print("🧪 ZOZO Burger Backend API Test Suite - Phase 3")
         print("=" * 70)
         print(f"Base URL: {self.base_url}")
         print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -435,6 +435,8 @@ class ZOZOBurgerAPITester:
         self.test_root()
         self.test_get_locations()
         self.test_get_menu()
+        self.test_check_delivery_valid()
+        self.test_check_delivery_invalid()
         self.test_create_order()
 
         # Admin authentication
@@ -451,6 +453,8 @@ class ZOZOBurgerAPITester:
         self.test_update_order_status()
         self.test_get_dashboard_stats()
         self.test_get_menu_items_admin()
+        self.test_get_location_settings()
+        self.test_update_location_settings()
 
         # Print summary
         print("\n" + "=" * 70)
