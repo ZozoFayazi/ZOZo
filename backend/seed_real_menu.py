@@ -146,13 +146,20 @@ def seed_real_menu():
              "removable": ["Gewürzgurken", "Bacon", "Röstzwiebeln", "Käse"]},
             
             # Burger mit nur EINER Größe
-            {"name": "Chicken Nugget Burger", "desc": "Burger mit Chicken Nuggets, Salat, Tomaten, Gewürzgurken und Zwiebeln", "price": 8.09, "menu_price": 13.99, "has_sizes": False, "img": IMG_NUGGETS},
-            {"name": "Crunchy Chickenburger", "desc": "Crunchy Chicken, Tomate, Salat, Zwiebeln, Gewürzgurke, Käse", "price": 8.09, "menu_price": 13.99, "has_sizes": False, "img": IMG_CHICKEN_BURGER},
-            {"name": "Crunchy Chicken Bacon Burger", "desc": "Crunchy Chicken, Bacon, Jalapeños, Tomaten, Salat, BBQ-Sauce, Gewürzgurken, Röstzwiebeln", "price": 10.39, "menu_price": 16.29, "has_sizes": False, "img": IMG_CHICKEN_BURGER},
-            {"name": "Veggie Burger", "desc": "Veggie Patty, Tomaten, Salat, Zwiebeln, Gewürzgurken", "price": 7.69, "menu_price": 13.59, "has_sizes": False, "img": IMG_VEGGIE_BURGER},
-            {"name": "Two Hundred Fifty Burger", "desc": "2x 125 g Beef, Salat, Tomaten, Zwiebeln, Gurken und Käse", "price": 9.59, "menu_price": 15.49, "has_sizes": False, "img": IMG_CHEESEBURGER},
-            {"name": "Three Hundred Sixty Burger", "desc": "2x 180 g Beef, Salat, Tomaten, Zwiebeln, Gurken und Käse", "price": 10.39, "menu_price": 16.29, "has_sizes": False, "img": IMG_CHEESEBURGER},
-            {"name": "The Double Crunchy Burger", "desc": "2x Crunchy Chicken, Tomaten, Salat, Zwiebeln, Gewürzgurke, Käse", "price": 12.99, "menu_price": None, "has_sizes": False, "img": IMG_CHICKEN_BURGER},
+            {"name": "Chicken Nugget Burger", "desc": "Burger mit Chicken Nuggets, Salat, Tomaten, Gewürzgurken und Zwiebeln", "price": 8.09, "menu_price": 13.99, "has_sizes": False, "img": IMG_NUGGETS,
+             "removable": ["Tomaten", "Salat", "Zwiebeln", "Gewürzgurken"]},
+            {"name": "Crunchy Chickenburger", "desc": "Crunchy Chicken, Tomate, Salat, Zwiebeln, Gewürzgurke, Käse", "price": 8.09, "menu_price": 13.99, "has_sizes": False, "img": IMG_CHICKEN_BURGER,
+             "removable": ["Tomaten", "Salat", "Zwiebeln", "Gewürzgurken", "Käse"]},
+            {"name": "Crunchy Chicken Bacon Burger", "desc": "Crunchy Chicken, Bacon, Jalapeños, Tomaten, Salat, BBQ-Sauce, Gewürzgurken, Röstzwiebeln", "price": 10.39, "menu_price": 16.29, "has_sizes": False, "img": IMG_CHICKEN_BURGER,
+             "removable": ["Tomaten", "Salat", "Gewürzgurken", "Bacon", "Jalapeños", "Röstzwiebeln"]},
+            {"name": "Veggie Burger", "desc": "Veggie Patty, Tomaten, Salat, Zwiebeln, Gewürzgurken", "price": 7.69, "menu_price": 13.59, "has_sizes": False, "img": IMG_VEGGIE_BURGER,
+             "removable": ["Tomaten", "Salat", "Zwiebeln", "Gewürzgurken"]},
+            {"name": "Two Hundred Fifty Burger", "desc": "2x 125 g Beef, Salat, Tomaten, Zwiebeln, Gurken und Käse", "price": 9.59, "menu_price": 15.49, "has_sizes": False, "img": IMG_CHEESEBURGER,
+             "removable": ["Tomaten", "Salat", "Zwiebeln", "Gewürzgurken", "Käse"]},
+            {"name": "Three Hundred Sixty Burger", "desc": "2x 180 g Beef, Salat, Tomaten, Zwiebeln, Gurken und Käse", "price": 10.39, "menu_price": 16.29, "has_sizes": False, "img": IMG_CHEESEBURGER,
+             "removable": ["Tomaten", "Salat", "Zwiebeln", "Gewürzgurken", "Käse"]},
+            {"name": "The Double Crunchy Burger", "desc": "2x Crunchy Chicken, Tomaten, Salat, Zwiebeln, Gewürzgurke, Käse", "price": 12.99, "menu_price": None, "has_sizes": False, "img": IMG_CHICKEN_BURGER,
+             "removable": ["Tomaten", "Salat", "Zwiebeln", "Gewürzgurken", "Käse"]},
         ]
         
         for item in burgers:
