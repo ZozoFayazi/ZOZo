@@ -72,7 +72,7 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
     }
 
     // Check if this is a burger that can be upgraded to menu
-    if (item.can_upgrade_to_menu && item.menu_upgrade_price) {
+    if (item.can_upgrade_to_menu) {
       // Store item with size info for upgrade dialog
       const itemWithPrice = {
         ...item,
@@ -81,7 +81,11 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
           : size === 'large' && item.price_large 
           ? item.price_large 
           : item.price_normal || item.price_medium || item.price_large,
-        selected_size: size
+        selected_size: size,
+        // Use correct menu upgrade price based on size
+        menu_upgrade_price: size === 'large' && item.menu_upgrade_price_large
+          ? item.menu_upgrade_price_large
+          : item.menu_upgrade_price || item.menu_upgrade_price_medium
       };
       setUpgradingItem(itemWithPrice);
       setMenuUpgradeOpen(true);
