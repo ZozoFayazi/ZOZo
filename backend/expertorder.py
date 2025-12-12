@@ -102,10 +102,13 @@ class ExpertOrderClient:
         }
         
         try:
+            order_dict = order.model_dump(exclude_none=True)
+            print(f"[DEBUG] Sending order JSON: {order_dict}")
+            
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.put(
                     self.base_url,
-                    json=order.model_dump(exclude_none=True),
+                    json=order_dict,
                     headers=headers
                 )
                 
