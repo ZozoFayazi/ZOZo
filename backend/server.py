@@ -234,7 +234,166 @@ async def create_order(order: OrderCreate):
     result = await db.orders.insert_one(order_doc)
     order_doc['_id'] = result.inserted_id
     
+    # Auto-send to ExpertOrder if API key is configured for this location
+    location_settings = await db.location_settings.find_one({"location_id": order.location_id})
+    if location_settings and location_settings.get('expertorder_api_key') and location_settings.get('expertorder_enabled'):
+        try:
+            from expertorder import ExpertOrderClient, map_zozo_order_to_expertorder
+            
+            # Map order to ExpertOrder format
+            eo_order = map_zozo_order_to_expertorder(order_doc, location)
+            
+            # Send to ExpertOrder
+            client = ExpertOrderClient(
+                api_key=location_settings['expertorder_api_key'],
+                use_test_mode=location_settings.get('expertorder_test_mode', False)
+            )
+            eo_response = await client.send_order(eo_order)
+            
+            # Update order with ExpertOrder status
+            await db.orders.update_one(
+                {"_id": result.inserted_id},
+                {
+                    "$set": {
+                        "expertorder_sent": eo_response.get('success', False),
+                        "expertorder_status": eo_response.get('status_code'),
+                        "expertorder_message": eo_response.get('message'),
+                        "expertorder_error": eo_response.get('error'),
+                        "expertorder_sent_at": datetime.utcnow() if eo_response.get('success') else None
+                    }
+                }
+            )
+        except Exception as e:
+            # Log error but don't fail the order creation
+            print(f"ExpertOrder auto-send failed: {str(e)}")
+    
     return serialize_doc(order_doc)
+
+# ExpertOrder Integration
+@api_router.post("/admin/orders/{order_id}/send-to-expertorder")
+async def send_order_to_expertorder(
+    order_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Manually send an order to ExpertOrder (for retry or manual sending)"""
+    from expertorder import ExpertOrderClient, map_zozo_order_to_expertorder
+    
+    # Get order
+    order = await db.orders.find_one({"_id": ObjectId(order_id)})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Get location
+    location = await db.locations.find_one({"_id": ObjectId(order['location_id'])})
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    # Get location settings (API key)
+    location_settings = await db.location_settings.find_one({"location_id": order['location_id']})
+    if not location_settings or not location_settings.get('expertorder_api_key'):
+        raise HTTPException(
+            status_code=400,
+            detail="ExpertOrder API key not configured for this location"
+        )
+    
+    # Map order to ExpertOrder format
+    eo_order = map_zozo_order_to_expertorder(order, location)
+    
+    # Send to ExpertOrder
+    client = ExpertOrderClient(
+        api_key=location_settings['expertorder_api_key'],
+        use_test_mode=location_settings.get('expertorder_test_mode', False)
+    )
+    eo_response = await client.send_order(eo_order)
+    
+    # Update order with ExpertOrder status
+    await db.orders.update_one(
+        {"_id": ObjectId(order_id)},
+        {
+            "$set": {
+                "expertorder_sent": eo_response.get('success', False),
+                "expertorder_status": eo_response.get('status_code'),
+                "expertorder_message": eo_response.get('message'),
+                "expertorder_error": eo_response.get('error'),
+                "expertorder_sent_at": datetime.utcnow() if eo_response.get('success') else None,
+                "updated_at": datetime.utcnow()
+            }
+        }
+    )
+    
+    return eo_response
+
+@api_router.post("/admin/expertorder/test")
+async def test_expertorder_connection(
+    location_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Test ExpertOrder connection with a test order"""
+    from expertorder import ExpertOrderClient, EOOrder, EOCustomer, EOPayment, EOItem
+    
+    # Get location settings
+    location_settings = await db.location_settings.find_one({"location_id": location_id})
+    if not location_settings:
+        raise HTTPException(status_code=404, detail="Location settings not found")
+    
+    api_key = location_settings.get('expertorder_api_key')
+    if not api_key:
+        raise HTTPException(
+            status_code=400,
+            detail="ExpertOrder API key not configured"
+        )
+    
+    # Create test order
+    test_order = EOOrder(
+        version=1,
+        broker="ZOZO Burger (Test)",
+        fromMobile=False,
+        clientIp="127.0.0.1",
+        id=f"TEST-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+        ordertime=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+        deliverytime=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+        customerinfo="Test-Bestellung von ZOZO Website",
+        orderprice=10.50,
+        orderdiscount=0,
+        notification=False,
+        deliverycost=2.50,
+        tip=0,
+        customer=EOCustomer(
+            phone="01700000001",
+            email="test@zozoburger.de",
+            name="Test Kunde",
+            street="Teststraße 1",
+            zip="12345",
+            location="Teststadt"
+        ),
+        payment=EOPayment(
+            type=1,  # Bar
+            prepaid=0
+        ),
+        items=[
+            EOItem(
+                count=1,
+                name="Test Burger",
+                price=8.00,
+                items=[]
+            ),
+            EOItem(
+                count=1,
+                name="Coca Cola 0,33l",
+                price=2.50,
+                items=[]
+            )
+        ]
+    )
+    
+    # Send test order
+    client = ExpertOrderClient(
+        api_key=api_key,
+        use_test_mode=True  # Always use test mode for connection tests
+    )
+    response = await client.send_order(test_order)
+    
+    return response
 
 # Auth Routes
 @api_router.post("/auth/login", response_model=LoginResponse)
