@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Query, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, Query, Depends, File, UploadFile
 from fastapi.security import HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
