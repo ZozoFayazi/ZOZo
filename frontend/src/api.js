@@ -18,8 +18,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getLocations = async () => {
-  const response = await api.get('/api/locations');
+export const getLocations = async (includeStatus = false) => {
+  const params = includeStatus ? { include_status: true } : {};
+  const response = await api.get('/api/locations', { params });
   return response.data;
 };
 
