@@ -179,8 +179,8 @@ class ZOZOBurgerAPITester:
     def test_admin_login(self):
         """Test admin login"""
         credentials = {
-            "email": "owner@zozoburger.de",
-            "password": "owner123"
+            "email": "owner@zozo.com",
+            "password": "owner_password"
         }
         
         success, response = self.run_test(
