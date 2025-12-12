@@ -600,6 +600,59 @@ async def update_menu_item(
     updated_item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
     return serialize_doc(updated_item)
 
+# Product Image Upload
+@api_router.post("/admin/menu-items/{item_id}/upload-image")
+async def upload_product_image(
+    item_id: str,
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """Upload product image for menu item"""
+    import os
+    import uuid
+    from pathlib import Path
+    
+    # Check if item exists
+    item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    if not item:
+        raise HTTPException(status_code=404, detail="Menu item not found")
+    
+    # Check access
+    if current_user.get('role') == 'manager':
+        if item.get('location_id') and item['location_id'] != current_user.get('location_id'):
+            raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Validate file type
+    allowed_types = ["image/jpeg", "image/png", "image/jpg", "image/webp"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Invalid file type. Only JPG, PNG, and WebP allowed")
+    
+    # Generate unique filename
+    file_extension = file.filename.split('.')[-1]
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    file_path = Path("uploads/products") / unique_filename
+    
+    # Save file
+    try:
+        with open(file_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
+    
+    # Update menu item with image URL
+    image_url = f"/uploads/products/{unique_filename}"
+    await db.menu_items.update_one(
+        {"_id": parse_object_id(item_id)},
+        {"$set": {"image_url": image_url}}
+    )
+    
+    return {
+        "success": True,
+        "image_url": image_url,
+        "filename": unique_filename
+    }
+
 # Dashboard Stats
 @api_router.get("/admin/stats")
 async def get_dashboard_stats(
