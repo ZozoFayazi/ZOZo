@@ -9,6 +9,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import LocationSettings from './pages/LocationSettings';
 import DealsManagement from './pages/DealsManagement';
+import ExpertOrderSettings from './pages/ExpertOrderSettings';
 import './App.css';
 
 function App() {
