@@ -209,7 +209,8 @@ def map_zozo_order_to_expertorder(zozo_order: Dict, location: Dict) -> EOOrder:
     Returns:
         EOOrder object ready to send
     """
-    customer_details = zozo_order.get('customer_details', {})
+    # Get customer data (check both 'customer' and 'customer_details')
+    customer_details = zozo_order.get('customer', zozo_order.get('customer_details', {}))
     
     # Map customer data
     eo_customer = EOCustomer(
