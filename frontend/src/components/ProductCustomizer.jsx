@@ -123,31 +123,33 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
           </div>
 
           {/* Extras */}
-          <div>
-            <h3 className="font-semibold mb-3">Extras hinzufügen</h3>
-            <div className="grid grid-cols-2 gap-3">
-              {COMMON_EXTRAS.map((extra) => {
-                const isSelected = selectedExtras.find(e => e.name === extra.name);
-                return (
-                  <button
-                    key={extra.name}
-                    onClick={() => toggleExtra(extra)}
-                    className={`p-3 rounded-lg border-2 transition-all text-left ${
-                      isSelected
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary/40'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium">{extra.name}</p>
-                        <p className="text-xs text-muted-foreground">+€{extra.price.toFixed(2)}</p>
+          {availableExtras.length > 0 && (
+            <div>
+              <h3 className="font-semibold mb-3">Extras hinzufügen</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {availableExtras.map((extra) => {
+                  const isSelected = selectedExtras.find(e => e.name === extra.name);
+                  return (
+                    <button
+                      key={extra.name}
+                      onClick={() => toggleExtra(extra)}
+                      className={`p-3 rounded-lg border-2 transition-all text-left ${
+                        isSelected
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border hover:border-primary/40'
+                      }`}
+                      data-testid={`extra-${extra.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium">{extra.name}</p>
+                          <p className="text-xs text-muted-foreground">+€{extra.price.toFixed(2)}</p>
+                        </div>
+                        {isSelected && <Check className="h-4 w-4 text-primary" />}
                       </div>
-                      {isSelected && <Check className="h-4 w-4 text-primary" />}
-                    </div>
-                  </button>
-                );
-              })}
+                    </button>
+                  );
+                })}
             </div>
           </div>
 
