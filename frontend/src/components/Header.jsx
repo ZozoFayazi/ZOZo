@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import CartDrawer from './CartDrawer';
+import QuickReorder from './QuickReorder';
 
-function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation }) {
+function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation, addToCart }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const location = useLocation();
@@ -54,8 +55,8 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               </Link>
             </div>
 
-            {/* Right side: Location & Cart */}
-            <div className="flex items-center space-x-4">
+            {/* Right side: Location, Quick Reorder & Cart */}
+            <div className="flex items-center space-x-2 md:space-x-4">
               {/* Selected Location Indicator */}
               {selectedLocation && (
                 <div className="hidden sm:flex items-center space-x-2 text-xs text-muted-foreground">
@@ -63,6 +64,11 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                   <span>{selectedLocation.name.replace('ZOZO Burger ', '')}</span>
                 </div>
               )}
+
+              {/* Quick Reorder */}
+              <div className="hidden md:block">
+                <QuickReorder onReorder={addToCart} />
+              </div>
 
               {/* Cart Button */}
               <button

@@ -79,6 +79,7 @@ function App() {
           updateCartItemQuantity={updateCartItemQuantity}
           clearCart={clearCart}
           selectedLocation={selectedLocation}
+          addToCart={addToCart}
         />
         <Routes>
           <Route
