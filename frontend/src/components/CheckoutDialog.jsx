@@ -67,8 +67,14 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
     e.preventDefault();
     
     // Check if delivery is available
-    if (!deliveryCheck || !deliveryCheck.can_deliver) {
+    if (!deliveryCheck || !deliveryCheck.available) {
       toast.error('Lieferung zu dieser Postleitzahl nicht verfügbar');
+      return;
+    }
+    
+    // Check minimum order value
+    if (cartTotal < deliveryCheck.min_order_value) {
+      toast.error(`Mindestbestellwert von €${deliveryCheck.min_order_value.toFixed(2)} nicht erreicht! Aktuell: €${cartTotal.toFixed(2)}`);
       return;
     }
 
