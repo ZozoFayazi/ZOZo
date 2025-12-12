@@ -61,7 +61,8 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   const canUpgradeToMenu = item.can_upgrade_to_menu && menuUpgradePrice > 0;
 
   const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
-  const totalPrice = (basePrice + extrasTotal) * quantity;
+  const itemPrice = upgradeToMenu ? menuUpgradePrice : basePrice;
+  const totalPrice = (itemPrice + extrasTotal) * quantity;
 
   const toggleExtra = (extra) => {
     if (selectedExtras.find(e => e.name === extra.name)) {
