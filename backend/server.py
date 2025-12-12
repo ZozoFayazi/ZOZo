@@ -97,6 +97,12 @@ class DeliveryZoneUpdate(BaseModel):
 class DeliveryCheckRequest(BaseModel):
     postal_code: str
 
+# ExpertOrder Settings Models
+class ExpertOrderSettings(BaseModel):
+    expertorder_api_key: Optional[str] = None
+    expertorder_enabled: bool = False
+    expertorder_test_mode: bool = False
+
 # Deal Models
 class DealCreate(BaseModel):
     title: str
