@@ -526,6 +526,70 @@ async def update_location_settings(
     updated_location = await db.locations.find_one({"_id": parse_object_id(location_id)})
     return serialize_doc(updated_location)
 
+# Deal Management (Admin)
+@api_router.get("/admin/deals")
+async def get_all_deals(current_user: dict = Depends(get_current_user)):
+    """Get all deals (admin)"""
+    deals = await db.deals.find({}).sort("created_at", -1).to_list(length=100)
+    return serialize_doc(deals)
+
+@api_router.post("/admin/deals")
+async def create_deal(deal: DealCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new deal (owner only)"""
+    if current_user.get('role') != 'owner':
+        raise HTTPException(status_code=403, detail="Only owners can create deals")
+    
+    deal_doc = deal.dict()
+    deal_doc['active'] = True
+    deal_doc['created_at'] = datetime.utcnow()
+    deal_doc['valid_from'] = datetime.utcnow()
+    
+    result = await db.deals.insert_one(deal_doc)
+    deal_doc['_id'] = result.inserted_id
+    return serialize_doc(deal_doc)
+
+@api_router.patch("/admin/deals/{deal_id}")
+async def update_deal(
+    deal_id: str,
+    update: DealUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update deal (owner only)"""
+    if current_user.get('role') != 'owner':
+        raise HTTPException(status_code=403, detail="Only owners can update deals")
+    
+    deal = await db.deals.find_one({"_id": parse_object_id(deal_id)})
+    if not deal:
+        raise HTTPException(status_code=404, detail="Deal not found")
+    
+    update_data = {k: v for k, v in update.dict().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    await db.deals.update_one(
+        {"_id": parse_object_id(deal_id)},
+        {"$set": update_data}
+    )
+    
+    updated_deal = await db.deals.find_one({"_id": parse_object_id(deal_id)})
+    return serialize_doc(updated_deal)
+
+@api_router.delete("/admin/deals/{deal_id}")
+async def delete_deal(deal_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete (deactivate) deal (owner only)"""
+    if current_user.get('role') != 'owner':
+        raise HTTPException(status_code=403, detail="Only owners can delete deals")
+    
+    result = await db.deals.update_one(
+        {"_id": parse_object_id(deal_id)},
+        {"$set": {"active": False}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Deal not found")
+    
+    return {"message": "Deal deleted successfully"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
