@@ -217,10 +217,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
           {/* Bun Selection (Required for Burgers) */}
           {requiresBunSelection && (
             <div className="p-4 bg-accent rounded-xl border-2 border-primary/40">
-              <h3 className="font-semibold mb-1 flex items-center gap-2">
-                Wähle dein Brötchen
-                <span className="text-xs text-primary font-bold">* Pflicht</span>
-              </h3>
+              <h3 className="font-semibold mb-1">Wähle dein Brötchen</h3>
               <p className="text-xs text-muted-foreground mb-3">Bitte wähle eine Brötchen-Art</p>
               <div className="grid grid-cols-2 gap-3">
                 {bunTypes.map((bun) => (
