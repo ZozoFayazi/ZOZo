@@ -154,23 +154,13 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
               <p className="text-muted-foreground">Wähle deine Favoriten</p>
             </div>
 
-            {/* Location Selector */}
-            {locations.length > 1 && (
-              <div className="flex items-center gap-2" data-testid="location-toggle">
-                {locations.map((location) => (
-                  <button
-                    key={location.id}
-                    onClick={() => setSelectedLocation(location)}
-                    className={`px-4 py-2 rounded-lg border transition-all ${
-                      selectedLocation?.id === location.id
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-card border-border hover:border-primary/40'
-                    }`}
-                  >
-                    <MapPin className="inline h-4 w-4 mr-2" />
-                    {location.name.replace('ZOZO Burger ', '')}
-                  </button>
-                ))}
+            {/* Location Info (Read-only) */}
+            {selectedLocation && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-accent rounded-lg border border-border" data-testid="location-info">
+                <MapPin className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium">
+                  {selectedLocation.name.replace('ZOZO Burger ', '')}
+                </span>
               </div>
             )}
           </div>
