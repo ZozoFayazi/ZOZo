@@ -151,7 +151,22 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                 className="bg-card border border-border rounded-xl p-8 space-y-4 card-hover"
                 data-testid={location.slug === 'rellingen' ? 'rellingen-card' : 'henstedt-card'}
               >
-                <h3 className="text-2xl font-serif font-semibold">{location.name}</h3>
+                <div className="flex items-start justify-between">
+                  <h3 className="text-2xl font-serif font-semibold">{location.name}</h3>
+                  {location.opening_status && (
+                    <span 
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                        location.opening_status.is_open 
+                          ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
+                          : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                      }`}
+                      data-testid={`status-${location.slug}`}
+                    >
+                      <span className={`w-2 h-2 rounded-full ${location.opening_status.is_open ? 'bg-green-500' : 'bg-red-500'}`} />
+                      {location.opening_status.is_open ? 'Geöffnet' : 'Geschlossen'}
+                    </span>
+                  )}
+                </div>
                 
                 <div className="space-y-3 text-muted-foreground">
                   <div className="flex items-start space-x-3">
