@@ -217,11 +217,12 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # WRAPS Category
+    # WRAPS Category - COMPLETE (4 items)
     wraps = [
-        {"name": "Chicken Wrap", "desc": "Gegrilltes Hähnchen, Salat, Tomate, Sauce", "price": 8.49, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
-        {"name": "Falafel Wrap", "desc": "Falafel, Salat, Tomate, Hummus", "price": 7.99, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
-        {"name": "BBQ Chicken Wrap", "desc": "Hähnchen, BBQ-Sauce, rote Zwiebeln, Käse", "price": 8.99, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
+        {"name": "Spicy Chicken Wrap", "desc": "Weizentortilla, Salat, Spicy Chicken, Mais und Tomate", "price": 8.19, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
+        {"name": "Crunchy Chicken Wrap", "desc": "Weizentortilla, Salat, Crunchy Chicken, Zwiebeln und Tomate", "price": 8.19, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
+        {"name": "Veggie Wrap", "desc": "Weizentortilla, Salat, Veggie Patty, Tomate", "price": 7.69, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
+        {"name": "BBQ-Beef Wrap", "desc": "Weizentortilla, Burger Patty, Bacon, Salat, Röstzwiebeln und BBQ-Sauce", "price": 9.29, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
     ]
     
     for item in wraps:
