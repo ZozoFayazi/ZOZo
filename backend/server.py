@@ -954,6 +954,9 @@ async def delete_deal(deal_id: str, current_user: dict = Depends(get_current_use
 # Include the router in the main app
 app.include_router(api_router)
 
+# Mount static files for product images
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
