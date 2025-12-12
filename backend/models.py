@@ -19,6 +19,12 @@ class PyObjectId(ObjectId):
         field_schema.update(type="string")
 
 # Location Models
+class DeliveryZone(BaseModel):
+    postal_codes: List[str] = []  # List of postal codes this location delivers to
+    min_order_value: float = 0.0  # Minimum order value for delivery
+    delivery_fee: float = 2.50  # Delivery fee
+    free_delivery_threshold: float = 15.0  # Free delivery above this amount
+
 class Location(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     name: str
@@ -31,6 +37,7 @@ class Location(BaseModel):
     phone: str
     email: Optional[str] = None
     opening_hours: str = "11:00 - 22:45"
+    delivery_zone: Optional[DeliveryZone] = None
     active: bool = True
 
     class Config:

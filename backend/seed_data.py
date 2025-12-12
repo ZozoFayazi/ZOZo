@@ -41,6 +41,12 @@ def seed_locations():
             "phone": "+49 4101 123456",
             "email": "rellingen@zozoburger.de",
             "opening_hours": "11:00 - 22:45",
+            "delivery_zone": {
+                "postal_codes": ["25462", "25421", "25451", "25469", "25479", "25485", "25488"],
+                "min_order_value": 10.0,
+                "delivery_fee": 2.50,
+                "free_delivery_threshold": 15.0
+            },
             "active": True
         },
         {
@@ -55,6 +61,12 @@ def seed_locations():
             "phone": "+49 4193 123456",
             "email": "henstedt@zozoburger.de",
             "opening_hours": "11:00 - 22:45",
+            "delivery_zone": {
+                "postal_codes": ["24558", "24568", "24576", "24601", "24594", "24623"],
+                "min_order_value": 10.0,
+                "delivery_fee": 2.50,
+                "free_delivery_threshold": 15.0
+            },
             "active": True
         }
     ]
