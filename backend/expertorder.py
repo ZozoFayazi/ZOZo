@@ -152,7 +152,10 @@ class ExpertOrderClient:
                         "error": "INVALID_API_KEY"
                     }
                 elif response.status_code == 422:
-                    error_data = response.json() if response.text else {}
+                    try:
+                        error_data = response.json() if response.text else {}
+                    except:
+                        error_data = {"raw_response": response.text}
                     return {
                         "success": False,
                         "status_code": 422,
