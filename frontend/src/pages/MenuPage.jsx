@@ -337,9 +337,16 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                                   </span>
                                 </div>
                                 <button
-                                  onClick={() => handleAddToCart(item, 'large')}
+                                  onClick={() => {
+                                    // For burgers, open customizer to select ingredients
+                                    if (category.slug === 'burger') {
+                                      handleCustomize(item, 'large');
+                                    } else {
+                                      handleAddToCart(item, 'large');
+                                    }
+                                  }}
                                   className="p-2 bg-primary/10 hover:bg-primary hover:text-primary-foreground rounded-lg transition-colors"
-                                  data-testid="add-to-cart-button"
+                                  data-testid="add-to-cart-btn"
                                 >
                                   <Plus className="h-4 w-4" />
                                 </button>
