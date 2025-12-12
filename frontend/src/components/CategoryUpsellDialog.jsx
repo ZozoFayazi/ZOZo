@@ -202,7 +202,7 @@ function CategoryUpsellDialog({ category, onAddUpsell, onClose }) {
               className="w-full py-3 text-muted-foreground hover:text-foreground transition-colors"
               data-testid="no-thanks-button"
             >
-              Nein danke, weiter zur Kasse
+              Nein danke, weiter zur Speisekarte
             </button>
           </div>
         </div>
