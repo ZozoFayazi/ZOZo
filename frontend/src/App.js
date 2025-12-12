@@ -5,6 +5,7 @@ import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
 import LocationsPage from './pages/LocationsPage';
+import OrderTracking from './pages/OrderTracking';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import LocationSettings from './pages/LocationSettings';
@@ -12,6 +13,7 @@ import DealsManagement from './pages/DealsManagement';
 import ExpertOrderSettings from './pages/ExpertOrderSettings';
 import MenuManagement from './pages/MenuManagement';
 import DiscountCodes from './pages/DiscountCodes';
+import OrderManagement from './pages/OrderManagement';
 import './App.css';
 
 function App() {
