@@ -410,6 +410,63 @@ async def get_dashboard_stats(
         "location_id": location_id
     }
 
+# Location Settings Management
+@api_router.get("/admin/location-settings")
+async def get_location_settings(current_user: dict = Depends(get_current_user)):
+    """Get location settings for current user"""
+    location_id = current_user.get('location_id')
+    
+    if current_user.get('role') == 'owner':
+        # Owner can see all locations
+        locations = await db.locations.find({"active": True}).to_list(length=100)
+        return serialize_doc(locations)
+    elif location_id:
+        # Manager can only see their location
+        location = await db.locations.find_one({"_id": parse_object_id(location_id), "active": True})
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        return serialize_doc([location])
+    else:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+@api_router.patch("/admin/location-settings/{location_id}")
+async def update_location_settings(
+    location_id: str,
+    settings: DeliveryZoneUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update location delivery zone settings"""
+    # Check access
+    if current_user.get('role') == 'manager':
+        if location_id != current_user.get('location_id'):
+            raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get current location
+    location = await db.locations.find_one({"_id": parse_object_id(location_id)})
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+    
+    # Update delivery zone
+    current_zone = location.get('delivery_zone', {})
+    update_data = {}
+    
+    if settings.postal_codes is not None:
+        current_zone['postal_codes'] = settings.postal_codes
+    if settings.min_order_value is not None:
+        current_zone['min_order_value'] = settings.min_order_value
+    if settings.delivery_fee is not None:
+        current_zone['delivery_fee'] = settings.delivery_fee
+    if settings.free_delivery_threshold is not None:
+        current_zone['free_delivery_threshold'] = settings.free_delivery_threshold
+    
+    await db.locations.update_one(
+        {"_id": parse_object_id(location_id)},
+        {"$set": {"delivery_zone": current_zone}}
+    )
+    
+    updated_location = await db.locations.find_one({"_id": parse_object_id(location_id)})
+    return serialize_doc(updated_location)
+
 # Include the router in the main app
 app.include_router(api_router)
 
