@@ -70,10 +70,10 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 <QuickReorder onReorder={addToCart} />
               </div>
 
-              {/* Cart Button */}
+              {/* Cart Button - Enhanced */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative p-2 hover:bg-secondary rounded-lg transition-colors"
+                className="relative p-3 glass hover:glass-premium rounded-xl transition-all hover:scale-105"
                 data-testid="cart-open-button"
               >
                 <ShoppingCart className="h-5 w-5" />
