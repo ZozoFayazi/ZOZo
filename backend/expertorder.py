@@ -175,7 +175,8 @@ class ExpertOrderClient:
                         "success": False,
                         "status_code": response.status_code,
                         "message": f"Unexpected status code: {response.status_code}",
-                        "error": "UNKNOWN_ERROR"
+                        "error": "UNKNOWN_ERROR",
+                        "raw_response": response.text[:500] if response.text else None
                     }
                     
         except httpx.TimeoutException:
