@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Clock, Phone, ArrowRight } from 'lucide-react';
+import { MapPin, Clock, Phone, ArrowRight, Sparkles } from 'lucide-react';
 import { getLocations } from '../api';
 
 function HomePage({ selectedLocation, setSelectedLocation }) {
