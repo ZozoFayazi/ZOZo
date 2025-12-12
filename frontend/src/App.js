@@ -11,6 +11,7 @@ import LocationSettings from './pages/LocationSettings';
 import DealsManagement from './pages/DealsManagement';
 import ExpertOrderSettings from './pages/ExpertOrderSettings';
 import MenuManagement from './pages/MenuManagement';
+import DiscountCodes from './pages/DiscountCodes';
 import './App.css';
 
 function App() {
