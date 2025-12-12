@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
-import { X, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle, MapPin, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { createOrder } from '../api';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, selectedLocation, clearCart, onCloseCart }) {
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [deliveryCheck, setDeliveryCheck] = useState(null);
+  const [checkingDelivery, setCheckingDelivery] = useState(false);
+  const [detectedLocation, setDetectedLocation] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -20,6 +26,41 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Check delivery availability when postal code changes
+  useEffect(() => {
+    if (formData.postal_code.length === 5) {
+      checkDeliveryAvailability(formData.postal_code);
+    } else {
+      setDeliveryCheck(null);
+      setDetectedLocation(null);
+    }
+  }, [formData.postal_code]);
+
+  const checkDeliveryAvailability = async (postalCode) => {
+    setCheckingDelivery(true);
+    try {
+      const response = await axios.post(`${API_URL}/api/check-delivery`, {
+        postal_code: postalCode
+      });
+      
+      setDeliveryCheck(response.data);
+      
+      if (response.data.can_deliver && response.data.available_locations.length > 0) {
+        const suggestedLocation = response.data.available_locations[0].location;
+        setDetectedLocation(suggestedLocation);
+        
+        // Show success message with detected location
+        toast.success(`Lieferung nach ${postalCode} möglich! Standort: ${suggestedLocation.name.replace('ZOZO Burger ', '')}`);
+      } else {
+        toast.error(response.data.message || 'Lieferung zu dieser PLZ nicht verfügbar');
+      }
+    } catch (error) {
+      console.error('Delivery check error:', error);
+    } finally {
+      setCheckingDelivery(false);
+    }
   };
 
   const handleSubmit = async (e) => {
