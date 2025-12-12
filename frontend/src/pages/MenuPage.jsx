@@ -327,21 +327,21 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
             ))}
           </div>
         )}
-      </div>
 
-      {/* Product Customizer */}
-      {customizerOpen && customizingItem && (
-        <ProductCustomizer
-          item={customizingItem}
-          size={customizingSize}
-          onAddToCart={addToCart}
-          onClose={() => {
-            setCustomizerOpen(false);
-            setCustomizingItem(null);
-            setCustomizingSize(null);
-          }}
-        />
-      )}
+        {/* Product Customizer */}
+        {customizerOpen && customizingItem && (
+          <ProductCustomizer
+            item={customizingItem}
+            size={customizingSize}
+            onAddToCart={addToCart}
+            onClose={() => {
+              setCustomizerOpen(false);
+              setCustomizingItem(null);
+              setCustomizingSize(null);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }
