@@ -15,15 +15,15 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
 
   return (
     <>
-      <header className="sticky top-0 z-50 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 border-b border-border">
+      <header className="sticky top-0 z-50 glass border-b border-border/50">
         <nav className="container-custom">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3" data-testid="header-logo">
+          <div className="flex items-center justify-between h-18 py-3">
+            {/* Logo with Subtle Scale Animation */}
+            <Link to="/" className="flex items-center space-x-3 group" data-testid="header-logo">
               <img
                 src="https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg"
                 alt="ZOZO Burger"
-                className="h-10 w-auto"
+                className="h-12 w-auto group-hover:scale-105 transition-transform"
               />
             </Link>
 
