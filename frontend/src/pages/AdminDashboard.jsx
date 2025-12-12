@@ -145,6 +145,13 @@ function AdminDashboard() {
                 <span>Menü-Bilder</span>
               </button>
               <button
+                onClick={() => navigate('/admin/discount-codes')}
+                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
+              >
+                <Tag className="h-4 w-4" />
+                <span>Rabattcodes</span>
+              </button>
+              <button
                 onClick={() => navigate('/admin/deals')}
                 className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
               >
