@@ -242,30 +242,20 @@ async def create_order(order: OrderCreate):
     
     # Auto-send to ExpertOrder if API key is configured for this location
     location_settings = await db.location_settings.find_one({"location_id": order.location_id})
-    print(f"[DEBUG] Location settings found: {location_settings is not None}")
-    if location_settings:
-        print(f"[DEBUG] API key set: {bool(location_settings.get('expertorder_api_key'))}")
-        print(f"[DEBUG] Enabled: {location_settings.get('expertorder_enabled')}")
     
     if location_settings and location_settings.get('expertorder_api_key') and location_settings.get('expertorder_enabled'):
         try:
-            print(f"[DEBUG] Attempting to send order to ExpertOrder...")
             from expertorder import ExpertOrderClient, map_zozo_order_to_expertorder
             
             # Map order to ExpertOrder format
-            print(f"[DEBUG] Mapping order to ExpertOrder format...")
             eo_order = map_zozo_order_to_expertorder(order_doc, location)
-            print(f"[DEBUG] Order mapped successfully")
             
             # Send to ExpertOrder
-            print(f"[DEBUG] Creating ExpertOrder client...")
             client = ExpertOrderClient(
                 api_key=location_settings['expertorder_api_key'],
                 use_test_mode=location_settings.get('expertorder_test_mode', False)
             )
-            print(f"[DEBUG] Sending order to ExpertOrder...")
             eo_response = await client.send_order(eo_order)
-            print(f"[DEBUG] ExpertOrder response: {eo_response}")
             
             # Update order with ExpertOrder status
             await db.orders.update_one(
