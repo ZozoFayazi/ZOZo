@@ -168,6 +168,13 @@ async def get_menu(location_id: str = Query(...)):
     
     return result
 
+# Public Deals Endpoint
+@api_router.get("/deals")
+async def get_active_deals():
+    """Get all active deals for homepage display"""
+    deals = await db.deals.find({"active": True}).sort("created_at", -1).to_list(length=100)
+    return serialize_doc(deals)
+
 # Orders
 @api_router.post("/orders")
 async def create_order(order: OrderCreate):
