@@ -68,7 +68,7 @@ function ExpertOrderSettings() {
     if (!selectedLocation) return;
     
     setLoading(true);
-    try:
+    try {
       const token = localStorage.getItem('zozoAuthToken');
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/expertorder-settings/${selectedLocation}`,
