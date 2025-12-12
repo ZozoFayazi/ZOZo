@@ -320,6 +320,106 @@ class ZOZOBurgerAPITester:
             return True
         return success
 
+    def test_check_delivery_valid(self):
+        """Test delivery check with valid postal code"""
+        delivery_data = {
+            "postal_code": "25462"  # Rellingen postal code
+        }
+        
+        success, response = self.run_test(
+            "Check Delivery (Valid Postal Code)",
+            "POST",
+            "check-delivery",
+            200,
+            data=delivery_data
+        )
+        
+        if success and response:
+            can_deliver = response.get('can_deliver')
+            available_locations = response.get('available_locations', [])
+            print(f"   📍 Can deliver: {can_deliver}")
+            print(f"   🏪 Available locations: {len(available_locations)}")
+            if available_locations:
+                loc = available_locations[0]
+                print(f"   💰 Delivery fee: €{loc.get('delivery_fee')}")
+                print(f"   📦 Min order: €{loc.get('min_order_value')}")
+            return True
+        return success
+
+    def test_check_delivery_invalid(self):
+        """Test delivery check with invalid postal code"""
+        delivery_data = {
+            "postal_code": "99999"  # Invalid postal code
+        }
+        
+        success, response = self.run_test(
+            "Check Delivery (Invalid Postal Code)",
+            "POST",
+            "check-delivery",
+            200,
+            data=delivery_data
+        )
+        
+        if success and response:
+            can_deliver = response.get('can_deliver')
+            message = response.get('message')
+            print(f"   📍 Can deliver: {can_deliver}")
+            print(f"   💬 Message: {message}")
+            return True
+        return success
+
+    def test_get_location_settings(self):
+        """Test getting location settings (admin)"""
+        if not self.token:
+            print("   ⚠️  Skipping - No auth token available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Location Settings",
+            "GET",
+            "admin/location-settings",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, list):
+                print(f"   🏪 Found {len(response)} location(s)")
+                for loc in response:
+                    delivery_zone = loc.get('delivery_zone', {})
+                    postal_codes = delivery_zone.get('postal_codes', [])
+                    print(f"   📍 {loc.get('name')}: {len(postal_codes)} postal codes")
+                return True
+        return success
+
+    def test_update_location_settings(self):
+        """Test updating location settings"""
+        if not self.token or not self.location_id:
+            print("   ⚠️  Skipping - Missing token or location_id")
+            return False
+        
+        settings_update = {
+            "postal_codes": ["25462", "25421", "25451"],
+            "min_order_value": 12.0,
+            "delivery_fee": 3.0,
+            "free_delivery_threshold": 20.0
+        }
+        
+        success, response = self.run_test(
+            "Update Location Settings",
+            "PATCH",
+            f"admin/location-settings/{self.location_id}",
+            200,
+            data=settings_update
+        )
+        
+        if success and response:
+            delivery_zone = response.get('delivery_zone', {})
+            print(f"   ✏️  Settings updated:")
+            print(f"      Min order: €{delivery_zone.get('min_order_value')}")
+            print(f"      Delivery fee: €{delivery_zone.get('delivery_fee')}")
+            return True
+        return success
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("=" * 70)
