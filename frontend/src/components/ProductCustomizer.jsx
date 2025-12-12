@@ -100,6 +100,12 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   };
 
   const handleAddToCart = () => {
+    // Validation for bun selection (required for burgers except Smash)
+    if (requiresBunSelection && !selectedBun) {
+      toast.error('Bitte wähle eine Brötchen-Art');
+      return;
+    }
+    
     // Validation for menu upgrade
     if (upgradeToMenu && (!selectedSide || !selectedDrink)) {
       toast.error('Bitte wähle eine Beilage und ein Getränk für das Menü');
