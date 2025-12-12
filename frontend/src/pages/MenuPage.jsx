@@ -389,6 +389,25 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
             onAddToCart={(cartItem) => {
               addToCart(cartItem);
               toast.success(`${cartItem.name} zum Warenkorb hinzugefügt`);
+              
+              // Show upsell after menu upgrade too
+              setUpsellCategory('Burger');
+              setUpsellDialogOpen(true);
+            }}
+          />
+        )}
+
+        {/* Category Upsell Dialog */}
+        {upsellDialogOpen && (
+          <CategoryUpsellDialog
+            category={upsellCategory}
+            onClose={() => {
+              setUpsellDialogOpen(false);
+              setUpsellCategory(null);
+            }}
+            onAddUpsell={(upsellItem) => {
+              addToCart(upsellItem);
+              toast.success(`${upsellItem.name} hinzugefügt`);
             }}
           />
         )}
