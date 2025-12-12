@@ -174,23 +174,63 @@ async def create_order(order: OrderCreate):
     
     return serialize_doc(order_doc)
 
+# Auth Routes
+@api_router.post("/auth/login", response_model=LoginResponse)
+async def login(credentials: LoginRequest):
+    """Admin login"""
+    # Find admin user
+    admin = await db.admin_users.find_one({"email": credentials.email, "active": True})
+    
+    if not admin or not verify_password(credentials.password, admin['password_hash']):
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect email or password"
+        )
+    
+    # Create access token
+    access_token = create_access_token(data={
+        "sub": str(admin['_id']),
+        "email": admin['email'],
+        "role": admin['role'],
+        "location_id": admin.get('location_id')
+    })
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": str(admin['_id']),
+            "email": admin['email'],
+            "role": admin['role'],
+            "location_id": admin.get('location_id')
+        }
+    }
+
+@api_router.get("/auth/me")
+async def get_current_user_info(current_user: dict = Depends(get_current_user)):
+    """Get current user information"""
+    return current_user
+
+# Admin Routes (Protected)
 @api_router.get("/admin/orders")
-async def get_orders(
+async def get_admin_orders(
     location_id: Optional[str] = None,
     status: Optional[str] = None,
-    token: str = Query(default="POC_TOKEN")
+    current_user: dict = Depends(get_current_user)
 ):
-    """Get orders (with optional filters) - POC uses simple token"""
-    if token != "POC_TOKEN":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
+    """Get orders with optional filters"""
     query = {}
-    if location_id:
+    
+    # If user is location manager, restrict to their location
+    if current_user.get('role') == 'manager' and current_user.get('location_id'):
+        query["location_id"] = current_user['location_id']
+    elif location_id:
         query["location_id"] = location_id
+    
     if status:
         query["status"] = status
     
-    cursor = db.orders.find(query).sort("created_at", -1)
+    cursor = db.orders.find(query).sort("created_at", -1).limit(100)
     orders = await cursor.to_list(length=100)
     return serialize_doc(orders)
 
@@ -198,22 +238,144 @@ async def get_orders(
 async def update_order_status(
     order_id: str,
     update: OrderStatusUpdate,
-    token: str = Query(default="POC_TOKEN")
+    current_user: dict = Depends(get_current_user)
 ):
-    """Update order status - POC uses simple token"""
-    if token != "POC_TOKEN":
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    """Update order status"""
+    # Check if order exists and user has access
+    order = await db.orders.find_one({"_id": parse_object_id(order_id)})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
     
+    if current_user.get('role') == 'manager':
+        if order['location_id'] != current_user.get('location_id'):
+            raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Update order
     result = await db.orders.update_one(
-        {"_id": ObjectId(order_id)},
+        {"_id": parse_object_id(order_id)},
         {"$set": {"status": update.status, "updated_at": datetime.utcnow()}}
     )
     
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Order not found")
     
-    order = await db.orders.find_one({"_id": ObjectId(order_id)})
-    return serialize_doc(order)
+    updated_order = await db.orders.find_one({"_id": parse_object_id(order_id)})
+    return serialize_doc(updated_order)
+
+# Menu Management
+@api_router.get("/admin/menu-items")
+async def get_all_menu_items(
+    location_id: Optional[str] = None,
+    category_id: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get all menu items (admin)"""
+    query = {}
+    
+    if current_user.get('role') == 'manager' and current_user.get('location_id'):
+        query["$or"] = [
+            {"location_id": None},
+            {"location_id": current_user['location_id']}
+        ]
+    elif location_id:
+        query["location_id"] = location_id
+    
+    if category_id:
+        query["category_id"] = category_id
+    
+    items = await db.menu_items.find(query).to_list(length=1000)
+    return serialize_doc(items)
+
+@api_router.post("/admin/menu-items")
+async def create_menu_item(
+    item: MenuItemCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create a new menu item"""
+    item_doc = item.dict()
+    
+    # If user is location manager, set location_id
+    if current_user.get('role') == 'manager' and current_user.get('location_id'):
+        item_doc['location_id'] = current_user['location_id']
+    
+    result = await db.menu_items.insert_one(item_doc)
+    item_doc['_id'] = result.inserted_id
+    return serialize_doc(item_doc)
+
+@api_router.patch("/admin/menu-items/{item_id}")
+async def update_menu_item(
+    item_id: str,
+    update: MenuItemUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update menu item"""
+    # Check if item exists
+    item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    if not item:
+        raise HTTPException(status_code=404, detail="Menu item not found")
+    
+    # Check access
+    if current_user.get('role') == 'manager':
+        if item.get('location_id') and item['location_id'] != current_user.get('location_id'):
+            raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Update only provided fields
+    update_data = {k: v for k, v in update.dict().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    await db.menu_items.update_one(
+        {"_id": parse_object_id(item_id)},
+        {"$set": update_data}
+    )
+    
+    updated_item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    return serialize_doc(updated_item)
+
+# Dashboard Stats
+@api_router.get("/admin/stats")
+async def get_dashboard_stats(
+    location_id: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get dashboard statistics"""
+    query = {}
+    
+    # If user is location manager, restrict to their location
+    if current_user.get('role') == 'manager' and current_user.get('location_id'):
+        query["location_id"] = current_user['location_id']
+        location_id = current_user['location_id']
+    elif location_id:
+        query["location_id"] = location_id
+    
+    # Get order stats
+    total_orders = await db.orders.count_documents(query)
+    new_orders = await db.orders.count_documents({**query, "status": "new"})
+    preparing_orders = await db.orders.count_documents({**query, "status": "preparing"})
+    completed_orders = await db.orders.count_documents({**query, "status": "completed"})
+    
+    # Get revenue (only completed orders)
+    pipeline = [
+        {"$match": {**query, "status": "completed"}},
+        {"$group": {"_id": None, "total_revenue": {"$sum": "$total"}}}
+    ]
+    revenue_result = await db.orders.aggregate(pipeline).to_list(1)
+    total_revenue = revenue_result[0]['total_revenue'] if revenue_result else 0
+    
+    # Get today's orders
+    today_start = datetime.combine(date.today(), datetime.min.time())
+    today_query = {**query, "created_at": {"$gte": today_start}}
+    today_orders = await db.orders.count_documents(today_query)
+    
+    return {
+        "total_orders": total_orders,
+        "new_orders": new_orders,
+        "preparing_orders": preparing_orders,
+        "completed_orders": completed_orders,
+        "total_revenue": round(total_revenue, 2),
+        "today_orders": today_orders,
+        "location_id": location_id
+    }
 
 # Include the router in the main app
 app.include_router(api_router)
