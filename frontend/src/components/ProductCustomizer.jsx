@@ -150,8 +150,9 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
                     </button>
                   );
                 })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Removals */}
           {removableIngredients.length > 0 && (
