@@ -3,6 +3,7 @@ import { getLocations, getMenu } from '../api';
 import { Search, Plus, MapPin, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import ProductCustomizer from '../components/ProductCustomizer';
+import MenuUpgradeDialog from '../components/MenuUpgradeDialog';
 
 function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [locations, setLocations] = useState([]);
@@ -13,6 +14,8 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [customizerOpen, setCustomizerOpen] = useState(false);
   const [customizingItem, setCustomizingItem] = useState(null);
   const [customizingSize, setCustomizingSize] = useState(null);
+  const [menuUpgradeOpen, setMenuUpgradeOpen] = useState(false);
+  const [upgradingItem, setUpgradingItem] = useState(null);
 
   useEffect(() => {
     loadLocations();
