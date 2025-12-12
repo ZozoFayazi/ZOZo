@@ -41,14 +41,14 @@
   },
   {
     "content": "Phase 2: SEO optimization with Schema.org markup",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 2: All user stories covered in Development",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: End to End Testing using Testing Agent",
-    "status": "pending"
+    "status": "in_progress"
   }
 ]
