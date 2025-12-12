@@ -126,6 +126,39 @@ class DealUpdate(BaseModel):
     image_url: Optional[str] = None
     active: Optional[bool] = None
 
+# Discount Code Models
+class DiscountCodeCreate(BaseModel):
+    code: str
+    description: Optional[str] = None
+    discount_type: str  # "percentage" or "fixed"
+    discount_value: float
+    min_order_value: Optional[float] = 0
+    order_type: Optional[str] = None  # "pickup", "delivery", or None (both)
+    max_uses: Optional[int] = None  # None = unlimited
+    valid_from: Optional[datetime] = None
+    valid_until: Optional[datetime] = None
+    location_ids: List[str] = []  # Empty = all locations
+    active: bool = True
+
+class DiscountCodeUpdate(BaseModel):
+    code: Optional[str] = None
+    description: Optional[str] = None
+    discount_type: Optional[str] = None
+    discount_value: Optional[float] = None
+    min_order_value: Optional[float] = None
+    order_type: Optional[str] = None
+    max_uses: Optional[int] = None
+    valid_from: Optional[datetime] = None
+    valid_until: Optional[datetime] = None
+    location_ids: Optional[List[str]] = None
+    active: Optional[bool] = None
+
+class DiscountCodeValidate(BaseModel):
+    code: str
+    order_total: float
+    order_type: str  # "pickup" or "delivery"
+    location_id: str
+
 # Routes
 @api_router.get("/")
 async def root():
