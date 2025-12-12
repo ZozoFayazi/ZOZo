@@ -175,11 +175,16 @@ def seed_menu_items(categories):
             "active": True
         })
     
-    # SMASH BURGER & FISCH Category
+    # SMASH BURGER & FISCH Category - COMPLETE (8 items)
     smash_items = [
-        {"name": "Smash Burger Classic", "desc": "Double Smash Patty, Käse, Burger Sauce, Gewürzgurken", "price": 11.99, "img": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800"},
-        {"name": "Smash Burger Bacon", "desc": "Double Smash Patty, Käse, Bacon, Burger Sauce", "price": 13.49, "img": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=800"},
-        {"name": "Fish Burger", "desc": "Knuspriges Fischfilet, Remoulade, Salat, Tomate", "price": 9.99, "img": "https://images.unsplash.com/photo-1625869016774-3faea40f6c5f?w=800"},
+        {"name": "Smash Klassik", "desc": "Potato Bun, Ketchup, 2x Beef Patty, Gewürzgurken, rote Zwiebeln, Salat und Tomaten", "price": 10.90, "img": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800"},
+        {"name": "Smash Cheese", "desc": "Potato Bun, Ketchup, 2x Beef Patty, 2x Käse, Gewürzgurken, rote Zwiebeln, Salat und Tomaten", "price": 12.99, "img": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=800"},
+        {"name": "Smash Bacon", "desc": "Potato Bun, BBQ-Sauce, 2x Beef Patty, Cheddar Käse, Bacon, Gewürzgurken, Röstzwiebeln, Salat und Tomaten", "price": 13.90, "img": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=800"},
+        {"name": "Smash Chili Cheese", "desc": "Potato Bun, Ketchup, 2x Beef Patty, 2x Käse, Jalapeños, Käse Sauce, Gewürzgurken, rote Zwiebeln, Salat und Tomaten", "price": 13.90, "img": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=800"},
+        {"name": "Fischburger", "desc": "Remoulade, Zwiebeln, Gewürzgurken, Käse, Salat und Tomaten", "price": 9.99, "img": "https://images.unsplash.com/photo-1625869016774-3faea40f6c5f?w=800"},
+        {"name": "Fisch und Chips", "desc": "Pommes mit 6 Fischnuggets", "price": 9.99, "img": "https://images.unsplash.com/photo-1625869016774-3faea40f6c5f?w=800"},
+        {"name": "Fisch Wrap", "desc": "Tortilla Wrap mit Remoulade, Salat, Zwiebeln und Fischburgerpatty", "price": 10.99, "img": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800"},
+        {"name": "Fischsalat", "desc": "Mix-Salat mit Zwiebeln und 6 Fischnuggets", "price": 10.99, "img": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"},
     ]
     
     for item in smash_items:
