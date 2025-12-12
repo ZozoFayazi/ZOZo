@@ -179,7 +179,14 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                   
                   <div className="flex items-center space-x-3">
                     <Clock className="h-5 w-5 flex-shrink-0" />
-                    <p>{location.opening_hours}</p>
+                    <div>
+                      <p>{location.opening_hours}</p>
+                      {location.opening_status && location.opening_status.next_opening && (
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {location.opening_status.next_opening}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   
                   {location.phone && (
