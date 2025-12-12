@@ -42,7 +42,9 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
     if (lower.includes('salat')) return '🥬';
     if (lower.includes('käse') || lower.includes('cheese')) return '🧀';
     if (lower.includes('bacon') || lower.includes('speck')) return '🥓';
-    if (lower.includes('ei')) return '🥚';
+    if (lower.includes('beef') || lower.includes('patty') || lower.includes('fleisch')) return '🥩';
+    if (lower.includes('spiegelei') || lower.includes('fried egg')) return '🍳';
+    if (lower.includes('ei') || lower.includes('egg')) return '🥚';
     if (lower.includes('jalapeño') || lower.includes('chili')) return '🌶️';
     if (lower.includes('pilz') || lower.includes('champignon')) return '🍄';
     if (lower.includes('paprika')) return '🫑';
