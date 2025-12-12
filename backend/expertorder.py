@@ -102,7 +102,16 @@ class ExpertOrderClient:
         }
         
         try:
+            # Dump model and remove empty strings (ExpertOrder doesn't accept them)
             order_dict = order.model_dump(exclude_none=True)
+            # Remove empty strings from dict recursively
+            def remove_empty_strings(d):
+                if isinstance(d, dict):
+                    return {k: remove_empty_strings(v) for k, v in d.items() if v != ''}
+                elif isinstance(d, list):
+                    return [remove_empty_strings(item) for item in d]
+                return d
+            order_dict = remove_empty_strings(order_dict)
             print(f"[DEBUG] Sending order JSON: {order_dict}")
             
             async with httpx.AsyncClient(timeout=self.timeout) as client:
