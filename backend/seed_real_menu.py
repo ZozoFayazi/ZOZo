@@ -181,6 +181,8 @@ def seed_real_menu():
                     "menu_upgrade_price_medium": item.get("menu_m"),
                     "menu_upgrade_price_large": item.get("menu_l"),
                     "can_upgrade_to_menu": item.get("menu_m") is not None,
+                    "removable_ingredients": item.get("removable", []),
+                    "available_extras": ["Extra Käse (+€1.50)", "Extra Bacon (+€2.00)", "Extra Beef Patty (+€3.50)", "Spiegelei (+€1.00)", "Jalapeños (+€0.50)"],
                     "created_at": datetime.utcnow()
                 }
             else:
@@ -198,6 +200,8 @@ def seed_real_menu():
                     "is_menu": False,
                     "menu_upgrade_price": item.get("menu_price"),
                     "can_upgrade_to_menu": item.get("menu_price") is not None,
+                    "removable_ingredients": item.get("removable", []),
+                    "available_extras": ["Extra Käse (+€1.50)", "Extra Bacon (+€2.00)", "Extra Beef Patty (+€3.50)", "Spiegelei (+€1.00)", "Jalapeños (+€0.50)"],
                     "created_at": datetime.utcnow()
                 }
             menu_items.append(doc)
