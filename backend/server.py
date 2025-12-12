@@ -87,6 +87,16 @@ class OrderCreate(BaseModel):
 class OrderStatusUpdate(BaseModel):
     status: str
 
+# Location Settings Models
+class DeliveryZoneUpdate(BaseModel):
+    postal_codes: Optional[List[str]] = None
+    min_order_value: Optional[float] = None
+    delivery_fee: Optional[float] = None
+    free_delivery_threshold: Optional[float] = None
+
+class DeliveryCheckRequest(BaseModel):
+    postal_code: str
+
 # Routes
 @api_router.get("/")
 async def root():
