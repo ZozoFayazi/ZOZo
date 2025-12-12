@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdminOrders, updateOrderStatus, getDashboardStats } from '../api';
 import { toast } from 'sonner';
-import { Package, Clock, CheckCircle, TrendingUp, LogOut } from 'lucide-react';
+import { Package, Clock, CheckCircle, TrendingUp, LogOut, Settings } from 'lucide-react';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -136,13 +136,22 @@ function AdminDashboard() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Abmelden</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate('/admin/settings')}
+                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Einstellungen</span>
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Abmelden</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
