@@ -327,7 +327,15 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
                       }`}
                       data-testid={`remove-${removal.toLowerCase().replace(/\s+/g, '-')}`}
                     >
-                      <span className="text-lg">{icon}</span>
+                      {icon.type === 'image' ? (
+                        <img 
+                          src={icon.icon} 
+                          alt="" 
+                          className="w-5 h-5 object-contain"
+                        />
+                      ) : (
+                        <span className="text-lg">{icon.icon}</span>
+                      )}
                       <span>{isSelected && '− '}Ohne {removal}</span>
                     </button>
                   );
