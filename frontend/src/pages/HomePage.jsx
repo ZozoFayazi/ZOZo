@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Clock, Phone, ArrowRight, Sparkles, Zap, Heart } from 'lucide-react';
 import { getLocations } from '../api';
+import OrderTypeSelection from '../components/OrderTypeSelection';
 
 function HomePage({ selectedLocation, setSelectedLocation }) {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
   const [deals, setDeals] = useState([]);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [showOrderTypeDialog, setShowOrderTypeDialog] = useState(false);
 
   useEffect(() => {
     loadLocations();
