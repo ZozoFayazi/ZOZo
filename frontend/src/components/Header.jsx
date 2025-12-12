@@ -35,6 +35,14 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               >
                 SPEISEKARTE
               </Link>
+              <Link
+                to="/order-tracking"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/order-tracking') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                BESTELLSTATUS
+              </Link>
             </div>
 
             {/* CENTER: Logo (Larger & Prominent) */}
