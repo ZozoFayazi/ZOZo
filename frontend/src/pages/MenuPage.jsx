@@ -389,9 +389,9 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
               setCustomizingItem(null);
               setCustomizingSize(null);
               
-              // Show category upsell after adding item
+              // Show category upsell for specific categories only
               const category = menu.find(cat => cat.items.some(i => i.id === customizingItem.id));
-              if (category && !category.slug.includes('getraenke') && !category.slug.includes('dip') && !category.slug.includes('dessert')) {
+              if (category && shouldShowUpsell(category.slug)) {
                 setUpsellCategory(category.name);
                 setUpsellDialogOpen(true);
               }
