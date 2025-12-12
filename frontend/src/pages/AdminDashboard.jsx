@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdminOrders, updateOrderStatus, getDashboardStats } from '../api';
 import { toast } from 'sonner';
-import { Package, Clock, CheckCircle, TrendingUp, LogOut, Settings } from 'lucide-react';
+import { Package, Clock, CheckCircle, TrendingUp, LogOut, Settings, Image } from 'lucide-react';
 
 function AdminDashboard() {
   const navigate = useNavigate();
