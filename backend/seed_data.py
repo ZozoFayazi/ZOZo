@@ -108,18 +108,25 @@ def seed_menu_items(categories):
     
     menu_items = []
     
-    # BURGER Category - COMPLETE
+    # BURGER Category - COMPLETE (17 items)
     burgers = [
         {"name": "Hamburger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken", "p_m": 7.99, "p_l": 11.19, "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"},
         {"name": "Cheeseburger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Käse", "p_m": 9.19, "p_l": 12.29, "img": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800"},
         {"name": "Chili-Cheeseburger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Käse, Jalapeños", "p_m": 9.49, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=800"},
-        {"name": "Bacon-Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Bacon, Gewürzgurken, BBQ Sauce, Röstzwiebeln", "p_m": 8.69, "p_l": 11.49, "img": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=800"},
+        {"name": "Bacon-Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Bacon, Gewürzgurken, BBQ Sauce, Röstzwiebeln", "p_m": 11.49, "p_l": 14.29, "img": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=800"},
         {"name": "Veggie Burger", "desc": "Veggie Patty, Tomaten, Salat, Zwiebeln, Gewürzgurken", "p_m": 7.69, "p_l": None, "img": "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=800"},
-        {"name": "Crunchy Chicken Burger", "desc": "Crunchy Chicken, Tomaten, Salat, Zwiebeln, Gewürzgurke, Käse", "p_m": 9.49, "p_l": None, "img": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=800"},
-        {"name": "Monster Bacon Burger", "desc": "Beef, Tomaten, Salat, Gewürzgurken, Zwiebeln, Ei, Champignons, Bacon, Käse", "p_m": 12.99, "p_l": 16.39, "img": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=800"},
-        {"name": "Greek Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Oliven, Hirtenkäse, Gewürzgurken, Peperoni", "p_m": 9.49, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=800"},
-        {"name": "Italian Burger", "desc": "Beef, Tomaten, Mozzarella, Basilikum, Gewürzgurken", "p_m": 9.49, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1585238341710-75a96881e2b7?w=800"},
-        {"name": "Big Boss Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Bacon, Ei, Käse", "p_m": 11.49, "p_l": 14.89, "img": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=800"},
+        {"name": "Crunchy Chicken Burger", "desc": "Crunchy Chicken, Tomaten, Salat, Zwiebeln, Gewürzgurke, Käse", "p_m": 8.09, "p_l": None, "img": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=800"},
+        {"name": "Monster Bacon Burger", "desc": "Beef, Tomaten, Salat, Gewürzgurken, Zwiebeln, Ei, Champignons, Bacon, Käse", "p_m": 9.49, "p_l": 12.59, "img": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=800"},
+        {"name": "Chili Bacon Burger", "desc": "Beef, Bacon, Jalapeños, BBQ Sauce, Tomaten, Salat, Gewürzgurken, Röstzwiebeln", "p_m": 9.99, "p_l": 13.99, "img": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=800"},
+        {"name": "Champion-Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Champignons", "p_m": 8.69, "p_l": 11.49, "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"},
+        {"name": "Green Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Oliven, Hirtenkäse, Gewürzgurken, Peperoni", "p_m": 9.49, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=800"},
+        {"name": "Italy Burger", "desc": "Beef, Tomaten, Rucola, Gewürzgurken, Zwiebeln, Grana Padano, Serrano Schinken", "p_m": 9.99, "p_l": 12.59, "img": "https://images.unsplash.com/photo-1585238341710-75a96881e2b7?w=800"},
+        {"name": "Farmers Burger", "desc": "Beef, Tomaten, Salat, Zwiebeln, Gewürzgurken, Spiegelei", "p_m": 8.79, "p_l": 11.29, "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"},
+        {"name": "Chicken Nugget Burger", "desc": "Chicken Nuggets, Salat, Tomaten, Gewürzgurken, Zwiebeln", "p_m": 8.09, "p_l": None, "img": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800"},
+        {"name": "Crunchy Chicken Bacon Burger", "desc": "Crunchy Chicken, Tomaten, Salat, BBQ Sauce, Gewürzgurken, Röstzwiebeln, Jalapeños, Bacon", "p_m": 10.39, "p_l": 13.99, "img": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=800"},
+        {"name": "Two Hundred Fifty Burger", "desc": "2x 125g Beef, Salat, Tomaten, Gewürzgurken, Zwiebeln, Käse", "p_m": 9.59, "p_l": 12.69, "img": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=800"},
+        {"name": "Three Hundred Sixty Burger", "desc": "2x 180g Beef, Salat, Tomaten, Gewürzgurken, Zwiebeln, Käse", "p_m": 10.39, "p_l": 17.49, "img": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=800"},
+        {"name": "Avocado Dream Burger", "desc": "Beef, Rucola Salat, Avocado Slices, Guacamole, Spiegelei", "p_m": 9.49, "p_l": 11.89, "img": "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=800"},
     ]
     
     for item in burgers:
