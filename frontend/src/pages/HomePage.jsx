@@ -27,7 +27,22 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
     navigate('/menu');
   };
 
+  const handleOrderTypeComplete = (data) => {
+    setSelectedLocation(data.location);
+    setShowOrderTypeDialog(false);
+    navigate('/menu');
+  };
+
   return (
+    <>
+      {/* Order Type Selection Modal */}
+      {showOrderTypeDialog && (
+        <OrderTypeSelection
+          locations={locations}
+          onComplete={handleOrderTypeComplete}
+          onClose={() => setShowOrderTypeDialog(false)}
+        />
+      )}
     <div className="min-h-screen">
       {/* Hero Section - Redesigned */}
       <section className="relative noise-overlay bg-gradient-to-br from-background via-accent/30 to-background py-24 md:py-36 overflow-hidden">
