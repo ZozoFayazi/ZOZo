@@ -65,11 +65,21 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check if delivery is available
+    if (!deliveryCheck || !deliveryCheck.can_deliver) {
+      toast.error('Lieferung zu dieser Postleitzahl nicht verfügbar');
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // Use detected location if available, otherwise use selected location
+      const locationToUse = detectedLocation || selectedLocation;
+      
       const orderData = {
-        location_id: selectedLocation.id,
+        location_id: locationToUse.id,
         items: cart.map(item => ({
           menu_item_id: item.menu_item_id,
           name: item.name,
@@ -96,7 +106,8 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       toast.success('Bestellung erfolgreich aufgegeben!');
     } catch (error) {
       console.error('Order error:', error);
-      toast.error('Fehler bei der Bestellung. Bitte versuche es erneut.');
+      const errorMessage = error.response?.data?.detail || 'Fehler bei der Bestellung. Bitte versuche es erneut.';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -227,8 +238,25 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                     value={formData.postal_code}
                     onChange={handleChange}
                     required
+                    maxLength={5}
                     className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="z.B. 25462"
                   />
+                  {checkingDelivery && (
+                    <p className="text-xs text-muted-foreground mt-1">Prüfe Liefergebiet...</p>
+                  )}
+                  {deliveryCheck && !deliveryCheck.can_deliver && (
+                    <div className="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-xs text-destructive flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                      <span>{deliveryCheck.message}</span>
+                    </div>
+                  )}
+                  {detectedLocation && (
+                    <div className="mt-2 p-2 bg-primary/10 border border-primary/20 rounded text-xs text-primary flex items-start gap-2">
+                      <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                      <span>Lieferung von: {detectedLocation.name.replace('ZOZO Burger ', '')}</span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Stadt *</label>
