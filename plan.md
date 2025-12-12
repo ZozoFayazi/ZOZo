@@ -3,7 +3,7 @@
 ## Projekt-Übersicht
 ZOZO Burger Lieferservice Website mit FastAPI Backend, React Frontend und MongoDB. Aktuell werden mehrere aufeinanderfolgende Dialoge für die Produktbestellung verwendet. Ziel ist es, die User Experience durch Zusammenführung der Dialoge zu vereinfachen.
 
-## Phase 1: Dialog-Vereinfachung (Status: In Progress) ✅
+## Phase 1: Dialog-Vereinfachung (Status: COMPLETED) ✅
 **Ziel:** ProductCustomizer und MenuUpgradeDialog zu einem einzigen, effizienten Dialog zusammenführen
 
 ### Umgesetzte Features:
