@@ -386,9 +386,10 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
           <button
             onClick={handleAddToCart}
             className="btn-primary w-full"
+            data-testid="add-to-cart-final"
           >
             <Plus className="inline h-5 w-5 mr-2" />
-            Zum Warenkorb hinzufügen
+            Zum Warenkorb hinzufügen (€{totalPrice.toFixed(2)})
           </button>
         </div>
       </div>
