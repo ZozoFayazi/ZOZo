@@ -1874,17 +1874,6 @@ async def remove_item_from_group_order(group_code: str, item_index: int):
         print(f"Error removing item: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-            # Award bonus points
-            if achievement["bonus_points"] > 0:
-                await add_points_to_account(
-                    customer_email,
-                    achievement["bonus_points"],
-                    f"Achievement freigeschaltet: {achievement['name']}",
-                    achievement_id=achievement_id
-                )
-    
-    return unlocked
-
 # Get loyalty account
 @api_router.get("/loyalty/account/{email}")
 async def get_loyalty_account(email: str):
