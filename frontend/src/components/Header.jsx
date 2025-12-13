@@ -157,35 +157,43 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 <Link
                   to="/menu"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2 text-sm font-medium transition-colors ${
-                    isActive('/menu') ? 'text-primary' : 'text-foreground/80'
+                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                    isActive('/menu') 
+                      ? 'text-primary bg-primary/10' 
+                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
                   }`}
                 >
-                  Speisekarte
+                  📋 Speisekarte
                 </Link>
                 <Link
                   to="/locations"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2 text-sm font-medium transition-colors ${
-                    isActive('/locations') ? 'text-primary' : 'text-foreground/80'
+                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                    isActive('/locations') 
+                      ? 'text-primary bg-primary/10' 
+                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
                   }`}
                 >
-                  Standorte
+                  📍 Standorte
                 </Link>
                 <Link
                   to="/order-tracking"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2 text-sm font-medium transition-colors ${
-                    isActive('/order-tracking') ? 'text-primary' : 'text-foreground/80'
+                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                    isActive('/order-tracking') 
+                      ? 'text-primary bg-primary/10' 
+                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
                   }`}
                 >
-                  Bestellstatus
+                  📦 Bestellstatus
                 </Link>
                 <Link
                   to="/burger-builder"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2 text-sm font-medium transition-colors ${
-                    isActive('/burger-builder') ? 'text-primary' : 'text-foreground/80'
+                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                    isActive('/burger-builder') 
+                      ? 'text-primary bg-primary/10' 
+                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
                   }`}
                 >
                   🍔 Burger Builder
@@ -193,8 +201,10 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 <Link
                   to="/rewards"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2 text-sm font-medium transition-colors ${
-                    isActive('/rewards') ? 'text-primary' : 'text-foreground/80'
+                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                    isActive('/rewards') 
+                      ? 'text-primary bg-primary/10' 
+                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
                   }`}
                 >
                   🎁 Belohnungen
