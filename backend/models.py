@@ -170,3 +170,25 @@ class OrderCreate(BaseModel):
 
 class OrderStatusUpdate(BaseModel):
     status: str
+
+# Custom Burger Models
+class CustomBurger(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    name: str
+    description: Optional[str] = None
+    bun: str  # "brioche", "sesame", "whole_wheat"
+    patty: str  # "beef", "chicken", "veggie", "vegan"
+    patty_count: int = 1  # 1-3 patties
+    cheese: Optional[str] = None  # "cheddar", "swiss", "blue", "vegan"
+    toppings: List[str] = []  # ["lettuce", "tomato", "onions", "pickles", "bacon", "egg", "jalapenos"]
+    sauces: List[str] = []  # ["ketchup", "mayo", "bbq", "ranch", "special"]
+    price: float
+    created_by: Optional[str] = None  # customer email/id
+    is_public: bool = False
+    votes: int = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
