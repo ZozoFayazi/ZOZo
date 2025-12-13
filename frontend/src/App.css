@@ -353,6 +353,15 @@ select:focus {
 
 /* Pull to refresh indicator */
 @keyframes pull-refresh {
+
+
+/* Add bottom padding on mobile to account for bottom navigation */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+}
+
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
