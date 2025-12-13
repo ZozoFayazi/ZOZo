@@ -234,3 +234,18 @@ class Achievement(BaseModel):
     bonus_points: int = 0  # Bonus points awarded when unlocked
     requirement: str  # Description of how to unlock
     category: str  # "orders", "spending", "variety", "time", "custom"
+
+
+# Email Verification Models
+class EmailVerification(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    email: str
+    code: str  # 6-digit verification code
+    verified: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: datetime  # Code expires after 10 minutes
+    
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
