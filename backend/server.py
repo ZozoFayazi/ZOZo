@@ -262,6 +262,16 @@ async def get_featured_products():
     items = await cursor.to_list(length=20)
     return serialize_doc(items)
 
+# Order History
+@api_router.get("/order-history/{email}")
+async def get_order_history(email: str, limit: int = 5):
+    """Get recent orders for a customer by email"""
+    cursor = db.orders.find(
+        {"customer.email": email}
+    ).sort("created_at", -1).limit(limit)
+    orders = await cursor.to_list(length=limit)
+    return serialize_doc(orders)
+
 # Orders
 @api_router.post("/orders")
 async def create_order(order: OrderCreate):
