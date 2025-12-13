@@ -1,27 +1,52 @@
 import React from 'react';
 
 function BurgerPreview({ burger }) {
-  // Ingredient visuals (layers stacked from bottom to top)
+  // Ingredient image mapping
+  const getIngredientImage = (ingredient) => {
+    const imageMap = {
+      // Patties
+      'beef': '/ingredients/beef_patty.png',
+      'chicken': '/ingredients/chicken_patty.png',
+      'veggie': '/ingredients/veggie_patty.png',
+      'vegan': '/ingredients/veggie_patty.png',
+      
+      // Cheese
+      'cheddar': '/ingredients/cheese_slice.png',
+      'swiss': '/ingredients/cheese_slice.png',
+      'blue': '/ingredients/cheese_slice.png',
+      'vegan_cheese': '/ingredients/cheese_slice.png',
+      
+      // Vegetables
+      'lettuce': '/ingredients/lettuce.png',
+      'tomato': '/ingredients/tomato.png',
+      'onions': '/ingredients/onion.png',
+      'pickles': '/ingredients/pickle.png',
+      
+      // Extras
+      'bacon': '/ingredients/bacon.png',
+      'jalapenos': '/ingredients/jalapeno.png',
+      
+      // Sauces
+      'ketchup': '/ingredients/ketchup_layer.png',
+      'mayo': '/ingredients/mayo_layer.png',
+      'bbq': '/ingredients/bbq_layer.png',
+      'mustard': '/ingredients/mustard_layer.png',
+      'ranch': '/ingredients/mayo_layer.png',
+      'special': '/ingredients/bbq_layer.png',
+    };
+    
+    return imageMap[ingredient] || null;
+  };
+
+  // Build the burger layers array (bottom to top)
   const layers = [];
 
   // Bottom Bun
   if (burger.bun) {
     layers.push({
       key: 'bottom-bun',
-      component: (
-        <div className="w-full h-8 bg-gradient-to-b from-amber-600 to-amber-700 rounded-b-[50px] border-4 border-amber-800 relative">
-          <div className="absolute inset-0 flex items-center justify-center gap-1">
-            {burger.bun === 'sesame' && (
-              <>
-                <div className="w-1.5 h-1.5 bg-amber-200 rounded-full"></div>
-                <div className="w-1.5 h-1.5 bg-amber-200 rounded-full"></div>
-                <div className="w-1.5 h-1.5 bg-amber-200 rounded-full"></div>
-                <div className="w-1.5 h-1.5 bg-amber-200 rounded-full"></div>
-              </>
-            )}
-          </div>
-        </div>
-      )
+      image: '/ingredients/bun_bottom.png',
+      height: 60
     });
   }
 
