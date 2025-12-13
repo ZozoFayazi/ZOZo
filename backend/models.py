@@ -248,6 +248,30 @@ class EmailVerification(BaseModel):
     code: str  # 6-digit verification code
     verified: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Social Ordering Models
+class GroupOrder(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    group_code: str  # Unique shareable code
+    host_name: str  # Name of person who created group order
+    host_email: Optional[str] = None
+    location_id: str
+    items: List[dict] = []  # Combined items from all participants
+    participants: List[dict] = []  # List of {name, items_added}
+    status: str = "active"  # active, finalized, expired
+    expires_at: datetime  # 1 hour from creation
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
+
+class GroupOrderAddItems(BaseModel):
+    participant_name: str
+    items: List[dict]
+
     expires_at: datetime  # Code expires after 10 minutes
     
     class Config:
