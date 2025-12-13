@@ -26,6 +26,18 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
     }
   };
 
+  const loadFeaturedProducts = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/featured-products`);
+      if (response.ok) {
+        const data = await response.json();
+        setFeaturedProducts(data);
+      }
+    } catch (error) {
+      console.error('Error loading featured products:', error);
+    }
+  };
+
   const handleOrder = (location) => {
     setSelectedLocation(location);
     navigate('/menu');
