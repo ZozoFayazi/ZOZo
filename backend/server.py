@@ -1498,6 +1498,165 @@ async def check_achievements(customer_email: str, order_total: float, order_item
     order_count = await db.orders.count_documents({"customer.email": customer_email})
     
     # Get custom burger count
+
+
+# ==================== EMAIL VERIFICATION ENDPOINTS ====================
+
+import random
+import string
+from datetime import timedelta
+from email_service import send_verification_email, send_status_update_email, send_review_request_email
+
+class EmailVerificationRequest(BaseModel):
+    email: str
+
+class EmailVerificationCheck(BaseModel):
+    email: str
+    code: str
+
+@api_router.post("/email/send-verification")
+async def send_email_verification(request: EmailVerificationRequest):
+    """Send verification code to email"""
+    try:
+        # Generate 6-digit code
+        code = ''.join(random.choices(string.digits, k=6))
+        
+        # Store in database with 10-minute expiry
+        verification_doc = {
+            "email": request.email,
+            "code": code,
+            "verified": False,
+            "created_at": datetime.utcnow(),
+            "expires_at": datetime.utcnow() + timedelta(minutes=10)
+        }
+        
+        # Delete old verification codes for this email
+        await db.email_verifications.delete_many({"email": request.email})
+        
+        # Insert new verification
+        await db.email_verifications.insert_one(verification_doc)
+        
+        # Send email
+        success = send_verification_email(request.email, code)
+        
+        if not success:
+            raise HTTPException(status_code=500, detail="E-Mail konnte nicht gesendet werden")
+        
+        return {"message": "Verifizierungscode wurde gesendet", "email": request.email}
+        
+    except Exception as e:
+        print(f"Verification email error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/email/verify-code")
+async def verify_email_code(request: EmailVerificationCheck):
+    """Verify email with code"""
+    try:
+        # Find verification record
+        verification = await db.email_verifications.find_one({
+            "email": request.email,
+            "code": request.code,
+            "verified": False
+        })
+        
+        if not verification:
+            raise HTTPException(status_code=400, detail="Ungültiger Verifizierungscode")
+        
+        # Check if expired
+        if datetime.utcnow() > verification['expires_at']:
+            raise HTTPException(status_code=400, detail="Verifizierungscode abgelaufen")
+        
+        # Mark as verified
+        await db.email_verifications.update_one(
+            {"_id": verification['_id']},
+            {"$set": {"verified": True}}
+        )
+        
+        return {"message": "E-Mail erfolgreich verifiziert", "email": request.email}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Verification check error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/email/is-verified/{email}")
+async def check_email_verified(email: str):
+    """Check if email is verified"""
+    verification = await db.email_verifications.find_one({
+        "email": email,
+        "verified": True
+    })
+    
+    return {"verified": verification is not None, "email": email}
+
+# ==================== SCHEDULED EMAIL TASKS ====================
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+
+scheduler = AsyncIOScheduler()
+
+async def check_and_send_review_emails():
+    """Check for orders delivered 2 hours ago and send review requests"""
+    try:
+        two_hours_ago = datetime.utcnow() - timedelta(hours=2)
+        five_minutes_ago = datetime.utcnow() - timedelta(minutes=5)
+        
+        # Find orders delivered around 2 hours ago that haven't received review email
+        orders = await db.orders.find({
+            "status": "delivered",
+            "updated_at": {
+                "$gte": two_hours_ago,
+                "$lte": five_minutes_ago
+            },
+            "review_email_sent": {"$ne": True}
+        }).to_list(length=100)
+        
+        for order in orders:
+            try:
+                # Get location
+                location = await db.locations.find_one({"_id": ObjectId(order['location_id'])})
+                
+                if location and order.get('customer', {}).get('email'):
+                    # Send review request
+                    success = send_review_request_email(order, location)
+                    
+                    if success:
+                        # Mark as sent
+                        await db.orders.update_one(
+                            {"_id": order['_id']},
+                            {"$set": {"review_email_sent": True}}
+                        )
+                        print(f"Review email sent for order {order.get('order_number')}")
+                        
+            except Exception as e:
+                print(f"Error sending review email for order {order.get('_id')}: {str(e)}")
+                
+    except Exception as e:
+        print(f"Error in review email task: {str(e)}")
+
+# Start scheduler
+@app.on_event("startup")
+async def start_scheduler():
+    """Start the background scheduler for email tasks"""
+    # Run every 5 minutes
+    scheduler.add_job(
+        check_and_send_review_emails,
+        IntervalTrigger(minutes=5),
+        id='review_email_task',
+        name='Send review request emails',
+        replace_existing=True
+    )
+    scheduler.start()
+    print("Email scheduler started")
+
+@app.on_event("shutdown")
+async def shutdown_scheduler():
+    """Shutdown the scheduler"""
+    scheduler.shutdown()
+
+
     custom_burger_count = await db.custom_burgers.count_documents({"created_by": customer_email})
     
     # Check achievements
