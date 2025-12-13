@@ -108,6 +108,8 @@ function App() {
           clearCart={clearCart}
           selectedLocation={selectedLocation}
           addToCart={addToCart}
+          cartOpen={cartOpen}
+          setCartOpen={setCartOpen}
         />
         <Suspense fallback={<PageLoader />}>
           <Routes>
