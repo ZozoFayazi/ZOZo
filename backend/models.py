@@ -167,6 +167,7 @@ class OrderCreate(BaseModel):
     items: List[OrderItem]
     customer: CustomerInfo
     payment_method: str = "cash"
+    points_to_redeem: Optional[int] = 0  # Points customer wants to use
 
 class OrderStatusUpdate(BaseModel):
     status: str
