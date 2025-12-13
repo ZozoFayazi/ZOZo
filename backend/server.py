@@ -750,6 +750,16 @@ async def update_order_status(
         raise HTTPException(status_code=404, detail="Order not found")
     
     updated_order = await db.orders.find_one({"_id": parse_object_id(order_id)})
+    
+    # ===== EMAIL: Send status update email =====
+    try:
+        if updated_order.get('customer', {}).get('email'):
+            location = await db.locations.find_one({"_id": parse_object_id(order['location_id'])})
+            if location:
+                send_status_update_email(updated_order, update.status, location)
+    except Exception as e:
+        print(f"Status update email failed: {str(e)}")
+    
     return serialize_doc(updated_order)
 
 # Menu Management
