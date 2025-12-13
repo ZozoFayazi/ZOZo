@@ -142,6 +142,8 @@ function App() {
             <Route path="/burger-builder" element={<BurgerBuilder addToCart={addToCart} />} />
           <Route path="/my-creations" element={<MyCreations addToCart={addToCart} />} />
           <Route path="/rewards" element={<RewardsPage />} />
+          <Route path="/start-group-order" element={<StartGroupOrder selectedLocation={selectedLocation} setSelectedLocation={setSelectedLocation} />} />
+          <Route path="/group-order/:groupCode" element={<GroupOrderPage addToCart={addToCart} selectedLocation={selectedLocation} />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/settings" element={<LocationSettings />} />
