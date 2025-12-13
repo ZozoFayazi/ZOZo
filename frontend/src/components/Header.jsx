@@ -120,6 +120,7 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 onClick={() => setCartOpen(true)}
                 className="relative p-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all"
                 data-testid="cart-button"
+                aria-label={`Warenkorb ${cartItemCount > 0 ? `mit ${cartItemCount} Artikel${cartItemCount !== 1 ? 'n' : ''}` : 'leer'}`}
               >
                 <ShoppingCart className="h-5 w-5" />
                 {cartItemCount > 0 && (
