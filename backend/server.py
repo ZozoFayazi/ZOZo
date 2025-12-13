@@ -385,6 +385,44 @@ async def create_order(order: OrderCreate):
     result = await db.orders.insert_one(order_doc)
     order_doc['_id'] = result.inserted_id
     
+    # ===== LOYALTY SYSTEM: Award points and check achievements =====
+    try:
+        customer_email = order.customer.email
+        
+        # Ensure loyalty account exists
+        await get_or_create_loyalty_account(customer_email)
+        
+        # Calculate points earned: 10€ = 1 point (so total/10)
+        points_earned = int(total / 10)
+        
+        if points_earned > 0:
+            # Add earned points
+            await add_points_to_account(
+                customer_email,
+                points_earned,
+                f"Bestellung {order_number}",
+                order_id=str(result.inserted_id)
+            )
+        
+        # Check and unlock achievements
+        unlocked_achievements = await check_achievements(
+            customer_email,
+            total,
+            [item.dict() for item in order.items],
+            datetime.utcnow()
+        )
+        
+        # Store achievement info in order for notification purposes
+        if unlocked_achievements:
+            await db.orders.update_one(
+                {"_id": result.inserted_id},
+                {"$set": {"unlocked_achievements": unlocked_achievements}}
+            )
+        
+    except Exception as e:
+        # Log error but don't fail order creation
+        print(f"Loyalty points award failed: {str(e)}")
+    
     # Auto-send to ExpertOrder if API key is configured for this location
     location_settings = await db.location_settings.find_one({"location_id": order.location_id})
     
