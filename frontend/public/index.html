@@ -33,32 +33,74 @@
     <meta property="twitter:description" content="🍔 Die besten Burger in Rellingen & Henstedt-Ulzburg! Frisch zubereitet, schnell geliefert!" />
     <meta property="twitter:image" content="https://customer-assets.emergentagent.com/job_custom-burger-maker/artifacts/crcay6aj_IMG_8154.jpeg" />
     
-    <!-- Structured Data -->
+    <!-- Structured Data - Restaurant -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Restaurant",
       "name": "ZOZO Burger",
-      "description": "Premium Burger, Pizza, Pasta Lieferservice",
-      "servesCuisine": ["Burger", "Pizza", "Pasta"],
+      "image": "https://customer-assets.emergentagent.com/job_custom-burger-maker/artifacts/crcay6aj_IMG_8154.jpeg",
+      "url": "https://custom-burger-maker.preview.emergentagent.com",
+      "description": "Premium Burger, Pizza, Pasta Lieferservice in Rellingen und Henstedt-Ulzburg",
+      "servesCuisine": ["Burger", "Pizza", "Pasta", "Fast Food", "American"],
       "priceRange": "€€",
+      "paymentAccepted": ["Cash", "Credit Card", "PayPal"],
       "address": [
         {
           "@type": "PostalAddress",
+          "streetAddress": "Möwenstraße 2",
           "addressLocality": "Rellingen",
+          "postalCode": "25462",
           "addressCountry": "DE"
         },
         {
           "@type": "PostalAddress",
           "addressLocality": "Henstedt-Ulzburg",
+          "postalCode": "24558",
           "addressCountry": "DE"
         }
       ],
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "4.9",
+        "bestRating": "5",
+        "worstRating": "1",
         "reviewCount": "1000"
-      }
+      },
+      "hasMenu": "https://custom-burger-maker.preview.emergentagent.com/menu",
+      "acceptsReservations": "False"
+    }
+    </script>
+    
+    <!-- Structured Data - Local Business -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "ZOZO Burger Rellingen",
+      "image": "https://customer-assets.emergentagent.com/job_custom-burger-maker/artifacts/crcay6aj_IMG_8154.jpeg",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Möwenstraße 2",
+        "addressLocality": "Rellingen",
+        "postalCode": "25462",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "53.6260316",
+        "longitude": "9.8755652"
+      },
+      "telephone": "+49-XXX-XXXXX",
+      "priceRange": "€€",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "11:00",
+          "closes": "22:00"
+        }
+      ]
     }
     </script>
     
