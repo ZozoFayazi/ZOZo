@@ -180,7 +180,7 @@ function BurgerBuilder({ addToCart }) {
 
   return (
     <div className="min-h-screen bg-background py-8">
-      <div className="container-custom max-w-4xl">
+      <div className="container-custom max-w-7xl">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
@@ -205,8 +205,10 @@ function BurgerBuilder({ addToCart }) {
           </div>
         </div>
 
-        {/* Step Content */}
-        <div className="bg-card border border-border rounded-xl p-6 mb-6">
+        {/* 2-Column Layout: Builder + Preview */}
+        <div className="grid lg:grid-cols-[1fr,350px] gap-8 mb-6">
+          {/* Left: Step Content */}
+          <div className="bg-card border border-border rounded-xl p-6">
           {/* Step 1: Bun Selection */}
           {step === 1 && (
             <div>
