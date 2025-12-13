@@ -415,6 +415,9 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
           </div>
         </div>
       </section>
+
+      {/* Reviews Section */}
+      <Reviews />
     </div>
     </>
   );
