@@ -144,7 +144,7 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
 
           {/* Mobile Menu - Enhanced */}
           {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-border animate-slide-up-fade">
+            <div id="mobile-menu" className="md:hidden py-4 border-t border-border animate-slide-up-fade">
               <div className="flex flex-col space-y-1">
                 <Link
                   to="/"
