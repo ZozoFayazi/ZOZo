@@ -4,6 +4,7 @@ import { Search, Plus, MapPin, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import ProductCustomizer from '../components/ProductCustomizer';
 import CategoryUpsellDialog from '../components/CategoryUpsellDialog';
+import QuickReorder from '../components/QuickReorder';
 
 function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [locations, setLocations] = useState([]);
