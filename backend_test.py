@@ -7,7 +7,7 @@ import sys
 from datetime import datetime
 
 class ZOZOBurgerAPITester:
-    def __init__(self, base_url="https://custom-burger-maker.preview.emergentagent.com/api"):
+    def __init__(self, base_url="https://burger-craft-7.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.token = None
         self.tests_run = 0

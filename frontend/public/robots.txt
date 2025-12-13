@@ -5,7 +5,7 @@ Disallow: /admin
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://custom-burger-maker.preview.emergentagent.com/sitemap.xml
+Sitemap: https://burger-craft-7.preview.emergentagent.com/sitemap.xml
 
 # Crawl-delay for bots
 Crawl-delay: 1
