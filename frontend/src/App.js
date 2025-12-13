@@ -5,6 +5,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import MobileBottomNav from './components/MobileBottomNav';
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
 import './App.css';
