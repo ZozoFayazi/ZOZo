@@ -138,6 +138,28 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       setOrderNumber(response.order_number);
       setOrderPlaced(true);
       
+      // Show points earned notification
+      if (response.points_earned) {
+        setTimeout(() => {
+          toast.success(`🎉 ${response.points_earned} Treuepunkte verdient!`, {
+            duration: 5000
+          });
+        }, 1000);
+      }
+      
+      // Show achievement notifications
+      if (response.unlocked_achievements && response.unlocked_achievements.length > 0) {
+        setTimeout(() => {
+          response.unlocked_achievements.forEach((achievementId, index) => {
+            setTimeout(() => {
+              toast.success(`🏆 Achievement freigeschaltet: ${achievementId}!`, {
+                duration: 6000
+              });
+            }, (index + 1) * 1500);
+          });
+        }, 2000);
+      }
+      
       // Save customer info for quick reorder
       if (formData.email) {
         localStorage.setItem('lastCustomerEmail', formData.email);
