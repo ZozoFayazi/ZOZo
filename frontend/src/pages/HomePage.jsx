@@ -135,37 +135,6 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                 </button>
               </div>
             </div>
-
-            {/* Hero Image - Right */}
-            <div className="relative animate-fade-in animation-delay-200">
-              {/* Main Image */}
-              <div className="relative">
-                <div className="aspect-square rounded-3xl overflow-hidden glass-premium">
-                  <img
-                    src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop"
-                    alt="Premium Burger"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                
-                {/* Floating Badge - Top Right */}
-                <div className="absolute -top-4 -right-4 glass-premium px-6 py-4 rounded-2xl border border-primary/20 shadow-xl">
-                  <p className="text-xs text-muted-foreground mb-1">Ab nur</p>
-                  <p className="text-2xl font-bold text-primary">€7.99</p>
-                </div>
-
-                {/* Floating Badge - Bottom Left */}
-                <div className="absolute -bottom-4 -left-4 glass-premium px-6 py-4 rounded-2xl border border-primary/20 shadow-xl">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Lieferung in</p>
-                      <p className="text-lg font-bold">30-45 Min</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
