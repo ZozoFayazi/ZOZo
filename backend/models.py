@@ -73,6 +73,9 @@ class MenuItem(BaseModel):
     tags: List[str] = []
     allergens: Optional[str] = None
     active: bool = True
+    is_featured: bool = False  # Show in homepage hero carousel
+    badge: Optional[str] = None  # "new", "limited", "bestseller", "hot"
+    featured_order: int = 0  # Order in featured carousel
 
     class Config:
         allow_population_by_field_name = True
