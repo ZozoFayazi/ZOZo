@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import Header from './components/Header';
+import ScrollToTop from './components/ScrollToTop';
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
 import LocationsPage from './pages/LocationsPage';
