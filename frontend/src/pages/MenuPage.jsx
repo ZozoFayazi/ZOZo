@@ -287,11 +287,29 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                               {item.description}
                             </p>
                           )}
-                          {item.allergens && (
-                            <p className="text-xs text-muted-foreground/60 mt-1">
-                              Allergene: {item.allergens}
-                            </p>
-                          )}
+                          {/* Dietary & Allergen Badges */}
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {item.is_vegetarian && (
+                              <span className="px-2 py-0.5 bg-green-500/10 text-green-700 dark:text-green-400 text-xs rounded-full border border-green-500/20">
+                                🌱 Vegetarisch
+                              </span>
+                            )}
+                            {item.is_vegan && (
+                              <span className="px-2 py-0.5 bg-green-500/10 text-green-700 dark:text-green-400 text-xs rounded-full border border-green-500/20">
+                                🌿 Vegan
+                              </span>
+                            )}
+                            {item.is_spicy && (
+                              <span className="px-2 py-0.5 bg-red-500/10 text-red-700 dark:text-red-400 text-xs rounded-full border border-red-500/20">
+                                🌶️ Scharf
+                              </span>
+                            )}
+                            {item.allergens && Array.isArray(item.allergens) && item.allergens.length > 0 && (
+                              <span className="px-2 py-0.5 bg-orange-500/10 text-orange-700 dark:text-orange-400 text-xs rounded-full border border-orange-500/20">
+                                ⚠️ {item.allergens.length} Allergene
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Price and Add to Cart */}
