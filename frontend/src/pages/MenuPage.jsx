@@ -217,6 +217,9 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
           </div>
         </div>
 
+        {/* Quick Reorder */}
+        <QuickReorder addToCart={addToCart} />
+
         {/* Menu Items */}
         {loading ? (
           <div className="text-center py-12">
