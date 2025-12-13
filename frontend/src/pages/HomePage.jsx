@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Clock, Phone, ArrowRight, Sparkles } from 'lucide-react';
+import { MapPin, Clock, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getLocations } from '../api';
 import OrderTypeSelection from '../components/OrderTypeSelection';
+import useEmblaCarousel from 'embla-carousel-react';
 
 function HomePage({ selectedLocation, setSelectedLocation }) {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
   const [showOrderTypeDialog, setShowOrderTypeDialog] = useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
 
   useEffect(() => {
     loadLocations();
+    loadFeaturedProducts();
   }, []);
 
   const loadLocations = async () => {
