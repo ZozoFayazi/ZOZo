@@ -177,15 +177,45 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                                 />
                                 
                                 {/* Product Info Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
-                                  <div className="text-white">
-                                    <h3 className="text-2xl font-bold mb-1">{product.name}</h3>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex items-end p-8">
+                                  <div className="text-white w-full space-y-3">
+                                    {/* Product Name */}
+                                    <h3 className="text-3xl md:text-4xl font-serif font-bold leading-tight">
+                                      {product.name}
+                                    </h3>
+                                    
+                                    {/* Description/Ingredients */}
                                     {product.description && (
-                                      <p className="text-sm text-white/80 mb-2 line-clamp-2">{product.description}</p>
+                                      <p className="text-base text-white/90 leading-relaxed line-clamp-2">
+                                        {product.description}
+                                      </p>
                                     )}
-                                    <p className="text-3xl font-bold text-primary">
-                                      €{(product.price_normal || product.price_medium || 0).toFixed(2)}
-                                    </p>
+                                    
+                                    {/* Price */}
+                                    <div className="flex items-center justify-between pt-2">
+                                      <div className="flex items-baseline gap-2">
+                                        <span className="text-4xl font-bold text-primary font-numeric">
+                                          €{(product.price_normal || product.price_medium || 0).toFixed(2)}
+                                        </span>
+                                        {product.price_medium && (
+                                          <span className="text-sm text-white/60">
+                                            ab
+                                          </span>
+                                        )}
+                                      </div>
+                                      
+                                      {/* Quick Order Button */}
+                                      <button
+                                        onClick={() => {
+                                          setShowOrderTypeDialog(true);
+                                        }}
+                                        className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full font-semibold transition-all hover:scale-105 flex items-center gap-2"
+                                        data-testid={`featured-order-${product.id}`}
+                                      >
+                                        Bestellen
+                                        <ArrowRight className="h-4 w-4" />
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
 
