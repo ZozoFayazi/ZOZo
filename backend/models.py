@@ -46,7 +46,7 @@ class Location(BaseModel):
     active: bool = True
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
@@ -60,7 +60,7 @@ class Category(BaseModel):
     active: bool = True
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
@@ -87,7 +87,7 @@ class MenuItem(BaseModel):
     featured_order: int = 0  # Order in featured carousel
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
@@ -162,7 +162,7 @@ class AdminUser(BaseModel):
     active: bool = True
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
