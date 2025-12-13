@@ -289,6 +289,79 @@ select:focus {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+
+/* Mobile Touch Optimizations */
+@media (max-width: 768px) {
+  /* Larger touch targets */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better tap feedback */
+  button:active, 
+  a:active,
+  [role="button"]:active {
+    transform: scale(0.97);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Prevent double-tap zoom on buttons */
+  button,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+  
+  /* Smooth scrolling on mobile */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Hide scrollbar on mobile for cleaner look */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Mobile-friendly spacing */
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Bottom safe area for iOS */
+  .mobile-bottom-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Swipe indicator styles */
+.swipe-indicator {
+  position: relative;
+}
+
+.swipe-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 4px;
+  background: hsl(var(--muted));
+  border-radius: 2px;
+}
+
+/* Pull to refresh indicator */
+@keyframes pull-refresh {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pull-refresh-spinner {
+  animation: pull-refresh 1s linear infinite;
+}
+
+
 .price-tag:hover {
   transform: scale(1.05);
   color: hsl(var(--primary));
