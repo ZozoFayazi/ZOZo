@@ -409,6 +409,7 @@ async def create_order(order: OrderCreate):
     order_doc['_id'] = result.inserted_id
     
     # ===== LOYALTY SYSTEM: Award points and check achievements =====
+    points_earned = 0
     try:
         customer_email = order.customer.email
         
