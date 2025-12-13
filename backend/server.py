@@ -272,6 +272,52 @@ async def get_order_history(email: str, limit: int = 5):
     orders = await cursor.to_list(length=limit)
     return serialize_doc(orders)
 
+# Custom Burger Builder
+@api_router.post("/custom-burgers")
+async def create_custom_burger(burger: CustomBurger):
+    """Create a custom burger"""
+    burger_dict = burger.dict(by_alias=True, exclude={"id"})
+    burger_dict["created_at"] = datetime.utcnow()
+    
+    result = await db.custom_burgers.insert_one(burger_dict)
+    created_burger = await db.custom_burgers.find_one({"_id": result.inserted_id})
+    
+    return serialize_doc(created_burger)
+
+@api_router.get("/custom-burgers")
+async def get_custom_burgers(email: Optional[str] = None, public_only: bool = False):
+    """Get custom burgers - filtered by email or public ones"""
+    query = {}
+    if public_only:
+        query["is_public"] = True
+    elif email:
+        query["created_by"] = email
+    
+    cursor = db.custom_burgers.find(query).sort("created_at", -1).limit(20)
+    burgers = await cursor.to_list(length=20)
+    return serialize_doc(burgers)
+
+@api_router.get("/custom-burgers/{burger_id}")
+async def get_custom_burger(burger_id: str):
+    """Get a specific custom burger by ID"""
+    burger = await db.custom_burgers.find_one({"_id": parse_object_id(burger_id)})
+    if not burger:
+        raise HTTPException(status_code=404, detail="Custom burger not found")
+    return serialize_doc(burger)
+
+@api_router.post("/custom-burgers/{burger_id}/vote")
+async def vote_custom_burger(burger_id: str):
+    """Vote for a custom burger"""
+    result = await db.custom_burgers.update_one(
+        {"_id": parse_object_id(burger_id)},
+        {"$inc": {"votes": 1}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Custom burger not found")
+    
+    burger = await db.custom_burgers.find_one({"_id": parse_object_id(burger_id)})
+    return serialize_doc(burger)
+
 # Orders
 @api_router.post("/orders")
 async def create_order(order: OrderCreate):
