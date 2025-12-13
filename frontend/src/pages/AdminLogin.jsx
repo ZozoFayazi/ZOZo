@@ -15,7 +15,9 @@ function AdminLogin() {
 
     try {
       const response = await login(email, password);
+      // Store token with BOTH keys for compatibility
       localStorage.setItem('zozoAuthToken', response.access_token);
+      localStorage.setItem('adminToken', response.access_token);
       localStorage.setItem('zozoUser', JSON.stringify(response.user));
       toast.success('Erfolgreich angemeldet');
       navigate('/admin/dashboard');
