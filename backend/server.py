@@ -1708,6 +1708,172 @@ async def shutdown_scheduler():
                 {"$addToSet": {"achievements": achievement_id}}
             )
             
+
+
+# ==================== SOCIAL ORDERING ENDPOINTS ====================
+
+import secrets
+
+def generate_group_code():
+    """Generate unique 6-character group code"""
+    return secrets.token_urlsafe(6)[:6].upper()
+
+@api_router.post("/group-orders/create")
+async def create_group_order(host_name: str, location_id: str, host_email: str = None):
+    """Create a new group order session"""
+    try:
+        group_code = generate_group_code()
+        
+        # Ensure unique code
+        while await db.group_orders.find_one({"group_code": group_code}):
+            group_code = generate_group_code()
+        
+        group_order = {
+            "group_code": group_code,
+            "host_name": host_name,
+            "host_email": host_email,
+            "location_id": location_id,
+            "items": [],
+            "participants": [],
+            "status": "active",
+            "expires_at": datetime.utcnow() + timedelta(hours=1),
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        
+        result = await db.group_orders.insert_one(group_order)
+        group_order["_id"] = result.inserted_id
+        
+        return serialize_doc(group_order)
+        
+    except Exception as e:
+        print(f"Error creating group order: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/group-orders/{group_code}")
+async def get_group_order(group_code: str):
+    """Get group order by code"""
+    group_order = await db.group_orders.find_one({"group_code": group_code.upper()})
+    
+    if not group_order:
+        raise HTTPException(status_code=404, detail="Gruppenbestellung nicht gefunden")
+    
+    # Check if expired
+    if datetime.utcnow() > group_order["expires_at"]:
+        await db.group_orders.update_one(
+            {"_id": group_order["_id"]},
+            {"$set": {"status": "expired"}}
+        )
+        group_order["status"] = "expired"
+    
+    return serialize_doc(group_order)
+
+@api_router.post("/group-orders/{group_code}/add-items")
+async def add_items_to_group_order(group_code: str, data: GroupOrderAddItems):
+    """Add items to group order"""
+    try:
+        group_order = await db.group_orders.find_one({"group_code": group_code.upper()})
+        
+        if not group_order:
+            raise HTTPException(status_code=404, detail="Gruppenbestellung nicht gefunden")
+        
+        if group_order["status"] != "active":
+            raise HTTPException(status_code=400, detail="Diese Gruppenbestellung ist nicht mehr aktiv")
+        
+        if datetime.utcnow() > group_order["expires_at"]:
+            raise HTTPException(status_code=400, detail="Diese Gruppenbestellung ist abgelaufen")
+        
+        # Add items to group
+        participant_info = {
+            "name": data.participant_name,
+            "items_added": len(data.items),
+            "added_at": datetime.utcnow()
+        }
+        
+        await db.group_orders.update_one(
+            {"_id": group_order["_id"]},
+            {
+                "$push": {
+                    "items": {"$each": data.items},
+                    "participants": participant_info
+                },
+                "$set": {"updated_at": datetime.utcnow()}
+            }
+        )
+        
+        # Get updated group order
+        updated = await db.group_orders.find_one({"_id": group_order["_id"]})
+        return serialize_doc(updated)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error adding items to group order: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/group-orders/{group_code}/finalize")
+async def finalize_group_order(group_code: str):
+    """Finalize group order (host only) and create actual order"""
+    try:
+        group_order = await db.group_orders.find_one({"group_code": group_code.upper()})
+        
+        if not group_order:
+            raise HTTPException(status_code=404, detail="Gruppenbestellung nicht gefunden")
+        
+        if group_order["status"] != "active":
+            raise HTTPException(status_code=400, detail="Diese Gruppenbestellung wurde bereits finalisiert")
+        
+        # Mark as finalized
+        await db.group_orders.update_one(
+            {"_id": group_order["_id"]},
+            {"$set": {"status": "finalized", "updated_at": datetime.utcnow()}}
+        )
+        
+        # Return the group order items for checkout
+        return serialize_doc(group_order)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error finalizing group order: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/group-orders/{group_code}/remove-item/{item_index}")
+async def remove_item_from_group_order(group_code: str, item_index: int):
+    """Remove an item from group order"""
+    try:
+        group_order = await db.group_orders.find_one({"group_code": group_code.upper()})
+        
+        if not group_order:
+            raise HTTPException(status_code=404, detail="Gruppenbestellung nicht gefunden")
+        
+        if group_order["status"] != "active":
+            raise HTTPException(status_code=400, detail="Diese Gruppenbestellung ist nicht mehr aktiv")
+        
+        # Remove item by index
+        items = group_order.get("items", [])
+        if 0 <= item_index < len(items):
+            items.pop(item_index)
+            
+            await db.group_orders.update_one(
+                {"_id": group_order["_id"]},
+                {
+                    "$set": {
+                        "items": items,
+                        "updated_at": datetime.utcnow()
+                    }
+                }
+            )
+        
+        updated = await db.group_orders.find_one({"_id": group_order["_id"]})
+        return serialize_doc(updated)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error removing item: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
             # Award bonus points
             if achievement["bonus_points"] > 0:
                 await add_points_to_account(
