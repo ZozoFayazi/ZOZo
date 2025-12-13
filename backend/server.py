@@ -1298,6 +1298,221 @@ async def delete_deal(deal_id: str, current_user: dict = Depends(get_current_use
     
     return {"message": "Deal deleted successfully"}
 
+
+# ==================== LOYALTY SYSTEM ENDPOINTS ====================
+
+# Achievements Configuration
+ACHIEVEMENTS = [
+    {
+        "id": "first_order",
+        "name": "Erster Biss",
+        "description": "Deine erste Bestellung abgeschlossen",
+        "icon": "🎯",
+        "bonus_points": 5,
+        "category": "orders"
+    },
+    {
+        "id": "loyal_customer",
+        "name": "Stammkunde",
+        "description": "10 Bestellungen abgeschlossen",
+        "icon": "⭐",
+        "bonus_points": 10,
+        "category": "orders"
+    },
+    {
+        "id": "burger_master",
+        "name": "Burger-Meister",
+        "description": "50 Burger bestellt",
+        "icon": "🍔",
+        "bonus_points": 20,
+        "category": "variety"
+    },
+    {
+        "id": "midnight_snacker",
+        "name": "Mitternachts-Snacker",
+        "description": "Bestellung nach 22 Uhr aufgegeben",
+        "icon": "🌙",
+        "bonus_points": 5,
+        "category": "time"
+    },
+    {
+        "id": "variety_lover",
+        "name": "Vielfalt-Lover",
+        "description": "Aus 3+ verschiedenen Kategorien in einer Bestellung",
+        "icon": "🎨",
+        "bonus_points": 8,
+        "category": "variety"
+    },
+    {
+        "id": "custom_king",
+        "name": "Custom King",
+        "description": "5 eigene Burger kreiert",
+        "icon": "👑",
+        "bonus_points": 15,
+        "category": "custom"
+    },
+    {
+        "id": "big_spender",
+        "name": "Großbestellung",
+        "description": "Bestellung über 50€",
+        "icon": "💎",
+        "bonus_points": 25,
+        "category": "spending"
+    }
+]
+
+# Helper: Get or create loyalty account
+async def get_or_create_loyalty_account(customer_email: str):
+    account = await db.loyalty_accounts.find_one({"customer_email": customer_email})
+    if not account:
+        account = {
+            "customer_email": customer_email,
+            "points": 0,
+            "total_earned": 0,
+            "total_spent": 0,
+            "achievements": [],
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        result = await db.loyalty_accounts.insert_one(account)
+        account["_id"] = result.inserted_id
+    return account
+
+# Helper: Add points to account
+async def add_points_to_account(customer_email: str, points: int, description: str, order_id: str = None, achievement_id: str = None):
+    # Create transaction
+    transaction = {
+        "customer_email": customer_email,
+        "type": "earned" if points > 0 else "spent",
+        "points": points,
+        "description": description,
+        "order_id": order_id,
+        "related_achievement": achievement_id,
+        "created_at": datetime.utcnow()
+    }
+    await db.loyalty_transactions.insert_one(transaction)
+    
+    # Update account
+    await db.loyalty_accounts.update_one(
+        {"customer_email": customer_email},
+        {
+            "$inc": {
+                "points": points,
+                "total_earned": points if points > 0 else 0,
+                "total_spent": abs(points) if points < 0 else 0
+            },
+            "$set": {"updated_at": datetime.utcnow()}
+        }
+    )
+
+# Helper: Check and unlock achievements
+async def check_achievements(customer_email: str, order_total: float, order_items: list, order_time: datetime):
+    account = await get_or_create_loyalty_account(customer_email)
+    unlocked = []
+    
+    # Get order count
+    order_count = await db.orders.count_documents({"customer.email": customer_email})
+    
+    # Get custom burger count
+    custom_burger_count = await db.custom_burgers.count_documents({"created_by": customer_email})
+    
+    # Check achievements
+    if "first_order" not in account["achievements"] and order_count >= 1:
+        unlocked.append("first_order")
+    
+    if "loyal_customer" not in account["achievements"] and order_count >= 10:
+        unlocked.append("loyal_customer")
+    
+    if "midnight_snacker" not in account["achievements"] and order_time.hour >= 22:
+        unlocked.append("midnight_snacker")
+    
+    if "big_spender" not in account["achievements"] and order_total >= 50:
+        unlocked.append("big_spender")
+    
+    if "custom_king" not in account["achievements"] and custom_burger_count >= 5:
+        unlocked.append("custom_king")
+    
+    # Check variety (3+ categories in one order)
+    if "variety_lover" not in account["achievements"]:
+        categories = set()
+        for item in order_items:
+            # Get menu item to check category
+            menu_item = await db.menu_items.find_one({"_id": parse_object_id(item.get("item_id"))})
+            if menu_item:
+                categories.add(str(menu_item.get("category_id")))
+        if len(categories) >= 3:
+            unlocked.append("variety_lover")
+    
+    # Unlock achievements and award bonus points
+    for achievement_id in unlocked:
+        achievement = next((a for a in ACHIEVEMENTS if a["id"] == achievement_id), None)
+        if achievement:
+            # Add achievement to account
+            await db.loyalty_accounts.update_one(
+                {"customer_email": customer_email},
+                {"$addToSet": {"achievements": achievement_id}}
+            )
+            
+            # Award bonus points
+            if achievement["bonus_points"] > 0:
+                await add_points_to_account(
+                    customer_email,
+                    achievement["bonus_points"],
+                    f"Achievement freigeschaltet: {achievement['name']}",
+                    achievement_id=achievement_id
+                )
+    
+    return unlocked
+
+# Get loyalty account
+@api_router.get("/loyalty/account/{email}")
+async def get_loyalty_account(email: str):
+    """Get loyalty account for a customer"""
+    account = await get_or_create_loyalty_account(email)
+    return serialize_doc(account)
+
+# Get loyalty transactions
+@api_router.get("/loyalty/transactions/{email}")
+async def get_loyalty_transactions(email: str, limit: int = 20):
+    """Get loyalty transaction history for a customer"""
+    transactions = await db.loyalty_transactions.find(
+        {"customer_email": email}
+    ).sort("created_at", -1).limit(limit).to_list(length=limit)
+    return serialize_doc(transactions)
+
+# Get available achievements
+@api_router.get("/loyalty/achievements")
+async def get_achievements():
+    """Get all available achievements"""
+    return ACHIEVEMENTS
+
+# Get rewards catalog (menu items with points prices)
+@api_router.get("/loyalty/rewards")
+async def get_rewards_catalog():
+    """Get all menu items as redeemable rewards with points prices"""
+    # Get all active menu items
+    items = await db.menu_items.find({"active": True}).to_list(length=1000)
+    
+    rewards = []
+    for item in items:
+        # Calculate points needed: price * 2 (since 1 point = 0.50€, so 1€ = 2 points)
+        price_normal = item.get("price_normal") or item.get("price_medium") or item.get("price_large", 0)
+        points_needed = int(price_normal * 2)
+        
+        reward = {
+            "id": str(item["_id"]),
+            "name": item.get("name"),
+            "description": item.get("description"),
+            "category_id": str(item.get("category_id")),
+            "image": item.get("image"),
+            "price_euro": price_normal,
+            "points_needed": points_needed
+        }
+        rewards.append(reward)
+    
+    return rewards
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
