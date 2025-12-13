@@ -13,6 +13,8 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
   const [deliveryCheck, setDeliveryCheck] = useState(null);
   const [checkingDelivery, setCheckingDelivery] = useState(false);
   const [detectedLocation, setDetectedLocation] = useState(null);
+  const [loyaltyAccount, setLoyaltyAccount] = useState(null);
+  const [pointsToRedeem, setPointsToRedeem] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
