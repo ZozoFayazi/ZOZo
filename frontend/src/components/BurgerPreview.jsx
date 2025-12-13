@@ -164,28 +164,41 @@ function BurgerPreview({ burger }) {
         <h3 className="text-lg font-semibold mb-4 text-center">Live Preview</h3>
         
         {/* Burger Stack */}
-        <div className="relative mx-auto" style={{ width: '200px' }}>
+        <div className="relative mx-auto flex items-center justify-center" style={{ minHeight: '400px' }}>
           {layers.length > 0 ? (
-            <div className="space-y-0.5 transform hover:scale-105 transition-transform duration-300">
-              {layers.reverse().map((layer, index) => (
+            <div className="flex flex-col-reverse items-center transform hover:scale-105 transition-transform duration-300">
+              {layers.map((layer, index) => (
                 <div 
                   key={layer.key} 
-                  className="animate-fadeIn"
+                  className="animate-fadeIn relative"
                   style={{ 
                     animationDelay: `${index * 50}ms`,
-                    animationFillMode: 'backwards'
+                    animationFillMode: 'backwards',
+                    marginTop: index === 0 ? '0' : '-10px',
+                    zIndex: layers.length - index
                   }}
                 >
-                  {layer.component}
+                  {layer.image && (
+                    <img 
+                      src={layer.image} 
+                      alt={layer.key}
+                      style={{ 
+                        height: `${layer.height}px`,
+                        width: 'auto',
+                        maxWidth: '280px',
+                        objectFit: 'contain',
+                        display: 'block'
+                      }}
+                      className="drop-shadow-lg"
+                    />
+                  )}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="h-64 flex items-center justify-center text-muted-foreground text-center">
-              <div>
-                <div className="text-6xl mb-3">🍔</div>
-                <p className="text-sm">Wähle Zutaten,<br />um deinen Burger zu sehen</p>
-              </div>
+            <div className="flex flex-col items-center justify-center text-muted-foreground text-center">
+              <div className="text-6xl mb-3">🍔</div>
+              <p className="text-sm">Wähle Zutaten,<br />um deinen Burger zu sehen</p>
             </div>
           )}
         </div>
@@ -212,7 +225,7 @@ function BurgerPreview({ burger }) {
       </div>
       
       {/* Animation styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes fadeIn {
           from {
             opacity: 0;
