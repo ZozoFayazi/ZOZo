@@ -244,11 +244,11 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                   {category.name}
                 </h2>
                 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-animation">
                   {category.items.map((item) => (
                     <div
                       key={item.id}
-                      className="group bg-card border border-border rounded-xl overflow-hidden card-hover"
+                      className="group bg-card border border-border rounded-xl overflow-hidden card-interactive hover:border-primary/30"
                       data-testid="menu-item-card"
                     >
                       {/* Image */}
