@@ -3,9 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Menu, X, MapPin } from 'lucide-react';
 import CartDrawer from './CartDrawer';
 
-function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation }) {
+function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation, cartOpen, setCartOpen }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const location = useLocation();
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
