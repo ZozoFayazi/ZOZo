@@ -118,8 +118,9 @@ function App() {
           cartOpen={cartOpen}
           setCartOpen={setCartOpen}
         />
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
+        <main id="main-content" role="main">
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
             <Route
               path="/"
               element={
