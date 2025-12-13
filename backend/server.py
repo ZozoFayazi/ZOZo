@@ -489,6 +489,13 @@ async def create_order(order: OrderCreate):
             # Log error but don't fail the order creation
             print(f"ExpertOrder auto-send failed: {str(e)}")
     
+    # ===== EMAIL: Send confirmation email =====
+    try:
+        from email_service import send_order_confirmation_email
+        send_order_confirmation_email(order_doc, location)
+    except Exception as e:
+        print(f"Email sending failed: {str(e)}")
+    
     # Add loyalty info to response
     response = serialize_doc(order_doc)
     if points_earned > 0:
