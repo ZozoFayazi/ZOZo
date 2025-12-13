@@ -61,17 +61,21 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               </Link>
             </div>
 
-            {/* CENTER: Logo (Larger & Prominent) */}
+            {/* CENTER: Logo (Optimized) */}
             <Link 
               to="/" 
-              className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 md:relative md:left-auto md:transform-none" 
+              className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 md:relative md:left-auto md:transform-none group" 
               data-testid="header-logo"
             >
-              <img
-                src="https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg"
-                alt="ZOZO Burger"
-                className="h-14 w-auto hover:scale-105 transition-transform"
-              />
+              <div className="relative">
+                {/* Logo with subtle glow effect */}
+                <img
+                  src="https://customer-assets.emergentagent.com/job_custom-burger-maker/artifacts/crcay6aj_IMG_8154.jpeg"
+                  alt="ZOZO Burger"
+                  className="h-12 md:h-16 w-auto object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-lg"
+                  style={{ filter: 'drop-shadow(0 0 10px rgba(220, 38, 38, 0.2))' }}
+                />
+              </div>
             </Link>
 
             {/* RIGHT: Location & Cart */}
