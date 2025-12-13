@@ -257,6 +257,7 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                           <img
                             src={item.image_url}
                             alt={item.name}
+                            loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
