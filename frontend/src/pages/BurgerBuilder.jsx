@@ -394,6 +394,12 @@ function BurgerBuilder({ addToCart }) {
               </label>
             </div>
           )}
+          </div>
+
+          {/* Right: Live Preview */}
+          <div className="hidden lg:block">
+            <BurgerPreview burger={burger} />
+          </div>
         </div>
 
         {/* Price & Navigation */}
