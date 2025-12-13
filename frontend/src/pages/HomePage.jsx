@@ -44,9 +44,29 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         />
       )}
     <div className="min-h-screen">
-      {/* Hero Section - Redesigned */}
-      <section className="relative noise-overlay bg-gradient-to-br from-background via-accent/30 to-background py-24 md:py-36 overflow-hidden">
-        {/* Subtle Glow Effects */}
+      {/* Hero Section - With Video Background */}
+      <section className="relative overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0 w-full h-full">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+            style={{ filter: 'brightness(0.4)' }}
+          >
+            <source
+              src="https://customer-assets.emergentagent.com/job_gourmet-bites-15/artifacts/9e8kt7kt_1539debe-118f-4b08-b0a4-049321223110.mp4"
+              type="video/mp4"
+            />
+          </video>
+          {/* Dark Overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+        
+        {/* Content Container */}
+        <div className="relative z-10 py-24 md:py-36">{/* Subtle Glow Effects */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
           <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
