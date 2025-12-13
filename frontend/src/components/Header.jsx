@@ -65,6 +65,7 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               to="/" 
               className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 md:relative md:left-auto md:transform-none group" 
               data-testid="header-logo"
+              aria-label="ZOZO Burger - Zur Startseite"
             >
               <div className="relative">
                 {/* Logo with subtle glow effect */}
