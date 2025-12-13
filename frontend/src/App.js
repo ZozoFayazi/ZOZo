@@ -151,6 +151,10 @@ function App() {
         </Suspense>
         <Footer />
         <ScrollToTop />
+        <MobileBottomNav 
+          cartItemCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
+          onCartClick={() => setCartOpen(true)}
+        />
         <Toaster
           position="bottom-right"
           toastOptions={{
