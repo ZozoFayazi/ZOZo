@@ -66,16 +66,10 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         </div>
         
         {/* Content Container */}
-        <div className="relative z-10 py-24 md:py-36">{/* Subtle Glow Effects */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
-        </div>
-
-        <div className="container-custom relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Text Content - Left */}
-            <div className="space-y-8 animate-fade-in">
+        <div className="relative z-10 py-32 md:py-48 min-h-screen flex items-center">
+          <div className="container-custom">
+            {/* Centered Content */}
+            <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-primary/20">
                 <MapPin className="h-4 w-4 text-primary" />
