@@ -20,6 +20,7 @@ import MenuManagement from './pages/MenuManagement';
 import DiscountCodes from './pages/DiscountCodes';
 import OrderManagement from './pages/OrderManagement';
 import FeaturedProducts from './pages/FeaturedProducts';
+import RewardsPage from './pages/RewardsPage';
 import './App.css';
 
 function App() {
