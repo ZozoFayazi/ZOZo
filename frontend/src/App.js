@@ -14,6 +14,7 @@ import ExpertOrderSettings from './pages/ExpertOrderSettings';
 import MenuManagement from './pages/MenuManagement';
 import DiscountCodes from './pages/DiscountCodes';
 import OrderManagement from './pages/OrderManagement';
+import FeaturedProducts from './pages/FeaturedProducts';
 import './App.css';
 
 function App() {
