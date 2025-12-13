@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -7,21 +7,33 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
-import LocationsPage from './pages/LocationsPage';
-import OrderTracking from './pages/OrderTracking';
-import BurgerBuilder from './pages/BurgerBuilder';
-import MyCreations from './pages/MyCreations';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import LocationSettings from './pages/LocationSettings';
-import DealsManagement from './pages/DealsManagement';
-import ExpertOrderSettings from './pages/ExpertOrderSettings';
-import MenuManagement from './pages/MenuManagement';
-import DiscountCodes from './pages/DiscountCodes';
-import OrderManagement from './pages/OrderManagement';
-import FeaturedProducts from './pages/FeaturedProducts';
-import RewardsPage from './pages/RewardsPage';
 import './App.css';
+
+// Lazy load non-critical pages
+const LocationsPage = lazy(() => import('./pages/LocationsPage'));
+const OrderTracking = lazy(() => import('./pages/OrderTracking'));
+const BurgerBuilder = lazy(() => import('./pages/BurgerBuilder'));
+const MyCreations = lazy(() => import('./pages/MyCreations'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const LocationSettings = lazy(() => import('./pages/LocationSettings'));
+const DealsManagement = lazy(() => import('./pages/DealsManagement'));
+const ExpertOrderSettings = lazy(() => import('./pages/ExpertOrderSettings'));
+const MenuManagement = lazy(() => import('./pages/MenuManagement'));
+const DiscountCodes = lazy(() => import('./pages/DiscountCodes'));
+const OrderManagement = lazy(() => import('./pages/OrderManagement'));
+const FeaturedProducts = lazy(() => import('./pages/FeaturedProducts'));
+const RewardsPage = lazy(() => import('./pages/RewardsPage'));
+
+// Loading component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="text-center space-y-4">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+      <p className="text-muted-foreground">Lädt...</p>
+    </div>
+  </div>
+);
 
 function App() {
   const [cart, setCart] = useState([]);
