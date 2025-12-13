@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapPin, Clock, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getLocations } from '../api';
 import OrderTypeSelection from '../components/OrderTypeSelection';
+import Reviews from '../components/Reviews';
 import useEmblaCarousel from 'embla-carousel-react';
 
 function HomePage({ selectedLocation, setSelectedLocation }) {
