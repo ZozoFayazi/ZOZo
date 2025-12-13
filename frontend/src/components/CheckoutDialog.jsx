@@ -51,6 +51,23 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
     }
   };
   
+  const checkEmailVerified = async (email) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/email/is-verified/${email}`);
+      setEmailVerified(response.data.verified);
+      setShowEmailVerification(!response.data.verified);
+    } catch (error) {
+      console.error('Error checking email verification:', error);
+      setShowEmailVerification(true);
+    }
+  };
+  
+  const handleEmailVerified = (email) => {
+    setEmailVerified(true);
+    setShowEmailVerification(false);
+    toast.success('E-Mail verifiziert! Du erhältst jetzt Bestellupdates. 📧');
+  };
+  
   const maxRedeemablePoints = loyaltyAccount ? Math.min(
     loyaltyAccount.points,
     Math.floor(total / 0.50) // Can't redeem more points than the order total allows
