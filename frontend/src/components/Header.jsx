@@ -166,6 +166,33 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 >
                   Standorte
                 </Link>
+                <Link
+                  to="/order-tracking"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`py-2 text-sm font-medium transition-colors ${
+                    isActive('/order-tracking') ? 'text-primary' : 'text-foreground/80'
+                  }`}
+                >
+                  Bestellstatus
+                </Link>
+                <Link
+                  to="/burger-builder"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`py-2 text-sm font-medium transition-colors ${
+                    isActive('/burger-builder') ? 'text-primary' : 'text-foreground/80'
+                  }`}
+                >
+                  🍔 Burger Builder
+                </Link>
+                <Link
+                  to="/rewards"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`py-2 text-sm font-medium transition-colors ${
+                    isActive('/rewards') ? 'text-primary' : 'text-foreground/80'
+                  }`}
+                >
+                  🎁 Belohnungen
+                </Link>
                 {selectedLocation && (
                   <div className="flex items-center space-x-2 py-2 text-xs text-muted-foreground">
                     <MapPin className="h-4 w-4" />
