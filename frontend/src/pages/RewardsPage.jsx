@@ -151,15 +151,15 @@ function RewardsPage() {
             <p className="text-muted-foreground mb-6">
               Löse deine Punkte gegen jedes Menü-Item ein. Nutze sie beim Checkout!
             </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-animation">
               {rewards.map((reward) => {
                 const affordable = canAfford(reward.points_needed);
                 return (
                   <div
                     key={reward.id}
-                    className={`bg-card rounded-xl overflow-hidden border-2 transition-all ${
+                    className={`bg-card rounded-xl overflow-hidden border-2 transition-all duration-300 ${
                       affordable
-                        ? 'border-primary/40 hover:border-primary hover:shadow-lg'
+                        ? 'border-primary/40 hover:border-primary hover:shadow-lg hover:-translate-y-1 card-interactive'
                         : 'border-border opacity-60'
                     }`}
                   >
