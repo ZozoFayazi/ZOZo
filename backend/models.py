@@ -192,3 +192,44 @@ class CustomBurger(BaseModel):
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
+
+
+# Loyalty System Models
+class LoyaltyAccount(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    customer_email: str
+    points: int = 0  # Current points balance
+    total_earned: int = 0  # Total points earned all-time
+    total_spent: int = 0  # Total points spent all-time
+    achievements: List[str] = []  # List of unlocked achievement IDs
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
+
+class LoyaltyTransaction(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    customer_email: str
+    type: str  # "earned", "spent", "bonus"
+    points: int  # Positive for earned/bonus, negative for spent
+    description: str  # "Order #12345", "Achievement: First Bite", "Redeemed for Classic Burger"
+    order_id: Optional[str] = None
+    related_achievement: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str, datetime: lambda v: v.isoformat()}
+
+class Achievement(BaseModel):
+    id: str  # Unique achievement ID like "first_order", "loyal_customer"
+    name: str  # Display name
+    description: str
+    icon: str  # Emoji or icon identifier
+    bonus_points: int = 0  # Bonus points awarded when unlocked
+    requirement: str  # Description of how to unlock
+    category: str  # "orders", "spending", "variety", "time", "custom"
