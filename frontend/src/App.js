@@ -9,6 +9,8 @@ import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
 import LocationsPage from './pages/LocationsPage';
 import OrderTracking from './pages/OrderTracking';
+import BurgerBuilder from './pages/BurgerBuilder';
+import MyCreations from './pages/MyCreations';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import LocationSettings from './pages/LocationSettings';
