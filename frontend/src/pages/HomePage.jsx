@@ -137,34 +137,98 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
               </div>
             </div>
 
-            {/* Hero Image - Right */}
+            {/* Hero Carousel - Right */}
             <div className="relative animate-fade-in animation-delay-200">
-              {/* Main Image */}
               <div className="relative">
-                <div className="aspect-square rounded-3xl overflow-hidden glass-premium">
-                  <img
-                    src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop"
-                    alt="Premium Burger"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                
-                {/* Floating Badge - Top Right */}
-                <div className="absolute -top-4 -right-4 glass-premium px-6 py-4 rounded-2xl border border-primary/20 shadow-xl">
-                  <p className="text-xs text-muted-foreground mb-1">Ab nur</p>
-                  <p className="text-2xl font-bold text-primary">€7.99</p>
-                </div>
+                {featuredProducts.length > 0 ? (
+                  <>
+                    {/* Carousel */}
+                    <div className="overflow-hidden rounded-3xl" ref={emblaRef}>
+                      <div className="flex">
+                        {featuredProducts.map((product) => {
+                          const getBadgeStyle = (badge) => {
+                            const styles = {
+                              new: 'bg-blue-500',
+                              limited: 'bg-orange-500',
+                              bestseller: 'bg-green-500',
+                              hot: 'bg-red-500'
+                            };
+                            return styles[badge] || 'bg-gray-500';
+                          };
 
-                {/* Floating Badge - Bottom Left */}
-                <div className="absolute -bottom-4 -left-4 glass-premium px-6 py-4 rounded-2xl border border-primary/20 shadow-xl">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Lieferung in</p>
-                      <p className="text-lg font-bold">30-45 Min</p>
+                          const getBadgeLabel = (badge) => {
+                            const labels = {
+                              new: 'NEU',
+                              limited: 'Nur kurze Zeit',
+                              bestseller: 'Bestseller',
+                              hot: 'Hot Deal'
+                            };
+                            return labels[badge] || badge;
+                          };
+
+                          return (
+                            <div key={product.id} className="flex-[0_0_100%] min-w-0">
+                              <div className="aspect-square glass-premium relative">
+                                <img
+                                  src={product.image_url || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop'}
+                                  alt={product.name}
+                                  className="w-full h-full object-cover"
+                                />
+                                
+                                {/* Product Info Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
+                                  <div className="text-white">
+                                    <h3 className="text-2xl font-bold mb-1">{product.name}</h3>
+                                    {product.description && (
+                                      <p className="text-sm text-white/80 mb-2 line-clamp-2">{product.description}</p>
+                                    )}
+                                    <p className="text-3xl font-bold text-primary">
+                                      €{(product.price_normal || product.price_medium || 0).toFixed(2)}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Badge */}
+                                {product.badge && (
+                                  <div className={`absolute top-6 right-6 ${getBadgeStyle(product.badge)} text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg`}>
+                                    {getBadgeLabel(product.badge)}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
+
+                    {/* Carousel Navigation */}
+                    {featuredProducts.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => emblaApi?.scrollPrev()}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass-premium flex items-center justify-center hover:bg-primary/20 transition-colors"
+                        >
+                          <ChevronLeft className="h-6 w-6" />
+                        </button>
+                        <button
+                          onClick={() => emblaApi?.scrollNext()}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass-premium flex items-center justify-center hover:bg-primary/20 transition-colors"
+                        >
+                          <ChevronRight className="h-6 w-6" />
+                        </button>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  // Fallback wenn keine Featured Products
+                  <div className="aspect-square rounded-3xl overflow-hidden glass-premium">
+                    <img
+                      src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop"
+                      alt="Premium Burger"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
