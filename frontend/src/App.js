@@ -145,7 +145,8 @@ function App() {
           <Route path="/admin/discount-codes" element={<DiscountCodes />} />
           <Route path="/admin/orders" element={<OrderManagement />} />
           <Route path="/admin/featured" element={<FeaturedProducts />} />
-        </Routes>
+          </Routes>
+        </Suspense>
         <Footer />
         <ScrollToTop />
         <Toaster
