@@ -254,6 +254,14 @@ async def get_active_deals():
     deals = await db.deals.find({"active": True}).sort("created_at", -1).to_list(length=100)
     return serialize_doc(deals)
 
+# Featured Products
+@api_router.get("/featured-products")
+async def get_featured_products():
+    """Get featured products for homepage hero carousel"""
+    cursor = db.menu_items.find({"is_featured": True, "active": True}).sort("featured_order", 1)
+    items = await cursor.to_list(length=20)
+    return serialize_doc(items)
+
 # Orders
 @api_router.post("/orders")
 async def create_order(order: OrderCreate):
