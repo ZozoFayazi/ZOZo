@@ -28,7 +28,33 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    
+    // Load loyalty account when email changes
+    if (e.target.name === 'email' && e.target.value.includes('@')) {
+      loadLoyaltyAccount(e.target.value);
+    }
   };
+  
+  const loadLoyaltyAccount = async (email) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/loyalty/account/${email}`);
+      if (response.data) {
+        setLoyaltyAccount(response.data);
+        // Save email to localStorage for rewards page
+        localStorage.setItem('customerEmail', email);
+      }
+    } catch (error) {
+      console.error('Error loading loyalty account:', error);
+    }
+  };
+  
+  const maxRedeemablePoints = loyaltyAccount ? Math.min(
+    loyaltyAccount.points,
+    Math.floor(total / 0.50) // Can't redeem more points than the order total allows
+  ) : 0;
+  
+  const pointsDiscount = pointsToRedeem * 0.50;
+  const finalTotal = Math.max(0, total - pointsDiscount);
 
   // Check delivery availability when postal code changes
   useEffect(() => {
