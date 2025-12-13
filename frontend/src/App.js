@@ -124,6 +124,7 @@ function App() {
           <Route path="/admin/orders" element={<OrderManagement />} />
           <Route path="/admin/featured" element={<FeaturedProducts />} />
         </Routes>
+        <ScrollToTop />
         <Toaster
           position="bottom-right"
           toastOptions={{
