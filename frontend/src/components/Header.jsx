@@ -13,8 +13,8 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
 
   return (
     <>
-      <header className="sticky top-0 z-50 glass border-b border-border/50">
-        <nav className="container-custom">
+      <header className="sticky top-0 z-50 glass border-b border-border/50" role="banner">
+        <nav className="container-custom" role="navigation" aria-label="Hauptnavigation">
           <div className="flex items-center justify-between h-20 py-4">
             {/* LEFT: Navigation Links */}
             <div className="hidden md:flex items-center space-x-8 flex-1">
