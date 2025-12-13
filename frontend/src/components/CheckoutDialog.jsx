@@ -409,6 +409,37 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                 </div>
               </div>
 
+              {/* Loyalty Points Redemption */}
+              {loyaltyAccount && loyaltyAccount.points > 0 && (
+                <div className="bg-primary/5 border-2 border-primary/20 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className="font-semibold text-sm flex items-center gap-2">
+                        🎁 Treuepunkte einlösen
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Verfügbar: {loyaltyAccount.points} Punkte (€{(loyaltyAccount.points * 0.50).toFixed(2)})
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max={maxRedeemablePoints}
+                      value={pointsToRedeem}
+                      onChange={(e) => setPointsToRedeem(parseInt(e.target.value))}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs">
+                      <span>{pointsToRedeem} Punkte</span>
+                      <span className="font-semibold text-primary">-€{pointsDiscount.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Summary */}
               <div className="bg-background border border-border rounded-lg p-4 space-y-2">
                 <div className="flex justify-between text-sm">
@@ -419,9 +450,15 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                   <span className="text-muted-foreground">Liefergebühr</span>
                   <span>{deliveryFee === 0 ? 'Kostenlos' : `€${deliveryFee.toFixed(2)}`}</span>
                 </div>
+                {pointsToRedeem > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>Punkte-Rabatt ({pointsToRedeem} Punkte)</span>
+                    <span>-€{pointsDiscount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-lg font-semibold pt-2 border-t border-border">
                   <span>Gesamt</span>
-                  <span className="text-primary">€{total.toFixed(2)}</span>
+                  <span className="text-primary">€{finalTotal.toFixed(2)}</span>
                 </div>
               </div>
 
