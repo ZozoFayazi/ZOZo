@@ -82,10 +82,11 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 onClick={() => setCartOpen(true)}
                 className="relative px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-primary/20"
                 data-testid="cart-open-button"
+                aria-label={`Warenkorb öffnen, ${cartItemCount} Artikel`}
               >
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-5 w-5" aria-hidden="true" />
                 {cartItemCount > 0 && (
-                  <span className="font-semibold">
+                  <span className="font-semibold" aria-label={`${cartItemCount} Artikel im Warenkorb`}>
                     {cartItemCount}
                   </span>
                 )}
