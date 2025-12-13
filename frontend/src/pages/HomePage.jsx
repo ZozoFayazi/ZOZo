@@ -72,7 +72,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         <div className="container-custom relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Text Content - Left */}
-            <div className="space-y-8 animate-fade-in">
+            <div className="space-y-8 animate-fade-in" role="region" aria-label="Willkommensnachricht">
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-primary/20">
                 <MapPin className="h-4 w-4 text-primary" />
