@@ -652,6 +652,33 @@ async def create_menu_item(
     item_doc['_id'] = result.inserted_id
     return serialize_doc(item_doc)
 
+@api_router.patch("/admin/menu-items/{item_id}/featured")
+async def update_featured_status(
+    item_id: str,
+    is_featured: bool,
+    badge: Optional[str] = None,
+    featured_order: Optional[int] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update featured status and badge for menu item"""
+    item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    if not item:
+        raise HTTPException(status_code=404, detail="Menu item not found")
+    
+    update_data = {"is_featured": is_featured}
+    if badge is not None:
+        update_data["badge"] = badge
+    if featured_order is not None:
+        update_data["featured_order"] = featured_order
+    
+    await db.menu_items.update_one(
+        {"_id": parse_object_id(item_id)},
+        {"$set": update_data}
+    )
+    
+    updated_item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    return serialize_doc(updated_item)
+
 @api_router.patch("/admin/menu-items/{item_id}")
 async def update_menu_item(
     item_id: str,
