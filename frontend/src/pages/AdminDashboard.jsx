@@ -145,6 +145,13 @@ function AdminDashboard() {
                 <span>Bestellungen</span>
               </button>
               <button
+                onClick={() => navigate('/admin/featured')}
+                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
+              >
+                <Star className="h-4 w-4" />
+                <span>Featured Products</span>
+              </button>
+              <button
                 onClick={() => navigate('/admin/menu')}
                 className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
               >
