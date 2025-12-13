@@ -51,6 +51,14 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               >
                 🍔 BURGER BUILDER
               </Link>
+              <Link
+                to="/rewards"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/rewards') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                🎁 BELOHNUNGEN
+              </Link>
             </div>
 
             {/* CENTER: Logo (Larger & Prominent) */}
