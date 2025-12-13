@@ -16,6 +16,8 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
   const [detectedLocation, setDetectedLocation] = useState(null);
   const [loyaltyAccount, setLoyaltyAccount] = useState(null);
   const [pointsToRedeem, setPointsToRedeem] = useState(0);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
