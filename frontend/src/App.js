@@ -122,6 +122,7 @@ function App() {
           <Route path="/order-tracking" element={<OrderTracking />} />
           <Route path="/burger-builder" element={<BurgerBuilder addToCart={addToCart} />} />
           <Route path="/my-creations" element={<MyCreations addToCart={addToCart} />} />
+          <Route path="/rewards" element={<RewardsPage />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/settings" element={<LocationSettings />} />
