@@ -111,9 +111,11 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       
       // Save customer info for quick reorder
       if (formData.email) {
-        localStorage.setItem('zozoCustomerEmail', formData.email);
+        localStorage.setItem('lastCustomerEmail', formData.email);
       }
-      localStorage.setItem('zozoCustomerPhone', formData.phone);
+      if (formData.phone) {
+        localStorage.setItem('lastCustomerPhone', formData.phone);
+      }
       
       clearCart();
       toast.success('Bestellung erfolgreich aufgegeben!');
