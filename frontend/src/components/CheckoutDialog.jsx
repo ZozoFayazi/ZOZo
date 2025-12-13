@@ -130,7 +130,8 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
           city: formData.city,
           notes: formData.notes || undefined
         },
-        payment_method: formData.payment_method
+        payment_method: formData.payment_method,
+        points_to_redeem: pointsToRedeem
       };
 
       const response = await createOrder(orderData);
