@@ -43,6 +43,14 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               >
                 BESTELLSTATUS
               </Link>
+              <Link
+                to="/burger-builder"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/burger-builder') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                🍔 BURGER BUILDER
+              </Link>
             </div>
 
             {/* CENTER: Logo (Larger & Prominent) */}
