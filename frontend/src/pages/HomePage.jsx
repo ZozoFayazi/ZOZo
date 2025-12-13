@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Clock, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, Clock, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight, Users, Check } from 'lucide-react';
 import { getLocations } from '../api';
 import OrderTypeSelection from '../components/OrderTypeSelection';
 import Reviews from '../components/Reviews';
