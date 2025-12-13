@@ -44,75 +44,60 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         />
       )}
     <div className="min-h-screen">
-      {/* Hero Section - With Video Background */}
-      <section className="relative overflow-hidden">
-        {/* Video Background */}
-        <div className="absolute inset-0 w-full h-full">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover"
-            style={{ filter: 'brightness(0.4)' }}
-          >
-            <source
-              src="https://customer-assets.emergentagent.com/job_gourmet-bites-15/artifacts/9e8kt7kt_1539debe-118f-4b08-b0a4-049321223110.mp4"
-              type="video/mp4"
-            />
-          </video>
-          {/* Dark Overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/50" />
+      {/* Hero Section - Redesigned */}
+      <section className="relative noise-overlay bg-gradient-to-br from-background via-accent/30 to-background py-24 md:py-36 overflow-hidden">
+        {/* Subtle Glow Effects */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
         </div>
-        
-        {/* Content Container */}
-        <div className="relative z-10 py-32 md:py-48 min-h-screen flex items-center">
-          <div className="container-custom">
-            {/* Centered Content */}
-            <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
+
+        <div className="container-custom relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Text Content - Left */}
+            <div className="space-y-8 animate-fade-in">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-primary/20 mx-auto">
+              <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-primary/20">
                 <MapPin className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium tracking-wide">RELLINGEN • HENSTEDT-ULZBURG</span>
               </div>
 
               {/* Main Headline */}
               <div className="space-y-4">
-                <h1 className="text-6xl md:text-7xl lg:text-9xl font-serif font-bold leading-none tracking-tight text-white">
+                <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-bold leading-none tracking-tight">
                   ZOZO<br />
                   <span className="text-primary">BURGER</span>
                 </h1>
-                <div className="flex items-center gap-3 text-white/80 text-sm tracking-[0.2em] uppercase justify-center">
+                <div className="flex items-center gap-3 text-muted-foreground text-sm tracking-[0.2em] uppercase">
                   <span className="w-12 h-px bg-primary" />
                   <span>Burger · Pizza · Pasta & More</span>
-                  <span className="w-12 h-px bg-primary" />
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-lg text-white/90 leading-relaxed max-w-2xl mx-auto">
+              <p className="text-lg text-foreground/80 leading-relaxed max-w-lg">
                 Premium Qualität, frisch zubereitet und in <span className="text-primary font-semibold">30-45 Minuten</span> bei dir. 
                 Genieße beste Zutaten und authentischen Geschmack.
               </p>
 
               {/* Stats/Features */}
-              <div className="grid grid-cols-3 gap-8 pt-4 max-w-2xl mx-auto">
+              <div className="grid grid-cols-3 gap-6 pt-4">
                 <div className="text-center">
-                  <p className="text-4xl font-bold text-primary">4.9</p>
-                  <p className="text-sm text-white/60 mt-1">★★★★★</p>
+                  <p className="text-3xl font-bold text-primary">4.9</p>
+                  <p className="text-xs text-muted-foreground mt-1">★★★★★</p>
                 </div>
-                <div className="text-center border-x border-white/20 px-2">
-                  <p className="text-4xl font-bold text-primary">30min</p>
-                  <p className="text-sm text-white/60 mt-1">Lieferzeit</p>
+                <div className="text-center border-x border-border px-2">
+                  <p className="text-3xl font-bold text-primary">30min</p>
+                  <p className="text-xs text-muted-foreground mt-1">Lieferzeit</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-4xl font-bold text-primary">100%</p>
-                  <p className="text-sm text-white/60 mt-1">Frisch</p>
+                  <p className="text-3xl font-bold text-primary">100%</p>
+                  <p className="text-xs text-muted-foreground mt-1">Frisch</p>
                 </div>
               </div>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <button
                   onClick={() => setShowOrderTypeDialog(true)}
                   className="btn-primary group relative overflow-hidden shadow-lg shadow-primary/30"
