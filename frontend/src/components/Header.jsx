@@ -133,6 +133,9 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-3 hover:bg-secondary rounded-lg transition-colors"
+                aria-label={mobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
