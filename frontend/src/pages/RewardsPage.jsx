@@ -182,15 +182,15 @@ function RewardsPage() {
                       )}
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="flex items-center gap-1 text-primary font-bold">
-                            <Star className="h-4 w-4 fill-primary" />
+                          <div className="flex items-center gap-1 text-primary font-bold price-tag">
+                            <Star className="h-4 w-4 fill-primary animate-pulse-slow" />
                             <span>{reward.points_needed}</span>
                           </div>
                           <p className="text-xs text-muted-foreground">Punkte</p>
                         </div>
                         <div className="text-right">
                           <p className="text-sm text-muted-foreground">oder</p>
-                          <p className="font-semibold">€{reward.price_euro.toFixed(2)}</p>
+                          <p className="font-semibold price-tag">€{reward.price_euro.toFixed(2)}</p>
                         </div>
                       </div>
                       {affordable && (
