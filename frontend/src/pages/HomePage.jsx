@@ -113,11 +113,11 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                 </div>
               </div>
 
-              {/* CTAs */}
+              {/* CTAs - Mobile Optimized */}
               <div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <button
                   onClick={() => setShowOrderTypeDialog(true)}
-                  className="btn-primary group relative overflow-hidden shadow-lg shadow-primary/30"
+                  className="btn-primary group relative overflow-hidden shadow-lg shadow-primary/30 py-4 sm:py-3 text-lg sm:text-base active:scale-95 transition-transform"
                   data-testid="hero-primary-cta-button"
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
@@ -127,7 +127,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                 </button>
                 <button
                   onClick={() => navigate('/menu')}
-                  className="btn-secondary group"
+                  className="btn-secondary group py-4 sm:py-3 text-lg sm:text-base active:scale-95 transition-transform"
                   data-testid="hero-secondary-cta-button"
                 >
                   <span className="flex items-center justify-center gap-2">
