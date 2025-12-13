@@ -80,9 +80,10 @@ function App() {
   const deliveryFee = cartTotal < 15 ? 2.50 : 0;
 
   return (
-    <Router>
-      <div className="min-h-screen bg-background text-foreground">
-        <Header
+    <ErrorBoundary>
+      <Router>
+        <div className="min-h-screen bg-background text-foreground">
+          <Header
           cart={cart}
           cartTotal={cartTotal}
           removeFromCart={removeFromCart}
