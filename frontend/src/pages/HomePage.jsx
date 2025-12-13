@@ -170,7 +170,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                           return (
                             <div key={product.id} className="flex-[0_0_100%] min-w-0">
                               <div className="aspect-square glass-premium relative">
-                                <img
+                                <img loading="lazy"
                                   src={product.image_url || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop'}
                                   alt={product.name}
                                   className="w-full h-full object-cover"
@@ -223,7 +223,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                 ) : (
                   // Fallback wenn keine Featured Products
                   <div className="aspect-square rounded-3xl overflow-hidden glass-premium">
-                    <img
+                    <img loading="lazy"
                       src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop"
                       alt="Premium Burger"
                       className="w-full h-full object-cover"
@@ -248,7 +248,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
             {/* Burger */}
             <div className="group relative overflow-hidden rounded-xl bg-card border border-border card-hover cursor-pointer" onClick={() => navigate('/menu')}>
               <div className="aspect-[4/3] overflow-hidden">
-                <img
+                <img loading="lazy"
                   src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&h=450&fit=crop"
                   alt="Burger"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -263,7 +263,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
             {/* Pizza */}
             <div className="group relative overflow-hidden rounded-xl bg-card border border-border card-hover cursor-pointer" onClick={() => navigate('/menu')}>
               <div className="aspect-[4/3] overflow-hidden">
-                <img
+                <img loading="lazy"
                   src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=450&fit=crop"
                   alt="Pizza"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -278,7 +278,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
             {/* Pasta */}
             <div className="group relative overflow-hidden rounded-xl bg-card border border-border card-hover cursor-pointer" onClick={() => navigate('/menu')}>
               <div className="aspect-[4/3] overflow-hidden">
-                <img
+                <img loading="lazy"
                   src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=450&fit=crop"
                   alt="Pasta"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
