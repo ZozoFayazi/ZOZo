@@ -414,7 +414,17 @@ async def create_order(order: OrderCreate):
         # Ensure loyalty account exists
         await get_or_create_loyalty_account(customer_email)
         
+        # Deduct redeemed points first
+        if points_redeemed > 0:
+            await add_points_to_account(
+                customer_email,
+                -points_redeemed,
+                f"Eingelöst bei Bestellung {order_number}",
+                order_id=str(result.inserted_id)
+            )
+        
         # Calculate points earned: 10€ = 1 point (so total/10)
+        # Note: Points are earned on the FINAL total (after discount)
         points_earned = int(total / 10)
         
         if points_earned > 0:
@@ -422,7 +432,7 @@ async def create_order(order: OrderCreate):
             await add_points_to_account(
                 customer_email,
                 points_earned,
-                f"Bestellung {order_number}",
+                f"Verdient bei Bestellung {order_number}",
                 order_id=str(result.inserted_id)
             )
         
