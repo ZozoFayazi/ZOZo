@@ -32,9 +32,10 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     
-    // Load loyalty account when email changes
+    // Load loyalty account and check verification when email changes
     if (e.target.name === 'email' && e.target.value.includes('@')) {
       loadLoyaltyAccount(e.target.value);
+      checkEmailVerified(e.target.value);
     }
   };
   
