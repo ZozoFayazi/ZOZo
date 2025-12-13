@@ -146,11 +146,13 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 <Link
                   to="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2 text-sm font-medium transition-colors ${
-                    isActive('/') ? 'text-primary' : 'text-foreground/80'
+                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                    isActive('/') 
+                      ? 'text-primary bg-primary/10' 
+                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
                   }`}
                 >
-                  Home
+                  🏠 Home
                 </Link>
                 <Link
                   to="/menu"
