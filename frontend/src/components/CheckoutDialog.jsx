@@ -304,6 +304,14 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                 />
               </div>
 
+              {/* Email Verification */}
+              {formData.email && formData.email.includes('@') && showEmailVerification && (
+                <EmailVerification 
+                  email={formData.email} 
+                  onVerified={handleEmailVerified}
+                />
+              )}
+
               <div>
                 <label className="block text-sm font-medium mb-2">Adresse *</label>
                 <input
