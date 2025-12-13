@@ -39,6 +39,7 @@ const PageLoader = () => (
 function App() {
   const [cart, setCart] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [cartOpen, setCartOpen] = useState(false);
 
   // Load cart from localStorage
   useEffect(() => {
