@@ -121,6 +121,7 @@ function App() {
           <Route path="/admin/menu" element={<MenuManagement />} />
           <Route path="/admin/discount-codes" element={<DiscountCodes />} />
           <Route path="/admin/orders" element={<OrderManagement />} />
+          <Route path="/admin/featured" element={<FeaturedProducts />} />
         </Routes>
         <Toaster
           position="bottom-right"
