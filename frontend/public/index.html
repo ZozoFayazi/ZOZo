@@ -107,10 +107,14 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
-    <!-- Google Fonts: Playfair Display + Chivo -->
+    <!-- Google Fonts: Playfair Display + Chivo - Optimized -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Chivo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Chivo:wght@300;400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Chivo:wght@300;400;500;700&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="https://customer-assets.emergentagent.com/job_custom-burger-maker/artifacts/crcay6aj_IMG_8154.jpeg" as="image">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
