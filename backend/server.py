@@ -353,7 +353,28 @@ async def create_order(order: OrderCreate):
     
     # Calculate delivery fee
     delivery_fee = delivery_fee_amount if subtotal < free_delivery_threshold else 0.0
-    total = subtotal + delivery_fee
+    
+    # ===== LOYALTY: Apply points redemption =====
+    points_discount = 0.0
+    points_redeemed = 0
+    
+    if hasattr(order, 'points_to_redeem') and order.points_to_redeem > 0:
+        # Check customer's loyalty account
+        loyalty_account = await db.loyalty_accounts.find_one({"customer_email": order.customer.email})
+        
+        if loyalty_account and loyalty_account.get("points", 0) >= order.points_to_redeem:
+            # Calculate discount: 1 point = 0.50€
+            points_discount = order.points_to_redeem * 0.50
+            points_redeemed = order.points_to_redeem
+            
+            # Don't allow discount to exceed total
+            if points_discount > (subtotal + delivery_fee):
+                points_discount = subtotal + delivery_fee
+                points_redeemed = int(points_discount / 0.50)
+        else:
+            raise HTTPException(status_code=400, detail="Nicht genügend Punkte verfügbar")
+    
+    total = subtotal + delivery_fee - points_discount
     
     # Generate order number
     count = await db.orders.count_documents({})
