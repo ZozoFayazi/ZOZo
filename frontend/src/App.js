@@ -102,6 +102,11 @@ function App() {
     <ErrorBoundary>
       <Router>
         <div className="min-h-screen bg-background text-foreground">
+          {/* Skip to main content for keyboard users */}
+          <a href="#main-content" className="skip-to-main">
+            Zum Hauptinhalt springen
+          </a>
+          
           <Header
           cart={cart}
           cartTotal={cartTotal}
