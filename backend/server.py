@@ -489,7 +489,14 @@ async def create_order(order: OrderCreate):
             # Log error but don't fail the order creation
             print(f"ExpertOrder auto-send failed: {str(e)}")
     
-    return serialize_doc(order_doc)
+    # Add loyalty info to response
+    response = serialize_doc(order_doc)
+    if points_earned > 0:
+        response['points_earned'] = points_earned
+    if 'unlocked_achievements' in order_doc:
+        response['unlocked_achievements'] = order_doc['unlocked_achievements']
+    
+    return response
 
 @api_router.get("/order-status/{order_number}")
 async def get_order_status(order_number: str):
