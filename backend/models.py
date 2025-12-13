@@ -71,7 +71,11 @@ class MenuItem(BaseModel):
     price_normal: Optional[float] = None
     image_url: Optional[str] = None
     tags: List[str] = []
-    allergens: Optional[str] = None
+    allergens: List[str] = []  # e.g. ["gluten", "milk", "eggs", "nuts"]
+    nutritional_info: Optional[dict] = None  # {"calories": 500, "protein": 25, "carbs": 45, "fat": 20}
+    is_vegetarian: bool = False
+    is_vegan: bool = False
+    is_spicy: bool = False
     active: bool = True
     is_featured: bool = False  # Show in homepage hero carousel
     badge: Optional[str] = None  # "new", "limited", "bestseller", "hot"
