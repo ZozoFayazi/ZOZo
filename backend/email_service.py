@@ -405,6 +405,41 @@ def send_review_request_email(order: dict, location: dict) -> bool:
     return send_email(customer.get('email'), "⭐ Wie hat dir deine ZOZO Burger Bestellung geschmeckt?", html)
 
 
+def send_group_order_invite_email(to_email: str, group_code: str, host_name: str, share_link: str) -> bool:
+    """Send invitation email to join a group order"""
+    content = f"""
+        <h1>👥 Du wurdest zu einer Gruppenbestellung eingeladen!</h1>
+        <p>Hey!</p>
+        <p><strong>{host_name}</strong> hat dich zu einer gemeinsamen ZOZO Burger Bestellung eingeladen.</p>
+        
+        <div class="info-box">
+            <p><strong>🍔 So funktioniert's:</strong></p>
+            <p>1. Klicke auf den Button unten</p>
+            <p>2. Füge deine Lieblings-Burger & Snacks hinzu</p>
+            <p>3. Alle sehen in Echtzeit, was bestellt wird</p>
+            <p>4. Der Host schließt die Bestellung ab</p>
+        </div>
+        
+        <div class="code-box">
+            <p style="color: #e5e5e5; margin-bottom: 10px;">Gruppencode:</p>
+            <div class="code">{group_code}</div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="{share_link}" class="button">
+                🍔 Jetzt mitmachen
+            </a>
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 14px; color: #888;">
+            <strong>⏰ Hinweis:</strong> Gruppenbestellungen sind 1 Stunde gültig. Sei schnell dabei!
+        </p>
+    """
+    
+    html = get_base_email_template(content, "Gruppenbestellung Einladung")
+    return send_email(to_email, f"👥 {host_name} lädt dich zur Gruppenbestellung ein!", html)
+
+
 def send_password_reset_email(email: str, reset_token: str) -> bool:
     """Send password reset email"""
     reset_link = f"https://zozofinal.preview.emergentagent.com/admin/reset-password?token={reset_token}"
