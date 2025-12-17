@@ -31,6 +31,7 @@ const FeaturedProducts = lazy(() => import('./pages/FeaturedProducts'));
 const RewardsPage = lazy(() => import('./pages/RewardsPage'));
 const StartGroupOrder = lazy(() => import('./pages/StartGroupOrder'));
 const GroupOrderPage = lazy(() => import('./pages/GroupOrderPage'));
+const POSSettings = lazy(() => import('./pages/POSSettings'));
 
 // Loading component
 const PageLoader = () => (
