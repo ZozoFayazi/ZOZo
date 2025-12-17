@@ -62,6 +62,7 @@ async def setup_admins():
             "role": admin_data["role"],
             "branch_ids": admin_data["branch_ids"],
             "is_active": True,
+            "must_change_password": True,  # Force password change on first login
             "created_at": None,
             "last_login": None,
             "totp_enabled": False,
