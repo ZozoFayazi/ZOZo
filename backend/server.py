@@ -1929,6 +1929,153 @@ async def get_rewards_catalog():
     return rewards
 
 
+# ============================================================================
+# ADMIN AUTHENTICATION & AUTHORIZATION ENDPOINTS
+# ============================================================================
+
+@api_router.post("/admin/auth/login", response_model=AdminLoginResponse)
+async def admin_login(request: AdminLoginRequest):
+    """Admin login endpoint with role-based authentication"""
+    try:
+        # Find admin by email
+        admin = await db.admins.find_one({"email": request.email})
+        
+        if not admin:
+            # Log failed attempt
+            await audit_service.log_action(
+                actor_email=request.email,
+                action="admin_login",
+                result="failure",
+                details={"reason": "Admin not found"}
+            )
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        # Check if admin is active
+        if not admin.get("is_active", True):
+            await audit_service.log_action(
+                actor_email=request.email,
+                action="admin_login",
+                result="failure",
+                details={"reason": "Account inactive"}
+            )
+            raise HTTPException(status_code=403, detail="Account is inactive")
+        
+        # Verify password
+        if not AdminAuth.verify_password(request.password, admin["password_hash"]):
+            await audit_service.log_action(
+                actor_email=request.email,
+                action="admin_login",
+                result="failure",
+                details={"reason": "Invalid password"}
+            )
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        # Create JWT token
+        token = AdminAuth.create_token(
+            email=admin["email"],
+            role=admin["role"],
+            branch_ids=admin.get("branch_ids", [])
+        )
+        
+        # Update last login
+        await db.admins.update_one(
+            {"_id": admin["_id"]},
+            {"$set": {"last_login": datetime.utcnow()}}
+        )
+        
+        # Log successful login
+        await audit_service.log_action(
+            actor_email=request.email,
+            action="admin_login",
+            result="success"
+        )
+        
+        # Prepare admin response
+        admin_response = {
+            "id": str(admin["_id"]),
+            "email": admin["email"],
+            "name": admin["name"],
+            "role": admin["role"],
+            "branch_ids": admin.get("branch_ids", []),
+            "permissions": AdminAuth.get_permissions(admin["role"]),
+            "totp_enabled": admin.get("totp_enabled", False)
+        }
+        
+        return AdminLoginResponse(
+            access_token=token,
+            token_type="bearer",
+            admin=admin_response
+        )
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Admin login error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Login failed")
+
+
+@api_router.get("/admin/auth/me")
+async def get_current_admin_info(admin: dict = Depends(get_current_admin)):
+    """Get current admin info from token"""
+    # Fetch full admin details from database
+    admin_doc = await db.admins.find_one({"email": admin["email"]})
+    
+    if not admin_doc:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    
+    return {
+        "id": str(admin_doc["_id"]),
+        "email": admin_doc["email"],
+        "name": admin_doc["name"],
+        "role": admin_doc["role"],
+        "branch_ids": admin_doc.get("branch_ids", []),
+        "permissions": admin["permissions"],
+        "totp_enabled": admin_doc.get("totp_enabled", False),
+        "last_login": admin_doc.get("last_login")
+    }
+
+
+@api_router.post("/admin/auth/change-password")
+async def change_admin_password(
+    request: PasswordChangeRequest,
+    admin: dict = Depends(get_current_admin)
+):
+    """Change admin password"""
+    # Get admin from database
+    admin_doc = await db.admins.find_one({"email": admin["email"]})
+    
+    if not admin_doc:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    
+    # Verify current password
+    if not AdminAuth.verify_password(request.current_password, admin_doc["password_hash"]):
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="password_change",
+            result="failure",
+            details={"reason": "Invalid current password"}
+        )
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+    
+    # Hash new password
+    new_hash = AdminAuth.hash_password(request.new_password)
+    
+    # Update password
+    await db.admins.update_one(
+        {"_id": admin_doc["_id"]},
+        {"$set": {"password_hash": new_hash}}
+    )
+    
+    # Log successful change
+    await audit_service.log_action(
+        actor_email=admin["email"],
+        action="password_change",
+        result="success"
+    )
+    
+    return {"message": "Password changed successfully"}
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
