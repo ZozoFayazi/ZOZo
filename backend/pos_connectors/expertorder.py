@@ -106,6 +106,41 @@ class ExpertOrderConnector(BasePOSConnector):
                         "is_test_mode": False
                     }
                 
+                # Try to parse JSON response
+                try:
+                    json_response = response.json()
+                    error_message = json_response.get('errorMessage', '')
+                    
+                    # "Order ID required" means auth was successful, just no order ID provided
+                    # This is expected for a GET without order ID - connection is valid!
+                    if 'Order ID required' in error_message:
+                        return {
+                            "success": True,
+                            "message": "Verbindung zu EOCloud erfolgreich (API Key akzeptiert)",
+                            "details": {
+                                "environment": "live",
+                                "api_url": api_url,
+                                "status_code": response.status_code,
+                                "api_response": "Order ID required (expected for test)"
+                            },
+                            "is_test_mode": False
+                        }
+                    
+                    # "API_KEY required" means authentication failed
+                    if 'API_KEY required' in error_message:
+                        return {
+                            "success": False,
+                            "message": "API Key fehlt oder ungültig",
+                            "details": {
+                                "status_code": response.status_code,
+                                "api_url": api_url,
+                                "api_response": error_message
+                            },
+                            "is_test_mode": False
+                        }
+                except:
+                    pass
+                
                 if response.status_code == 200:
                     return {
                         "success": True,
