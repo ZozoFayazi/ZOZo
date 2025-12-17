@@ -248,6 +248,14 @@ function App() {
               </ProtectedAdminRoute>
             } 
           />
+          <Route 
+            path="/admin/security" 
+            element={
+              <ProtectedAdminRoute>
+                <SecurityDashboard />
+              </ProtectedAdminRoute>
+            } 
+          />
             </Routes>
           </Suspense>
         </main>
