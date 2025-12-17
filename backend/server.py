@@ -38,6 +38,7 @@ db = client[db_name]
 audit_service = AuditService(db)
 pos_service = POSService(db)
 rate_limiter = RateLimiter(db)
+totp_service = TOTPService(db)
 
 # Create product router with admin authentication
 product_router = create_product_router(db, audit_service)
