@@ -439,6 +439,47 @@ export default function ProductManagement() {
           </Card>
         </div>
       </div>
+
+      {/* Product Dialog */}
+      <ProductDialog
+        open={productDialogOpen}
+        onClose={() => setProductDialogOpen(false)}
+        product={selectedProduct}
+        categories={categories}
+        onSuccess={handleProductSuccess}
+      />
+
+      {/* Category Dialog */}
+      <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+        <DialogContent data-testid="category-dialog">
+          <DialogHeader>
+            <DialogTitle>Neue Kategorie</DialogTitle>
+            <DialogDescription>
+              Erstellen Sie eine neue Produktkategorie
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="category-name">Kategoriename</Label>
+              <Input
+                id="category-name"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                placeholder="z.B. Specials"
+                data-testid="category-name-input"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>
+              Abbrechen
+            </Button>
+            <Button onClick={handleCreateCategory} data-testid="category-save">
+              Erstellen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
