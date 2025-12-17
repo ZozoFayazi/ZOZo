@@ -398,6 +398,7 @@ async def create_order(order: OrderCreate):
     # Create order document
     order_doc = {
         "location_id": order.location_id,
+        "location_slug": location.get('slug', ''),  # Store slug for POS retry
         "order_number": order_number,
         "items": [item.dict() for item in order.items],
         "subtotal": round(subtotal, 2),
@@ -416,7 +417,8 @@ async def create_order(order: OrderCreate):
             "status": "confirmed",
             "timestamp": datetime.utcnow().isoformat(),
             "note": "Bestellung wurde bestätigt"
-        }]
+        }],
+        "pos_status": "pending"  # Initial POS status
     }
     
     result = await db.orders.insert_one(order_doc)
