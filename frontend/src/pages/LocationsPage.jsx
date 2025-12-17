@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { getLocations } from '../api';
-import { MapPin, Clock, Phone, Mail } from 'lucide-react';
+import { MapPin, Clock, Phone, Mail, ChevronRight } from 'lucide-react';
+import { Button } from '../components/ui/button';
 
 function LocationsPage({ setSelectedLocation }) {
   const navigate = useNavigate();
