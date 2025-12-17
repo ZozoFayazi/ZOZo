@@ -182,8 +182,9 @@ function App() {
             },
           }}
         />
-        </div>
-      </Router>
+          </div>
+        </Router>
+      </AdminAuthProvider>
     </ErrorBoundary>
   );
 }
