@@ -491,13 +491,13 @@ class ExpertOrderConnector(BasePOSConnector):
             items.append(eocloud_item)
         
         # Current time for ordertime, delivery time +30 min
-        # EOCloud expects Unix timestamp in milliseconds
+        # EOCloud expects ISO 8601 string format: "2025-12-17T16:30:00"
         now = datetime.utcnow()
         delivery_time = now + timedelta(minutes=30)
         
-        # Convert to Unix timestamp in milliseconds
-        ordertime_ms = int(now.timestamp() * 1000)
-        deliverytime_ms = int(delivery_time.timestamp() * 1000)
+        # Format as ISO strings
+        ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+        deliverytime_str = delivery_time.strftime("%Y-%m-%dT%H:%M:%SZ")
         
         # Payment type mapping - EOCloud uses integers:
         # 0 = Cash, 1 = Card, etc.
@@ -508,8 +508,8 @@ class ExpertOrderConnector(BasePOSConnector):
         payload = {
             "version": 1,  # Required by EOCloud - must be INTEGER
             "id": order_data.get('order_number', str(uuid.uuid4())),  # Required
-            "ordertime": ordertime_ms,  # Unix timestamp in ms
-            "deliverytime": deliverytime_ms,  # Unix timestamp in ms
+            "ordertime": ordertime_str,  # ISO 8601 string
+            "deliverytime": deliverytime_str,  # ISO 8601 string
             "orderprice": float(order_data.get('total', 0)),  # Required
             "orderdiscount": 0.0,  # Required
             "payment": {
@@ -517,7 +517,7 @@ class ExpertOrderConnector(BasePOSConnector):
                 "amount": float(order_data.get('total', 0)),
                 "provider": "",  # Required by EOCloud
                 "transactionid": "",  # Required by EOCloud
-                "prepaid": False  # Required by EOCloud - False for pay on delivery
+                "prepaid": 0.0  # Required by EOCloud - Number, 0.0 = not prepaid
             },
             "customer": {
                 "name": order_data.get('customer_name', ''),
