@@ -15,7 +15,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Package,
-  Cable
+  Cable,
+  Shield
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
