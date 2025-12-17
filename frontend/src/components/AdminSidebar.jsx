@@ -14,7 +14,8 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
-  Package
+  Package,
+  Cable
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
