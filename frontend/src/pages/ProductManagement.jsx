@@ -44,6 +44,7 @@ export default function ProductManagement() {
   useEffect(() => {
     if (token) {
       fetchProducts();
+      fetchCategories();
     }
   }, [token]);
   
@@ -67,6 +68,99 @@ export default function ProductManagement() {
       toast.error('Fehler beim Laden der Produkte');
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const fetchCategories = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${backendUrl}/api/categories`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      
+      const data = await response.json();
+      // Create simple category objects from the data
+      const cats = data.categories || [];
+      setCategories(cats.map(cat => ({
+        id: cat.slug || cat._id || cat.id,
+        name: cat.name
+      })));
+    } catch (error) {
+      console.error('Fetch categories error:', error);
+      // Use fallback categories if fetch fails
+      setCategories([
+        { id: 'burgers', name: 'Burgers' },
+        { id: 'sides', name: 'Beilagen' },
+        { id: 'drinks', name: 'Getränke' },
+        { id: 'desserts', name: 'Desserts' }
+      ]);
+    }
+  };
+  
+  const handleCreateProduct = () => {
+    setSelectedProduct(null);
+    setProductDialogOpen(true);
+  };
+  
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
+    setProductDialogOpen(true);
+  };
+  
+  const handleProductSuccess = (updatedProduct) => {
+    if (selectedProduct) {
+      // Update existing
+      setProducts(prev => prev.map(p => 
+        p.id === updatedProduct.id ? updatedProduct : p
+      ));
+    } else {
+      // Add new
+      setProducts(prev => [updatedProduct, ...prev]);
+    }
+  };
+  
+  const handleCreateCategory = async () => {
+    if (!categoryName.trim()) {
+      toast.error('Bitte Kategorienamen eingeben');
+      return;
+    }
+    
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${backendUrl}/api/admin/categories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: categoryName,
+          slug: categoryName.toLowerCase().replace(/\s+/g, '-')
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Fehler beim Erstellen');
+      }
+      
+      const newCategory = await response.json();
+      setCategories(prev => [...prev, {
+        id: newCategory.slug || newCategory.id,
+        name: newCategory.name
+      }]);
+      
+      toast.success('Kategorie erstellt');
+      setCategoryDialogOpen(false);
+      setCategoryName('');
+    } catch (error) {
+      console.error('Create category error:', error);
+      toast.error(error.message || 'Fehler beim Erstellen');
     }
   };
   
