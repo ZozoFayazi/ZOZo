@@ -1,70 +1,153 @@
-# ZOZO Burger - Bestellablauf-Optimierung
+# ZOZO Burger - Multi-Location Admin System
 
 ## Projekt-Übersicht
-ZOZO Burger Lieferservice Website mit FastAPI Backend, React Frontend und MongoDB. Aktuell werden mehrere aufeinanderfolgende Dialoge für die Produktbestellung verwendet. Ziel ist es, die User Experience durch Zusammenführung der Dialoge zu vereinfachen.
+ZOZO Burger Multi-Standort Admin-System mit FastAPI Backend, React Frontend und MongoDB. 
+Umfassende Architektur-Überarbeitung für professionelles Multi-Tenant-System.
 
-## Phase 1: Dialog-Vereinfachung (Status: COMPLETED) ✅
-**Ziel:** ProductCustomizer und MenuUpgradeDialog zu einem einzigen, effizienten Dialog zusammenführen
+---
+
+## Modul 1: Rollen- & Rechte-System (Status: COMPLETED) ✅
+**Ziel:** JWT-basiertes Auth-System mit rollenspezifischen Berechtigungen
 
 ### Umgesetzte Features:
-- ✅ Vollständige Menü-Daten aus Foodbooking gescraped und in DB gespeichert
-- ✅ Produkt-spezifische abwählbare Zutaten implementiert
-- ✅ Menu-Upgrade und Category-Upsell Dialoge entwickelt
-- ✅ ExpertOrder POS-Integration erfolgreich getestet
+- ✅ AdminUser Model mit gehashten Passwörtern (bcrypt)
+- ✅ JWT-Token-Authentifizierung für Admin-Bereich
+- ✅ 3 Admin-Rollen: Super Admin, Rellingen Admin, Henstedt Admin
+- ✅ Server-seitige Berechtigungsprüfung auf allen Endpunkten
+- ✅ AdminAuthContext für Frontend-Session-Management
+- ✅ Protected Routes für Admin-Seiten
 
-### Aktueller Bestellablauf (3 Dialoge):
-1. **ProductCustomizer** → Zutaten entfernen, Extras hinzufügen
-2. **MenuUpgradeDialog** → "Als Burger" oder "Als Menü" auswählen
-3. **CategoryUpsellDialog** → Cross-Sell für Sidekicks/Desserts
+### Admin-Accounts:
+- `admin@zonik-solutions.de` (Super Admin) - Voller Systemzugriff
+- `info@zozo-burger.de` (Rellingen) - Volle Produkt-Berechtigungen
+- `henstedt@zozo-burger.de` (Henstedt) - Nur Active/InStock Toggle
 
-### Neuer optimierter Bestellablauf (2 Dialoge):
-1. **Kombinierter ProductCustomizer** → Alles in einem (Zutaten, Extras, Menu-Option)
-2. **CategoryUpsellDialog** → Cross-Sell bleibt unverändert
+---
 
-### Technische Änderungen:
-- **ProductCustomizer.jsx**: Erweitern mit Menu-Upgrade-Logik
-  - Toggle "Als Burger" vs "Als Menü"
-  - Dynamische Beilagen- und Getränke-Auswahl bei Menü-Option
-  - Preisberechnung inkl. Menu-Upgrade-Kosten
-  - Alle bestehenden Features beibehalten (Extras, Removals, Quantity, Special Instructions)
+## Modul 2: Filial- & Standort-Management (Status: COMPLETED) ✅
+**Ziel:** Verwaltung mehrerer Standorte mit eigenen Einstellungen
+
+### Umgesetzte Features:
+- ✅ Location Model mit Adresse, Öffnungszeiten, Liefergebieten, SEO
+- ✅ CRUD-Endpoints für Locations mit Rollen-Prüfung
+- ✅ Super Admin: Alle Standorte verwalten
+- ✅ Branch Admin: Nur eigenen Standort bearbeiten (eingeschränkte Felder)
+- ✅ LocationDialog mit Tabs (Details, Öffnungszeiten, Liefergebiet, SEO)
+- ✅ Collapsible Left Sidebar Navigation
+
+---
+
+## Modul 3: Produktverwaltung (Status: COMPLETED) ✅
+**Ziel:** Rollen-basiertes Produkt-CRUD
+
+### Umgesetzte Features:
+- ✅ Produkt-Endpoints mit strengen Berechtigungen
+- ✅ Super/Rellingen Admin: Volles CRUD (Create, Edit, Delete)
+- ✅ Henstedt Admin: Nur Active/InStock Toggle
+- ✅ Bildupload-Funktionalität
+- ✅ Kategorie-Management
+- ✅ ProductDialog für Create/Edit
+
+---
+
+## Modul 4: POS-Connector Architektur (Status: IN PROGRESS) 🔄
+**Ziel:** Plug-and-Play POS-Integration pro Standort
+
+### Anforderungen:
+1. **POS-Konfiguration pro Filiale:**
+   - Provider: NONE / EXPERTORDER / CASHX
+   - Status: connected / disconnected / error
+   - Verschlüsselte Credentials
+   - lastSyncAt, lastError
+   - settingsJson (Mapping, Steuern, Zahlungsarten)
+   - **Testmodus-Toggle**
+
+2. **Berechtigungen:**
+   - Super Admin: POS für alle Filialen konfigurieren
+   - Branch Admin: POS nur für eigene Filiale
+   - Henstedt sieht nur Henstedt
+
+3. **Bestellfluss + Fallback:**
+   - Wenn POS aktiv: Bestellung pushen
+   - Wenn Push fehlschlägt: Status "POS Fehler", manuell bearbeitbar
+   - Retry-Button für erneuten Versuch
+
+4. **Test-Modus (VERBINDLICH):**
+   - Simuliert Connected/Disconnected/Error
+   - Simuliert Order-Push (Success + Failure)
+   - Strukturiertes Logging (ohne Secrets)
+   - Klarer Toggle "Testmodus" pro Filiale
+
+### Implementierungsschritte:
+- [ ] Backend: POS-Config Modelle erweitern
+- [ ] Backend: ExpertOrder Connector mit Test-Modus
+- [ ] Backend: POS-Endpoints erweitern (Config CRUD, Test, Retry)
+- [ ] Backend: Order-Flow mit POS-Integration + Fallback
+- [ ] Frontend: POSSettings.jsx Seite erstellen
+- [ ] Frontend: POS-Config Dialog pro Standort
+- [ ] Frontend: Connection Test UI
+- [ ] Frontend: Order Retry Funktionalität
+- [ ] Testing: Alle 3 Admin-Rollen testen
+- [ ] Screenshots: Dokumentation
+
+### Technische Details:
+- **Backend-Dateien:**
+  - `/app/backend/pos_connectors/base.py` - Interface
+  - `/app/backend/pos_connectors/expertorder.py` - ExpertOrder
+  - `/app/backend/pos_connectors/cashx.py` - Cash-X Skeleton
+  - `/app/backend/pos_service.py` - Service-Schicht
   
-- **MenuPage.jsx**: Flow-Logik vereinfachen
-  - MenuUpgradeDialog-Import und State entfernen
-  - Direkt von ProductCustomizer zu CategoryUpsellDialog
-  
-- **MenuUpgradeDialog.jsx**: Löschen (redundant)
+- **Frontend-Dateien:**
+  - `/app/frontend/src/pages/POSSettings.jsx` - NEU
+  - `/app/frontend/src/components/POSConfigDialog.jsx` - NEU
 
-### Design-Vorgaben (aus design_guidelines.md):
-- **Farben**: Primary Red #B00020, Card BG #121214, Border #232326
-- **Typografie**: Playfair Display (Headings), Chivo (Body/UI)
-- **Buttons**: 10px radius, red glow shadow
-- **Spacing**: Großzügige Abstände zwischen Sektionen
-- **Testing**: Alle interaktiven Elemente mit `data-testid`
+---
 
-## Phase 2: Produktbilder-Lösung (Status: Not Started) 📋
-**Problem:** Aktuelle Bilder sind Stock-Fotos, keine echten Produktbilder
+## Modul 5: SEO & GEO (Status: NOT STARTED) 📋
+**Ziel:** Individuelle, indexierbare Standort-Seiten
 
-### Optionen:
-1. **Admin-Upload-Interface** (empfohlen) - Manueller Upload durch Admin
-2. **Scraping von Wolt/Uber Eats** - Automatisch, aber Copyright-Risiko
-3. **Stock-Fotos behalten** - Aktuelle hochwertige Bilder
+### Geplante Features:
+- Automatisch generierte Location-Seiten
+- LocalBusiness Schema Markup
+- Geo-spezifische Meta-Tags
+- Sitemap-Integration
 
-**Nächster Schritt:** Mit Benutzer besprechen und beste Option auswählen
+---
 
-## Phase 3: Zukünftige Integrationen (Status: Planned) 🔮
-- Lieferando/Wolt/Uber Eats Webhook-Integration
-- CTI (Telephony) Integration für Caller-ID
-- iPad Kitchen/Cashier Dashboard
+## Modul 6: Sicherheit (Status: NOT STARTED) 📋
+**Ziel:** Professionelle Sicherheitsmaßnahmen
+
+### Geplante Features:
+- Rate-Limiting für API-Endpoints
+- Umfassende Audit-Logs
+- mustChangePassword Flag in UI
+- Session-Management
+
+---
+
+## Modul 7: 2FA-Integration (Status: NOT STARTED) 📋
+**Ziel:** TOTP-basierte Zwei-Faktor-Authentifizierung
+
+### Geplante Features:
+- Google Authenticator Kompatibilität
+- Backup-Codes
+- 2FA-Setup-Wizard
+
+---
 
 ## Technischer Stack
-- **Backend**: FastAPI, Motor, Pydantic, JWT Auth
+- **Backend**: FastAPI, Motor, Pydantic, JWT Auth, bcrypt
 - **Frontend**: React, Vite, Shadcn/UI, Sonner (Toasts), Lucide Icons
 - **Database**: MongoDB (Motor)
-- **Integration**: ExpertOrder POS System (REST API)
+- **POS**: ExpertOrder (aktiv), Cash-X (vorbereitet)
 
-## Wichtige Dateien
-- `/app/frontend/src/components/ProductCustomizer.jsx` - Hauptkomponente für diese Phase
-- `/app/frontend/src/components/MenuUpgradeDialog.jsx` - Wird entfernt
-- `/app/frontend/src/pages/MenuPage.jsx` - Flow-Logik anpassen
-- `/app/backend/expertorder.py` - POS Integration (bleibt unverändert)
-- `/app/design_guidelines.md` - Design-Richtlinien (strikt befolgen)
+## Design-Richtlinien
+- **Farben**: Primary Red #B00020, Card BG #121214, Border #232326
+- **Status**: Success (grün), Warning (orange), Error (rot), Info (blau)
+- **Typografie**: Playfair Display (Headings), Chivo (Body)
+- **Alle interaktiven Elemente mit `data-testid`**
+
+## Admin-Credentials (Test)
+- Super Admin: `admin@zonik-solutions.de` / `ZozoAdmin2024!`
+- Rellingen: `info@zozo-burger.de` / `ZozoAdmin2024!`
+- Henstedt: `henstedt@zozo-burger.de` / `ZozoAdmin2024!`
