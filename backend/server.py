@@ -20,6 +20,7 @@ from admin_models import AdminLoginRequest, AdminLoginResponse, PasswordChangeRe
 from audit_service import AuditService
 from location_models import LocationCreate, LocationUpdate, LocationResponse
 from product_endpoints import create_product_router
+from pos_service import POSService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
