@@ -1,12 +1,20 @@
 """
 Email Service for ZOZO Burger
-Handles all email communications including verification, confirmations, and follow-ups
+Handles all email communications using Resend
 """
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, To, Content
+import resend
 from datetime import datetime
 from typing import Optional
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Initialize Resend with API key
+resend.api_key = os.getenv('RESEND_API_KEY')
+
+# Default sender email
+SENDER_EMAIL = os.getenv('SENDER_EMAIL', 'noreply@zozo-burger.de')
 
 # Google Review Links for each location
 LOCATION_REVIEW_LINKS = {
@@ -145,21 +153,34 @@ def get_base_email_template(content: str, title: str = "ZOZO Burger") -> str:
     """
 
 def send_email(to_email: str, subject: str, html_content: str) -> bool:
-    """Send email via SendGrid"""
+    """Send email via Resend"""
     try:
-        message = Mail(
-            from_email=Email(os.getenv('SENDER_EMAIL', 'info@zozo-burger.de')),
-            to_emails=To(to_email),
-            subject=subject,
-            html_content=Content("text/html", html_content)
-        )
+        # Ensure API key is set
+        if not resend.api_key:
+            resend.api_key = os.getenv('RESEND_API_KEY')
         
-        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
-        response = sg.send(message)
+        if not resend.api_key:
+            logger.error("RESEND_API_KEY not configured")
+            return False
         
-        return response.status_code in [200, 202]
+        params = {
+            "from": f"ZOZO Burger <{SENDER_EMAIL}>",
+            "to": [to_email],
+            "subject": subject,
+            "html": html_content
+        }
+        
+        response = resend.Emails.send(params)
+        
+        if response and response.get('id'):
+            logger.info(f"Email sent successfully to {to_email}, ID: {response.get('id')}")
+            return True
+        else:
+            logger.error(f"Email send failed: {response}")
+            return False
+            
     except Exception as e:
-        print(f"Email send error: {str(e)}")
+        logger.error(f"Email send error: {str(e)}")
         return False
 
 def send_verification_email(email: str, verification_code: str) -> bool:
@@ -308,7 +329,7 @@ def send_review_request_email(order: dict, location: dict) -> bool:
     review_link = LOCATION_REVIEW_LINKS.get(location_slug)
     
     if not review_link:
-        print(f"No review link configured for location: {location_slug}")
+        logger.warning(f"No review link configured for location: {location_slug}")
         return False
     
     content = f"""
@@ -343,3 +364,63 @@ def send_review_request_email(order: dict, location: dict) -> bool:
     
     html = get_base_email_template(content, "Bewerte uns auf Google")
     return send_email(customer.get('email'), "⭐ Wie hat dir deine ZOZO Burger Bestellung geschmeckt?", html)
+
+
+def send_password_reset_email(email: str, reset_token: str) -> bool:
+    """Send password reset email"""
+    reset_link = f"https://zozofinal.preview.emergentagent.com/admin/reset-password?token={reset_token}"
+    
+    content = f"""
+        <h1>🔑 Passwort zurücksetzen</h1>
+        <p>Du hast eine Anfrage zum Zurücksetzen deines Passworts gestellt.</p>
+        
+        <div class="info-box">
+            <p>Klicke auf den Button unten, um ein neues Passwort zu erstellen.</p>
+            <p>Dieser Link ist <strong>1 Stunde</strong> gültig.</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="{reset_link}" class="button">
+                🔑 Passwort zurücksetzen
+            </a>
+        </div>
+        
+        <p style="margin-top: 30px;">Falls du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren.</p>
+    """
+    
+    html = get_base_email_template(content, "Passwort zurücksetzen")
+    return send_email(email, "🔑 ZOZO Burger - Passwort zurücksetzen", html)
+
+
+def send_test_email(to_email: str) -> dict:
+    """Send a test email to verify configuration"""
+    try:
+        content = f"""
+            <h1>✅ Test-Email erfolgreich!</h1>
+            <p>Diese E-Mail bestätigt, dass die E-Mail-Konfiguration korrekt eingerichtet ist.</p>
+            
+            <div class="info-box">
+                <p><strong>📧 Gesendet an:</strong> {to_email}</p>
+                <p><strong>⏰ Zeitstempel:</strong> {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}</p>
+                <p><strong>📤 Provider:</strong> Resend</p>
+            </div>
+            
+            <p>Die E-Mail-Integration funktioniert einwandfrei! 🎉</p>
+        """
+        
+        html = get_base_email_template(content, "Test-Email")
+        success = send_email(to_email, "✅ ZOZO Burger - Test-Email erfolgreich", html)
+        
+        return {
+            "success": success,
+            "message": "Test-Email wurde gesendet" if success else "Fehler beim Senden der Test-Email",
+            "to": to_email,
+            "provider": "Resend"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": str(e),
+            "to": to_email,
+            "provider": "Resend"
+        }
