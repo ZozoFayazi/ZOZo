@@ -134,12 +134,25 @@ function LocationsPage({ setSelectedLocation }) {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => handleOrder(location)}
-                  className="btn-primary w-full"
-                >
-                  Hier bestellen
-                </button>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => handleOrder(location)}
+                    className="flex-1"
+                    data-testid={`order-${location.slug}`}
+                  >
+                    Hier bestellen
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    asChild
+                    data-testid={`details-${location.slug}`}
+                  >
+                    <Link to={`/standorte/${location.slug}`}>
+                      Mehr Info
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
