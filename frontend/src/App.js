@@ -20,6 +20,7 @@ const MyCreations = lazy(() => import('./pages/MyCreations'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const LocationSettings = lazy(() => import('./pages/LocationSettings'));
+const LocationManagement = lazy(() => import('./pages/LocationManagement'));
 const DealsManagement = lazy(() => import('./pages/DealsManagement'));
 const ExpertOrderSettings = lazy(() => import('./pages/ExpertOrderSettings'));
 const MenuManagement = lazy(() => import('./pages/MenuManagement'));
