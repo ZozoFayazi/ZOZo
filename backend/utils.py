@@ -6,6 +6,7 @@ def serialize_doc(doc: Any) -> Any:
     """
     Convert MongoDB document to JSON-serializable dict.
     Handles ObjectId and datetime conversion.
+    Ensures datetime is serialized with UTC timezone suffix ('Z').
     """
     if doc is None:
         return None
@@ -21,7 +22,12 @@ def serialize_doc(doc: Any) -> Any:
             elif isinstance(value, ObjectId):
                 result[key] = str(value)
             elif isinstance(value, datetime):
-                result[key] = value.isoformat()
+                # Ensure UTC timezone suffix is added for proper parsing
+                # MongoDB stores naive UTC times, so we append 'Z' to indicate UTC
+                iso_str = value.isoformat()
+                if not iso_str.endswith('Z') and '+' not in iso_str:
+                    iso_str += 'Z'
+                result[key] = iso_str
             elif isinstance(value, dict):
                 result[key] = serialize_doc(value)
             elif isinstance(value, list):
