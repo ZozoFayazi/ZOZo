@@ -1,15 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, ArrowRight, Share2, Clock, Check } from 'lucide-react';
+import { Users, ArrowRight, Share2, Clock, Check, MapPin, X } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
+import { Button } from '../components/ui/button';
 
 function StartGroupOrder({ selectedLocation, setSelectedLocation }) {
   const navigate = useNavigate();
   const [hostName, setHostName] = useState('');
   const [hostEmail, setHostEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showLocationDialog, setShowLocationDialog] = useState(false);
+  const [locations, setLocations] = useState([]);
+  const [loadingLocations, setLoadingLocations] = useState(false);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+
+  // Load locations for the dialog
+  const loadLocations = async () => {
+    setLoadingLocations(true);
+    try {
+      const response = await fetch(`${backendUrl}/api/locations`);
+      if (response.ok) {
+        const data = await response.json();
+        setLocations(data);
+      }
+    } catch (error) {
+      console.error('Error loading locations:', error);
+    } finally {
+      setLoadingLocations(false);
+    }
+  };
+
+  // Open location dialog and load locations
+  const handleChangeLocation = () => {
+    setShowLocationDialog(true);
+    if (locations.length === 0) {
+      loadLocations();
+    }
+  };
+
+  // Select a location from the dialog
+  const handleSelectLocation = (location) => {
+    setSelectedLocation(location);
+    setShowLocationDialog(false);
+    toast.success(`Standort gewählt: ${location.name}`);
+  };
 
   const createGroupOrder = async () => {
     if (!hostName.trim()) {
@@ -19,7 +61,8 @@ function StartGroupOrder({ selectedLocation, setSelectedLocation }) {
 
     if (!selectedLocation) {
       toast.error('Bitte wähle erst einen Standort');
-      navigate('/locations');
+      setShowLocationDialog(true);
+      loadLocations();
       return;
     }
 
@@ -139,6 +182,7 @@ function StartGroupOrder({ selectedLocation, setSelectedLocation }) {
                 onChange={(e) => setHostName(e.target.value)}
                 placeholder="z.B. Max Mustermann"
                 className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                data-testid="host-name-input"
               />
             </div>
 
@@ -152,33 +196,52 @@ function StartGroupOrder({ selectedLocation, setSelectedLocation }) {
                 onChange={(e) => setHostEmail(e.target.value)}
                 placeholder="max@example.com"
                 className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                data-testid="host-email-input"
               />
             </div>
 
-            {selectedLocation && (
-              <div className="bg-background rounded-lg p-4">
-                <p className="text-sm text-muted-foreground mb-1">Ausgewählter Standort:</p>
-                <p className="font-semibold">{selectedLocation.name}</p>
-                <button
-                  onClick={() => navigate('/locations')}
-                  className="text-sm text-primary hover:underline mt-1"
-                >
-                  Standort ändern
-                </button>
+            {/* Location Selection - Inline Dialog */}
+            {selectedLocation ? (
+              <div className="bg-background rounded-lg p-4 border border-border" data-testid="selected-location-box">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <MapPin className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Ausgewählter Standort:</p>
+                      <p className="font-semibold">{selectedLocation.name}</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleChangeLocation}
+                    data-testid="change-location-button"
+                  >
+                    Ändern
+                  </Button>
+                </div>
               </div>
-            )}
-
-            {!selectedLocation && (
-              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
-                <p className="text-sm text-yellow-600 dark:text-yellow-500">
-                  Bitte wähle zuerst einen Standort aus
-                </p>
-                <button
-                  onClick={() => navigate('/locations')}
-                  className="text-sm text-primary hover:underline mt-2"
-                >
-                  Standort auswählen →
-                </button>
+            ) : (
+              <div 
+                className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 cursor-pointer hover:bg-yellow-500/20 transition-colors"
+                onClick={handleChangeLocation}
+                data-testid="select-location-prompt"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                    <MapPin className="h-5 w-5 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-yellow-600 dark:text-yellow-500">
+                      Bitte wähle zuerst einen Standort aus
+                    </p>
+                    <p className="text-xs text-yellow-600/70 dark:text-yellow-500/70">
+                      Klicke hier, um einen Standort zu wählen
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -186,6 +249,7 @@ function StartGroupOrder({ selectedLocation, setSelectedLocation }) {
               onClick={createGroupOrder}
               disabled={loading || !selectedLocation}
               className="w-full bg-primary text-primary-foreground py-4 rounded-lg hover:bg-primary/90 transition-colors font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              data-testid="create-group-order-button"
             >
               {loading ? (
                 <>
@@ -202,6 +266,58 @@ function StartGroupOrder({ selectedLocation, setSelectedLocation }) {
           </div>
         </div>
       </div>
+
+      {/* Location Selection Dialog */}
+      <Dialog open={showLocationDialog} onOpenChange={setShowLocationDialog}>
+        <DialogContent className="sm:max-w-md" data-testid="location-dialog">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-primary" />
+              Standort wählen
+            </DialogTitle>
+            <DialogDescription>
+              Wähle den Standort für deine Gruppenbestellung
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-3 py-4">
+            {loadingLocations ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            ) : locations.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4">
+                Keine Standorte verfügbar
+              </p>
+            ) : (
+              locations.map((location) => (
+                <button
+                  key={location.id}
+                  onClick={() => handleSelectLocation(location)}
+                  className={`w-full p-4 rounded-lg border transition-all text-left hover:border-primary hover:bg-primary/5 ${
+                    selectedLocation?.id === location.id 
+                      ? 'border-primary bg-primary/10' 
+                      : 'border-border'
+                  }`}
+                  data-testid={`location-option-${location.slug}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold">{location.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {location.address}, {location.postal_code} {location.city}
+                      </p>
+                    </div>
+                    {selectedLocation?.id === location.id && (
+                      <Check className="h-5 w-5 text-primary" />
+                    )}
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
