@@ -198,6 +198,89 @@ async def get_locations(include_status: bool = Query(False, description="Include
     
     return result
 
+
+@api_router.get("/locations/{slug}")
+async def get_location_by_slug(slug: str, include_menu: bool = Query(False)):
+    """
+    Get a single location by slug for public SEO pages
+    Returns detailed location info including opening hours, delivery area, and SEO data
+    """
+    from opening_hours_checker import get_opening_status_for_location
+    
+    location = await db.locations.find_one({"slug": slug, "active": True})
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Standort nicht gefunden")
+    
+    result = serialize_doc(location)
+    
+    # Add opening status
+    result['opening_status'] = get_opening_status_for_location(location)
+    
+    # Format opening hours for display
+    opening_hours = location.get('opening_hours', [])
+    formatted_hours = []
+    day_names = {
+        'monday': 'Montag',
+        'tuesday': 'Dienstag', 
+        'wednesday': 'Mittwoch',
+        'thursday': 'Donnerstag',
+        'friday': 'Freitag',
+        'saturday': 'Samstag',
+        'sunday': 'Sonntag'
+    }
+    
+    for hours in opening_hours:
+        day = hours.get('day', '').lower()
+        if hours.get('is_open', True):
+            formatted_hours.append({
+                'day': day_names.get(day, day.capitalize()),
+                'day_key': day,
+                'is_open': True,
+                'hours': f"{hours.get('open_time', '11:00')} - {hours.get('close_time', '22:45')}"
+            })
+        else:
+            formatted_hours.append({
+                'day': day_names.get(day, day.capitalize()),
+                'day_key': day,
+                'is_open': False,
+                'hours': 'Geschlossen'
+            })
+    
+    result['formatted_hours'] = formatted_hours
+    
+    # Get delivery area info
+    delivery_area = location.get('delivery_area', {})
+    result['delivery_info'] = {
+        'mode': delivery_area.get('mode', 'radius'),
+        'radius_km': delivery_area.get('radius_km', 5.0),
+        'postal_codes': delivery_area.get('postal_codes', []),
+        'delivery_fee': delivery_area.get('delivery_fee', 2.50),
+        'min_order_value': delivery_area.get('min_order_value', 15.0),
+        'estimated_time': delivery_area.get('estimated_delivery_time', '30-45 Min')
+    }
+    
+    # Get SEO data with defaults
+    seo = location.get('seo', {})
+    result['seo'] = {
+        'meta_title': seo.get('meta_title') or f"ZOZO Burger {location.get('name', '')} - Burger, Pizza & Pasta Lieferservice",
+        'meta_description': seo.get('meta_description') or f"Bestelle jetzt bei ZOZO Burger {location.get('city', '')}! Premium Burger, Pizza, Pasta & mehr. Lieferung in {location.get('city', '')} und Umgebung. ☎ {location.get('phone', '')}",
+        'keywords': seo.get('keywords') or f"Burger {location.get('city', '')}, Pizza Lieferservice, ZOZO Burger, Lieferservice {location.get('city', '')}"
+    }
+    
+    # Include popular menu items if requested
+    if include_menu:
+        menu_items = await db.menu_items.find({
+            "active": True,
+            "$or": [
+                {"location_id": None},  # Global items
+                {"location_id": str(location['_id'])}  # Location-specific items
+            ]
+        }).limit(6).to_list(length=6)
+        result['popular_items'] = serialize_doc(menu_items)
+    
+    return result
+
 # Delivery Zone Check
 @api_router.get("/check-delivery-zone")
 async def check_delivery_zone(postal_code: str = Query(..., description="Customer postal code")):
