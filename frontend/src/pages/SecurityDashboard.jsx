@@ -22,11 +22,14 @@ import {
   RefreshCw,
   Filter,
   Activity,
-  Loader2
+  Loader2,
+  Smartphone,
+  Key
 } from 'lucide-react';
+import TwoFactorSetup from '../components/TwoFactorSetup';
 
 export default function SecurityDashboard() {
-  const { token, admin, isSuperAdmin } = useAdminAuth();
+  const { token, admin, isSuperAdmin, updateAdminData } = useAdminAuth();
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
   const [logs, setLogs] = useState([]);
@@ -38,6 +41,10 @@ export default function SecurityDashboard() {
     severity: '',
     action: ''
   });
+  
+  // 2FA state
+  const [twoFAStatus, setTwoFAStatus] = useState(null);
+  const [show2FASetup, setShow2FASetup] = useState(false);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
   const PAGE_SIZE = 25;
