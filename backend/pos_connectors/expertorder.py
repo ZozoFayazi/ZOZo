@@ -448,14 +448,32 @@ class ExpertOrderConnector(BasePOSConnector):
         """
         Transform ZOZO order format to EOCloud OSP format
         
-        Note: The exact format may need adjustment based on EOCloud documentation
+        EOCloud OSP API required fields:
+        - version: API version (required)
+        - id: Order ID (required)
+        - customer: object with street, zip, location (required)
+        - items: array with count (not quantity)
         """
-        # Build items list
+        import uuid
+        
+        # Parse delivery address for street, zip, location
+        delivery_address = order_data.get('delivery_address', '')
+        address_parts = delivery_address.split(',') if delivery_address else []
+        
+        street = address_parts[0].strip() if len(address_parts) > 0 else ''
+        zip_location = address_parts[1].strip() if len(address_parts) > 1 else ''
+        
+        # Try to split zip and location (e.g., "24558 Henstedt-Ulzburg")
+        zip_parts = zip_location.split(' ', 1) if zip_location else []
+        zip_code = zip_parts[0] if len(zip_parts) > 0 else ''
+        location = zip_parts[1] if len(zip_parts) > 1 else zip_location
+        
+        # Build items list with EOCloud required fields
         items = []
         for item in order_data.get('items', []):
             eocloud_item = {
                 "name": item.get('name', ''),
-                "quantity": item.get('quantity', 1),
+                "count": item.get('quantity', 1),  # EOCloud uses "count" not "quantity"
                 "price": item.get('price', 0),
             }
             
@@ -466,13 +484,17 @@ class ExpertOrderConnector(BasePOSConnector):
             
             items.append(eocloud_item)
         
-        # Build the OSP payload
+        # Build the OSP payload with all required EOCloud fields
         payload = {
-            "orderNumber": order_data.get('order_number', ''),
+            "version": "1.0",  # Required by EOCloud
+            "id": order_data.get('order_number', str(uuid.uuid4())),  # Required by EOCloud
             "customer": {
                 "name": order_data.get('customer_name', ''),
                 "phone": order_data.get('customer_phone', ''),
-                "email": order_data.get('customer_email', '')
+                "email": order_data.get('customer_email', ''),
+                "street": street,  # Required by EOCloud
+                "zip": zip_code,  # Required by EOCloud
+                "location": location  # Required by EOCloud (city)
             },
             "items": items,
             "total": order_data.get('total', 0),
@@ -481,8 +503,6 @@ class ExpertOrderConnector(BasePOSConnector):
             "notes": order_data.get('notes', '')
         }
         
-        # Add delivery address if not pickup
-        if order_data.get('delivery_type') != 'pickup':
-            payload["deliveryAddress"] = order_data.get('delivery_address', '')
+        logger.info(f"EOCloud payload: {payload}")
         
         return payload
