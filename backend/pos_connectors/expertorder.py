@@ -1,13 +1,16 @@
-"""ExpertOrder POS Connector"""
+"""ExpertOrder POS Connector with Test Mode Support"""
 import httpx
 import logging
+import random
 from typing import Dict
+from datetime import datetime
 from .base import BasePOSConnector
 
 logger = logging.getLogger(__name__)
 
+
 class ExpertOrderConnector(BasePOSConnector):
-    """Connector for ExpertOrder POS system"""
+    """Connector for ExpertOrder POS system with test mode support"""
     
     def __init__(self, config: Dict):
         super().__init__(config)
@@ -16,15 +19,24 @@ class ExpertOrderConnector(BasePOSConnector):
         self.merchant_id = config.get('merchant_id')
         self.username = config.get('username')
         self.secret = config.get('secret')
-        self.environment = config.get('environment', 'test')  # 'test' or 'live'
+        self.test_mode = config.get('test_mode', True)
+        
+        # Test mode simulation settings
+        self.test_simulate_failure = config.get('test_simulate_failure', False)
+        self.test_failure_rate = config.get('test_failure_rate', 0.0)  # 0-1
     
     async def test_connection(self) -> Dict:
         """Test connection to ExpertOrder API"""
+        
+        # TEST MODE - Simulate connection
+        if self.test_mode:
+            return await self._simulate_connection_test()
+        
+        # LIVE MODE - Real API call
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 headers = self._get_headers()
                 
-                # Try to ping the API or get merchant info
                 response = await client.get(
                     f"{self.base_url}/merchant/{self.merchant_id}",
                     headers=headers
@@ -35,43 +47,104 @@ class ExpertOrderConnector(BasePOSConnector):
                         "success": True,
                         "message": "Verbindung erfolgreich",
                         "details": {
-                            "environment": self.environment,
+                            "environment": "live",
                             "merchant_id": self.merchant_id
-                        }
+                        },
+                        "is_test_mode": False
                     }
                 elif response.status_code == 401:
                     return {
                         "success": False,
                         "message": "Authentifizierung fehlgeschlagen",
-                        "details": {"status_code": 401}
+                        "details": {"status_code": 401},
+                        "is_test_mode": False
                     }
                 else:
                     return {
                         "success": False,
                         "message": f"Verbindung fehlgeschlagen (Status {response.status_code})",
-                        "details": {"status_code": response.status_code}
+                        "details": {"status_code": response.status_code},
+                        "is_test_mode": False
                     }
         except httpx.TimeoutException:
             return {
                 "success": False,
                 "message": "Verbindungs-Timeout",
-                "details": {"error": "timeout"}
+                "details": {"error": "timeout"},
+                "is_test_mode": False
             }
         except Exception as e:
             logger.error(f"ExpertOrder connection test failed: {str(e)}")
             return {
                 "success": False,
                 "message": f"Fehler: {str(e)}",
-                "details": {"error": str(e)}
+                "details": {"error": str(e)},
+                "is_test_mode": False
             }
+    
+    async def _simulate_connection_test(self) -> Dict:
+        """Simulate connection test in test mode"""
+        # Check if we should simulate failure
+        if self.test_simulate_failure:
+            return {
+                "success": False,
+                "message": "[TESTMODUS] Simulierter Verbindungsfehler",
+                "details": {
+                    "environment": "test",
+                    "simulated": True,
+                    "reason": "test_simulate_failure=True"
+                },
+                "is_test_mode": True
+            }
+        
+        # Check if credentials are set (even in test mode)
+        if not self.merchant_id:
+            return {
+                "success": False,
+                "message": "[TESTMODUS] Merchant ID fehlt",
+                "details": {
+                    "environment": "test",
+                    "simulated": True,
+                    "missing_field": "merchant_id"
+                },
+                "is_test_mode": True
+            }
+        
+        if not self.api_key and not (self.username and self.secret):
+            return {
+                "success": False,
+                "message": "[TESTMODUS] Credentials fehlen (API Key oder Username/Secret)",
+                "details": {
+                    "environment": "test",
+                    "simulated": True,
+                    "missing_field": "credentials"
+                },
+                "is_test_mode": True
+            }
+        
+        # Simulate success
+        return {
+            "success": True,
+            "message": "[TESTMODUS] Verbindung simuliert - erfolgreich",
+            "details": {
+                "environment": "test",
+                "simulated": True,
+                "merchant_id": self.merchant_id[:4] + "****" if self.merchant_id else None
+            },
+            "is_test_mode": True
+        }
     
     async def push_order(self, order_data: Dict) -> Dict:
         """Send order to ExpertOrder POS"""
+        
+        # TEST MODE - Simulate order push
+        if self.test_mode:
+            return await self._simulate_order_push(order_data)
+        
+        # LIVE MODE - Real API call
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 headers = self._get_headers()
-                
-                # Transform order data to ExpertOrder format
                 payload = self._transform_order(order_data)
                 
                 response = await client.post(
@@ -85,7 +158,8 @@ class ExpertOrderConnector(BasePOSConnector):
                     return {
                         "success": True,
                         "pos_order_id": result.get('order_id'),
-                        "message": "Bestellung an ExpertOrder gesendet"
+                        "message": "Bestellung an ExpertOrder gesendet",
+                        "is_test_mode": False
                     }
                 else:
                     error_detail = response.text
@@ -93,7 +167,8 @@ class ExpertOrderConnector(BasePOSConnector):
                         "success": False,
                         "pos_order_id": None,
                         "message": f"Fehler beim Senden (Status {response.status_code})",
-                        "error": error_detail
+                        "error": error_detail,
+                        "is_test_mode": False
                     }
         except Exception as e:
             logger.error(f"ExpertOrder push order failed: {str(e)}")
@@ -101,8 +176,44 @@ class ExpertOrderConnector(BasePOSConnector):
                 "success": False,
                 "pos_order_id": None,
                 "message": "Fehler beim Senden der Bestellung",
-                "error": str(e)
+                "error": str(e),
+                "is_test_mode": False
             }
+    
+    async def _simulate_order_push(self, order_data: Dict) -> Dict:
+        """Simulate order push in test mode"""
+        order_number = order_data.get('order_number', 'UNKNOWN')
+        
+        # Check if we should simulate failure
+        should_fail = self.test_simulate_failure or (self.test_failure_rate > 0 and random.random() < self.test_failure_rate)
+        
+        if should_fail:
+            logger.info(f"[TESTMODUS] Order {order_number} - Simulierter Fehler")
+            return {
+                "success": False,
+                "pos_order_id": None,
+                "message": f"[TESTMODUS] Simulierter Fehler für Bestellung {order_number}",
+                "error": "Simulated failure for testing",
+                "is_test_mode": True,
+                "simulated": True
+            }
+        
+        # Generate fake POS order ID
+        fake_pos_id = f"TEST-{order_number}-{datetime.utcnow().strftime('%H%M%S')}"
+        
+        logger.info(f"[TESTMODUS] Order {order_number} -> POS ID: {fake_pos_id}")
+        
+        return {
+            "success": True,
+            "pos_order_id": fake_pos_id,
+            "message": f"[TESTMODUS] Bestellung {order_number} simuliert gesendet",
+            "is_test_mode": True,
+            "simulated": True,
+            "details": {
+                "items_count": len(order_data.get('items', [])),
+                "total": order_data.get('total', 0)
+            }
+        }
     
     def _get_headers(self) -> Dict:
         """Get HTTP headers for API requests"""
@@ -114,7 +225,6 @@ class ExpertOrderConnector(BasePOSConnector):
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
         elif self.username and self.secret:
-            # Basic Auth
             import base64
             credentials = f"{self.username}:{self.secret}"
             encoded = base64.b64encode(credentials.encode()).decode()
