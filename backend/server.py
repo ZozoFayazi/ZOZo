@@ -2728,6 +2728,152 @@ async def delete_location(slug: str, admin: dict = Depends(get_current_admin)):
         raise HTTPException(status_code=500, detail="Failed to delete location")
 
 
+# ============================================================================
+# SECURITY & AUDIT ENDPOINTS
+# ============================================================================
+
+@api_router.get("/admin/security/audit-logs")
+async def get_audit_logs(
+    start_date: Optional[str] = Query(None, description="Start date (ISO format)"),
+    end_date: Optional[str] = Query(None, description="End date (ISO format)"),
+    actor_email: Optional[str] = Query(None),
+    action: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
+    result: Optional[str] = Query(None),
+    severity: Optional[str] = Query(None),
+    limit: int = Query(50, le=200),
+    offset: int = Query(0),
+    admin: dict = Depends(get_current_admin)
+):
+    """Get audit logs (Super Admin only)"""
+    if admin["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Nur Super Admin kann Audit-Logs einsehen")
+    
+    # Parse dates if provided
+    parsed_start = None
+    parsed_end = None
+    if start_date:
+        try:
+            parsed_start = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+        except ValueError:
+            pass
+    if end_date:
+        try:
+            parsed_end = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+        except ValueError:
+            pass
+    
+    logs = await audit_service.get_logs(
+        start_date=parsed_start,
+        end_date=parsed_end,
+        actor_email=actor_email,
+        action=action,
+        category=category,
+        result=result,
+        severity=severity,
+        limit=limit,
+        offset=offset
+    )
+    
+    return logs
+
+
+@api_router.get("/admin/security/summary")
+async def get_security_summary(
+    hours: int = Query(24, ge=1, le=168),
+    admin: dict = Depends(get_current_admin)
+):
+    """Get security summary for the last N hours (Super Admin only)"""
+    if admin["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Nur Super Admin kann Sicherheits-Übersicht einsehen")
+    
+    summary = await audit_service.get_security_summary(hours=hours)
+    return summary
+
+
+@api_router.get("/admin/security/rate-limit-status")
+async def get_rate_limit_status(
+    http_request: Request,
+    admin: dict = Depends(get_current_admin)
+):
+    """Get current rate limit status for client (for debugging)"""
+    if admin["role"] != "super_admin":
+        raise HTTPException(status_code=403, detail="Nur Super Admin")
+    
+    statuses = {}
+    for action in ["admin_login", "order", "api_general"]:
+        statuses[action] = await rate_limiter.get_client_status(http_request, action)
+    
+    return {"rate_limits": statuses}
+
+
+@api_router.post("/admin/security/change-password")
+async def change_admin_password(
+    http_request: Request,
+    admin: dict = Depends(get_current_admin)
+):
+    """Force password change endpoint"""
+    try:
+        body = await http_request.json()
+        current_password = body.get("current_password")
+        new_password = body.get("new_password")
+        
+        if not current_password or not new_password:
+            raise HTTPException(status_code=400, detail="Aktuelles und neues Passwort erforderlich")
+        
+        # Get admin from DB
+        admin_user = await db.admins.find_one({"email": admin["email"]})
+        if not admin_user:
+            raise HTTPException(status_code=404, detail="Admin nicht gefunden")
+        
+        # Verify current password
+        if not AdminAuth.verify_password(current_password, admin_user["password_hash"]):
+            await audit_service.log_action(
+                actor_email=admin["email"],
+                action=AuditAction.PASSWORD_CHANGED.value,
+                result="failure",
+                category=AuditCategory.AUTH.value,
+                details={"reason": "Invalid current password"}
+            )
+            raise HTTPException(status_code=401, detail="Aktuelles Passwort ist falsch")
+        
+        # Validate new password
+        if len(new_password) < 8:
+            raise HTTPException(status_code=400, detail="Neues Passwort muss mindestens 8 Zeichen haben")
+        
+        if new_password == current_password:
+            raise HTTPException(status_code=400, detail="Neues Passwort muss sich vom aktuellen unterscheiden")
+        
+        # Hash and save new password
+        new_hash = AdminAuth.hash_password(new_password)
+        await db.admins.update_one(
+            {"email": admin["email"]},
+            {
+                "$set": {
+                    "password_hash": new_hash,
+                    "must_change_password": False,
+                    "password_changed_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        # Log success
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action=AuditAction.PASSWORD_CHANGED.value,
+            result="success",
+            category=AuditCategory.AUTH.value
+        )
+        
+        return {"message": "Passwort erfolgreich geändert", "must_change_password": False}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Change password error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Fehler beim Ändern des Passworts")
+
+
 # Include the routers in the main app
 app.include_router(api_router)
 app.include_router(product_router, prefix="/api")
