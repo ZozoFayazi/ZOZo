@@ -2,30 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdminOrders, updateOrderStatus, getDashboardStats } from '../api';
 import AdminLayout from '../components/AdminLayout';
+import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { toast } from 'sonner';
 import { Package, Clock, CheckCircle, TrendingUp, LogOut, Settings, Image, Tag, Star } from 'lucide-react';
 
 function AdminDashboard() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { admin, logout } = useAdminAuth();
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('zozoAuthToken');
-    const userData = localStorage.getItem('zozoUser');
-    
-    if (!token || !userData) {
-      navigate('/admin');
-      return;
-    }
-
-    setUser(JSON.parse(userData));
+    // Auth is now handled by ProtectedAdminRoute - just load data
     loadDashboardData();
-  }, [navigate]);
+  }, []);
 
   const loadDashboardData = async () => {
     setLoading(true);
