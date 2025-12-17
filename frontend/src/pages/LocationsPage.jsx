@@ -27,8 +27,46 @@ function LocationsPage({ setSelectedLocation }) {
     navigate('/menu');
   };
 
+  // JSON-LD Schema for Locations Overview
+  const locationsSchema = {
+    "@context": "https://schema.org",
+    "@type": "FoodEstablishment",
+    "name": "ZOZO Burger",
+    "description": "ZOZO Burger - Premium Burger, Pizza, Pasta & mehr. Lieferservice in Rellingen und Henstedt-Ulzburg.",
+    "url": window.location.origin + "/standorte",
+    "image": "https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg",
+    "department": locations.map(loc => ({
+      "@type": "Restaurant",
+      "name": loc.name,
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": loc.address,
+        "addressLocality": loc.city,
+        "postalCode": loc.postal_code,
+        "addressCountry": "DE"
+      },
+      "telephone": loc.phone,
+      "url": `${window.location.origin}/standorte/${loc.slug}`
+    }))
+  };
+
   return (
-    <div className="min-h-screen bg-background py-16">
+    <>
+      <Helmet>
+        <title>Standorte | ZOZO Burger - Lieferservice Rellingen & Henstedt-Ulzburg</title>
+        <meta name="description" content="Finde deinen ZOZO Burger Standort! Lieferservice in Rellingen und Henstedt-Ulzburg. Premium Burger, Pizza, Pasta & mehr. Schnelle Lieferung garantiert." />
+        <meta name="keywords" content="ZOZO Burger Standorte, Burger Lieferservice Rellingen, Burger Lieferservice Henstedt-Ulzburg, Pizza Lieferservice Hamburg" />
+        <link rel="canonical" href={`${window.location.origin}/standorte`} />
+        <meta property="og:title" content="Standorte | ZOZO Burger Lieferservice" />
+        <meta property="og:description" content="Finde deinen ZOZO Burger Standort! Premium Burger, Pizza & Pasta Lieferservice." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${window.location.origin}/standorte`} />
+        <script type="application/ld+json">
+          {JSON.stringify(locationsSchema)}
+        </script>
+      </Helmet>
+      
+    <div className="min-h-screen bg-background py-16" data-testid="locations-page">
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12">
