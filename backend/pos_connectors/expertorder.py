@@ -390,14 +390,22 @@ class ExpertOrderConnector(BasePOSConnector):
             "Accept": "application/json"
         }
         
-        # EOCloud typically uses Basic Auth or API Key
+        # EOCloud uses API_KEY header for authentication
+        # The API expects the key in a header named "API_KEY" or "api_key"
         if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
-        elif self.username and self.secret:
+            # Try multiple header formats that EOCloud might accept
+            headers["API_KEY"] = self.api_key
+            headers["api_key"] = self.api_key
+            headers["X-API-KEY"] = self.api_key
+        
+        # Also support Basic Auth as fallback
+        if self.username and self.secret:
             import base64
             credentials = f"{self.username}:{self.secret}"
             encoded = base64.b64encode(credentials.encode()).decode()
             headers["Authorization"] = f"Basic {encoded}"
+        
+        logger.info(f"EOCloud headers (masked): API_KEY={'SET' if self.api_key else 'NOT SET'}, Basic Auth={'SET' if (self.username and self.secret) else 'NOT SET'}")
         
         return headers
     
