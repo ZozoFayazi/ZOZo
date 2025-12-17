@@ -413,6 +413,194 @@ def send_password_reset_email(email: str, reset_token: str) -> bool:
     return send_email(email, "🔑 ZOZO Burger - Passwort zurücksetzen", html)
 
 
+def send_password_changed_email(email: str, name: str = None) -> bool:
+    """Send confirmation email when password has been changed"""
+    display_name = name or "Admin"
+    timestamp = datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')
+    
+    content = f"""
+        <h1>✅ Passwort erfolgreich geändert</h1>
+        <p>Hallo {display_name},</p>
+        <p>dein Passwort wurde soeben erfolgreich geändert.</p>
+        
+        <div class="info-box">
+            <p><strong>📅 Datum:</strong> {timestamp}</p>
+            <p><strong>📧 Account:</strong> {email}</p>
+        </div>
+        
+        <div style="background: rgba(220, 38, 38, 0.15); border: 1px solid #dc2626; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <p style="margin: 0; color: #ffffff;"><strong>⚠️ Das warst nicht du?</strong></p>
+            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
+                Falls du diese Änderung nicht vorgenommen hast, kontaktiere uns umgehend unter 
+                <a href="mailto:info@zozo-burger.de" style="color: #dc2626;">info@zozo-burger.de</a>
+            </p>
+        </div>
+        
+        <p style="margin-top: 30px;">Dein ZOZO Burger Team 🍔</p>
+    """
+    
+    html = get_base_email_template(content, "Passwort geändert")
+    return send_email(email, "✅ ZOZO Burger - Passwort erfolgreich geändert", html)
+
+
+def send_2fa_enabled_email(email: str, name: str = None) -> bool:
+    """Send confirmation email when 2FA has been enabled"""
+    display_name = name or "Admin"
+    timestamp = datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')
+    
+    content = f"""
+        <h1>🛡️ Zwei-Faktor-Authentifizierung aktiviert</h1>
+        <p>Hallo {display_name},</p>
+        <p>die Zwei-Faktor-Authentifizierung wurde erfolgreich für deinen Account aktiviert.</p>
+        
+        <div class="info-box">
+            <p><strong>📅 Aktiviert am:</strong> {timestamp}</p>
+            <p><strong>📧 Account:</strong> {email}</p>
+        </div>
+        
+        <div style="background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <p style="margin: 0; color: #22c55e;"><strong>✅ Dein Konto ist jetzt sicherer!</strong></p>
+            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
+                Ab sofort wird bei jedem Login ein zusätzlicher Code aus deiner Authenticator-App benötigt.
+            </p>
+        </div>
+        
+        <div class="info-box">
+            <p><strong>💡 Wichtig:</strong></p>
+            <p style="font-size: 14px;">Bewahre deine Backup-Codes sicher auf! Du benötigst sie, falls du den Zugang zu deiner Authenticator-App verlierst.</p>
+        </div>
+        
+        <p style="margin-top: 30px;">Dein ZOZO Burger Team 🍔</p>
+    """
+    
+    html = get_base_email_template(content, "2FA aktiviert")
+    return send_email(email, "🛡️ ZOZO Burger - 2FA erfolgreich aktiviert", html)
+
+
+def send_2fa_disabled_email(email: str, name: str = None) -> bool:
+    """Send notification email when 2FA has been disabled"""
+    display_name = name or "Admin"
+    timestamp = datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')
+    
+    content = f"""
+        <h1>⚠️ Zwei-Faktor-Authentifizierung deaktiviert</h1>
+        <p>Hallo {display_name},</p>
+        <p>die Zwei-Faktor-Authentifizierung wurde für deinen Account deaktiviert.</p>
+        
+        <div class="info-box">
+            <p><strong>📅 Deaktiviert am:</strong> {timestamp}</p>
+            <p><strong>📧 Account:</strong> {email}</p>
+        </div>
+        
+        <div style="background: rgba(234, 179, 8, 0.15); border: 1px solid #eab308; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <p style="margin: 0; color: #eab308;"><strong>⚠️ Dein Konto ist jetzt weniger geschützt</strong></p>
+            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
+                Wir empfehlen, die 2FA schnellstmöglich wieder zu aktivieren, um dein Konto zu schützen.
+            </p>
+        </div>
+        
+        <div style="background: rgba(220, 38, 38, 0.15); border: 1px solid #dc2626; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <p style="margin: 0; color: #ffffff;"><strong>❗ Das warst nicht du?</strong></p>
+            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
+                Falls du diese Änderung nicht vorgenommen hast, wurde möglicherweise unberechtigt auf dein Konto zugegriffen. 
+                Kontaktiere uns sofort unter <a href="mailto:info@zozo-burger.de" style="color: #dc2626;">info@zozo-burger.de</a>
+            </p>
+        </div>
+        
+        <p style="margin-top: 30px;">Dein ZOZO Burger Team 🍔</p>
+    """
+    
+    html = get_base_email_template(content, "2FA deaktiviert")
+    return send_email(email, "⚠️ ZOZO Burger - 2FA wurde deaktiviert", html)
+
+
+def send_security_alert_email(email: str, name: str = None, alert_type: str = "new_login", details: dict = None) -> bool:
+    """Send security alert email for suspicious activity"""
+    display_name = name or "Admin"
+    timestamp = datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')
+    details = details or {}
+    
+    alert_configs = {
+        "new_login": {
+            "title": "Neuer Login erkannt",
+            "emoji": "🔔",
+            "description": "Es wurde ein neuer Login auf deinem Konto registriert.",
+            "color": "#3b82f6"  # Blue
+        },
+        "failed_login": {
+            "title": "Fehlgeschlagene Login-Versuche",
+            "emoji": "🚨",
+            "description": "Wir haben mehrere fehlgeschlagene Login-Versuche auf deinem Konto festgestellt.",
+            "color": "#dc2626"  # Red
+        },
+        "password_reset_request": {
+            "title": "Passwort-Reset angefordert",
+            "emoji": "🔑",
+            "description": "Es wurde eine Anfrage zum Zurücksetzen deines Passworts gestellt.",
+            "color": "#eab308"  # Yellow
+        },
+        "account_locked": {
+            "title": "Konto vorübergehend gesperrt",
+            "emoji": "🔒",
+            "description": "Dein Konto wurde aufgrund von zu vielen fehlgeschlagenen Login-Versuchen vorübergehend gesperrt.",
+            "color": "#dc2626"  # Red
+        }
+    }
+    
+    config = alert_configs.get(alert_type, alert_configs["new_login"])
+    
+    # Build details section
+    details_html = ""
+    if details:
+        details_items = []
+        if details.get("ip_address"):
+            details_items.append(f"<p><strong>🌐 IP-Adresse:</strong> {details['ip_address']}</p>")
+        if details.get("location"):
+            details_items.append(f"<p><strong>📍 Standort:</strong> {details['location']}</p>")
+        if details.get("device"):
+            details_items.append(f"<p><strong>💻 Gerät:</strong> {details['device']}</p>")
+        if details.get("browser"):
+            details_items.append(f"<p><strong>🌐 Browser:</strong> {details['browser']}</p>")
+        if details_items:
+            details_html = f"""
+                <div class="info-box">
+                    <p><strong>📋 Details:</strong></p>
+                    {''.join(details_items)}
+                </div>
+            """
+    
+    content = f"""
+        <h1>{config['emoji']} {config['title']}</h1>
+        <p>Hallo {display_name},</p>
+        <p>{config['description']}</p>
+        
+        <div class="info-box">
+            <p><strong>📅 Zeitpunkt:</strong> {timestamp}</p>
+            <p><strong>📧 Account:</strong> {email}</p>
+        </div>
+        
+        {details_html}
+        
+        <div style="background: rgba({','.join(str(int(config['color'][i:i+2], 16)) for i in (1, 3, 5))}, 0.15); border: 1px solid {config['color']}; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <p style="margin: 0; color: #ffffff;"><strong>Das warst nicht du?</strong></p>
+            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
+                Wenn du diese Aktivität nicht erkennst, ändere umgehend dein Passwort und aktiviere die Zwei-Faktor-Authentifizierung.
+            </p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="https://zozofinal.preview.emergentagent.com/admin/login" class="button">
+                🔐 Zum Admin-Bereich
+            </a>
+        </div>
+        
+        <p style="margin-top: 30px;">Dein ZOZO Burger Sicherheitsteam 🛡️</p>
+    """
+    
+    html = get_base_email_template(content, f"Sicherheitswarnung: {config['title']}")
+    return send_email(email, f"{config['emoji']} ZOZO Burger - Sicherheitswarnung: {config['title']}", html)
+
+
 def send_test_email(to_email: str) -> dict:
     """Send a test email to verify configuration"""
     try:
@@ -445,3 +633,63 @@ def send_test_email(to_email: str) -> dict:
             "to": to_email,
             "provider": "Resend"
         }
+
+
+def send_all_template_previews(to_email: str) -> dict:
+    """Send all email templates to preview address for testing"""
+    results = {}
+    
+    # Test data
+    test_name = "Max Mustermann"
+    test_order = {
+        "order_number": "ZOZO-TEST-001",
+        "total": 24.99,
+        "estimated_time": 30,
+        "items": [
+            {"name": "Cheeseburger", "size": "Large", "price": 12.29, "quantity": 2}
+        ],
+        "customer": {
+            "name": test_name,
+            "email": to_email,
+            "address": "Musterstraße 1",
+            "postal_code": "25462",
+            "city": "Rellingen"
+        },
+        "payment_method": "Bar bei Lieferung"
+    }
+    test_location = {
+        "name": "ZOZO Burger Rellingen",
+        "slug": "rellingen"
+    }
+    
+    # 1. Password Reset
+    results["password_reset"] = send_password_reset_email(to_email, "test-reset-token-xyz")
+    
+    # 2. Password Changed
+    results["password_changed"] = send_password_changed_email(to_email, test_name)
+    
+    # 3. 2FA Enabled
+    results["2fa_enabled"] = send_2fa_enabled_email(to_email, test_name)
+    
+    # 4. 2FA Disabled
+    results["2fa_disabled"] = send_2fa_disabled_email(to_email, test_name)
+    
+    # 5. Security Alert (New Login)
+    results["security_alert"] = send_security_alert_email(
+        to_email, 
+        test_name, 
+        "new_login",
+        {
+            "ip_address": "192.168.1.1",
+            "location": "Hamburg, Deutschland",
+            "device": "Chrome auf Windows",
+            "browser": "Chrome 120"
+        }
+    )
+    
+    return {
+        "success": all(results.values()),
+        "results": results,
+        "to": to_email,
+        "templates_sent": len([r for r in results.values() if r])
+    }
