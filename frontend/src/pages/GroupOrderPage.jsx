@@ -128,15 +128,33 @@ function GroupOrderPage({ addToCart, selectedLocation }) {
   };
 
   const getTimeRemaining = () => {
-    if (!groupOrder) return '';
+    if (!groupOrder || !groupOrder.expires_at) return '';
     const now = new Date();
-    const expires = new Date(groupOrder.expires_at);
-    const diff = expires - now;
+    // Parse the ISO string - if it ends with 'Z', it's UTC
+    const expiresStr = groupOrder.expires_at;
+    const expires = new Date(expiresStr);
+    const diff = expires.getTime() - now.getTime();
     
     if (diff <= 0) return 'Abgelaufen';
     
     const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${remainingMinutes}min verbleibend`;
+    }
     return `${minutes} Min verbleibend`;
+  };
+  
+  const checkIsExpired = () => {
+    if (!groupOrder) return false;
+    if (groupOrder.status === 'expired') return true;
+    if (!groupOrder.expires_at) return false;
+    
+    const now = new Date();
+    const expires = new Date(groupOrder.expires_at);
+    return now.getTime() > expires.getTime();
   };
 
   if (loading) {
