@@ -151,6 +151,14 @@ function App() {
               path="/locations"
               element={<LocationsPage setSelectedLocation={setSelectedLocation} />}
             />
+            <Route
+              path="/standorte"
+              element={<LocationsPage setSelectedLocation={setSelectedLocation} />}
+            />
+            <Route
+              path="/standorte/:slug"
+              element={<LocationDetailPage setSelectedLocation={setSelectedLocation} />}
+            />
             <Route path="/order-tracking" element={<OrderTracking />} />
             <Route path="/burger-builder" element={<BurgerBuilder addToCart={addToCart} />} />
           <Route path="/my-creations" element={<MyCreations addToCart={addToCart} />} />
