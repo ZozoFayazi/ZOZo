@@ -63,6 +63,12 @@ const AdminSidebar = () => {
       permission: 'manage_products' // Only Rellingen + Super Admin
     },
     {
+      title: 'POS-System',
+      icon: Cable,
+      path: '/admin/pos',
+      permission: null // All admins can see their POS settings
+    },
+    {
       title: 'Einstellungen',
       icon: Settings,
       path: '/admin/settings',
