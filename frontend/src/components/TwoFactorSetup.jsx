@@ -142,7 +142,7 @@ export const TwoFactorSetup = ({ open, onOpenChange, onSuccess, forced = false }
   return (
     <Dialog open={open} onOpenChange={forced && step < 4 ? undefined : onOpenChange}>
       <DialogContent 
-        className="sm:max-w-[500px]" 
+        className={`sm:max-w-[500px] ${forced && step < 4 ? '[&>button]:hidden' : ''}`}
         data-testid="2fa-setup-dialog"
         onPointerDownOutside={forced && step < 4 ? (e) => e.preventDefault() : undefined}
         onEscapeKeyDown={forced && step < 4 ? (e) => e.preventDefault() : undefined}
