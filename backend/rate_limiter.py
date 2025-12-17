@@ -113,7 +113,7 @@ class RateLimiter:
             logger.warning(f"Rate limit exceeded: {action} for {client_id}, locked until {lockout_until}")
             
             # Log to database if available
-            if self.db:
+            if self.db is not None:
                 await self._log_rate_limit_event(client_id, action, "lockout")
             
             return False, f"Rate-Limit überschritten. Bitte warten Sie {config['lockout_seconds'] // 60} Minuten."
