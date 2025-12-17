@@ -48,7 +48,16 @@ export const AdminAuthProvider = ({ children }) => {
 
     const data = await response.json();
     
-    // Store in state and sessionStorage
+    // Check if 2FA is required - return early with require_2fa flag
+    if (data.require_2fa) {
+      return {
+        require_2fa: true,
+        temp_token: data.temp_token,
+        message: data.message
+      };
+    }
+    
+    // Normal login - store in state and sessionStorage
     setAdmin(data.admin);
     setToken(data.access_token);
     sessionStorage.setItem('admin', JSON.stringify(data.admin));
