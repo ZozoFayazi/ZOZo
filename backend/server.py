@@ -218,7 +218,7 @@ async def get_location_by_slug(slug: str, include_menu: bool = Query(False)):
     result['opening_status'] = get_opening_status_for_location(location)
     
     # Format opening hours for display
-    opening_hours = location.get('opening_hours', [])
+    opening_hours_raw = location.get('opening_hours', [])
     formatted_hours = []
     day_names = {
         'monday': 'Montag',
@@ -229,22 +229,46 @@ async def get_location_by_slug(slug: str, include_menu: bool = Query(False)):
         'saturday': 'Samstag',
         'sunday': 'Sonntag'
     }
+    days_order = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
     
-    for hours in opening_hours:
-        day = hours.get('day', '').lower()
-        if hours.get('is_open', True):
+    # Handle different formats
+    if isinstance(opening_hours_raw, str):
+        # Simple string format like "11:00 - 22:45" - apply to all days
+        for day in days_order:
             formatted_hours.append({
-                'day': day_names.get(day, day.capitalize()),
+                'day': day_names[day],
                 'day_key': day,
                 'is_open': True,
-                'hours': f"{hours.get('open_time', '11:00')} - {hours.get('close_time', '22:45')}"
+                'hours': opening_hours_raw or "11:00 - 22:45"
             })
-        else:
+    elif isinstance(opening_hours_raw, list):
+        # Structured format with per-day settings
+        for hours in opening_hours_raw:
+            if isinstance(hours, dict):
+                day = hours.get('day', '').lower()
+                if hours.get('is_open', True):
+                    formatted_hours.append({
+                        'day': day_names.get(day, day.capitalize()),
+                        'day_key': day,
+                        'is_open': True,
+                        'hours': f"{hours.get('open_time', '11:00')} - {hours.get('close_time', '22:45')}"
+                    })
+                else:
+                    formatted_hours.append({
+                        'day': day_names.get(day, day.capitalize()),
+                        'day_key': day,
+                        'is_open': False,
+                        'hours': 'Geschlossen'
+                    })
+    
+    # If no hours defined, use default
+    if not formatted_hours:
+        for day in days_order:
             formatted_hours.append({
-                'day': day_names.get(day, day.capitalize()),
+                'day': day_names[day],
                 'day_key': day,
-                'is_open': False,
-                'hours': 'Geschlossen'
+                'is_open': True,
+                'hours': "11:00 - 22:45"
             })
     
     result['formatted_hours'] = formatted_hours
