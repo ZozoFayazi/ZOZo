@@ -1,0 +1,175 @@
+<analysis>**original_problem_statement:**
+The user initiated a major architectural overhaul to transform the single-location ZOZO Burger website into a professional, scalable, multi-location (multi-tenant) system.
+
+**PRODUCT REQUIREMENTS:**
+- **Filial- & Standort-Management (Module 2):** A core feature where a Super-Admin can manage multiple store locations. Each location has its own address, opening hours, delivery zones, and SEO settings. Branch Admins have restricted access to manage only their assigned store.
+- **Rollen- & Rechte-System (Module 1):** A strict, server-side enforced role model with three main roles:
+    - **Super Admin ():** Full system control, including managing branches and users.
+    - **Filial Admin (Rellingen - ):** Full product CRUD permissions for the master product list.
+    - **Filial Admin (Henstedt - ):** Limited permissions, can only toggle product  and  status.
+- **Admin-Dashboard:** A professional, left-sidebar-based UI for managing the entire system, with the UI adapting based on the logged-in user's role.
+- **Kassensystem-Integration (POS) (Module 4):** A per-branch, connector-based architecture for POS integration.  is to be implemented immediately, while  is to be prepared as a future-proof skeleton.
+- **Sicherheit & Professionalität (Module 6, 7):** Mandated features like TOTP-based 2FA, rate-limiting, audit logs, and secure password handling.
+- **SEO & GEO (Module 5):** Each branch must have its own automatically generated, indexable location page with appropriate schema markup.
+
+**User's preferred language**: German. All user messages and UI text should be in German.
+
+**what currently exists?**
+A full-stack application (FastAPI + React) that has been significantly refactored to support a multi-location, role-based architecture. The core backend logic and frontend UI for the first three major modules of this refactor are complete and have been tested.
+
+- **Module 1 (Auth & Roles):** A complete, JWT-based authentication system for the three specified admin roles (, , ). Permissions are enforced server-side.
+- **Module 2 (Location Management):** A full-featured location management system. A Super Admin can create, edit, and delete locations. Branch admins can view and edit a limited set of fields for their assigned location only. The UI (including create/edit dialogs) is complete.
+- **Module 3 (Product Management):** A role-based product management UI. Rellingen/Super Admins have full CRUD access, including image uploads and category management. The Henstedt admin can only view the product list and toggle the 'active' and 'in-stock' status.
+
+**Last working item**:
+- **Last item agent was working:** The agent began implementing **Module 4: POS-Connector Architektur**. It successfully created the foundational backend structure for a plug-and-play POS system.
+    - A base connector interface ().
+    - Concrete implementations for  and a skeleton for .
+    - A  to manage the connectors.
+    - New API endpoints in  for POS configuration.
+- **Status:** IN PROGRESS
+- **Agent Testing Done:** N
+- **Which testing method agent to use?** backend testing agent
+- **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+- **Issue 1: Invalid SendGrid API Key (P2)**
+  - **Description:** The email notification system from the *previous* fork is non-functional due to an invalid API key. This task was superseded by the major architectural refactor but remains unresolved.
+  - **Status:** BLOCKED
+  - **Is recurring issue?** N
+  - **Blocked on other issue:** Blocked on user providing a valid SendGrid API key.
+
+**In progress Task List**:
+- **Task 1: Complete Module 4: POS-Connector Architecture (P0)**
+  - **Where to resume:** The backend files have just been created. The next steps are:
+    1.  Update database models to store per-location POS configurations (selected system, encrypted credentials).
+    2.  Restart and test the newly created backend POS endpoints with  to ensure they are functional.
+    3.  Integrate the  into the main order processing logic in  to automatically push orders to the configured POS for a given location.
+    4.  Build the Frontend UI in the admin dashboard for managing POS settings on a per-location basis.
+  - **What will be achieved with this?** Each store location will be able to configure and connect to its own Point-of-Sale system, starting with ExpertOrder.
+  - **Status:** IN PROGRESS
+  - **Should Test frontend/backend/both after fix?** Both
+  - **Blocked on something:** No. User has provided instructions to proceed even without production credentials for ExpertOrder by using a test mode/stub.
+
+**Upcoming and Future Tasks**
+- **Upcoming Tasks:**
+  - **P1: Module 5 - SEO & GEO:** Create individual, indexable location pages with  schema markup.
+  - **P2: Module 6 - Security Hardening:** Implement rate-limiting and comprehensive audit logs for all critical admin actions. Implement the  flag logic in the UI to force a password change on the first login.
+  - **P3: Module 7 - 2FA Integration:** Implement TOTP-based Two-Factor Authentication (e.g., Google Authenticator) for admin accounts.
+- **Future Tasks:**
+  - **P3: Burger Builder Image Update:** The user previously requested to replace AI-generated burger ingredient images with real photos. This task is pending user-provided assets.
+  - **P4: Full Cash-X Connector Implementation:** Implement the live logic for the Cash-X POS connector once specifications are available.
+
+**Completed work in this session**
+- **Module 1: Role-based Authentication System:**
+  - Implemented JWT authentication with server-side role and permission validation.
+  - Created  models with hashed passwords.
+  - Built protected routes and an  on the frontend.
+- **Module 2: Multi-Location Management:**
+  - Created location models and CRUD endpoints with role-based restrictions.
+  - Built a comprehensive frontend UI for Super Admins to manage all locations and for Branch Admins to manage only their own, with appropriate read-only fields.
+  - Implemented complex dialogs for creating/editing locations, including tabs for opening hours, delivery zones (radius/PLZ), and SEO.
+- **Admin UI Refactor:**
+  - Replaced the top navigation with a persistent, collapsible left sidebar ().
+  - Created a consistent  for all admin pages.
+- **Module 3: Role-based Product Management:**
+  - Implemented product management endpoints with strict, role-based permissions.
+  - Built a frontend UI where Super/Rellingen admins have full CRUD access, while the Henstedt admin can only toggle product availability.
+  - Completed create/edit product dialogs, including image upload functionality and category management.
+
+**Earlier issues found/mentioned but not fixed**
+- The original  issue remains unresolved as focus shifted to the major refactor.
+
+**Known issue recurrence from previous fork**
+- None.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+- **Role-Based Access Control (RBAC):** Implemented from the ground up, with permissions checked server-side on every request.
+- **Multi-Tenancy Architecture:** The system is now designed to handle multiple, distinct store locations, with data and permissions properly segregated.
+- **Connector/Plugin Architecture:** The design pattern used for the POS integration, allowing for easy addition of new POS systems in the future.
+- **JWT Authentication:** Used for securing the new admin-facing API endpoints.
+- **Pydantic Model-Driven Development:** Extensively used in the backend for request validation and response serialization.
+
+**key DB schema**
+- **AdminUser:** 
+- **Location:** 
+- **AuditLog:** 
+
+**changes in tech stack**
+- : Added to backend for password hashing.
+- : Added to backend for JWT token generation and validation.
+
+**All files of reference**
+- : The contract/interface for all future POS integrations.
+- : The core of the permission and role-checking logic.
+- : A key example of a UI that dramatically changes based on user roles.
+- : A complex, multi-tabbed dialog for location management.
+- User's specification documents: Messages #24 and #27 in the history contain the master plan for the refactor.
+
+**Areas that need refactoring**:
+- None currently. The agent has just completed a major, well-structured refactor.
+
+**key api endpoints**
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+-  (Newly created, untested)
+-  (Newly created, untested)
+
+**Critical Info for New Agent**
+- You are in the middle of a large, multi-module refactor based on a very detailed plan provided by the user. Do not deviate from this plan.
+- The user expects a Module to be fully completed, tested, and demonstrated with screenshots before moving to the next.
+- You are currently starting **Module 4 (POS Integration)**. The immediate next step is to get the backend code you just wrote running and tested.
+- All new UI must adhere to the  created for the admin dashboard.
+- Permissions are paramount. Every new feature must have its logic and UI tested against all three admin roles.
+
+**documents created in this job**
+- /app/PROJEKT_ÜBERSICHT.md
+- /app/IMPLEMENTATION_PLAN.md
+
+**Last 10 User Messages and any pending user messages**
+1. **User:** Approves Module 3 core, but requests completion of dialogs, image upload, and category management. (DONE)
+2. **User:** Provides a detailed summary of completed/pending work.
+3. **User:** Approves Module 3 completion and gives the final go-ahead to start Module 4 (POS Connector). (ACKNOWLEDGED, IN PROGRESS)
+4. **User:** (older) Provides detailed instructions for Module 3 rest-work.
+5. **User:** (older) Approves Module 3 core and gives next steps.
+6. **User:** (older) Confirms login flow is stable and gives final instructions to complete Module 2 and take screenshots.
+7. **User:** (older) Acknowledges the agent's pragmatic approach to fixing the login flow first.
+8. **User:** (older) Provides feedback on the login flow issue.
+9. **User:** (older) Acknowledges agent's summary and asks for clarification on next steps.
+10. **User:** (older) Asks the agent to complete Module 2 fully (including dialogs) and implement a left sidebar for admin navigation.
+
+**Project Health Check:**
+- **Broken:**
+  - SendGrid email integration (a pre-existing issue from a previous fork).
+- **Mocked:**
+  - The  POS connector is a skeleton and not functional.  is also not connected to a live order flow yet.
+
+**3rd Party Integrations**
+- **ExpertOrder:** Integration is being built. Requires per-location credentials.
+- **Cash-X:** Skeleton prepared for future integration.
+- **bcrypt:** Used for password hashing.
+- **PyJWT:** Used for token-based authentication.
+
+**Testing status**
+- **Testing agent used after significant changes:** NO (Agent has been doing manual  and  testing, which has been effective for the modular development).
+- **Troubleshoot agent used after agent stuck in loop:** NO
+- **Test files created:**
+  - 
+  - 
+- **Known regressions:** None from the current session's work.
+
+**Credentials to test flow:**
+- **Super Admin:**  / 
+- **Rellingen Admin:**  / 
+- **Henstedt Admin:**  / 
+
+**What agent forgot to execute**
+- The agent has been extremely diligent in following the user's new, detailed plan. No tasks from this new plan have been forgotten. Older, superseded tasks (like asking for burger images) have been implicitly de-prioritized by the user's new direction.</analysis>
