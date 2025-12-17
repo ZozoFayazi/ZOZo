@@ -210,7 +210,8 @@ export default function LocationManagement() {
             </CardContent>
           </Card>
         )}
+        </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
