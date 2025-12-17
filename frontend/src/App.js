@@ -165,6 +165,14 @@ function App() {
             } 
           />
           <Route 
+            path="/admin/locations" 
+            element={
+              <ProtectedAdminRoute>
+                <LocationManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
             path="/admin/settings" 
             element={
               <ProtectedAdminRoute requiredPermission="manage_branch_rellingen">
