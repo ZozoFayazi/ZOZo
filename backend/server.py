@@ -15,6 +15,9 @@ from bson import ObjectId
 from auth import create_access_token, get_current_user, verify_password, get_password_hash
 from utils import serialize_doc, parse_object_id
 from models import *
+from admin_auth import AdminAuth, get_current_admin, require_permission, require_super_admin
+from admin_models import AdminLoginRequest, AdminLoginResponse, PasswordChangeRequest
+from audit_service import AuditService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
