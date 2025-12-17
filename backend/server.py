@@ -33,6 +33,9 @@ db = client[db_name]
 # Initialize services
 audit_service = AuditService(db)
 
+# Create product router with admin authentication
+product_router = create_product_router(db, audit_service)
+
 # Create the main app without a prefix
 app = FastAPI()
 
