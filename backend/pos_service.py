@@ -316,9 +316,12 @@ class POSService:
             "notes": order.get('notes', '')
         }
         
+        # Use the actual order _id for updates
+        order_oid = order['_id']
+        
         # Update order to "retrying" status
         await self.db.orders.update_one(
-            {"_id": order_id},
+            {"_id": order_oid},
             {"$set": {"pos_status": "retrying", "pos_retry_at": datetime.now(timezone.utc)}}
         )
         
@@ -336,7 +339,7 @@ class POSService:
             update_data["pos_error"] = result.get('message', 'Unknown error')
         
         await self.db.orders.update_one(
-            {"_id": order_id},
+            {"_id": order_oid},
             {"$set": update_data}
         )
         
