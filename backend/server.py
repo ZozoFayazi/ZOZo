@@ -2278,8 +2278,9 @@ async def delete_location(slug: str, admin: dict = Depends(get_current_admin)):
         raise HTTPException(status_code=500, detail="Failed to delete location")
 
 
-# Include the router in the main app
+# Include the routers in the main app
 app.include_router(api_router)
+app.include_router(product_router, prefix="/api")
 
 # Mount static files for product images
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
