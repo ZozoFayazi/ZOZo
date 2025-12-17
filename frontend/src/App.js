@@ -230,6 +230,14 @@ function App() {
               </ProtectedAdminRoute>
             } 
           />
+          <Route 
+            path="/admin/pos" 
+            element={
+              <ProtectedAdminRoute>
+                <POSSettings />
+              </ProtectedAdminRoute>
+            } 
+          />
             </Routes>
           </Suspense>
         </main>
