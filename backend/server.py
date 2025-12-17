@@ -1968,6 +1968,50 @@ async def add_items_to_group_order(group_code: str, data: GroupOrderAddItems):
         print(f"Error adding items to group order: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+class GroupOrderInvite(BaseModel):
+    email: str
+    sender_name: Optional[str] = None
+
+@api_router.post("/group-orders/{group_code}/invite")
+async def invite_to_group_order(group_code: str, data: GroupOrderInvite):
+    """Send email invitation to join group order"""
+    try:
+        group_order = await db.group_orders.find_one({"group_code": group_code.upper()})
+        
+        if not group_order:
+            raise HTTPException(status_code=404, detail="Gruppenbestellung nicht gefunden")
+        
+        if group_order["status"] != "active":
+            raise HTTPException(status_code=400, detail="Diese Gruppenbestellung ist nicht mehr aktiv")
+        
+        # Check if expired
+        if datetime.utcnow() > group_order["expires_at"]:
+            raise HTTPException(status_code=400, detail="Diese Gruppenbestellung ist abgelaufen")
+        
+        # Send invitation email
+        from email_service import send_group_order_invite_email
+        
+        share_link = f"https://zozofinal.preview.emergentagent.com/group-order/{group_code.upper()}"
+        sender_name = data.sender_name or group_order.get("host_name", "Ein Freund")
+        
+        success = send_group_order_invite_email(
+            to_email=data.email,
+            group_code=group_code.upper(),
+            host_name=sender_name,
+            share_link=share_link
+        )
+        
+        if success:
+            return {"success": True, "message": f"Einladung an {data.email} gesendet"}
+        else:
+            raise HTTPException(status_code=500, detail="Fehler beim Senden der Einladung. Bitte versuche es erneut.")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error sending group order invite: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/group-orders/{group_code}/finalize")
 async def finalize_group_order(group_code: str):
     """Finalize group order (host only) and create actual order"""
