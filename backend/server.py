@@ -2088,68 +2088,94 @@ async def change_admin_password(
 # POS INTEGRATION ENDPOINTS
 # ============================================================================
 
-@api_router.post("/admin/locations/{slug}/pos/test")
-async def test_pos_connection(
+class POSConfigUpdate(BaseModel):
+    """Request model for updating POS configuration"""
+    provider: str = "none"  # "none", "expertorder", "cashx"
+    test_mode: bool = True
+    api_key: Optional[str] = None
+    merchant_id: Optional[str] = None
+    username: Optional[str] = None
+    secret: Optional[str] = None
+    base_url: Optional[str] = None
+    settings: Optional[dict] = None
+
+class POSTestRequest(BaseModel):
+    """Request model for POS connection test"""
+    simulate_failure: bool = False
+
+
+@api_router.get("/admin/locations/{slug}/pos/config")
+async def get_pos_config(
     slug: str,
     admin: dict = Depends(get_current_admin)
 ):
-    """Test POS connection for a location"""
+    """Get POS configuration for a location (secrets masked)"""
     try:
-        # Check access
+        # Check access - Branch admins can view their own location's config
         if admin["role"] != "super_admin":
-            if slug not in admin["branch_ids"]:
-                raise HTTPException(status_code=403, detail="Access denied to this location")
+            if slug not in admin.get("branch_ids", []):
+                raise HTTPException(status_code=403, detail="Zugriff auf diesen Standort verweigert")
         
-        # Get location
         location = await db.locations.find_one({"slug": slug})
         if not location:
-            raise HTTPException(status_code=404, detail="Location not found")
+            raise HTTPException(status_code=404, detail="Standort nicht gefunden")
         
-        # Test POS connection
-        result = await pos_service.test_location_pos(location["_id"])
+        pos_config = location.get('pos_config', {
+            "provider": "none",
+            "status": "disconnected",
+            "test_mode": True,
+            "credentials": {},
+            "settings": {}
+        })
         
-        # Audit log
-        await audit_service.log_action(
-            actor_email=admin["email"],
-            action="pos_test_connection",
-            result="success" if result.get("success") else "failure",
-            target=str(location["_id"]),
-            target_type="location",
-            details={"slug": slug, "test_result": result}
-        )
-        
-        return result
+        # Return config with masked credentials
+        credentials = pos_config.get('credentials', {})
+        return {
+            "provider": pos_config.get('provider', 'none'),
+            "status": pos_config.get('status', 'disconnected'),
+            "test_mode": pos_config.get('test_mode', True),
+            "has_api_key": bool(credentials.get('api_key')),
+            "has_merchant_id": bool(credentials.get('merchant_id')),
+            "has_username": bool(credentials.get('username')),
+            "has_secret": bool(credentials.get('secret')),
+            "base_url": credentials.get('base_url'),
+            "settings": pos_config.get('settings', {}),
+            "last_sync_at": pos_config.get('last_sync_at'),
+            "last_error": pos_config.get('last_error'),
+            "last_error_at": pos_config.get('last_error_at'),
+            "updated_at": pos_config.get('updated_at'),
+            "updated_by": pos_config.get('updated_by')
+        }
     except HTTPException:
         raise
     except Exception as e:
-        logging.error(f"POS test error: {str(e)}")
-        raise HTTPException(status_code=500, detail="POS test failed")
+        logging.error(f"Get POS config error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Fehler beim Abrufen der POS-Konfiguration")
 
 
 @api_router.put("/admin/locations/{slug}/pos/config")
 async def update_pos_config(
     slug: str,
-    config: dict,
+    config: POSConfigUpdate,
     admin: dict = Depends(get_current_admin)
 ):
     """Update POS configuration for a location"""
     try:
-        # Only super admin can update POS config
+        # Check access - Super Admin can update all, Branch Admin only their own
         if admin["role"] != "super_admin":
-            raise HTTPException(
-                status_code=403,
-                detail="Nur Super Admin kann POS-Konfiguration ändern"
-            )
+            if slug not in admin.get("branch_ids", []):
+                raise HTTPException(status_code=403, detail="Zugriff auf diesen Standort verweigert")
         
         # Get location
         location = await db.locations.find_one({"slug": slug})
         if not location:
-            raise HTTPException(status_code=404, detail="Location not found")
+            raise HTTPException(status_code=404, detail="Standort nicht gefunden")
         
-        # Update POS config
-        await db.locations.update_one(
-            {"slug": slug},
-            {"$set": {"pos_integration": config}}
+        # Update via service
+        new_config = await pos_service.update_pos_config(
+            location_slug=slug,
+            config_data=config.model_dump(),
+            admin_email=admin["email"]
         )
         
         # Audit log
@@ -2159,15 +2185,63 @@ async def update_pos_config(
             result="success",
             target=str(location["_id"]),
             target_type="location",
-            details={"slug": slug, "vendor": config.get("vendor")}
+            details={"slug": slug, "provider": config.provider, "test_mode": config.test_mode}
         )
         
-        return {"message": "POS configuration updated"}
+        return {"message": "POS-Konfiguration aktualisiert", "config": {
+            "provider": new_config.get('provider'),
+            "status": new_config.get('status'),
+            "test_mode": new_config.get('test_mode')
+        }}
     except HTTPException:
         raise
     except Exception as e:
         logging.error(f"Update POS config error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to update POS config")
+        raise HTTPException(status_code=500, detail="Fehler beim Aktualisieren der POS-Konfiguration")
+
+
+@api_router.post("/admin/locations/{slug}/pos/test")
+async def test_pos_connection(
+    slug: str,
+    request: Optional[POSTestRequest] = None,
+    admin: dict = Depends(get_current_admin)
+):
+    """Test POS connection for a location"""
+    try:
+        # Check access
+        if admin["role"] != "super_admin":
+            if slug not in admin.get("branch_ids", []):
+                raise HTTPException(status_code=403, detail="Zugriff auf diesen Standort verweigert")
+        
+        # Get location
+        location = await db.locations.find_one({"slug": slug})
+        if not location:
+            raise HTTPException(status_code=404, detail="Standort nicht gefunden")
+        
+        # Test connection
+        simulate_failure = request.simulate_failure if request else False
+        result = await pos_service.test_connection(
+            location_slug=slug,
+            admin_email=admin["email"],
+            simulate_failure=simulate_failure
+        )
+        
+        # Audit log
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="pos_test_connection",
+            result="success" if result.get("success") else "failure",
+            target=str(location["_id"]),
+            target_type="location",
+            details={"slug": slug, "test_result": result, "simulate_failure": simulate_failure}
+        )
+        
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"POS test error: {str(e)}")
+        raise HTTPException(status_code=500, detail="POS-Verbindungstest fehlgeschlagen")
 
 
 @api_router.get("/admin/locations/{slug}/pos/logs")
@@ -2180,23 +2254,101 @@ async def get_pos_logs(
     try:
         # Check access
         if admin["role"] != "super_admin":
-            if slug not in admin["branch_ids"]:
-                raise HTTPException(status_code=403, detail="Access denied to this location")
+            if slug not in admin.get("branch_ids", []):
+                raise HTTPException(status_code=403, detail="Zugriff auf diesen Standort verweigert")
         
         # Get location
         location = await db.locations.find_one({"slug": slug})
         if not location:
-            raise HTTPException(status_code=404, detail="Location not found")
+            raise HTTPException(status_code=404, detail="Standort nicht gefunden")
         
         # Get logs
-        logs = await pos_service.get_pos_logs(location_id=str(location["_id"]), limit=limit)
+        logs = await pos_service.get_logs(location_slug=slug, limit=limit)
         
-        return {"logs": logs}
+        return {"logs": logs, "location_slug": slug}
     except HTTPException:
         raise
     except Exception as e:
         logging.error(f"Get POS logs error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to fetch logs")
+        raise HTTPException(status_code=500, detail="Fehler beim Abrufen der POS-Logs")
+
+
+@api_router.post("/admin/orders/{order_id}/pos/retry")
+async def retry_order_pos_push(
+    order_id: str,
+    admin: dict = Depends(get_current_admin)
+):
+    """Retry pushing a failed order to POS"""
+    try:
+        # Get order to check location access
+        order = await db.orders.find_one({"_id": order_id})
+        if not order:
+            raise HTTPException(status_code=404, detail="Bestellung nicht gefunden")
+        
+        location_slug = order.get('location_slug') or order.get('location_id')
+        
+        # Check access
+        if admin["role"] != "super_admin":
+            if location_slug not in admin.get("branch_ids", []):
+                raise HTTPException(status_code=403, detail="Zugriff auf diese Bestellung verweigert")
+        
+        # Retry push
+        result = await pos_service.retry_order_push(
+            order_id=order_id,
+            admin_email=admin["email"]
+        )
+        
+        # Audit log
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="pos_order_retry",
+            result="success" if result.get("success") else "failure",
+            target=order_id,
+            target_type="order",
+            details={"order_id": order_id, "result": result}
+        )
+        
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"POS retry error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Fehler beim erneuten Senden an POS")
+
+
+@api_router.get("/admin/pos/providers")
+async def get_pos_providers(admin: dict = Depends(get_current_admin)):
+    """Get list of available POS providers"""
+    return {
+        "providers": [
+            {
+                "id": "none",
+                "name": "Kein POS",
+                "description": "Bestellungen nur lokal speichern",
+                "available": True
+            },
+            {
+                "id": "expertorder",
+                "name": "ExpertOrder",
+                "description": "ExpertOrder POS-Integration",
+                "available": True,
+                "fields": [
+                    {"key": "merchant_id", "label": "Merchant ID", "required": True},
+                    {"key": "api_key", "label": "API Key", "required": False},
+                    {"key": "username", "label": "Benutzername", "required": False},
+                    {"key": "secret", "label": "Secret", "required": False},
+                    {"key": "base_url", "label": "API URL", "required": False, "default": "https://api.expertorder.com/v1"}
+                ]
+            },
+            {
+                "id": "cashx",
+                "name": "Cash-X",
+                "description": "Cash-X Kassensystem (in Vorbereitung)",
+                "available": False,
+                "fields": []
+            }
+        ]
+    }
 
 
 # ============================================================================
