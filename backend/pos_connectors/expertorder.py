@@ -491,25 +491,34 @@ class ExpertOrderConnector(BasePOSConnector):
             items.append(eocloud_item)
         
         # Current time for ordertime, delivery time +30 min
+        # EOCloud expects Unix timestamp in milliseconds
         now = datetime.utcnow()
         delivery_time = now + timedelta(minutes=30)
         
-        # Payment method mapping
+        # Convert to Unix timestamp in milliseconds
+        ordertime_ms = int(now.timestamp() * 1000)
+        deliverytime_ms = int(delivery_time.timestamp() * 1000)
+        
+        # Payment type mapping - EOCloud uses integers:
+        # 0 = Cash, 1 = Card, etc.
         payment_method = order_data.get('payment_method', 'cash')
-        payment_type = 'CASH' if payment_method == 'cash' else 'CARD'
+        payment_type = 0 if payment_method == 'cash' else 1  # Integer type required
         
         # Build the OSP payload with all required EOCloud fields
         payload = {
             "version": 1,  # Required by EOCloud - must be INTEGER
             "id": order_data.get('order_number', str(uuid.uuid4())),  # Required
-            "ordertime": now.strftime("%Y-%m-%dT%H:%M:%S"),  # Required
-            "deliverytime": delivery_time.strftime("%Y-%m-%dT%H:%M:%S"),  # Required
+            "ordertime": ordertime_ms,  # Unix timestamp in ms
+            "deliverytime": deliverytime_ms,  # Unix timestamp in ms
             "orderprice": float(order_data.get('total', 0)),  # Required
             "orderdiscount": 0.0,  # Required
             "payment": {
-                "type": payment_type,
-                "amount": float(order_data.get('total', 0))
-            },  # Required
+                "type": payment_type,  # Integer: 0=cash, 1=card
+                "amount": float(order_data.get('total', 0)),
+                "provider": "",  # Required by EOCloud
+                "transactionid": "",  # Required by EOCloud
+                "prepaid": False  # Required by EOCloud - False for pay on delivery
+            },
             "customer": {
                 "name": order_data.get('customer_name', ''),
                 "phone": order_data.get('customer_phone', ''),
