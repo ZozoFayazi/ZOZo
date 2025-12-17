@@ -219,8 +219,16 @@ function GroupOrderPage({ addToCart, selectedLocation }) {
 
         {/* Status Badges */}
         {isExpired && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 text-center">
-            <p className="text-red-500 font-semibold">Diese Gruppenbestellung ist abgelaufen</p>
+          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6 mb-6 text-center">
+            <p className="text-red-500 font-semibold text-lg mb-3">Diese Gruppenbestellung ist abgelaufen</p>
+            <p className="text-muted-foreground mb-4">Gruppenbestellungen sind 1 Stunde gültig. Starte eine neue!</p>
+            <button
+              onClick={() => navigate('/start-group-order')}
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors font-semibold"
+              data-testid="start-new-group-order-btn"
+            >
+              Neue Gruppenbestellung starten
+            </button>
           </div>
         )}
 
