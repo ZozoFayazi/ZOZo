@@ -285,8 +285,15 @@ class POSService:
         Returns:
             Retry result
         """
-        # Get order
+        from bson import ObjectId
+        
+        # Get order - try both string and ObjectId
         order = await self.db.orders.find_one({"_id": order_id})
+        if not order:
+            try:
+                order = await self.db.orders.find_one({"_id": ObjectId(order_id)})
+            except Exception:
+                pass
         if not order:
             return {"success": False, "message": "Bestellung nicht gefunden"}
         
