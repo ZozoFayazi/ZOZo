@@ -122,89 +122,14 @@ function AdminDashboard() {
 
   return (
     <AdminLayout>
-      {/* Header */}
-      <div className="bg-card border-b border-border">
-        <div className="container-custom py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img
-                src="https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg"
-                alt="ZOZO Burger"
-                className="h-10"
-              />
-              <div>
-                <h1 className="text-lg font-semibold">Admin Dashboard</h1>
-                <p className="text-sm text-muted-foreground">
-                  {user?.role === 'owner' ? 'Alle Standorte' : 'Standort Manager'}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => navigate('/admin/orders')}
-                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
-              >
-                <Package className="h-4 w-4" />
-                <span>Bestellungen</span>
-              </button>
-              <button
-                onClick={() => navigate('/admin/featured')}
-                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
-              >
-                <Star className="h-4 w-4" />
-                <span>Featured Products</span>
-              </button>
-              <button
-                onClick={() => navigate('/admin/menu')}
-                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
-              >
-                <Image className="h-4 w-4" />
-                <span>Menü-Bilder</span>
-              </button>
-              <button
-                onClick={() => navigate('/admin/discount-codes')}
-                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
-              >
-                <Tag className="h-4 w-4" />
-                <span>Rabattcodes</span>
-              </button>
-              <button
-                onClick={() => navigate('/admin/deals')}
-                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
-              >
-                <Package className="h-4 w-4" />
-                <span>Deals</span>
-              </button>
-              <button
-                onClick={() => navigate('/admin/settings')}
-                className="flex items-center space-x-2 px-4 py-2 text-sm text-foreground hover:bg-secondary rounded-lg transition-colors"
-              >
-                <Settings className="h-4 w-4" />
-                <span>Einstellungen</span>
-              </button>
-              {user?.role === 'owner' && (
-                <button
-                  onClick={() => navigate('/admin/expertorder')}
-                  className="flex items-center space-x-2 px-4 py-2 text-sm bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors"
-                  data-testid="expertorder-link"
-                >
-                  <Package className="h-4 w-4" />
-                  <span>ExpertOrder</span>
-                </button>
-              )}
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Abmelden</span>
-              </button>
-            </div>
-          </div>
+      <div className="p-6">
+        {/* Page Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">
+            Willkommen zurück, {user?.name || user?.email}
+          </p>
         </div>
-      </div>
-
-      <div className="container-custom py-8">
         {/* Stats Cards */}
         {stats && (
           <div className="grid md:grid-cols-4 gap-6 mb-8">
