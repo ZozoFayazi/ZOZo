@@ -471,39 +471,54 @@ async def create_order(order: OrderCreate):
         # Log error but don't fail order creation
         print(f"Loyalty points award failed: {str(e)}")
     
-    # Auto-send to ExpertOrder if API key is configured for this location
-    location_settings = await db.location_settings.find_one({"location_id": order.location_id})
-    
-    if location_settings and location_settings.get('expertorder_api_key') and location_settings.get('expertorder_enabled'):
-        try:
-            from expertorder import ExpertOrderClient, map_zozo_order_to_expertorder
-            
-            # Map order to ExpertOrder format
-            eo_order = map_zozo_order_to_expertorder(order_doc, location)
-            
-            # Send to ExpertOrder
-            client = ExpertOrderClient(
-                api_key=location_settings['expertorder_api_key'],
-                use_test_mode=location_settings.get('expertorder_test_mode', False)
-            )
-            eo_response = await client.send_order(eo_order)
-            
-            # Update order with ExpertOrder status
-            await db.orders.update_one(
-                {"_id": result.inserted_id},
+    # ===== POS INTEGRATION: Auto-push to configured POS system =====
+    try:
+        # Build POS order data
+        pos_order_data = {
+            "order_id": str(result.inserted_id),
+            "order_number": order_number,
+            "customer_name": order.customer.name,
+            "customer_email": order.customer.email if hasattr(order.customer, 'email') else None,
+            "customer_phone": order.customer.phone,
+            "items": [
                 {
-                    "$set": {
-                        "expertorder_sent": eo_response.get('success', False),
-                        "expertorder_status": eo_response.get('status_code'),
-                        "expertorder_message": eo_response.get('message'),
-                        "expertorder_error": eo_response.get('error'),
-                        "expertorder_sent_at": datetime.utcnow() if eo_response.get('success') else None
-                    }
+                    "product_id": item.menu_item_id,
+                    "name": item.name,
+                    "quantity": item.quantity,
+                    "price": item.price,
+                    "size": item.size
                 }
-            )
-        except Exception as e:
-            # Log error but don't fail the order creation
-            print(f"ExpertOrder auto-send failed: {str(e)}")
+                for item in order.items
+            ],
+            "total": round(total, 2),
+            "delivery_type": "pickup" if getattr(order, 'is_pickup', False) else "delivery",
+            "delivery_address": f"{order.customer.address}, {order.customer.postal_code} {order.customer.city}",
+            "payment_method": order.payment_method,
+            "notes": order.customer.notes if hasattr(order.customer, 'notes') else ""
+        }
+        
+        # Push to POS via service (uses location's pos_config)
+        pos_result = await pos_service.push_order(pos_order_data, location.get('slug', ''))
+        
+        # Update order with POS status
+        pos_update = {
+            "pos_status": pos_result.get('pos_status', 'not_applicable'),
+            "pos_pushed_at": datetime.utcnow() if pos_result.get('success') else None,
+            "pos_order_id": pos_result.get('pos_order_id'),
+            "pos_is_test_mode": pos_result.get('is_test_mode', True)
+        }
+        
+        if not pos_result.get('success') and pos_result.get('pos_status') == 'error':
+            pos_update["pos_error"] = pos_result.get('message', 'Unknown error')
+        
+        await db.orders.update_one(
+            {"_id": result.inserted_id},
+            {"$set": pos_update}
+        )
+        
+    except Exception as e:
+        # Log error but don't fail the order creation
+        logging.error(f"POS auto-push failed: {str(e)}")
     
     # ===== EMAIL: Send confirmation email =====
     try:
