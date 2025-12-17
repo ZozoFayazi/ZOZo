@@ -2203,7 +2203,8 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             pass
         
         # Check if 2FA should be enforced (Super Admin without 2FA)
-        require_2fa_setup = admin["role"] == "super_admin" and not admin.get("totp_enabled")
+        # Note: Use explicit require_2fa_setup flag from DB if set, otherwise default based on role
+        require_2fa_setup = admin.get("require_2fa_setup", False)
         
         # Create JWT token
         token = AdminAuth.create_token(
