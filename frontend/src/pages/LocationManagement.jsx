@@ -275,6 +275,35 @@ export default function LocationManagement() {
         )}
         </div>
       </div>
+
+      {/* Location Dialog (Create/Edit) */}
+      <LocationDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        location={selectedLocation}
+        onSuccess={handleDialogSuccess}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Filiale löschen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Möchten Sie wirklich die Filiale "{locationToDelete?.name}" löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Löschen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }
