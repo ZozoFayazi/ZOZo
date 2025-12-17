@@ -33,6 +33,7 @@ const StartGroupOrder = lazy(() => import('./pages/StartGroupOrder'));
 const GroupOrderPage = lazy(() => import('./pages/GroupOrderPage'));
 const POSSettings = lazy(() => import('./pages/POSSettings'));
 const LocationDetailPage = lazy(() => import('./pages/LocationDetailPage'));
+const SecurityDashboard = lazy(() => import('./pages/SecurityDashboard'));
 
 // Loading component
 const PageLoader = () => (
