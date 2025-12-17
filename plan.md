@@ -50,56 +50,61 @@ Umfassende Architektur-Überarbeitung für professionelles Multi-Tenant-System.
 
 ---
 
-## Modul 4: POS-Connector Architektur (Status: IN PROGRESS) 🔄
+## Modul 4: POS-Connector Architektur (Status: COMPLETED) ✅
 **Ziel:** Plug-and-Play POS-Integration pro Standort
 
-### Anforderungen:
-1. **POS-Konfiguration pro Filiale:**
-   - Provider: NONE / EXPERTORDER / CASHX
-   - Status: connected / disconnected / error
-   - Verschlüsselte Credentials
-   - lastSyncAt, lastError
-   - settingsJson (Mapping, Steuern, Zahlungsarten)
-   - **Testmodus-Toggle**
+### Umgesetzte Features:
 
-2. **Berechtigungen:**
-   - Super Admin: POS für alle Filialen konfigurieren
-   - Branch Admin: POS nur für eigene Filiale
-   - Henstedt sieht nur Henstedt
+#### Backend:
+- ✅ `pos_models.py` - Pydantic Models für POS-Konfiguration
+- ✅ `pos_connectors/base.py` - Abstract Interface für POS-Connectors
+- ✅ `pos_connectors/expertorder.py` - Vollständiger ExpertOrder-Connector mit Testmodus
+- ✅ `pos_connectors/cashx.py` - Cash-X Skeleton für zukünftige Integration
+- ✅ `pos_service.py` - Service-Schicht mit Factory Pattern
 
-3. **Bestellfluss + Fallback:**
-   - Wenn POS aktiv: Bestellung pushen
-   - Wenn Push fehlschlägt: Status "POS Fehler", manuell bearbeitbar
-   - Retry-Button für erneuten Versuch
+#### Endpoints:
+- ✅ `GET /api/admin/pos/providers` - Liste verfügbarer POS-Provider
+- ✅ `GET /api/admin/locations/{slug}/pos/config` - POS-Config abrufen (Secrets maskiert)
+- ✅ `PUT /api/admin/locations/{slug}/pos/config` - POS-Config aktualisieren
+- ✅ `POST /api/admin/locations/{slug}/pos/test` - Verbindungstest (mit simulate_failure Option)
+- ✅ `GET /api/admin/locations/{slug}/pos/logs` - POS-Protokoll
+- ✅ `POST /api/admin/orders/{order_id}/pos/retry` - Bestellung erneut an POS senden
 
-4. **Test-Modus (VERBINDLICH):**
-   - Simuliert Connected/Disconnected/Error
-   - Simuliert Order-Push (Success + Failure)
-   - Strukturiertes Logging (ohne Secrets)
-   - Klarer Toggle "Testmodus" pro Filiale
+#### POS-Konfiguration pro Filiale:
+- ✅ Provider: NONE / EXPERTORDER / CASHX
+- ✅ Status: connected / disconnected / error
+- ✅ Credentials (verschlüsselt in DB, nur has_* Flags im Frontend)
+- ✅ last_sync_at, last_error, last_error_at
+- ✅ **Testmodus-Toggle** (verbindlich)
 
-### Implementierungsschritte:
-- [ ] Backend: POS-Config Modelle erweitern
-- [ ] Backend: ExpertOrder Connector mit Test-Modus
-- [ ] Backend: POS-Endpoints erweitern (Config CRUD, Test, Retry)
-- [ ] Backend: Order-Flow mit POS-Integration + Fallback
-- [ ] Frontend: POSSettings.jsx Seite erstellen
-- [ ] Frontend: POS-Config Dialog pro Standort
-- [ ] Frontend: Connection Test UI
-- [ ] Frontend: Order Retry Funktionalität
-- [ ] Testing: Alle 3 Admin-Rollen testen
-- [ ] Screenshots: Dokumentation
+#### Test-Modus:
+- ✅ Simuliert Connected / Disconnected / Error
+- ✅ Simuliert Order-Push (Success + Failure)
+- ✅ Strukturiertes Logging ohne Secrets
+- ✅ Klarer "[TESTMODUS]" Prefix in allen Nachrichten
 
-### Technische Details:
-- **Backend-Dateien:**
-  - `/app/backend/pos_connectors/base.py` - Interface
-  - `/app/backend/pos_connectors/expertorder.py` - ExpertOrder
-  - `/app/backend/pos_connectors/cashx.py` - Cash-X Skeleton
-  - `/app/backend/pos_service.py` - Service-Schicht
-  
-- **Frontend-Dateien:**
-  - `/app/frontend/src/pages/POSSettings.jsx` - NEU
-  - `/app/frontend/src/components/POSConfigDialog.jsx` - NEU
+#### Berechtigungen:
+- ✅ Super Admin: POS für alle Filialen konfigurieren
+- ✅ Branch Admin: POS nur für eigene Filiale
+- ✅ Henstedt sieht nur Henstedt-Standort
+
+#### Bestellfluss + Fallback:
+- ✅ Automatischer POS-Push bei Bestellungseingang
+- ✅ pos_status in Order: pending → sent / error
+- ✅ pos_order_id bei Erfolg gespeichert
+- ✅ Retry-Button für fehlerhafte Bestellungen
+
+#### Frontend UI:
+- ✅ `POSSettings.jsx` - Vollständige Admin-Seite
+- ✅ Standort-Auswahl Dropdown
+- ✅ POS-Konfiguration Card mit Status-Badge
+- ✅ Credentials-Anzeige (nur ob gesetzt, nie der Wert)
+- ✅ Letzte Synchronisation & Fehler-Anzeige
+- ✅ "Konfigurieren" Dialog mit Provider-Auswahl
+- ✅ "Verbindung testen" Button
+- ✅ "Fehler simulieren" Button (nur im Testmodus)
+- ✅ POS-Protokoll mit Scroll-Area
+- ✅ Test-Ergebnis Dialog
 
 ---
 
