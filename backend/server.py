@@ -2204,7 +2204,8 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             "branch_ids": admin.get("branch_ids", []),
             "permissions": AdminAuth.get_permissions(admin["role"]),
             "totp_enabled": admin.get("totp_enabled", False),
-            "must_change_password": admin.get("must_change_password", True)  # Force password change on first login
+            "must_change_password": admin.get("must_change_password", True),
+            "require_2fa_setup": require_2fa_setup  # Super Admin without 2FA
         }
         
         return AdminLoginResponse(
