@@ -61,15 +61,32 @@ class AdminAuth:
         return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
     
     @staticmethod
-    def create_token(email: str, role: str, branch_ids: List[str]) -> str:
-        """Create a JWT token for admin"""
+    def create_token(email: str, role: str, branch_ids: List[str], additional_claims: Dict = None) -> str:
+        """Create a JWT token for admin
+        
+        Args:
+            email: Admin email
+            role: Admin role
+            branch_ids: List of branch IDs the admin can access
+            additional_claims: Optional dict with additional JWT claims (e.g., awaiting_2fa, exp_minutes)
+        """
+        # Handle custom expiration time
+        exp_minutes = JWT_EXPIRATION_HOURS * 60
+        if additional_claims and 'exp_minutes' in additional_claims:
+            exp_minutes = additional_claims.pop('exp_minutes')
+        
         payload = {
             "email": email,
             "role": role,
             "branch_ids": branch_ids,
-            "exp": datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS),
+            "exp": datetime.utcnow() + timedelta(minutes=exp_minutes),
             "iat": datetime.utcnow()
         }
+        
+        # Add any additional claims
+        if additional_claims:
+            payload.update(additional_claims)
+        
         return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
     @staticmethod
