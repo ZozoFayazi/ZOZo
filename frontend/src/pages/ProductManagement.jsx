@@ -412,6 +412,7 @@ export default function ProductManagement() {
                                 <Button
                                   variant="outline"
                                   size="sm"
+                                  onClick={() => handleEditProduct(product)}
                                   data-testid={`product-edit-${product.id}`}
                                 >
                                   <Edit className="h-4 w-4" />
