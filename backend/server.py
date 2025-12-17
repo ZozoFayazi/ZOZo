@@ -1205,15 +1205,15 @@ async def validate_discount_code(validation: DiscountCodeValidate):
 @api_router.get("/admin/stats")
 async def get_dashboard_stats(
     location_id: Optional[str] = None,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Get dashboard statistics"""
     query = {}
     
-    # If user is location manager, restrict to their location
-    if current_user.get('role') == 'manager' and current_user.get('location_id'):
-        query["location_id"] = current_user['location_id']
-        location_id = current_user['location_id']
+    # If admin has restricted branch access, filter by those branches
+    branch_ids = admin.get('branch_ids', [])
+    if branch_ids:
+        query["location_id"] = {"$in": branch_ids}
     elif location_id:
         query["location_id"] = location_id
     
