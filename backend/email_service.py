@@ -23,8 +23,8 @@ LOCATION_REVIEW_LINKS = {
 }
 
 def get_email_logo_url():
-    """Get ZOZO Burger logo URL"""
-    return "https://customer-assets.emergentagent.com/job_custom-burger-maker/artifacts/crcay6aj_IMG_8154.jpeg"
+    """Get ZOZO Burger logo URL - publicly accessible"""
+    return "https://customer-assets.emergentagent.com/job_zozofinal/artifacts/ucrdxkwy_IMG_8154.jpeg"
 
 def get_base_email_template(content: str, title: str = "ZOZO Burger") -> str:
     """Base HTML template for all emails"""
