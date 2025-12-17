@@ -289,10 +289,16 @@ export default function ProductManagement() {
               </p>
             </div>
             {canManageProducts && (
-              <Button data-testid="products-add-button">
-                <Plus className="h-4 w-4 mr-2" />
-                Neues Produkt
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={handleCreateProduct} data-testid="products-add-button">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Neues Produkt
+                </Button>
+                <Button variant="outline" onClick={() => setCategoryDialogOpen(true)} data-testid="categories-add-button">
+                  <FolderPlus className="h-4 w-4 mr-2" />
+                  Kategorie
+                </Button>
+              </div>
             )}
           </div>
           
