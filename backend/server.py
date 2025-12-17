@@ -2123,20 +2123,26 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
         
         # Check if admin is active
         if not admin.get("is_active", True):
+            await rate_limiter.record_attempt(http_request, "admin_login", success=False)
             await audit_service.log_action(
                 actor_email=request.email,
-                action="admin_login",
+                action=AuditAction.LOGIN_FAILED.value,
                 result="failure",
+                category=AuditCategory.AUTH.value,
+                ip_address=client_ip,
                 details={"reason": "Account inactive"}
             )
             raise HTTPException(status_code=403, detail="Account is inactive")
         
         # Verify password
         if not AdminAuth.verify_password(request.password, admin["password_hash"]):
+            await rate_limiter.record_attempt(http_request, "admin_login", success=False)
             await audit_service.log_action(
                 actor_email=request.email,
-                action="admin_login",
+                action=AuditAction.LOGIN_FAILED.value,
                 result="failure",
+                category=AuditCategory.AUTH.value,
+                ip_address=client_ip,
                 details={"reason": "Invalid password"}
             )
             raise HTTPException(status_code=401, detail="Invalid credentials")
