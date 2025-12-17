@@ -2149,6 +2149,26 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             )
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
+        # Check if 2FA is enabled
+        if admin.get("totp_enabled"):
+            # Return partial response requiring 2FA verification
+            # Create a temporary token for 2FA verification step
+            temp_token = AdminAuth.create_token(
+                email=admin["email"],
+                role=admin["role"],
+                branch_ids=admin.get("branch_ids", []),
+                additional_claims={"awaiting_2fa": True, "exp_minutes": 5}  # Short-lived
+            )
+            
+            return {
+                "require_2fa": True,
+                "temp_token": temp_token,
+                "message": "2FA-Verifizierung erforderlich"
+            }
+        
+        # Check if 2FA should be enforced (Super Admin without 2FA)
+        require_2fa_setup = admin["role"] == "super_admin" and not admin.get("totp_enabled")
+        
         # Create JWT token
         token = AdminAuth.create_token(
             email=admin["email"],
@@ -2172,7 +2192,7 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             result="success",
             category=AuditCategory.AUTH.value,
             ip_address=client_ip,
-            details={"role": admin["role"]}
+            details={"role": admin["role"], "2fa_enabled": admin.get("totp_enabled", False)}
         )
         
         # Prepare admin response
