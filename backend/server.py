@@ -856,14 +856,15 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user)):
 async def get_admin_orders(
     location_id: Optional[str] = None,
     status: Optional[str] = None,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Get orders with optional filters"""
     query = {}
     
-    # If user is location manager, restrict to their location
-    if current_user.get('role') == 'manager' and current_user.get('location_id'):
-        query["location_id"] = current_user['location_id']
+    # If admin has restricted branch access, filter by those branches
+    branch_ids = admin.get('branch_ids', [])
+    if branch_ids:
+        query["location_id"] = {"$in": branch_ids}
     elif location_id:
         query["location_id"] = location_id
     
