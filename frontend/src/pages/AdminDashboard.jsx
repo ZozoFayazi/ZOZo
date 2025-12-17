@@ -53,9 +53,8 @@ function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('zozoAuthToken');
-    localStorage.removeItem('zozoUser');
-    navigate('/admin');
+    logout();
+    navigate('/admin/login');
   };
 
   const filteredOrders = statusFilter === 'all'
