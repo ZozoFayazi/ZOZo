@@ -142,30 +142,57 @@
 
 ---
 
-## 8. Offene Risiken
+## 8. Email-Integration (Resend)
+
+### Status: ⚠️ DOMAIN-VERIFIZIERUNG ERFORDERLICH
+
+**Durchgeführt:**
+- [x] SendGrid → Resend Migration
+- [x] Resend API-Key konfiguriert: `re_KS2rud3s_...`
+- [x] Sender-Email: `noreply@zozo-burger.de`
+- [x] API-Verbindung erfolgreich getestet
+
+**Noch erforderlich:**
+- [ ] Domain `zozo-burger.de` bei Resend verifizieren
+
+### Domain-Verifizierung Anleitung:
+1. Gehe zu https://resend.com/domains
+2. Klicke "Add Domain"
+3. Gib `zozo-burger.de` ein
+4. Füge die angezeigten DNS-Records hinzu (MX, TXT, DKIM)
+5. Warte auf Verifizierung (meist wenige Minuten)
+6. Danach funktionieren alle Emails von `noreply@zozo-burger.de`
+
+### Test-Modus (optional):
+Bis zur Domain-Verifizierung kann `RESEND_USE_TEST_DOMAIN=true` in `.env` gesetzt werden.
+Dann werden Emails von `onboarding@resend.dev` gesendet (nur für interne Tests).
+
+---
+
+## 9. Offene Risiken
 
 ### Niedrig
-1. **Email-Benachrichtigungen deaktiviert** - SendGrid-Integration nicht funktional
-2. **Cash-X POS** - Skeleton-Implementation ohne Live-Logik
+1. **Cash-X POS** - Skeleton-Implementation ohne Live-Logik
 
 ### Mittel
 1. **Rate-Limiter In-Memory** - Wird bei Server-Restart zurückgesetzt. Für Produktion: Redis empfohlen.
 2. **Frontend Location-Selection** - UX könnte verbessert werden (auto-detect oder Cookie-basiert)
+3. **Email Domain-Verifizierung** - Resend benötigt verifizierte Domain für Produktions-Emails
 
 ---
 
-## 9. Go-Live-Empfehlung
+## 10. Go-Live-Empfehlung
 
 ### ✅ EMPFEHLUNG: GO-LIVE FREIGABE
 
 Das System ist **produktionsbereit** mit folgenden Einschränkungen:
 
-1. **Email-Benachrichtigungen** sind deaktiviert (kein funktionierender SendGrid-Key)
+1. **Email-Benachrichtigungen** erfordern Domain-Verifizierung bei Resend
 2. **ExpertOrder POS** läuft im Testmodus - Live-Credentials erforderlich
 3. **Cash-X POS** ist nicht implementiert
 
 **Voraussetzungen für vollständige Produktion:**
-- [ ] Gültigen SendGrid API-Key hinterlegen
+- [ ] Domain `zozo-burger.de` bei Resend verifizieren
 - [ ] ExpertOrder Produktions-Credentials eingeben
 - [ ] Testmodus deaktivieren nach manueller Verifizierung
 
