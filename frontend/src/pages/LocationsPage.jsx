@@ -174,6 +174,7 @@ function LocationsPage({ setSelectedLocation }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
