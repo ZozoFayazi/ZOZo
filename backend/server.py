@@ -2085,6 +2085,121 @@ async def change_admin_password(
 
 
 # ============================================================================
+# POS INTEGRATION ENDPOINTS
+# ============================================================================
+
+@api_router.post("/admin/locations/{slug}/pos/test")
+async def test_pos_connection(
+    slug: str,
+    admin: dict = Depends(get_current_admin)
+):
+    """Test POS connection for a location"""
+    try:
+        # Check access
+        if admin["role"] != "super_admin":
+            if slug not in admin["branch_ids"]:
+                raise HTTPException(status_code=403, detail="Access denied to this location")
+        
+        # Get location
+        location = await db.locations.find_one({"slug": slug})
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        
+        # Test POS connection
+        result = await pos_service.test_location_pos(location["_id"])
+        
+        # Audit log
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="pos_test_connection",
+            result="success" if result.get("success") else "failure",
+            target=str(location["_id"]),
+            target_type="location",
+            details={"slug": slug, "test_result": result}
+        )
+        
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"POS test error: {str(e)}")
+        raise HTTPException(status_code=500, detail="POS test failed")
+
+
+@api_router.put("/admin/locations/{slug}/pos/config")
+async def update_pos_config(
+    slug: str,
+    config: dict,
+    admin: dict = Depends(get_current_admin)
+):
+    """Update POS configuration for a location"""
+    try:
+        # Only super admin can update POS config
+        if admin["role"] != "super_admin":
+            raise HTTPException(
+                status_code=403,
+                detail="Nur Super Admin kann POS-Konfiguration ändern"
+            )
+        
+        # Get location
+        location = await db.locations.find_one({"slug": slug})
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        
+        # Update POS config
+        await db.locations.update_one(
+            {"slug": slug},
+            {"$set": {"pos_integration": config}}
+        )
+        
+        # Audit log
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="pos_config_updated",
+            result="success",
+            target=str(location["_id"]),
+            target_type="location",
+            details={"slug": slug, "vendor": config.get("vendor")}
+        )
+        
+        return {"message": "POS configuration updated"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Update POS config error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update POS config")
+
+
+@api_router.get("/admin/locations/{slug}/pos/logs")
+async def get_pos_logs(
+    slug: str,
+    limit: int = 50,
+    admin: dict = Depends(get_current_admin)
+):
+    """Get POS integration logs for a location"""
+    try:
+        # Check access
+        if admin["role"] != "super_admin":
+            if slug not in admin["branch_ids"]:
+                raise HTTPException(status_code=403, detail="Access denied to this location")
+        
+        # Get location
+        location = await db.locations.find_one({"slug": slug})
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        
+        # Get logs
+        logs = await pos_service.get_pos_logs(location_id=str(location["_id"]), limit=limit)
+        
+        return {"logs": logs}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Get POS logs error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch logs")
+
+
+# ============================================================================
 # LOCATION MANAGEMENT ENDPOINTS
 # ============================================================================
 
