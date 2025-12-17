@@ -187,9 +187,24 @@ Dann werden Emails von `onboarding@resend.dev` gesendet (nur für interne Tests)
 - Mobile: Klare Hierarchie mit Trennlinie zwischen primär/sekundär
 
 ### Gruppenbestellung Flow gefixt ✅
-- **Problem:** Standortwechsel leitete zur `/locations` Seite, Kontext ging verloren
+- **Problem 1:** Standortwechsel leitete zur `/locations` Seite, Kontext ging verloren
 - **Lösung:** Inline-Dialog für Standortauswahl innerhalb des Flows
-- **Ergebnis:** Kontext bleibt erhalten, Link teilbar, UX verbessert
+
+- **Problem 2:** Zeigt "abgelaufen" direkt nach Erstellung (Timezone-Bug)
+- **Lösung:** UTC-Zeiten werden jetzt mit 'Z' Suffix serialisiert
+- **Geänderte Datei:** `/app/backend/utils.py` - `serialize_doc()` Funktion
+
+### Email-Einladung für Gruppenbestellung ✅ (NEU)
+- **Endpoint:** `POST /api/group-orders/{code}/invite`
+- **Frontend:** Dialog mit Email-Eingabe
+- **Template:** Professionelles Einladungs-Email mit Logo und CTA-Button
+
+### Getestete Szenarien:
+- ✅ Neue Gruppenbestellung erstellt → **NICHT abgelaufen** (Code: HA3VU7)
+- ✅ "59 Min verbleibend" wird korrekt angezeigt
+- ✅ Link teilen funktioniert
+- ✅ Email-Einladung gesendet und zugestellt
+- ✅ Mobile + Desktop getestet
 
 ---
 
