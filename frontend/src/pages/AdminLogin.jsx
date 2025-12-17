@@ -25,13 +25,20 @@ export default function AdminLogin() {
     setLoading(true);
     
     try {
-      await login(email, password);
+      const result = await login(email, password);
+      console.log('Login successful:', result);
       toast.success('Login erfolgreich!');
-      navigate('/admin/dashboard');
+      
+      // Force navigation with replace to avoid back-button issues
+      navigate('/admin/dashboard', { replace: true });
+      
+      // Force a small delay to ensure state is updated
+      setTimeout(() => {
+        window.location.href = '/admin/dashboard';
+      }, 100);
     } catch (error) {
       console.error('Login error:', error);
       toast.error(error.message || 'Login fehlgeschlagen');
-    } finally {
       setLoading(false);
     }
   };
