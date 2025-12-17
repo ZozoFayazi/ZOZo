@@ -118,7 +118,7 @@ function AdminDashboard() {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1">
-            Willkommen zurück, {user?.name || user?.email}
+            Willkommen zurück, {admin?.name || admin?.email}
           </p>
         </div>
         {/* Stats Cards */}
