@@ -42,8 +42,9 @@ export const ProtectedAdminRoute = ({ children, requiredPermission, requiredBran
 
   // SECURITY CHECK 2: Super Admin 2FA Setup Required
   // This blocks Super Admins who haven't set up 2FA
+  // Note: Only enforce if require_2fa_setup is explicitly true from backend
   const requiresTwoFASetup = isSuperAdmin() && 
-    (admin.require_2fa_setup === true || admin.totp_enabled === false) && 
+    admin.require_2fa_setup === true && 
     !twoFASetupComplete;
   
   if (requiresTwoFASetup) {
