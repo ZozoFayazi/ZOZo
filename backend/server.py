@@ -2752,6 +2752,243 @@ async def delete_location(slug: str, admin: dict = Depends(get_current_admin)):
 
 
 # ============================================================================
+# TWO-FACTOR AUTHENTICATION (2FA) ENDPOINTS
+# ============================================================================
+
+class TOTP2FAVerifyRequest(BaseModel):
+    temp_token: str
+    code: str
+
+class TOTP2FASetupConfirmRequest(BaseModel):
+    code: str
+
+
+@api_router.post("/admin/auth/2fa/verify")
+async def verify_2fa_login(
+    request: TOTP2FAVerifyRequest,
+    http_request: Request
+):
+    """Verify 2FA code to complete login"""
+    try:
+        client_ip = http_request.headers.get("X-Forwarded-For", "").split(",")[0].strip() or \
+                   http_request.headers.get("X-Real-IP", "") or \
+                   (http_request.client.host if http_request.client else "unknown")
+        
+        # Decode temp token to get email
+        try:
+            payload = AdminAuth.decode_token(request.temp_token)
+            email = payload.get("email")
+            if not email or not payload.get("awaiting_2fa"):
+                raise HTTPException(status_code=401, detail="Ungültiger Token")
+        except Exception:
+            raise HTTPException(status_code=401, detail="Token abgelaufen oder ungültig")
+        
+        # Verify 2FA code
+        success, message = await totp_service.verify_2fa_login(email, request.code)
+        
+        if not success:
+            await audit_service.log_action(
+                actor_email=email,
+                action="2fa_verification_failed",
+                result="failure",
+                category=AuditCategory.AUTH.value,
+                ip_address=client_ip,
+                details={"reason": message}
+            )
+            raise HTTPException(status_code=401, detail=message)
+        
+        # Get admin for full token
+        admin = await db.admins.find_one({"email": email})
+        if not admin:
+            raise HTTPException(status_code=404, detail="Admin nicht gefunden")
+        
+        # Create full JWT token
+        token = AdminAuth.create_token(
+            email=admin["email"],
+            role=admin["role"],
+            branch_ids=admin.get("branch_ids", [])
+        )
+        
+        # Update last login
+        await db.admins.update_one(
+            {"_id": admin["_id"]},
+            {"$set": {"last_login": datetime.utcnow()}}
+        )
+        
+        # Log successful login
+        await audit_service.log_action(
+            actor_email=email,
+            action=AuditAction.LOGIN_SUCCESS.value,
+            result="success",
+            category=AuditCategory.AUTH.value,
+            ip_address=client_ip,
+            details={"role": admin["role"], "2fa_verified": True, "method": message}
+        )
+        
+        # Prepare admin response
+        admin_response = {
+            "id": str(admin["_id"]),
+            "email": admin["email"],
+            "name": admin["name"],
+            "role": admin["role"],
+            "branch_ids": admin.get("branch_ids", []),
+            "permissions": AdminAuth.get_permissions(admin["role"]),
+            "totp_enabled": admin.get("totp_enabled", False),
+            "must_change_password": admin.get("must_change_password", False)
+        }
+        
+        return AdminLoginResponse(
+            access_token=token,
+            token_type="bearer",
+            admin=admin_response
+        )
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"2FA verification error: {str(e)}")
+        raise HTTPException(status_code=500, detail="2FA-Verifizierung fehlgeschlagen")
+
+
+@api_router.post("/admin/auth/2fa/setup")
+async def setup_2fa(admin: dict = Depends(get_current_admin)):
+    """Initialize 2FA setup - generates QR code and backup codes"""
+    try:
+        setup_data = await totp_service.setup_2fa(admin["email"])
+        
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="2fa_setup_started",
+            result="success",
+            category=AuditCategory.AUTH.value
+        )
+        
+        return {
+            "qr_code": setup_data["qr_code"],
+            "manual_entry_key": setup_data["manual_entry_key"],
+            "backup_codes": setup_data["backup_codes"],
+            "message": "Scannen Sie den QR-Code mit Ihrer Authenticator-App"
+        }
+    
+    except Exception as e:
+        logging.error(f"2FA setup error: {str(e)}")
+        raise HTTPException(status_code=500, detail="2FA-Einrichtung fehlgeschlagen")
+
+
+@api_router.post("/admin/auth/2fa/confirm")
+async def confirm_2fa_setup(
+    request: TOTP2FASetupConfirmRequest,
+    admin: dict = Depends(get_current_admin)
+):
+    """Confirm 2FA setup by verifying the first TOTP code"""
+    try:
+        success, message = await totp_service.confirm_2fa_setup(admin["email"], request.code)
+        
+        if not success:
+            await audit_service.log_action(
+                actor_email=admin["email"],
+                action="2fa_setup_confirm_failed",
+                result="failure",
+                category=AuditCategory.AUTH.value,
+                details={"reason": message}
+            )
+            raise HTTPException(status_code=400, detail=message)
+        
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action=AuditAction.TOTP_ENABLED.value,
+            result="success",
+            category=AuditCategory.AUTH.value
+        )
+        
+        return {"success": True, "message": message}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"2FA confirm error: {str(e)}")
+        raise HTTPException(status_code=500, detail="2FA-Bestätigung fehlgeschlagen")
+
+
+@api_router.post("/admin/auth/2fa/disable")
+async def disable_2fa(
+    target_email: Optional[str] = None,
+    admin: dict = Depends(get_current_admin)
+):
+    """
+    Disable 2FA for self or another admin (Super Admin only for others)
+    """
+    try:
+        email_to_disable = target_email or admin["email"]
+        
+        # Only Super Admin can disable 2FA for others
+        if email_to_disable != admin["email"] and admin["role"] != "super_admin":
+            raise HTTPException(status_code=403, detail="Nur Super Admin kann 2FA für andere deaktivieren")
+        
+        # Super Admin cannot disable their own 2FA
+        if email_to_disable == admin["email"] and admin["role"] == "super_admin":
+            raise HTTPException(status_code=400, detail="Super Admin kann eigene 2FA nicht deaktivieren")
+        
+        success, message = await totp_service.disable_2fa(email_to_disable, admin["email"])
+        
+        if not success:
+            raise HTTPException(status_code=400, detail=message)
+        
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action=AuditAction.TOTP_DISABLED.value,
+            result="success",
+            category=AuditCategory.AUTH.value,
+            target=email_to_disable,
+            details={"disabled_by": admin["email"]}
+        )
+        
+        return {"success": True, "message": message}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"2FA disable error: {str(e)}")
+        raise HTTPException(status_code=500, detail="2FA-Deaktivierung fehlgeschlagen")
+
+
+@api_router.post("/admin/auth/2fa/regenerate-backup-codes")
+async def regenerate_backup_codes(admin: dict = Depends(get_current_admin)):
+    """Generate new backup codes (invalidates old ones)"""
+    try:
+        success, new_codes, message = await totp_service.regenerate_backup_codes(admin["email"])
+        
+        if not success:
+            raise HTTPException(status_code=400, detail=message)
+        
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="2fa_backup_codes_regenerated",
+            result="success",
+            category=AuditCategory.AUTH.value
+        )
+        
+        return {
+            "success": True,
+            "backup_codes": new_codes,
+            "message": "Neue Backup-Codes generiert. Speichern Sie diese sicher!"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Backup code regeneration error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Backup-Code-Generierung fehlgeschlagen")
+
+
+@api_router.get("/admin/auth/2fa/status")
+async def get_2fa_status(admin: dict = Depends(get_current_admin)):
+    """Get current 2FA status"""
+    status = await totp_service.get_2fa_status(admin["email"])
+    return status
+
+
+# ============================================================================
 # SECURITY & AUDIT ENDPOINTS
 # ============================================================================
 
