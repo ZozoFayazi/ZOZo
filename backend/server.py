@@ -2078,6 +2078,202 @@ async def change_admin_password(
     return {"message": "Password changed successfully"}
 
 
+# ============================================================================
+# LOCATION MANAGEMENT ENDPOINTS
+# ============================================================================
+
+@api_router.get("/admin/locations")
+async def get_all_locations(admin: dict = Depends(get_current_admin)):
+    """Get all locations (Super Admin) or only assigned locations (Branch Admin)"""
+    try:
+        query = {}
+        
+        # Branch admins can only see their assigned locations
+        if admin["role"] != "super_admin" and admin["branch_ids"]:
+            query["slug"] = {"$in": admin["branch_ids"]}
+        
+        locations = await db.locations.find(query).to_list(length=100)
+        
+        # Convert ObjectId to string
+        for loc in locations:
+            loc["_id"] = str(loc["_id"])
+            loc["id"] = loc["_id"]
+        
+        return {"locations": locations}
+    
+    except Exception as e:
+        logging.error(f"Get locations error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch locations")
+
+
+@api_router.get("/admin/locations/{slug}")
+async def get_location(slug: str, admin: dict = Depends(get_current_admin)):
+    """Get a specific location by slug"""
+    try:
+        # Check if admin can access this location
+        if admin["role"] != "super_admin":
+            if slug not in admin["branch_ids"]:
+                raise HTTPException(status_code=403, detail="Access denied to this location")
+        
+        location = await db.locations.find_one({"slug": slug})
+        
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        
+        location["_id"] = str(location["_id"])
+        location["id"] = location["_id"]
+        
+        return location
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Get location error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch location")
+
+
+@api_router.post("/admin/locations", dependencies=[Depends(require_super_admin())])
+async def create_location(location_data: LocationCreate, admin: dict = Depends(get_current_admin)):
+    """Create a new location (Super Admin only)"""
+    try:
+        # Check if slug already exists
+        existing = await db.locations.find_one({"slug": location_data.slug})
+        if existing:
+            raise HTTPException(status_code=400, detail="Location with this slug already exists")
+        
+        # Prepare location document
+        location_dict = location_data.model_dump()
+        location_dict["created_at"] = datetime.utcnow()
+        location_dict["updated_at"] = datetime.utcnow()
+        
+        # Insert location
+        result = await db.locations.insert_one(location_dict)
+        
+        # Log action
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="location_created",
+            result="success",
+            target=str(result.inserted_id),
+            target_type="location",
+            details={"name": location_data.name, "slug": location_data.slug}
+        )
+        
+        # Fetch and return created location
+        created_location = await db.locations.find_one({"_id": result.inserted_id})
+        created_location["_id"] = str(created_location["_id"])
+        created_location["id"] = created_location["_id"]
+        
+        return created_location
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Create location error: {str(e)}")
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="location_created",
+            result="failure",
+            details={"error": str(e)}
+        )
+        raise HTTPException(status_code=500, detail="Failed to create location")
+
+
+@api_router.put("/admin/locations/{slug}")
+async def update_location(
+    slug: str,
+    location_data: LocationUpdate,
+    admin: dict = Depends(get_current_admin)
+):
+    """Update a location (Super Admin: all fields, Branch Admin: limited fields)"""
+    try:
+        # Check access
+        if admin["role"] != "super_admin":
+            if slug not in admin["branch_ids"]:
+                raise HTTPException(status_code=403, detail="Access denied to this location")
+            
+            # Branch admins can only update specific fields
+            allowed_fields = {"opening_hours", "delivery_area", "phone", "email"}
+            update_dict = location_data.model_dump(exclude_unset=True)
+            
+            # Check if trying to update forbidden fields
+            forbidden_updates = set(update_dict.keys()) - allowed_fields
+            if forbidden_updates:
+                raise HTTPException(
+                    status_code=403,
+                    detail=f"Branch admins cannot update these fields: {', '.join(forbidden_updates)}"
+                )
+        
+        # Get existing location
+        existing = await db.locations.find_one({"slug": slug})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Location not found")
+        
+        # Prepare update
+        update_dict = location_data.model_dump(exclude_unset=True)
+        update_dict["updated_at"] = datetime.utcnow()
+        
+        # Update location
+        await db.locations.update_one(
+            {"slug": slug},
+            {"$set": update_dict}
+        )
+        
+        # Log action
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="location_updated",
+            result="success",
+            target=str(existing["_id"]),
+            target_type="location",
+            details={"slug": slug, "updated_fields": list(update_dict.keys())}
+        )
+        
+        # Fetch and return updated location
+        updated_location = await db.locations.find_one({"slug": slug})
+        updated_location["_id"] = str(updated_location["_id"])
+        updated_location["id"] = updated_location["_id"]
+        
+        return updated_location
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Update location error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update location")
+
+
+@api_router.delete("/admin/locations/{slug}", dependencies=[Depends(require_super_admin())])
+async def delete_location(slug: str, admin: dict = Depends(get_current_admin)):
+    """Delete a location (Super Admin only)"""
+    try:
+        # Check if location exists
+        location = await db.locations.find_one({"slug": slug})
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        
+        # Delete location
+        await db.locations.delete_one({"slug": slug})
+        
+        # Log action
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="location_deleted",
+            result="success",
+            target=str(location["_id"]),
+            target_type="location",
+            details={"name": location["name"], "slug": slug}
+        )
+        
+        return {"message": f"Location {location['name']} deleted successfully"}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Delete location error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete location")
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
