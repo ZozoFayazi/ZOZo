@@ -153,15 +153,72 @@ function App() {
           <Route path="/rewards" element={<RewardsPage />} />
           <Route path="/start-group-order" element={<StartGroupOrder selectedLocation={selectedLocation} setSelectedLocation={setSelectedLocation} />} />
           <Route path="/group-order/:groupCode" element={<GroupOrderPage addToCart={addToCart} selectedLocation={selectedLocation} />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/settings" element={<LocationSettings />} />
-          <Route path="/admin/deals" element={<DealsManagement />} />
-          <Route path="/admin/expertorder" element={<ExpertOrderSettings />} />
-          <Route path="/admin/menu" element={<MenuManagement />} />
-          <Route path="/admin/discount-codes" element={<DiscountCodes />} />
-          <Route path="/admin/orders" element={<OrderManagement />} />
-          <Route path="/admin/featured" element={<FeaturedProducts />} />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboard />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/settings" 
+            element={
+              <ProtectedAdminRoute requiredPermission="manage_branch_rellingen">
+                <LocationSettings />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/deals" 
+            element={
+              <ProtectedAdminRoute>
+                <DealsManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/expertorder" 
+            element={
+              <ProtectedAdminRoute>
+                <ExpertOrderSettings />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/menu" 
+            element={
+              <ProtectedAdminRoute>
+                <MenuManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/discount-codes" 
+            element={
+              <ProtectedAdminRoute>
+                <DiscountCodes />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/orders" 
+            element={
+              <ProtectedAdminRoute>
+                <OrderManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/featured" 
+            element={
+              <ProtectedAdminRoute>
+                <FeaturedProducts />
+              </ProtectedAdminRoute>
+            } 
+          />
             </Routes>
           </Suspense>
         </main>
