@@ -377,7 +377,7 @@ function AdminDashboard() {
           </div>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
 
