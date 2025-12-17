@@ -160,7 +160,7 @@ class RateLimiter:
             self._cache[action][client_id].append((time.time(), 1))
         
         # Log to database if available
-        if self.db and not success:
+        if self.db is not None and not success:
             await self._log_rate_limit_event(client_id, action, "failed_attempt")
     
     async def _log_rate_limit_event(self, client_id: str, action: str, event_type: str):
