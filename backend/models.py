@@ -99,6 +99,7 @@ class MenuItem(BaseModel):
     is_vegan: bool = False
     is_spicy: bool = False
     active: bool = True
+    in_stock: bool = True  # For toggle stock status
     is_featured: bool = False  # Show in homepage hero carousel
     badge: Optional[str] = None  # "new", "limited", "bestseller", "hot"
     featured_order: int = 0  # Order in featured carousel
@@ -107,6 +108,43 @@ class MenuItem(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
+
+class MenuItemCreate(BaseModel):
+    """Model for creating a new menu item"""
+    location_id: Optional[str] = None
+    category_id: str
+    name: str
+    description: Optional[str] = None
+    price_medium: Optional[float] = None
+    price_large: Optional[float] = None
+    price_normal: Optional[float] = None
+    image_url: Optional[str] = None
+    tags: List[str] = []
+    allergens: List[str] = []
+    nutritional_info: Optional[dict] = None
+    is_vegetarian: bool = False
+    is_vegan: bool = False
+    is_spicy: bool = False
+    active: bool = True
+    in_stock: bool = True
+
+class MenuItemUpdate(BaseModel):
+    """Model for updating a menu item"""
+    name: Optional[str] = None
+    description: Optional[str] = None
+    category_id: Optional[str] = None
+    price_medium: Optional[float] = None
+    price_large: Optional[float] = None
+    price_normal: Optional[float] = None
+    image_url: Optional[str] = None
+    tags: Optional[List[str]] = None
+    allergens: Optional[List[str]] = None
+    nutritional_info: Optional[dict] = None
+    is_vegetarian: Optional[bool] = None
+    is_vegan: Optional[bool] = None
+    is_spicy: Optional[bool] = None
+    active: Optional[bool] = None
+    in_stock: Optional[bool] = None
 
 # Deal/Promotion Models
 class Deal(BaseModel):
