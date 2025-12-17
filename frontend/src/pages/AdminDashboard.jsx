@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdminOrders, updateOrderStatus, getDashboardStats } from '../api';
+import AdminLayout from '../components/AdminLayout';
 import { toast } from 'sonner';
 import { Package, Clock, CheckCircle, TrendingUp, LogOut, Settings, Image, Tag, Star } from 'lucide-react';
 
