@@ -1,29 +1,36 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../api';
+import { useAdminAuth } from '../contexts/AdminAuthContext';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from 'sonner';
+import { Lock, Mail, Loader2 } from 'lucide-react';
 
-function AdminLogin() {
+export default function AdminLogin() {
   const navigate = useNavigate();
+  const { login } = useAdminAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    
+    if (!email || !password) {
+      toast.error('Bitte alle Felder ausfüllen');
+      return;
+    }
 
+    setLoading(true);
+    
     try {
-      const response = await login(email, password);
-      // Store token with BOTH keys for compatibility
-      localStorage.setItem('zozoAuthToken', response.access_token);
-      localStorage.setItem('adminToken', response.access_token);
-      localStorage.setItem('zozoUser', JSON.stringify(response.user));
-      toast.success('Erfolgreich angemeldet');
+      await login(email, password);
+      toast.success('Login erfolgreich!');
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      toast.error('Falsche Anmeldedaten');
+      toast.error(error.message || 'Login fehlgeschlagen');
     } finally {
       setLoading(false);
     }
@@ -31,61 +38,89 @@ function AdminLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <img
-            src="https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg"
-            alt="ZOZO Burger"
-            className="h-16 mx-auto mb-4"
-          />
-          <h1 className="text-2xl font-serif font-semibold mb-2">Admin Login</h1>
-          <p className="text-muted-foreground">Melde dich an, um fortzufahren</p>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-8">
+      <Card className="w-full max-w-md border-border" data-testid="admin-login-card">
+        <CardHeader className="space-y-1">
+          <div className="flex items-center justify-center mb-4">
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Lock className="h-6 w-6 text-primary" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold text-center">
+            Admin Login
+          </CardTitle>
+          <CardDescription className="text-center">
+            ZOZO Burger Verwaltung
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">E-Mail</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="admin@zozoburger.de"
-              />
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium text-muted-foreground">
+                E-Mail
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="admin@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  disabled={loading}
+                  data-testid="admin-login-email"
+                  required
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Passwort</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="••••••••"
-              />
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium text-muted-foreground">
+                Passwort
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10"
+                  disabled={loading}
+                  data-testid="admin-login-password"
+                  required
+                />
+              </div>
             </div>
 
-            <button
+            <Button
               type="submit"
+              className="w-full"
               disabled={loading}
-              className="btn-primary w-full disabled:opacity-50"
+              data-testid="admin-login-submit"
             >
-              {loading ? 'Wird angemeldet...' : 'Anmelden'}
-            </button>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Anmelden...
+                </>
+              ) : (
+                'Anmelden'
+              )}
+            </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-            <p className="text-xs text-muted-foreground mb-2">Test-Zugangsdaten:</p>
-            <p className="text-xs">Owner: owner@zozoburger.de / owner123</p>
-            <p className="text-xs">Rellingen: rellingen@zozoburger.de / rellingen123</p>
+          <div className="mt-6 text-center">
+            <p className="text-xs text-muted-foreground">
+              Standard-Passwort: ZozoAdmin2024!
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Bitte nach dem ersten Login ändern
+            </p>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
-
-export default AdminLogin;
