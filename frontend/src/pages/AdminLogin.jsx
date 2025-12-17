@@ -6,6 +6,7 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from 'sonner';
 import { Lock, Mail, Loader2 } from 'lucide-react';
+import TwoFactorVerify from '../components/TwoFactorVerify';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -13,6 +14,12 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // 2FA state
+  const [require2FA, setRequire2FA] = useState(false);
+  const [tempToken, setTempToken] = useState(null);
+
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,11 +33,19 @@ export default function AdminLogin() {
     
     try {
       const result = await login(email, password);
+      
+      // Check if 2FA is required
+      if (result.require_2fa) {
+        setTempToken(result.temp_token);
+        setRequire2FA(true);
+        setLoading(false);
+        return;
+      }
+      
       console.log('Login successful:', result);
       toast.success('Login erfolgreich!');
       
-      // Navigate to dashboard - using replace to prevent back button issues
-      // Small delay to ensure state is fully updated before navigation
+      // Navigate to dashboard
       setTimeout(() => {
         navigate('/admin/dashboard', { replace: true });
       }, 150);
@@ -41,6 +56,39 @@ export default function AdminLogin() {
       setLoading(false);
     }
   };
+
+  // Handle successful 2FA verification
+  const handle2FASuccess = async (data) => {
+    // Store token and admin data
+    sessionStorage.setItem('adminToken', data.access_token);
+    sessionStorage.setItem('admin', JSON.stringify(data.admin));
+    
+    toast.success('Login erfolgreich!');
+    
+    // Force page reload to update auth context
+    window.location.href = '/admin/dashboard';
+  };
+
+  // Cancel 2FA and go back to login
+  const handle2FACancel = () => {
+    setRequire2FA(false);
+    setTempToken(null);
+    setPassword('');
+  };
+
+  // Show 2FA verification screen
+  if (require2FA && tempToken) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <TwoFactorVerify
+          tempToken={tempToken}
+          onSuccess={handle2FASuccess}
+          onCancel={handle2FACancel}
+          backendUrl={backendUrl}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
