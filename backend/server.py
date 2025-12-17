@@ -21,6 +21,7 @@ from audit_service import AuditService
 from location_models import LocationCreate, LocationUpdate, LocationResponse
 from product_endpoints import create_product_router
 from pos_service import POSService
+from pos_models import POSProvider, POSStatus, POSConfigInput, POSConfigResponse
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
