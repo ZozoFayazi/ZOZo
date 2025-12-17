@@ -1,4 +1,4 @@
-"""ExpertOrder POS Connector with Test Mode Support"""
+"""ExpertOrder / EOCloud POS Connector with Test Mode Support"""
 import httpx
 import logging
 import random
@@ -10,81 +10,180 @@ logger = logging.getLogger(__name__)
 
 
 class ExpertOrderConnector(BasePOSConnector):
-    """Connector for ExpertOrder POS system with test mode support"""
+    """
+    Connector for ExpertOrder / EOCloud POS system
+    
+    API Documentation:
+    - Base URL: https://s1.eocloud.de/{merchant_id}
+    - Send Order: PUT /api/v1/osp
+    - Check Status: GET /api/v1/osp
+    """
+    
+    # Default EOCloud base URL (without merchant path)
+    DEFAULT_EOCLOUD_BASE = "https://s1.eocloud.de"
     
     def __init__(self, config: Dict):
         super().__init__(config)
-        self.base_url = config.get('base_url', 'https://api.expertorder.com/v1')
+        
+        # EOCloud uses merchant_id as part of the URL path
+        self.merchant_id = config.get('merchant_id', '')
+        
+        # Build the correct base URL
+        # If base_url is provided and contains the merchant path, use it directly
+        # Otherwise, construct it from DEFAULT_EOCLOUD_BASE + merchant_id
+        provided_base = config.get('base_url', '')
+        if provided_base and '/c' in provided_base:
+            # User provided full base URL like https://s1.eocloud.de/c102285
+            self.base_url = provided_base.rstrip('/')
+        elif self.merchant_id:
+            # Construct from merchant_id
+            self.base_url = f"{self.DEFAULT_EOCLOUD_BASE}/{self.merchant_id}"
+        else:
+            self.base_url = self.DEFAULT_EOCLOUD_BASE
+        
+        # API endpoint path
+        self.api_path = "/api/v1/osp"
+        
+        # Authentication credentials
         self.api_key = config.get('api_key')
-        self.merchant_id = config.get('merchant_id')
         self.username = config.get('username')
         self.secret = config.get('secret')
         self.test_mode = config.get('test_mode', True)
         
         # Test mode simulation settings
         self.test_simulate_failure = config.get('test_simulate_failure', False)
-        self.test_failure_rate = config.get('test_failure_rate', 0.0)  # 0-1
+        self.test_failure_rate = config.get('test_failure_rate', 0.0)
+        
+        logger.info(f"ExpertOrder Connector initialized: base_url={self.base_url}, test_mode={self.test_mode}")
+    
+    def _get_api_url(self) -> str:
+        """Get the full API URL for OSP endpoint"""
+        return f"{self.base_url}{self.api_path}"
     
     async def test_connection(self) -> Dict:
-        """Test connection to ExpertOrder API"""
+        """Test connection to EOCloud API using GET on /api/v1/osp"""
         
         # TEST MODE - Simulate connection
         if self.test_mode:
             return await self._simulate_connection_test()
         
-        # LIVE MODE - Real API call
+        # LIVE MODE - Real API call to GET /api/v1/osp
+        api_url = self._get_api_url()
+        logger.info(f"Testing EOCloud connection: GET {api_url}")
+        
         try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
+            async with httpx.AsyncClient(timeout=15.0, follow_redirects=False) as client:
                 headers = self._get_headers()
                 
-                response = await client.get(
-                    f"{self.base_url}/merchant/{self.merchant_id}",
-                    headers=headers
-                )
+                response = await client.get(api_url, headers=headers)
+                
+                logger.info(f"EOCloud test response: status={response.status_code}, content-type={response.headers.get('content-type', 'unknown')}")
+                
+                # Check for redirects (302) - this means wrong endpoint or no auth
+                if response.status_code == 302:
+                    return {
+                        "success": False,
+                        "message": "Redirect erhalten (302) - möglicherweise falscher Endpoint oder fehlende Authentifizierung",
+                        "details": {
+                            "status_code": 302,
+                            "location": response.headers.get('location', 'unknown'),
+                            "api_url": api_url
+                        },
+                        "is_test_mode": False
+                    }
+                
+                # Check content type - should be JSON, not HTML
+                content_type = response.headers.get('content-type', '')
+                if 'text/html' in content_type:
+                    return {
+                        "success": False,
+                        "message": "HTML-Antwort erhalten statt JSON - falscher Endpoint",
+                        "details": {
+                            "status_code": response.status_code,
+                            "content_type": content_type,
+                            "api_url": api_url
+                        },
+                        "is_test_mode": False
+                    }
                 
                 if response.status_code == 200:
                     return {
                         "success": True,
-                        "message": "Verbindung erfolgreich",
+                        "message": "Verbindung zu EOCloud erfolgreich",
                         "details": {
                             "environment": "live",
-                            "merchant_id": self.merchant_id
+                            "api_url": api_url,
+                            "status_code": 200
                         },
                         "is_test_mode": False
                     }
                 elif response.status_code == 401:
                     return {
                         "success": False,
-                        "message": "Authentifizierung fehlgeschlagen",
-                        "details": {"status_code": 401},
+                        "message": "Authentifizierung fehlgeschlagen (401)",
+                        "details": {
+                            "status_code": 401,
+                            "api_url": api_url
+                        },
+                        "is_test_mode": False
+                    }
+                elif response.status_code == 403:
+                    return {
+                        "success": False,
+                        "message": "Zugriff verweigert (403) - Credentials prüfen",
+                        "details": {
+                            "status_code": 403,
+                            "api_url": api_url
+                        },
+                        "is_test_mode": False
+                    }
+                elif response.status_code == 404:
+                    return {
+                        "success": False,
+                        "message": "Endpoint nicht gefunden (404) - URL prüfen",
+                        "details": {
+                            "status_code": 404,
+                            "api_url": api_url
+                        },
                         "is_test_mode": False
                     }
                 else:
                     return {
                         "success": False,
-                        "message": f"Verbindung fehlgeschlagen (Status {response.status_code})",
-                        "details": {"status_code": response.status_code},
+                        "message": f"Unerwarteter Status: {response.status_code}",
+                        "details": {
+                            "status_code": response.status_code,
+                            "api_url": api_url,
+                            "response_preview": response.text[:200] if response.text else "empty"
+                        },
                         "is_test_mode": False
                     }
+                    
         except httpx.TimeoutException:
             return {
                 "success": False,
-                "message": "Verbindungs-Timeout",
-                "details": {"error": "timeout"},
+                "message": "Verbindungs-Timeout (15s)",
+                "details": {"error": "timeout", "api_url": api_url},
+                "is_test_mode": False
+            }
+        except httpx.ConnectError as e:
+            return {
+                "success": False,
+                "message": f"Verbindungsfehler: Server nicht erreichbar",
+                "details": {"error": str(e), "api_url": api_url},
                 "is_test_mode": False
             }
         except Exception as e:
-            logger.error(f"ExpertOrder connection test failed: {str(e)}")
+            logger.error(f"EOCloud connection test failed: {str(e)}")
             return {
                 "success": False,
                 "message": f"Fehler: {str(e)}",
-                "details": {"error": str(e)},
+                "details": {"error": str(e), "api_url": api_url},
                 "is_test_mode": False
             }
     
     async def _simulate_connection_test(self) -> Dict:
         """Simulate connection test in test mode"""
-        # Check if we should simulate failure
         if self.test_simulate_failure:
             return {
                 "success": False,
@@ -97,15 +196,16 @@ class ExpertOrderConnector(BasePOSConnector):
                 "is_test_mode": True
             }
         
-        # Check if credentials are set (even in test mode)
-        if not self.merchant_id:
+        # Check if base_url looks valid
+        if not self.base_url or self.base_url == self.DEFAULT_EOCLOUD_BASE:
             return {
                 "success": False,
-                "message": "[TESTMODUS] Merchant ID fehlt",
+                "message": "[TESTMODUS] Base URL nicht konfiguriert - Merchant ID fehlt",
                 "details": {
                     "environment": "test",
                     "simulated": True,
-                    "missing_field": "merchant_id"
+                    "missing_field": "base_url/merchant_id",
+                    "current_base_url": self.base_url
                 },
                 "is_test_mode": True
             }
@@ -125,53 +225,121 @@ class ExpertOrderConnector(BasePOSConnector):
         # Simulate success
         return {
             "success": True,
-            "message": "[TESTMODUS] Verbindung simuliert - erfolgreich",
+            "message": "[TESTMODUS] EOCloud Verbindung simuliert - erfolgreich",
             "details": {
                 "environment": "test",
                 "simulated": True,
-                "merchant_id": self.merchant_id[:4] + "****" if self.merchant_id else None
+                "api_url": self._get_api_url()
             },
             "is_test_mode": True
         }
     
     async def push_order(self, order_data: Dict) -> Dict:
-        """Send order to ExpertOrder POS"""
+        """
+        Send order to EOCloud POS using PUT /api/v1/osp
+        
+        IMPORTANT: EOCloud uses PUT method, not POST!
+        """
         
         # TEST MODE - Simulate order push
         if self.test_mode:
             return await self._simulate_order_push(order_data)
         
-        # LIVE MODE - Real API call
+        # LIVE MODE - Real API call using PUT
+        api_url = self._get_api_url()
+        order_number = order_data.get('order_number', 'UNKNOWN')
+        
+        logger.info(f"Sending order {order_number} to EOCloud: PUT {api_url}")
+        
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=30.0, follow_redirects=False) as client:
                 headers = self._get_headers()
-                payload = self._transform_order(order_data)
+                payload = self._transform_order_to_eocloud(order_data)
                 
-                response = await client.post(
-                    f"{self.base_url}/orders",
+                logger.info(f"EOCloud order payload: {payload}")
+                
+                # IMPORTANT: Use PUT method as per EOCloud API spec
+                response = await client.put(
+                    api_url,
                     headers=headers,
                     json=payload
                 )
                 
-                if response.status_code in [200, 201]:
-                    result = response.json()
+                logger.info(f"EOCloud order response: status={response.status_code}")
+                
+                # Check for redirects
+                if response.status_code == 302:
+                    return {
+                        "success": False,
+                        "pos_order_id": None,
+                        "message": "Redirect erhalten (302) - Authentifizierung oder Endpoint prüfen",
+                        "error": f"Redirect to: {response.headers.get('location', 'unknown')}",
+                        "is_test_mode": False
+                    }
+                
+                # Check content type
+                content_type = response.headers.get('content-type', '')
+                if 'text/html' in content_type:
+                    return {
+                        "success": False,
+                        "pos_order_id": None,
+                        "message": "HTML-Antwort erhalten - falscher Endpoint oder Auth-Fehler",
+                        "error": "Expected JSON, got HTML",
+                        "is_test_mode": False
+                    }
+                
+                if response.status_code in [200, 201, 202]:
+                    # Try to parse JSON response
+                    try:
+                        result = response.json()
+                        pos_order_id = result.get('order_id') or result.get('id') or result.get('reference')
+                    except:
+                        pos_order_id = f"EOC-{order_number}"
+                    
+                    logger.info(f"Order {order_number} successfully sent to EOCloud, POS ID: {pos_order_id}")
+                    
                     return {
                         "success": True,
-                        "pos_order_id": result.get('order_id'),
-                        "message": "Bestellung an ExpertOrder gesendet",
+                        "pos_order_id": pos_order_id,
+                        "message": f"Bestellung {order_number} an EOCloud gesendet",
+                        "is_test_mode": False
+                    }
+                elif response.status_code == 401:
+                    return {
+                        "success": False,
+                        "pos_order_id": None,
+                        "message": "Authentifizierung fehlgeschlagen (401)",
+                        "error": response.text[:200] if response.text else "Unauthorized",
+                        "is_test_mode": False
+                    }
+                elif response.status_code == 400:
+                    return {
+                        "success": False,
+                        "pos_order_id": None,
+                        "message": "Ungültige Anfrage (400) - Payload prüfen",
+                        "error": response.text[:500] if response.text else "Bad Request",
                         "is_test_mode": False
                     }
                 else:
-                    error_detail = response.text
                     return {
                         "success": False,
                         "pos_order_id": None,
                         "message": f"Fehler beim Senden (Status {response.status_code})",
-                        "error": error_detail,
+                        "error": response.text[:500] if response.text else "Unknown error",
                         "is_test_mode": False
                     }
+                    
+        except httpx.TimeoutException:
+            logger.error(f"EOCloud timeout for order {order_number}")
+            return {
+                "success": False,
+                "pos_order_id": None,
+                "message": "Timeout beim Senden der Bestellung (30s)",
+                "error": "timeout",
+                "is_test_mode": False
+            }
         except Exception as e:
-            logger.error(f"ExpertOrder push order failed: {str(e)}")
+            logger.error(f"EOCloud push order failed for {order_number}: {str(e)}")
             return {
                 "success": False,
                 "pos_order_id": None,
@@ -184,7 +352,6 @@ class ExpertOrderConnector(BasePOSConnector):
         """Simulate order push in test mode"""
         order_number = order_data.get('order_number', 'UNKNOWN')
         
-        # Check if we should simulate failure
         should_fail = self.test_simulate_failure or (self.test_failure_rate > 0 and random.random() < self.test_failure_rate)
         
         if should_fail:
@@ -211,17 +378,19 @@ class ExpertOrderConnector(BasePOSConnector):
             "simulated": True,
             "details": {
                 "items_count": len(order_data.get('items', [])),
-                "total": order_data.get('total', 0)
+                "total": order_data.get('total', 0),
+                "api_url": self._get_api_url()
             }
         }
     
     def _get_headers(self) -> Dict:
-        """Get HTTP headers for API requests"""
+        """Get HTTP headers for EOCloud API requests"""
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
         
+        # EOCloud typically uses Basic Auth or API Key
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
         elif self.username and self.secret:
@@ -232,29 +401,45 @@ class ExpertOrderConnector(BasePOSConnector):
         
         return headers
     
-    def _transform_order(self, order_data: Dict) -> Dict:
-        """Transform ZOZO order format to ExpertOrder format"""
-        return {
-            "merchant_id": self.merchant_id,
-            "order_number": order_data.get('order_number'),
+    def _transform_order_to_eocloud(self, order_data: Dict) -> Dict:
+        """
+        Transform ZOZO order format to EOCloud OSP format
+        
+        Note: The exact format may need adjustment based on EOCloud documentation
+        """
+        # Build items list
+        items = []
+        for item in order_data.get('items', []):
+            eocloud_item = {
+                "name": item.get('name', ''),
+                "quantity": item.get('quantity', 1),
+                "price": item.get('price', 0),
+            }
+            
+            # Add customizations if present
+            customizations = item.get('customizations', [])
+            if customizations:
+                eocloud_item["options"] = customizations
+            
+            items.append(eocloud_item)
+        
+        # Build the OSP payload
+        payload = {
+            "orderNumber": order_data.get('order_number', ''),
             "customer": {
-                "email": order_data.get('customer_email'),
                 "name": order_data.get('customer_name', ''),
-                "phone": order_data.get('customer_phone', '')
+                "phone": order_data.get('customer_phone', ''),
+                "email": order_data.get('customer_email', '')
             },
-            "items": [
-                {
-                    "product_id": item.get('product_id'),
-                    "name": item.get('name'),
-                    "quantity": item.get('quantity'),
-                    "price": item.get('price'),
-                    "customizations": item.get('customizations', [])
-                }
-                for item in order_data.get('items', [])
-            ],
-            "total": order_data.get('total'),
-            "delivery_type": order_data.get('delivery_type', 'delivery'),
-            "delivery_address": order_data.get('delivery_address'),
-            "payment_method": order_data.get('payment_method'),
+            "items": items,
+            "total": order_data.get('total', 0),
+            "deliveryType": order_data.get('delivery_type', 'delivery'),
+            "paymentMethod": order_data.get('payment_method', 'cash'),
             "notes": order_data.get('notes', '')
         }
+        
+        # Add delivery address if not pickup
+        if order_data.get('delivery_type') != 'pickup':
+            payload["deliveryAddress"] = order_data.get('delivery_address', '')
+        
+        return payload
