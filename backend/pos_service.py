@@ -285,7 +285,6 @@ class POSService:
         Returns:
             Retry result
         """
-        from bson import ObjectId
         
         # Get order - try both string and ObjectId
         order = await self.db.orders.find_one({"_id": order_id})
