@@ -449,12 +449,18 @@ class ExpertOrderConnector(BasePOSConnector):
         Transform ZOZO order format to EOCloud OSP format
         
         EOCloud OSP API required fields:
-        - version: API version (required)
-        - id: Order ID (required)
-        - customer: object with street, zip, location (required)
+        - version: Integer (API version)
+        - id: Order ID
+        - ordertime: Order timestamp (ISO format)
+        - deliverytime: Delivery timestamp (ISO format)
+        - orderprice: Total price
+        - orderdiscount: Discount amount
+        - payment: Payment info object
+        - customer: object with street, zip, location
         - items: array with count (not quantity)
         """
         import uuid
+        from datetime import datetime, timedelta
         
         # Parse delivery address for street, zip, location
         delivery_address = order_data.get('delivery_address', '')
@@ -474,7 +480,7 @@ class ExpertOrderConnector(BasePOSConnector):
             eocloud_item = {
                 "name": item.get('name', ''),
                 "count": item.get('quantity', 1),  # EOCloud uses "count" not "quantity"
-                "price": item.get('price', 0),
+                "price": float(item.get('price', 0)),
             }
             
             # Add customizations if present
@@ -484,22 +490,36 @@ class ExpertOrderConnector(BasePOSConnector):
             
             items.append(eocloud_item)
         
+        # Current time for ordertime, delivery time +30 min
+        now = datetime.utcnow()
+        delivery_time = now + timedelta(minutes=30)
+        
+        # Payment method mapping
+        payment_method = order_data.get('payment_method', 'cash')
+        payment_type = 'CASH' if payment_method == 'cash' else 'CARD'
+        
         # Build the OSP payload with all required EOCloud fields
         payload = {
-            "version": "1.0",  # Required by EOCloud
-            "id": order_data.get('order_number', str(uuid.uuid4())),  # Required by EOCloud
+            "version": 1,  # Required by EOCloud - must be INTEGER
+            "id": order_data.get('order_number', str(uuid.uuid4())),  # Required
+            "ordertime": now.strftime("%Y-%m-%dT%H:%M:%S"),  # Required
+            "deliverytime": delivery_time.strftime("%Y-%m-%dT%H:%M:%S"),  # Required
+            "orderprice": float(order_data.get('total', 0)),  # Required
+            "orderdiscount": 0.0,  # Required
+            "payment": {
+                "type": payment_type,
+                "amount": float(order_data.get('total', 0))
+            },  # Required
             "customer": {
                 "name": order_data.get('customer_name', ''),
                 "phone": order_data.get('customer_phone', ''),
                 "email": order_data.get('customer_email', ''),
-                "street": street,  # Required by EOCloud
-                "zip": zip_code,  # Required by EOCloud
-                "location": location  # Required by EOCloud (city)
+                "street": street,  # Required
+                "zip": zip_code,  # Required
+                "location": location  # Required (city)
             },
             "items": items,
-            "total": order_data.get('total', 0),
             "deliveryType": order_data.get('delivery_type', 'delivery'),
-            "paymentMethod": order_data.get('payment_method', 'cash'),
             "notes": order_data.get('notes', '')
         }
         
