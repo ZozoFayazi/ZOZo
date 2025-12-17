@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import AdminLayout from '../components/AdminLayout';
+import LocationDialog from '../components/LocationDialog';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { Plus, MapPin, Phone, Mail, Edit, Trash2, Globe, Clock } from 'lucide-react';
 
@@ -11,6 +22,10 @@ export default function LocationManagement() {
   const { token, admin, isSuperAdmin } = useAdminAuth();
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [locationToDelete, setLocationToDelete] = useState(null);
 
   const fetchLocations = async () => {
     try {
