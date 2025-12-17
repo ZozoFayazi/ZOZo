@@ -5,7 +5,7 @@ Disallow: /admin
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://zozofinal.preview.emergentagent.com/sitemap.xml
+Sitemap: https://burger-ready.preview.emergentagent.com/sitemap.xml
 
 # Crawl-delay for bots
 Crawl-delay: 1

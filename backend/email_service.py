@@ -351,7 +351,7 @@ def send_status_update_email(order: dict, new_status: str, location: dict) -> bo
         <p>Du kannst den Status deiner Bestellung jederzeit online verfolgen.</p>
         
         <div style="text-align: center;">
-            <a href="https://zozofinal.preview.emergentagent.com/order-tracking" 
+            <a href="https://burger-ready.preview.emergentagent.com/order-tracking" 
                class="button">
                 📍 Bestellung verfolgen
             </a>
@@ -394,7 +394,7 @@ def send_review_request_email(order: dict, location: dict) -> bool:
         <div style="text-align: center; margin-top: 40px;">
             <p><strong>🎁 Noch mehr Vorteile?</strong></p>
             <p>Sammle Treuepunkte bei jeder Bestellung und sichere dir leckere Belohnungen!</p>
-            <a href="https://zozofinal.preview.emergentagent.com/rewards" 
+            <a href="https://burger-ready.preview.emergentagent.com/rewards" 
                style="color: #dc2626; text-decoration: underline;">
                 Zu den Belohnungen →
             </a>
@@ -442,7 +442,7 @@ def send_group_order_invite_email(to_email: str, group_code: str, host_name: str
 
 def send_password_reset_email(email: str, reset_token: str) -> bool:
     """Send password reset email"""
-    reset_link = f"https://zozofinal.preview.emergentagent.com/admin/reset-password?token={reset_token}"
+    reset_link = f"https://burger-ready.preview.emergentagent.com/admin/reset-password?token={reset_token}"
     
     content = f"""
         <h1>🔑 Passwort zurücksetzen</h1>
@@ -642,7 +642,7 @@ def send_security_alert_email(email: str, name: str = None, alert_type: str = "n
         </div>
         
         <div style="text-align: center;">
-            <a href="https://zozofinal.preview.emergentagent.com/admin/login" class="button">
+            <a href="https://burger-ready.preview.emergentagent.com/admin/login" class="button">
                 🔐 Zum Admin-Bereich
             </a>
         </div>

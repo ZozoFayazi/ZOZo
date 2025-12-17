@@ -1,163 +1,197 @@
 <analysis>**original_problem_statement:**
-The user has approved the completion of all 7 development modules for the ZOZO Burger multi-location system. The project is now considered feature-complete. The user has initiated the final Go-Live Preparation phase. The next agent's task is to execute a comprehensive checklist to ensure the system is stable, secure, and ready for a production launch.
+The user initiated the Go-Live Preparation phase for the ZOZO Burger application. The initial task was to work through a detailed .
 
-**PRODUCT REQUIREMENTS (Go-Live-Checklist):**
-- **Environment Configs:** Verify production vs. test settings.
-- **ExpertOrder POS:** Prepare the connector to switch from Test Mode to Live Mode.
-- **Security:** Ensure the  flag is enforced for initial admin logins.
-- **Data Integrity:** Check backup strategy.
-- **Monitoring:** Perform a final review of logging mechanisms.
-- **Smoke Tests:** Conduct end-to-end tests for critical user flows:
-    - Placing an order and seeing it pushed to the POS.
-    - Admin login with 2FA.
-    - Toggling the active status of products and locations.
-    - Verifying public-facing location pages are correct.
+During this process, the user reported several critical bugs and UX issues:
+1.  A security flaw where  and 2FA setup were not being enforced on login.
+2.  The email service (SendGrid) was not working; the user requested a migration to Resend.
+3.  The main header was cluttered and needed simplification.
+4.  The group order flow was broken (context was lost on location change).
+5.  Group orders were showing as expired immediately after creation due to a timezone bug.
+6.  Email invitations for group orders were missing.
+7.  Email templates were basic and lacked the company logo.
+8.  The user requested to connect the Henstedt-Ulzburg location to the ExpertOrder POS system and run a test order.
+
+**PRODUCT REQUIREMENTS:**
+-   Fix all identified security flaws and bugs.
+-   Implement all requested UX improvements and features (Resend migration, email templates, group order invitations).
+-   Connect the Henstedt-Ulzburg POS in test mode and verify the flow.
+-   The final goal is to get a confirmation from the user that a test order sent from the app has arrived in their real-world POS system.
 
 **User's preferred language**: German
 
 **what currently exists?**
-A feature-complete, multi-tenant, role-based admin system for a restaurant chain. All 7 development modules (Roles, Locations, Products, POS, SEO, Security, 2FA) have been implemented, tested, and officially approved by the user. The application is built on a FastAPI backend, a React frontend, and a MongoDB database. The system is now in the Go-Live Preparation phase.
+The ZOZO Burger application is a feature-complete system with a FastAPI backend and React frontend. It's in a Go-Live hardening phase.
+
+Key recent work includes:
+-   **Go-Live Checklist:** Most initial checks were completed.
+-   **Security Fixes:** A critical bug was fixed where login security policies (, 2FA) were not being enforced. The fix was implemented in .
+-   **Email Service:** Migrated from SendGrid to Resend. The  was rewritten, and new HTML templates (with logo) were created for all system emails.
+-   **UX/Flow Fixes:** The main header was simplified, and the group order flow was completely overhauled to fix an expiry bug and a broken location-change flow. An email invitation feature was also added.
+-   **POS Setup:** The Henstedt-Ulzburg location was configured to use the  POS connector in **Test Mode**. A simulated test order was successfully pushed, and the backend confirmed its status as .
 
 **Last working item**:
-- **Last item agent was working:** Starting the **Go-Live-Vorbereitung (Go-Live Preparation)** phase as requested by the user. The agent's first action was to create a structured checklist to guide this process.
-- **Status:** IN PROGRESS
-- **Agent Testing Done:** N
-- **Which testing method agent to use?** A combination of methods will be needed:  for backend endpoint verification,  for UI smoke tests, and manual inspection of logs and database states.
-- **User Testing Done:** N
+-   **Last item agent was working:** The agent was clarifying to the user why a test order for Henstedt-Ulzburg did not appear in their real ExpertOrder POS terminal. The agent correctly identified that this is expected behavior because the system is in **Test Mode**, which only simulates the push without sending data to the live POS. The agent is now waiting for the user to provide the real API credentials for ExpertOrder.
+-   **Status:** BLOCKED
+-   **Agent Testing Done:** Y (Agent confirmed that the simulated POS push works in Test Mode).
+-   **Which testing method agent to use?** Manual testing. After receiving credentials and disabling test mode, the agent must trigger an order and ask the user to verify its arrival at the physical POS terminal.
+-   **User Testing Done:** N (User has confirmed the order did *not* arrive, which validates the Test Mode is working as intended).
 
 **All Pending/In progress Issue list**:
-There are no active bugs or issues. All previously implemented modules were signed off by the user. The pending work is the Go-Live Preparation task itself.
+-   **Issue 1: Henstedt-Ulzburg POS is not sending LIVE orders (P0)**
+-   **Issue 2: Admin area frontend is unstable and buggy (P1)**
+-   **Issue 3: Resend email domain is not verified (P2)**
+
+**Issues Detail:**
+-   **Issue 1: Henstedt-Ulzburg POS is not sending LIVE orders**
+    -   **Attempted fixes:** This is not a bug. The agent correctly configured the POS in Test Mode and confirmed the simulated push works. The system is now awaiting live credentials.
+    -   **Next debug checklist:**
+        1.  Receive the real ExpertOrder API credentials from the user for the Henstedt-Ulzburg location.
+        2.  Navigate to the Admin POS settings page ().
+        3.  Select the Henstedt-Ulzburg location.
+        4.  Enter the live credentials.
+        5.  **Crucially, uncheck the Testmodus (Test Mode) checkbox.**
+        6.  Save the configuration and confirm the status changes to Verbunden (Connected).
+        7.  Create a test order for Henstedt-Ulzburg through the backend.
+        8.  Ask the user to confirm the order has appeared in their real POS system.
+    -   **Why fix this issue and what will be achieved with the fix?** This is the final step to make the Henstedt-Ulzburg location fully operational for online orders.
+    -   **Status:** BLOCKED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Backend (via API call) and requires manual user verification.
+    -   **Blocked on other issue:** User providing credentials.
+
+-   **Issue 2: Admin area frontend is unstable and buggy**
+    -   **Attempted fixes:** The agent fixed a critical backend bug ( vs  on the  endpoint). However, the agent struggled repeatedly to get admin pages (, ) to load correctly, indicating a frontend session/state management problem. The agent had to apply multiple temporary workarounds (like disabling 2FA checks) just to take screenshots.
+    -   **Next debug checklist:**
+        1.  Restore the original, correct logic in  and  that was temporarily commented out to bypass 2FA.
+        2.  Log in as Super Admin and navigate between different admin pages (, , ).
+        3.  Investigate why the frontend session seems to be lost or why components are detaching from the DOM, causing pages to fail to load.
+        4.  Review  for flaws in how the token and admin state are stored and retrieved.
+    -   **Why fix this issue and what will be achieved with the fix?** The admin panel is currently unreliable, preventing administrators from performing essential tasks like managing orders. This is a go-live blocker.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Frontend.
+    -   **Blocked on other issue:** None.
+
+-   **Issue 3: Resend email domain is not verified**
+    -   **Attempted fixes:** The agent successfully migrated to Resend and implemented a fallback using  in the  file. This allows test emails to be sent from .
+    -   **Next debug checklist:** This issue is external. The user must add the required DNS records provided by Resend to their  domain. Once done,  should be set to .
+    -   **Why fix this issue and what will be achieved with the fix?** To ensure emails are sent from  for a professional appearance and to improve deliverability.
+    -   **Status:** BLOCKED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Backend.
+    -   **Blocked on other issue:** User action (DNS configuration).
 
 **In progress Task List**:
-- **Task 1: Complete Go-Live Preparation (P0)**
-  - **Where to resume:** The file  has just been created. The next step is to systematically work through each item on this checklist, performing the required checks and tests.
-  - **What will be achieved with this?** The application will be thoroughly vetted and confirmed as production-ready, addressing final configurations and stability checks.
-  - **Status:** IN PROGRESS
-  - **Should Test frontend/backend/both after fix?** Both
-  - **Blocked on something:** No
+-   **Task 1: Complete Henstedt-Ulzburg POS Live Integration (P0)**
+    -   **Where to resume:** Waiting for the user to provide live ExpertOrder credentials.
+    -   **What will be achieved with this?** The second restaurant location will be able to receive online orders directly to its POS system.
+    -   **Status:** BLOCKED
+    -   **Should Test frontend/backend/both after fix?** Backend, with manual user verification.
+    -   **Blocked on something:** Awaiting credentials from the user.
 
 **Upcoming and Future Tasks**
-- **Future Tasks:**
-    - **P3: Full Cash-X Connector Implementation:** Implement the live logic for the Cash-X POS connector once specifications are available.
-    - **P4: Burger Builder Image Update:** A long-standing request to replace AI-generated ingredient images with real photos, pending user-provided assets.
+-   **Future Tasks:**
+    -   **P3: Full Cash-X Connector Implementation:** Implement the live logic for the Cash-X POS connector.
+    -   **P4: Burger Builder Image Update:** Replace AI-generated ingredient images with real photos (pending user assets).
 
 **Completed work in this session**
-- **Module 4: POS-Connector Architecture:**
-  - Implemented a full plug-and-play POS system with a base connector, a working  implementation (including a crucial test mode), and a skeleton for .
-  - Built backend services and endpoints () for per-location POS configuration.
-  - Created a comprehensive frontend UI () for managing POS settings, testing connections, and viewing logs, all respecting role-based permissions.
-  - Integrated the POS service into the order creation flow for automatic order pushing and implemented a robust retry mechanism.
-- **Module 5: SEO & GEO:**
-  - Created public, SEO-optimized location detail pages (e.g., ).
-  - Implemented a new public backend endpoint () to serve location data.
-  - Used  in  to dynamically inject meta tags, canonical URLs, and structured data (JSON-LD) for  and .
-- **Module 6: Security & Hardening:**
-  - Implemented rate-limiting () for login and other critical endpoints.
-  - Significantly enhanced the audit logging service () with detailed categories and severity levels.
-  - Created a frontend  for Super Admins to monitor system activity and review audit logs.
-  - Implemented the  flow with a  to force password changes on first login.
-- **Module 7: 2FA Integration (TOTP):**
-  - Integrated Time-based One-Time Password (TOTP) using  and .
-  - Developed a complete 2FA lifecycle backend service () and API endpoints for setup, verification, and recovery.
-  - Modified the admin login flow to support a two-step verification process.
-  - Built the corresponding frontend components (, ) and integrated them into the login page and Security Dashboard, enforcing 2FA for Super Admins.
+-   **Go-Live Checklist Execution:** Systematically worked through the user's checklist, identifying and fixing issues.
+-   **Critical Security Flow Fix:** Implemented a blocking modal/dialog flow in  to correctly enforce  and 2FA setup for admins.
+-   **Email Service Migration (SendGrid → Resend):** Replaced the entire email backend, installing the  library, updating , and creating new, branded HTML templates for all system notifications (e.g., password reset, 2FA changes, security alerts).
+-   **Group Order Flow Overhaul:**
+    -   Fixed a critical timezone bug in  and  that caused new group orders to appear expired immediately.
+    -   Fixed a UX flaw where changing the location would break the group order flow; implemented an in-page modal for location selection instead.
+    -   Added a new feature to invite users to a group order via email, including a new backend endpoint () and frontend UI.
+-   **Frontend UX Improvement:** Simplified the main  by moving secondary navigation links into a More dropdown menu to improve focus on primary actions.
+-   **Bug Fixes:**
+    -   Resolved a  vs.  dependency issue on the  endpoint.
+    -   Fixed the  method in  to accept additional claims.
+    -   Corrected the POS credential-saving logic in .
 
 **Earlier issues found/mentioned but not fixed**
-- **Issue 1: Invalid SendGrid API Key**
-   - **Debug checklist:** This is an old issue from a previous fork. The integration exists but fails due to an invalid key. It was de-prioritized during the major refactor.
-   - **Why to solve this issue and what will be achieved with this?** To enable any email-based notifications from the application.
-   - **Should Test frontend/backend/both after fix:** Backend (via a test email trigger).
-   - **Is recurring issue?** N
+-   None. The agent addressed all issues raised by the user in this session. However, the temporary workarounds applied represent a significant new issue (see **Areas that need refactoring**).
 
 **Known issue recurrence from previous fork**
-- None.
+-   None.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Two-Factor Authentication (TOTP):** Using  to generate and verify codes compatible with Google Authenticator.
-- **Rate Limiting:** IP and user-based request throttling to prevent brute-force attacks.
-- **Advanced Audit Logging:** Categorized and severity-graded logging for all critical system events.
-- **SEO & Structured Data:** Using  to inject dynamic meta tags and JSON-LD schemas for improved search engine visibility.
-- **Go-Live Preparation:** A systematic process of final checks and configurations before deploying to production.
+-   **POS Integration:** Configuring and testing a POS connector () in both Test Mode and preparing for live mode.
+-   **Email Service APIs:** Migrating from SendGrid to the Resend API for transactional emails.
+-   **Frontend State Management:** Debugging issues related to React state, props, and context ().
+-   **Frontend Guarded Routes:** Using a component like  to enforce authentication and security policies before rendering a view.
+-   **Timezone Handling:** The critical importance of consistent timezone management between the backend (Python ) and frontend (JavaScript ), including serializing to ISO 8601 format with a 'Z' suffix.
+-   **JWT Debugging:** Diagnosing and fixing issues related to JWT creation, validation, and dependency injection in a FastAPI application.
 
 **key DB schema**
-- **AdminUser:** 
-- **Location:** 
-- **AuditLog:** 
+-   **locations:** The  field was heavily used and updated. It stores .
+-   **group_orders:**  and  fields now use timezone-aware UTC format.
 
 **changes in tech stack**
-- **Backend:** , ,  (dependency of qrcode)
-- **Frontend:** 
+-   **Backend:** Added  Python package.  is no longer used but may still be in .
 
 **All files of reference**
-- : The primary document guiding the current task.
-- : The central file integrating all new security middleware and API endpoints for POS, SEO, and 2FA.
-- : The core implementation for rate-limiting logic.
-- : The core implementation for 2FA logic.
-- : The main UI for security monitoring and 2FA management.
-- : Shows the updated, multi-step authentication flow.
-- : An example of a public, SEO-optimized page.
+-   : Contains the logic for managing POS configurations.
+-   : Central backend file; contains the new group order invite endpoint and the fixed  endpoint. **Contains temporary edits that must be reverted.**
+-   : Contains the fixed group order logic and new email invitation UI.
+-   : The gatekeeper for the admin area. **Contains temporary edits that must be reverted.**
+-   : The guiding document for the current phase, which has been updated throughout the session.
 
-**Areas that need refactoring**:
-- None. The application has just undergone a major, modular refactoring that has been fully approved.
+**Areas that need refactoring**
+-   **Admin Authentication Flow:** This is the most critical area. The agent applied multiple temporary hacks to the frontend () and backend () to bypass 2FA checks just to take screenshots for the user. These changes **MUST be reverted**, and the underlying instability of the admin session management needs to be properly fixed. The fact that the agent had to constantly re-login, restart services, and bypass security checks points to a fundamental flaw in how the admin auth state is handled in React.
 
 **key api endpoints**
-- **Public SEO:**
-  - 
-- **Security & Audit:**
-  - 
-  - 
-  - 
-- **Two-Factor Authentication (2FA):**
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+-   ****: To set POS provider and credentials.
+-   ****: To test the POS connection.
+-   ****: (NEW) To send an email invitation for a group order.
+-   ****: (FIXED) Now uses the correct admin authentication.
 
 **Critical Info for New Agent**
-- You are in the **Go-Live Preparation** phase. Do not add any new features. Your entire focus is on executing the .
-- All 7 previous development modules are complete and have been signed off by the user. The system is considered feature-complete and stable.
-- Follow the checklist methodically. For each step, perform the check, document the result, and show evidence (e.g., screenshots, log outputs) to the user for final verification.
-- Continue to communicate in German.
+-   **REVERT TEMPORARY CHANGES:** Your first action must be to identify and revert the temporary changes made to  and  that were implemented to bypass 2FA security checks. These were hacks to get screenshots and leave the security model in a broken state.
+-   **AWAIT USER CREDENTIALS:** You are blocked on connecting the Henstedt-Ulzburg POS until the user provides the live API credentials for ExpertOrder.
+-   **USER IS TECHNICAL:** The user understands technical concepts and provides specific, actionable feedback. They will spot inconsistencies.
+-   **DO NOT USE KEYS IN PLAINTEXT:** The user explicitly warned against this. Use  variables only.
+-   **THOROUGH TESTING:** The user expects you to test flows end-to-end and provide proof (screenshots, logs).
 
 **documents created in this job**
-- /app/GO_LIVE_CHECKLIST.md
+-    (Continuously updated)
 
 **Last 10 User Messages and any pending user messages**
-1.  **User:** Approved Module 7 (2FA) and declared all 7 modules complete and accepted. (COMPLETED)
-2.  **User:** Kicked off the next phase: Go-Live-Vorbereitung (Go-Live Preparation). (IN PROGRESS)
-3.  **User:** Provided a mandatory checklist for the go-live phase, focusing on configuration, final checks, and smoke tests, explicitly stating no more new features. (IN PROGRESS)
+1.  **User:** Reports group order is immediately expired and email invites are missing/templates are plain. (IN PROGRESS)
+2.  **User:** Provides an image of credentials (later identified as irrelevant). (COMPLETED)
+3.  **User:** Requests to connect Henstedt-Ulzburg POS with ExpertOrder and run a test. (IN PROGRESS)
+4.  **User:** Asks why the test order for Henstedt didn't arrive at their physical POS. (PENDING)
 
 **Project Health Check:**
-- **Broken:**
-  - SendGrid email integration (due to an invalid API key from a previous fork).
-- **Mocked:**
-  -  POS connector remains a skeleton.
-  -  POS connector is in **Test Mode**. A key task in the go-live checklist is to prepare it for live operation.
+-   **Broken:**
+    -   **Admin Panel Frontend:** Unstable session management makes navigation and use unreliable.
+    -   **Security Flow:** Temporarily disabled/bypassed by the previous agent to complete other tasks. This is a critical regression.
+-   **Mocked:**
+    -    POS connector is in **Test Mode** for both locations.
+    -    POS connector remains a skeleton.
+    -   Email sending uses a test domain () until the  domain is verified by the user.
 
 **3rd Party Integrations**
-- **pyotp:** For TOTP generation and verification.
-- **qrcode:** For generating QR codes for 2FA setup.
-- **bcrypt:** For password hashing.
-- **PyJWT:** For token-based authentication.
-- **react-helmet:** For managing SEO-related head tags in React.
+-   **MongoDB:** Primary database.
+-   **FastAPI:** Backend framework.
+-   **React:** Frontend framework.
+-   **Resend:** Transactional email service (API Key required).
+-   **ExpertOrder:** POS system (credentials required for live mode).
+-   **pyotp, qrcode, bcrypt, PyJWT:** Used for auth and security.
 
 **Testing status**
-- **Testing agent used after significant changes:** NO (Agent has been effectively using manual  and  testing, which the user has consistently approved).
-- **Troubleshoot agent used after agent stuck in loop:** NO
-- **Test files created:** None in this session.
-- **Known regressions:** None.
+-   **Testing agent used after significant changes:** NO
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None.
+-   **Known regressions:** The admin 2FA enforcement flow was intentionally broken by the last agent as a temporary workaround and was not restored.
 
 **Credentials to test flow:**
-- **Super Admin:**  / 
-- **Rellingen Admin:**  / 
-- **Henstedt Admin:**  / 
-*(Note: The Super Admin account will require 2FA setup and verification upon next login)*
+-   **Super Admin:**  / 
+-   **Rellingen Admin:**  / 
+-   **Henstedt Admin:**  / 
 
 **What agent forgot to execute**
-The agent has perfectly followed the user's instructions, completing all requested modules and then correctly initiating the go-live phase by creating the required checklist. No tasks have been forgotten.</analysis>
+-   **CRITICAL:** The agent forgot to revert the temporary code changes made to bypass security checks (2FA). They disabled core security features in both the backend () and frontend () and left them in that broken state.
+-   The agent did not fully resolve the root cause of the admin panel's frontend instability, opting for workarounds instead of a proper fix.</analysis>
