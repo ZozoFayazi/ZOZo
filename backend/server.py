@@ -2083,18 +2083,40 @@ async def get_rewards_catalog():
 # ============================================================================
 
 @api_router.post("/admin/auth/login", response_model=AdminLoginResponse)
-async def admin_login(request: AdminLoginRequest):
-    """Admin login endpoint with role-based authentication"""
+async def admin_login(request: AdminLoginRequest, http_request: Request):
+    """Admin login endpoint with role-based authentication and rate limiting"""
     try:
+        # Check rate limit FIRST
+        client_ip = http_request.headers.get("X-Forwarded-For", "").split(",")[0].strip() or \
+                   http_request.headers.get("X-Real-IP", "") or \
+                   (http_request.client.host if http_request.client else "unknown")
+        
+        allowed, message = await rate_limiter.check_rate_limit(http_request, "admin_login")
+        if not allowed:
+            await audit_service.log_action(
+                actor_email=request.email,
+                action=AuditAction.LOGIN_FAILED.value,
+                result="failure",
+                category=AuditCategory.SECURITY.value,
+                ip_address=client_ip,
+                details={"reason": "rate_limit_exceeded"}
+            )
+            raise HTTPException(status_code=429, detail=message)
+        
         # Find admin by email
         admin = await db.admins.find_one({"email": request.email})
         
         if not admin:
+            # Record failed attempt for rate limiting
+            await rate_limiter.record_attempt(http_request, "admin_login", success=False)
+            
             # Log failed attempt
             await audit_service.log_action(
                 actor_email=request.email,
-                action="admin_login",
+                action=AuditAction.LOGIN_FAILED.value,
                 result="failure",
+                category=AuditCategory.AUTH.value,
+                ip_address=client_ip,
                 details={"reason": "Admin not found"}
             )
             raise HTTPException(status_code=401, detail="Invalid credentials")
