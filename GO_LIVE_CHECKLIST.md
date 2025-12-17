@@ -148,9 +148,19 @@
 
 **Durchgeführt:**
 - [x] SendGrid → Resend Migration
-- [x] Resend API-Key konfiguriert: `re_KS2rud3s_...`
+- [x] Resend API-Key konfiguriert (ENV-Variable)
 - [x] Sender-Email: `noreply@zozo-burger.de`
 - [x] API-Verbindung erfolgreich getestet
+- [x] **5 neue Security-Templates erstellt und versendet**
+
+**Email-Templates implementiert:**
+1. ✅ Passwort vergessen (`send_password_reset_email`)
+2. ✅ Passwort geändert (`send_password_changed_email`)
+3. ✅ 2FA aktiviert (`send_2fa_enabled_email`)
+4. ✅ 2FA deaktiviert (`send_2fa_disabled_email`)
+5. ✅ Sicherheitswarnung (`send_security_alert_email`)
+
+**Test-Emails gesendet an:** krischmaazimi@live.de (17.12.2025)
 
 **Noch erforderlich:**
 - [ ] Domain `zozo-burger.de` bei Resend verifizieren
@@ -166,6 +176,20 @@
 ### Test-Modus (optional):
 Bis zur Domain-Verifizierung kann `RESEND_USE_TEST_DOMAIN=true` in `.env` gesetzt werden.
 Dann werden Emails von `onboarding@resend.dev` gesendet (nur für interne Tests).
+
+---
+
+## 9. UX-Verbesserungen (17.12.2025)
+
+### Header-Navigation vereinfacht ✅
+- **Primär (sichtbar):** HOME | SPEISEKARTE | STANDORTE | BESTELLSTATUS
+- **Sekundär (unter "MEHR"):** Burger Builder, Belohnungen, Gruppenbestellung
+- Mobile: Klare Hierarchie mit Trennlinie zwischen primär/sekundär
+
+### Gruppenbestellung Flow gefixt ✅
+- **Problem:** Standortwechsel leitete zur `/locations` Seite, Kontext ging verloren
+- **Lösung:** Inline-Dialog für Standortauswahl innerhalb des Flows
+- **Ergebnis:** Kontext bleibt erhalten, Link teilbar, UX verbessert
 
 ---
 
