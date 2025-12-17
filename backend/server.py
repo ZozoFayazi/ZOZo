@@ -291,11 +291,20 @@ async def get_location_by_slug(slug: str, include_menu: bool = Query(False)):
     }
     
     # Get SEO data with defaults
-    seo = location.get('seo', {})
+    seo = location.get('seo', {}) or {}
+    location_name = location.get('name', '')
+    city = location.get('city', '')
+    
+    # Clean title - avoid double "ZOZO Burger"
+    if location_name.startswith('ZOZO Burger'):
+        title_name = location_name
+    else:
+        title_name = f"ZOZO Burger {location_name}"
+    
     result['seo'] = {
-        'meta_title': seo.get('meta_title') or f"ZOZO Burger {location.get('name', '')} - Burger, Pizza & Pasta Lieferservice",
-        'meta_description': seo.get('meta_description') or f"Bestelle jetzt bei ZOZO Burger {location.get('city', '')}! Premium Burger, Pizza, Pasta & mehr. Lieferung in {location.get('city', '')} und Umgebung. ☎ {location.get('phone', '')}",
-        'keywords': seo.get('keywords') or f"Burger {location.get('city', '')}, Pizza Lieferservice, ZOZO Burger, Lieferservice {location.get('city', '')}"
+        'meta_title': seo.get('meta_title') or f"{title_name} - Burger, Pizza & Pasta Lieferservice",
+        'meta_description': seo.get('meta_description') or f"Bestelle jetzt bei {location_name}! Premium Burger, Pizza, Pasta & mehr. Lieferung in {city} und Umgebung. ☎ {location.get('phone', '')}",
+        'keywords': seo.get('keywords') or f"Burger {city}, Pizza Lieferservice, ZOZO Burger, Lieferservice {city}, {location_name}"
     }
     
     # Include popular menu items if requested
