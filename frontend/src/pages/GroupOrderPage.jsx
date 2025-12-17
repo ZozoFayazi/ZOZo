@@ -392,6 +392,72 @@ function GroupOrderPage({ addToCart, selectedLocation }) {
           </div>
         )}
       </div>
+
+      {/* Email Invite Dialog */}
+      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+        <DialogContent className="sm:max-w-md" data-testid="invite-dialog">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" />
+              Per Email einladen
+            </DialogTitle>
+            <DialogDescription>
+              Sende eine Einladung an Freunde, Familie oder Kollegen
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="invite-email" className="text-sm font-medium">
+                E-Mail-Adresse
+              </label>
+              <Input
+                id="invite-email"
+                type="email"
+                placeholder="freund@example.com"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && sendInviteEmail()}
+                data-testid="invite-email-input"
+              />
+            </div>
+            
+            <div className="bg-accent/50 rounded-lg p-3 text-sm">
+              <p className="text-muted-foreground">
+                📧 Der Empfänger erhält eine E-Mail mit dem Link zu dieser Gruppenbestellung.
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowInviteDialog(false)}
+              className="flex-1"
+            >
+              Abbrechen
+            </Button>
+            <Button
+              onClick={sendInviteEmail}
+              disabled={sendingInvite || !inviteEmail.trim()}
+              className="flex-1 gap-2"
+              data-testid="send-invite-btn"
+            >
+              {sendingInvite ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Sende...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Einladung senden
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
