@@ -24,6 +24,7 @@ const LocationManagement = lazy(() => import('./pages/LocationManagement'));
 const DealsManagement = lazy(() => import('./pages/DealsManagement'));
 const ExpertOrderSettings = lazy(() => import('./pages/ExpertOrderSettings'));
 const MenuManagement = lazy(() => import('./pages/MenuManagement'));
+const ProductManagement = lazy(() => import('./pages/ProductManagement'));
 const DiscountCodes = lazy(() => import('./pages/DiscountCodes'));
 const OrderManagement = lazy(() => import('./pages/OrderManagement'));
 const FeaturedProducts = lazy(() => import('./pages/FeaturedProducts'));
