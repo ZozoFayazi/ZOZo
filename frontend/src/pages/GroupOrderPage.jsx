@@ -58,6 +58,45 @@ function GroupOrderPage({ addToCart, selectedLocation }) {
     toast.success('Link kopiert! 📋');
   };
 
+  const sendInviteEmail = async () => {
+    if (!inviteEmail.trim()) {
+      toast.error('Bitte gib eine E-Mail-Adresse ein');
+      return;
+    }
+
+    // Basic email validation
+    if (!inviteEmail.includes('@') || !inviteEmail.includes('.')) {
+      toast.error('Bitte gib eine gültige E-Mail-Adresse ein');
+      return;
+    }
+
+    setSendingInvite(true);
+    try {
+      const response = await fetch(`${backendUrl}/api/group-orders/${groupCode}/invite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: inviteEmail,
+          sender_name: groupOrder?.host_name || 'Ein Freund'
+        })
+      });
+
+      if (response.ok) {
+        toast.success(`Einladung an ${inviteEmail} gesendet! 📧`);
+        setInviteEmail('');
+        setShowInviteDialog(false);
+      } else {
+        const error = await response.json();
+        toast.error(error.detail || 'Fehler beim Senden der Einladung');
+      }
+    } catch (error) {
+      console.error('Error sending invite:', error);
+      toast.error('Fehler beim Senden der Einladung');
+    } finally {
+      setSendingInvite(false);
+    }
+  };
+
   const addItemsToGroup = async () => {
     if (!participantName.trim()) {
       toast.error('Bitte gib deinen Namen ein');
