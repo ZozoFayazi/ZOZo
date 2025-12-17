@@ -129,7 +129,7 @@ export default function LocationManagement() {
             </p>
           </div>
           {isSuperAdmin() && (
-            <Button data-testid="locations-add-button">
+            <Button onClick={handleCreateClick} data-testid="locations-add-button">
               <Plus className="h-4 w-4 mr-2" />
               Neue Filiale
             </Button>
