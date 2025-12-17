@@ -284,12 +284,12 @@ export default function SecurityDashboard() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
               <div>
                 <Label className="text-xs">Kategorie</Label>
-                <Select value={filters.category} onValueChange={(v) => handleFilterChange('category', v)}>
+                <Select value={filters.category || 'all'} onValueChange={(v) => handleFilterChange('category', v === 'all' ? '' : v)}>
                   <SelectTrigger data-testid="filter-category">
                     <SelectValue placeholder="Alle" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Alle</SelectItem>
+                    <SelectItem value="all">Alle</SelectItem>
                     <SelectItem value="auth">Auth</SelectItem>
                     <SelectItem value="security">Security</SelectItem>
                     <SelectItem value="product">Produkt</SelectItem>
@@ -303,12 +303,12 @@ export default function SecurityDashboard() {
 
               <div>
                 <Label className="text-xs">Ergebnis</Label>
-                <Select value={filters.result} onValueChange={(v) => handleFilterChange('result', v)}>
+                <Select value={filters.result || 'all'} onValueChange={(v) => handleFilterChange('result', v === 'all' ? '' : v)}>
                   <SelectTrigger data-testid="filter-result">
                     <SelectValue placeholder="Alle" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Alle</SelectItem>
+                    <SelectItem value="all">Alle</SelectItem>
                     <SelectItem value="success">Erfolg</SelectItem>
                     <SelectItem value="failure">Fehler</SelectItem>
                   </SelectContent>
@@ -317,12 +317,12 @@ export default function SecurityDashboard() {
 
               <div>
                 <Label className="text-xs">Schweregrad</Label>
-                <Select value={filters.severity} onValueChange={(v) => handleFilterChange('severity', v)}>
+                <Select value={filters.severity || 'all'} onValueChange={(v) => handleFilterChange('severity', v === 'all' ? '' : v)}>
                   <SelectTrigger data-testid="filter-severity">
                     <SelectValue placeholder="Alle" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Alle</SelectItem>
+                    <SelectItem value="all">Alle</SelectItem>
                     <SelectItem value="critical">Kritisch</SelectItem>
                     <SelectItem value="high">Hoch</SelectItem>
                     <SelectItem value="medium">Mittel</SelectItem>
