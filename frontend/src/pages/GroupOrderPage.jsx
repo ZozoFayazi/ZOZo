@@ -256,15 +256,26 @@ function GroupOrderPage({ addToCart, selectedLocation }) {
             </div>
           </div>
 
-          {/* Share Button */}
+          {/* Share Buttons */}
           {!isExpired && !isFinalized && (
-            <button
-              onClick={copyShareLink}
-              className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-            >
-              <Share2 className="h-4 w-4" />
-              Link teilen & Freunde einladen
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={copyShareLink}
+                className="flex-1 bg-primary text-primary-foreground py-3 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                data-testid="copy-link-btn"
+              >
+                <Copy className="h-4 w-4" />
+                Link kopieren
+              </button>
+              <button
+                onClick={() => setShowInviteDialog(true)}
+                className="flex-1 bg-accent text-foreground py-3 rounded-lg hover:bg-accent/80 transition-colors flex items-center justify-center gap-2 border border-border"
+                data-testid="invite-email-btn"
+              >
+                <Mail className="h-4 w-4" />
+                Per Email einladen
+              </button>
+            </div>
           )}
         </div>
 
