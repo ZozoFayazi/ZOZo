@@ -24,11 +24,24 @@ class PyObjectId(ObjectId):
         return ObjectId(v)
 
 # Location Models
-class DeliveryZone(BaseModel):
-    postal_codes: List[str] = []  # List of postal codes this location delivers to
-    min_order_value: float = 0.0  # Minimum order value for delivery
-    delivery_fee: float = 2.50  # Delivery fee
-    free_delivery_threshold: float = 15.0  # Free delivery above this amount
+class OpeningHours(BaseModel):
+    day: str  # "monday", "tuesday", etc.
+    is_open: bool = True
+    open_time: str = "11:00"
+    close_time: str = "22:45"
+
+class DeliveryArea(BaseModel):
+    mode: str = "radius"  # "radius" or "postal_codes"
+    radius_km: Optional[float] = 5.0  # Only if mode is "radius"
+    postal_codes: List[str] = []  # Only if mode is "postal_codes"
+    delivery_fee: float = 2.50
+    min_order_value: float = 15.0
+    estimated_delivery_time: str = "30-45 Min"
+
+class LocationSEO(BaseModel):
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
+    keywords: Optional[str] = None
 
 class Location(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -37,13 +50,17 @@ class Location(BaseModel):
     address: str
     city: str
     postal_code: str
-    lat: float
-    lng: float
-    phone: str
+    lat: float = 0.0
+    lng: float = 0.0
+    phone: Optional[str] = None
     email: Optional[str] = None
-    opening_hours: str = "11:00 - 22:45"
-    delivery_zone: Optional[DeliveryZone] = None
-    active: bool = True
+    google_review_url: Optional[str] = None
+    opening_hours: List[OpeningHours] = []
+    delivery_area: Optional[DeliveryArea] = None
+    seo: Optional[LocationSEO] = None
+    is_active: bool = True
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     class Config:
         populate_by_name = True
