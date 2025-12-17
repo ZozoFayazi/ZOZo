@@ -163,8 +163,19 @@ def send_email(to_email: str, subject: str, html_content: str) -> bool:
             logger.error("RESEND_API_KEY not configured")
             return False
         
+        # Use configured sender email, fallback to Resend test domain if domain not verified
+        sender = SENDER_EMAIL
+        
+        # Check if using custom domain - may need verification
+        # For production, use verified domain: noreply@zozo-burger.de
+        # For testing/development, can use: onboarding@resend.dev
+        use_test_domain = os.getenv('RESEND_USE_TEST_DOMAIN', 'false').lower() == 'true'
+        if use_test_domain:
+            sender = 'onboarding@resend.dev'
+            logger.info("Using Resend test domain for sending")
+        
         params = {
-            "from": f"ZOZO Burger <{SENDER_EMAIL}>",
+            "from": f"ZOZO Burger <{sender}>",
             "to": [to_email],
             "subject": subject,
             "html": html_content
@@ -180,7 +191,17 @@ def send_email(to_email: str, subject: str, html_content: str) -> bool:
             return False
             
     except Exception as e:
-        logger.error(f"Email send error: {str(e)}")
+        error_msg = str(e)
+        logger.error(f"Email send error: {error_msg}")
+        
+        # Check for domain verification error
+        if 'not verified' in error_msg.lower():
+            logger.warning(
+                "Domain not verified at Resend. "
+                "Please verify zozo-burger.de at https://resend.com/domains "
+                "or set RESEND_USE_TEST_DOMAIN=true for testing"
+            )
+        
         return False
 
 def send_verification_email(email: str, verification_code: str) -> bool:
