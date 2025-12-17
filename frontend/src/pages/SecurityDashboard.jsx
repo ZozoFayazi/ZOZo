@@ -489,6 +489,19 @@ export default function SecurityDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* 2FA Setup Dialog */}
+      <TwoFactorSetup
+        open={show2FASetup}
+        onOpenChange={setShow2FASetup}
+        forced={twoFAStatus?.required && !twoFAStatus?.enabled}
+        onSuccess={() => {
+          fetch2FAStatus();
+          if (updateAdminData) {
+            updateAdminData({ totp_enabled: true });
+          }
+        }}
+      />
     </AdminLayout>
   );
 }
