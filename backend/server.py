@@ -2298,8 +2298,13 @@ async def retry_order_pos_push(
 ):
     """Retry pushing a failed order to POS"""
     try:
-        # Get order to check location access
+        # Get order to check location access - try both string and ObjectId
         order = await db.orders.find_one({"_id": order_id})
+        if not order:
+            try:
+                order = await db.orders.find_one({"_id": ObjectId(order_id)})
+            except Exception:
+                pass
         if not order:
             raise HTTPException(status_code=404, detail="Bestellung nicht gefunden")
         
