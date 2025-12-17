@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, MapPin } from 'lucide-react';
+import { ShoppingCart, Menu, X, MapPin, ChevronDown } from 'lucide-react';
 import CartDrawer from './CartDrawer';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation, cartOpen, setCartOpen }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,7 +22,7 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
       <header className="sticky top-0 z-50 glass border-b border-border/50" role="banner">
         <nav className="container-custom" role="navigation" aria-label="Hauptnavigation">
           <div className="flex items-center justify-between h-20 py-4">
-            {/* LEFT: Navigation Links */}
+            {/* LEFT: Primary Navigation Links */}
             <div className="hidden md:flex items-center space-x-8 flex-1">
               <Link
                 to="/"
@@ -35,6 +41,14 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 SPEISEKARTE
               </Link>
               <Link
+                to="/locations"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/locations') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                STANDORTE
+              </Link>
+              <Link
                 to="/order-tracking"
                 className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
                   isActive('/order-tracking') ? 'text-primary' : 'text-foreground/70'
@@ -42,25 +56,9 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               >
                 BESTELLSTATUS
               </Link>
-              <Link
-                to="/burger-builder"
-                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
-                  isActive('/burger-builder') ? 'text-primary' : 'text-foreground/70'
-                }`}
-              >
-                🍔 BURGER BUILDER
-              </Link>
-              <Link
-                to="/rewards"
-                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
-                  isActive('/rewards') ? 'text-primary' : 'text-foreground/70'
-                }`}
-              >
-                🎁 BELOHNUNGEN
-              </Link>
             </div>
 
-            {/* CENTER: Logo (Optimized) */}
+            {/* CENTER: Logo */}
             <Link 
               to="/" 
               className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 md:relative md:left-auto md:transform-none group" 
@@ -68,7 +66,6 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               aria-label="ZOZO Burger - Zur Startseite"
             >
               <div className="relative">
-                {/* Logo with subtle glow effect */}
                 <img
                   src="https://customer-assets.emergentagent.com/job_custom-burger-maker/artifacts/crcay6aj_IMG_8154.jpeg"
                   alt="ZOZO Burger"
@@ -78,23 +75,41 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               </div>
             </Link>
 
-            {/* RIGHT: Location & Cart */}
-            <div className="hidden md:flex items-center space-x-8 flex-1 justify-end">
-              <Link
-                to="/locations"
-                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
-                  isActive('/locations') ? 'text-primary' : 'text-foreground/70'
-                }`}
-              >
-                STANDORTE
-              </Link>
+            {/* RIGHT: Secondary Nav, Location & Cart */}
+            <div className="hidden md:flex items-center space-x-6 flex-1 justify-end">
+              {/* More dropdown for secondary features */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-sm font-medium tracking-wide transition-all hover:text-primary text-foreground/70 flex items-center gap-1">
+                  MEHR <ChevronDown className="h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/burger-builder" className="flex items-center gap-2 cursor-pointer">
+                      🍔 Burger Builder
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/rewards" className="flex items-center gap-2 cursor-pointer">
+                      🎁 Belohnungen
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/start-group-order" className="flex items-center gap-2 cursor-pointer">
+                      👥 Gruppenbestellung
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Location Badge */}
               {selectedLocation && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-accent rounded-lg border border-border/50">
+                <Link 
+                  to="/locations"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-accent rounded-lg border border-border/50 hover:bg-accent/80 transition-colors"
+                >
                   <MapPin className="h-3.5 w-3.5 text-primary" />
                   <span className="text-xs font-medium">{selectedLocation.name.replace('ZOZO Burger ', '')}</span>
-                </div>
+                </Link>
               )}
 
               {/* Cart Button - Prominent */}
@@ -143,80 +158,111 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
             </div>
           </div>
 
-          {/* Mobile Menu - Enhanced */}
+          {/* Mobile Menu - Simplified with clear hierarchy */}
           {mobileMenuOpen && (
             <div id="mobile-menu" className="md:hidden py-4 border-t border-border animate-slide-up-fade">
               <div className="flex flex-col space-y-1">
-                <Link
-                  to="/"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                    isActive('/') 
-                      ? 'text-primary bg-primary/10' 
-                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
-                  }`}
-                >
-                  🏠 Home
-                </Link>
-                <Link
-                  to="/menu"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                    isActive('/menu') 
-                      ? 'text-primary bg-primary/10' 
-                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
-                  }`}
-                >
-                  📋 Speisekarte
-                </Link>
-                <Link
-                  to="/locations"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                    isActive('/locations') 
-                      ? 'text-primary bg-primary/10' 
-                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
-                  }`}
-                >
-                  📍 Standorte
-                </Link>
-                <Link
-                  to="/order-tracking"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                    isActive('/order-tracking') 
-                      ? 'text-primary bg-primary/10' 
-                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
-                  }`}
-                >
-                  📦 Bestellstatus
-                </Link>
-                <Link
-                  to="/burger-builder"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                    isActive('/burger-builder') 
-                      ? 'text-primary bg-primary/10' 
-                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
-                  }`}
-                >
-                  🍔 Burger Builder
-                </Link>
-                <Link
-                  to="/rewards"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                    isActive('/rewards') 
-                      ? 'text-primary bg-primary/10' 
-                      : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
-                  }`}
-                >
-                  🎁 Belohnungen
-                </Link>
+                {/* Primary Navigation */}
+                <div className="px-2 pb-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 pb-2">
+                    Navigation
+                  </p>
+                  <Link
+                    to="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    🏠 Home
+                  </Link>
+                  <Link
+                    to="/menu"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/menu') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    📋 Speisekarte
+                  </Link>
+                  <Link
+                    to="/locations"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/locations') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    📍 Standorte
+                  </Link>
+                  <Link
+                    to="/order-tracking"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/order-tracking') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    📦 Bestellstatus
+                  </Link>
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-border my-2"></div>
+
+                {/* Secondary Features */}
+                <div className="px-2 pt-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 pb-2">
+                    Weitere Features
+                  </p>
+                  <Link
+                    to="/burger-builder"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/burger-builder') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    🍔 Burger Builder
+                  </Link>
+                  <Link
+                    to="/rewards"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/rewards') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    🎁 Belohnungen
+                  </Link>
+                  <Link
+                    to="/start-group-order"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/start-group-order') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    👥 Gruppenbestellung
+                  </Link>
+                </div>
+
+                {/* Location Badge */}
                 {selectedLocation && (
-                  <div className="flex items-center space-x-2 py-2 text-xs text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{selectedLocation.name}</span>
+                  <div className="px-4 pt-4 border-t border-border mt-2">
+                    <div className="flex items-center space-x-2 py-2 text-xs text-muted-foreground">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span>{selectedLocation.name}</span>
+                    </div>
                   </div>
                 )}
               </div>
