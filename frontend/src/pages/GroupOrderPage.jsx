@@ -178,7 +178,7 @@ function GroupOrderPage({ addToCart, selectedLocation }) {
     );
   }
 
-  const isExpired = groupOrder.status === 'expired' || new Date() > new Date(groupOrder.expires_at);
+  const isExpired = checkIsExpired();
   const isFinalized = groupOrder.status === 'finalized';
 
   return (
