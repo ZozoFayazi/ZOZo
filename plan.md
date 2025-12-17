@@ -40,76 +40,74 @@ Umfassende Architektur-Überarbeitung für professionelles Multi-Tenant-System.
 ---
 
 ## Modul 6: Sicherheit (Status: COMPLETED) ✅
-**Ziel:** Professionelle Sicherheitsmaßnahmen für Go-Live
-
-### Umgesetzte Features:
-
-#### Rate-Limiting (`rate_limiter.py`):
-- ✅ **Admin Login**: 3 Versuche pro 15 Minuten, 30 Min Lockout
-- ✅ **Bestellungen**: 10 pro Stunde pro IP
-- ✅ **API General**: 100 Requests pro Minute
-- ✅ **POS Tests**: 10 pro 5 Minuten
-- ✅ In-Memory Cache mit automatischer Bereinigung
-- ✅ IP-Erkennung (X-Forwarded-For, X-Real-IP)
-- ✅ Deutschsprachige Fehlermeldungen
-
-#### Erweitertes Audit-Logging (`audit_service.py`):
-- ✅ **Kategorien**: auth, admin, product, location, order, pos, security, system
-- ✅ **Schweregrade**: low, medium, high, critical
-- ✅ **Auto-Kategorisierung** basierend auf Action-Namen
-- ✅ **Security-Summary** Endpoint (24h Übersicht)
-- ✅ **Filterbare Logs** (Kategorie, Ergebnis, Schweregrad, Aktion)
-- ✅ IP-Adresse wird protokolliert
-
-#### Audit-Actions:
-- `login_success`, `login_failed`
-- `password_changed`
-- `pos_config_updated`, `pos_connection_tested`, `pos_order_pushed`
-- `product_created/updated/deleted`
-- `location_created/updated/deleted`
-- `rate_limit_exceeded`
-
-#### Backend-Endpoints:
-- ✅ `GET /api/admin/security/audit-logs` - Filterbare Audit-Logs
-- ✅ `GET /api/admin/security/summary` - Security-Übersicht (24h)
-- ✅ `GET /api/admin/security/rate-limit-status` - Rate-Limit Status
-- ✅ `POST /api/admin/security/change-password` - Passwort ändern
-
-#### Frontend - Security Dashboard:
-- ✅ **Übersichtskarten**: Fehlgeschlagene Logins, Rate-Limit Events, Kritische Ereignisse, Gesamt-Logs
-- ✅ **Kritische Ereignisse Box** (rot hervorgehoben)
-- ✅ **Audit-Protokoll** mit Filtern
-- ✅ **Pagination** für große Log-Mengen
-- ✅ **Severity Badges** (KRITISCH, HOCH, MITTEL, NIEDRIG)
-- ✅ **Category Badges** (AUTH, SECURITY, POS, etc.)
-- ✅ Nur für Super Admin zugänglich
-
-#### Password-Change Dialog:
-- ✅ `PasswordChangeDialog.jsx` Komponente
-- ✅ Passwort-Anforderungen (8+ Zeichen, Groß/Klein, Zahlen, Sonderzeichen)
-- ✅ Live-Validierung mit Checkmarks
-- ✅ Unterstützt "forced" Modus für mustChangePassword
-
-#### Zusätzliche Sicherheitsmaßnahmen:
-- ✅ Rate-Limit auf Admin-Login integriert
-- ✅ IP-Adresse bei Login erfasst
-- ✅ Erfolgreicher Login setzt Rate-Limit zurück
-- ✅ mustChangePassword Flag vorhanden
+- Rate-Limiting (Admin Login: 3 Versuche → 30 Min Lockout)
+- Erweitertes Audit-Logging mit Kategorien & Schweregraden
+- Password-Change Dialog mit Anforderungen
+- Security Dashboard für Super Admin
 
 ---
 
-## Modul 7: 2FA-Integration (Status: NOT STARTED) 📋
+## Modul 7: 2FA-Integration (Status: COMPLETED) ✅
 **Ziel:** TOTP-basierte Zwei-Faktor-Authentifizierung
 
-### Geplante Features:
-- Google Authenticator Kompatibilität
-- Backup-Codes
-- 2FA-Setup-Wizard
+### Umgesetzte Features:
+
+#### Backend (`totp_service.py`):
+- ✅ TOTP Secret-Generierung (pyotp)
+- ✅ QR-Code-Generierung (qrcode + PIL)
+- ✅ Backup-Code-Generierung (10 Codes, Format: XXXX-XXXX)
+- ✅ TOTP-Verifizierung mit 1 Zeitfenster Toleranz
+- ✅ Backup-Code-Verifizierung (einmalig verwendbar)
+
+#### Endpoints:
+- ✅ `POST /api/admin/auth/2fa/setup` - 2FA einrichten (QR + Backup-Codes)
+- ✅ `POST /api/admin/auth/2fa/confirm` - Setup bestätigen mit erstem Code
+- ✅ `POST /api/admin/auth/2fa/verify` - Login-Verifizierung
+- ✅ `POST /api/admin/auth/2fa/disable` - 2FA deaktivieren
+- ✅ `POST /api/admin/auth/2fa/regenerate-backup-codes` - Neue Backup-Codes
+- ✅ `GET /api/admin/auth/2fa/status` - 2FA-Status abfragen
+
+#### Login-Flow mit 2FA:
+1. Passwort-Verifizierung → `require_2fa: true` + `temp_token`
+2. 2FA-Verifizierung mit temp_token + TOTP-Code
+3. Vollständiger JWT-Token wird ausgegeben
+
+#### Erzwingung:
+- ✅ **Super Admin (Pflicht):** `require_2fa_setup: true` wenn 2FA nicht aktiviert
+- ✅ **Filial-Admins:** Optional (konfigurierbar)
+- ✅ "Erforderlich" Badge im Security Dashboard
+
+#### Recovery-Flow:
+- ✅ Backup-Codes als Alternative zum TOTP-Code
+- ✅ Super Admin kann 2FA für andere deaktivieren
+- ✅ Super Admin kann eigene 2FA NICHT deaktivieren
+
+#### Frontend-Komponenten:
+- ✅ `TwoFactorSetup.jsx` - 4-Schritt Setup-Wizard:
+  1. Intro mit App-Hinweisen
+  2. QR-Code + Manuelle Eingabe
+  3. Code-Verifizierung
+  4. Backup-Codes speichern
+- ✅ `TwoFactorVerify.jsx` - Login-Verifizierung:
+  - 6-Digit TOTP-Eingabe mit Auto-Focus
+  - Backup-Code Alternative
+  - Paste-Unterstützung
+- ✅ Security Dashboard Integration:
+  - 2FA-Status Card
+  - "Erforderlich" Badge für Super Admin
+  - "2FA aktivieren" Button
+
+#### Audit-Logging:
+- ✅ `2fa_setup_started`
+- ✅ `totp_enabled`
+- ✅ `totp_disabled`
+- ✅ `2fa_verification_failed`
+- ✅ `2fa_backup_codes_regenerated`
 
 ---
 
 ## Technischer Stack
-- **Backend**: FastAPI, Motor, Pydantic, JWT Auth, bcrypt
+- **Backend**: FastAPI, Motor, Pydantic, JWT Auth, bcrypt, pyotp, qrcode
 - **Frontend**: React, Vite, Shadcn/UI, Sonner, Lucide Icons, react-helmet
 - **Database**: MongoDB (Motor)
 
@@ -117,3 +115,18 @@ Umfassende Architektur-Überarbeitung für professionelles Multi-Tenant-System.
 - Super Admin: `admin@zonik-solutions.de` / `ZozoAdmin2024!`
 - Rellingen: `info@zozo-burger.de` / `ZozoAdmin2024!`
 - Henstedt: `henstedt@zozo-burger.de` / `ZozoAdmin2024!`
+
+---
+
+## 🎉 PROJEKT ABGESCHLOSSEN
+
+Alle 7 Module sind vollständig implementiert und getestet:
+1. ✅ Rollen- & Rechte-System
+2. ✅ Filial- & Standort-Management
+3. ✅ Produktverwaltung
+4. ✅ POS-Connector Architektur
+5. ✅ SEO & GEO
+6. ✅ Sicherheit (Rate-Limiting, Audit-Logs)
+7. ✅ 2FA-Integration (TOTP)
+
+Das System ist technisch vollständig und bereit für Go-Live-Vorbereitung.
