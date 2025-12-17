@@ -80,6 +80,16 @@ export const AdminAuthProvider = ({ children }) => {
     return admin?.role === 'super_admin';
   };
 
+  const mustChangePassword = () => {
+    return admin?.must_change_password === true;
+  };
+
+  const updateAdminData = (updates) => {
+    const updated = { ...admin, ...updates };
+    setAdmin(updated);
+    sessionStorage.setItem('admin', JSON.stringify(updated));
+  };
+
   const value = {
     admin,
     token,
@@ -89,6 +99,8 @@ export const AdminAuthProvider = ({ children }) => {
     hasPermission,
     canAccessBranch,
     isSuperAdmin,
+    mustChangePassword,
+    updateAdminData,
     isAuthenticated: !!admin
   };
 
