@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Users, Share2, ShoppingCart, Clock, Trash2, Check, Copy } from 'lucide-react';
+import { Users, Share2, ShoppingCart, Clock, Trash2, Check, Copy, Mail, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
 
 function GroupOrderPage({ addToCart, selectedLocation }) {
   const { groupCode } = useParams();
@@ -12,6 +21,9 @@ function GroupOrderPage({ addToCart, selectedLocation }) {
   const [participantName, setParticipantName] = useState('');
   const [showAddItems, setShowAddItems] = useState(false);
   const [tempCart, setTempCart] = useState([]);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [sendingInvite, setSendingInvite] = useState(false);
   
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
 
