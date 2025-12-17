@@ -69,6 +69,12 @@ const AdminSidebar = () => {
       permission: null // All admins can see their POS settings
     },
     {
+      title: 'Sicherheit',
+      icon: Shield,
+      path: '/admin/security',
+      permission: '*' // Super Admin only
+    },
+    {
       title: 'Einstellungen',
       icon: Settings,
       path: '/admin/settings',
