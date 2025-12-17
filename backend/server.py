@@ -273,15 +273,21 @@ async def get_location_by_slug(slug: str, include_menu: bool = Query(False)):
     
     result['formatted_hours'] = formatted_hours
     
-    # Get delivery area info
-    delivery_area = location.get('delivery_area', {})
+    # Get delivery area info - handle both old and new format
+    delivery_area = location.get('delivery_area', {}) or {}
+    delivery_zone = location.get('delivery_zone', {}) or {}
+    
+    # Merge both formats (new format takes precedence)
+    combined_delivery = {**delivery_zone, **delivery_area}
+    
     result['delivery_info'] = {
-        'mode': delivery_area.get('mode', 'radius'),
-        'radius_km': delivery_area.get('radius_km', 5.0),
-        'postal_codes': delivery_area.get('postal_codes', []),
-        'delivery_fee': delivery_area.get('delivery_fee', 2.50),
-        'min_order_value': delivery_area.get('min_order_value', 15.0),
-        'estimated_time': delivery_area.get('estimated_delivery_time', '30-45 Min')
+        'mode': combined_delivery.get('mode', 'plz'),
+        'radius_km': combined_delivery.get('radius_km', 5.0),
+        'postal_codes': combined_delivery.get('postal_codes', []),
+        'delivery_fee': combined_delivery.get('delivery_fee', 3.0),
+        'min_order_value': combined_delivery.get('min_order_value', 12.0),
+        'free_delivery_threshold': combined_delivery.get('free_delivery_threshold', 20.0),
+        'estimated_time': combined_delivery.get('estimated_delivery_time', '30-45 Min')
     }
     
     # Get SEO data with defaults
