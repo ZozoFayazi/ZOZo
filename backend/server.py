@@ -28,6 +28,9 @@ db_name = os.environ.get('DB_NAME', 'test_database')
 client = AsyncIOMotorClient(mongo_url)
 db = client[db_name]
 
+# Initialize services
+audit_service = AuditService(db)
+
 # Create the main app without a prefix
 app = FastAPI()
 
