@@ -56,6 +56,52 @@ export default function LocationManagement() {
     }
   }, [token]);
 
+  const handleCreateClick = () => {
+    setSelectedLocation(null);
+    setDialogOpen(true);
+  };
+
+  const handleEditClick = (location) => {
+    setSelectedLocation(location);
+    setDialogOpen(true);
+  };
+
+  const handleDeleteClick = (location) => {
+    setLocationToDelete(location);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!locationToDelete) return;
+
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${backendUrl}/api/admin/locations/${locationToDelete.slug}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Fehler beim Löschen');
+      }
+
+      toast.success('Filiale gelöscht');
+      fetchLocations();
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Fehler beim Löschen');
+    } finally {
+      setDeleteDialogOpen(false);
+      setLocationToDelete(null);
+    }
+  };
+
+  const handleDialogSuccess = () => {
+    fetchLocations();
+  };
+
   if (loading) {
     return (
       <AdminLayout>
