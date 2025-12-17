@@ -291,7 +291,7 @@ def send_status_update_email(order: dict, new_status: str, location: dict) -> bo
         <p>Du kannst den Status deiner Bestellung jederzeit online verfolgen.</p>
         
         <div style="text-align: center;">
-            <a href="https://biteadmin.preview.emergentagent.com/order-tracking" 
+            <a href="https://zozofinal.preview.emergentagent.com/order-tracking" 
                class="button">
                 📍 Bestellung verfolgen
             </a>
@@ -334,7 +334,7 @@ def send_review_request_email(order: dict, location: dict) -> bool:
         <div style="text-align: center; margin-top: 40px;">
             <p><strong>🎁 Noch mehr Vorteile?</strong></p>
             <p>Sammle Treuepunkte bei jeder Bestellung und sichere dir leckere Belohnungen!</p>
-            <a href="https://biteadmin.preview.emergentagent.com/rewards" 
+            <a href="https://zozofinal.preview.emergentagent.com/rewards" 
                style="color: #dc2626; text-decoration: underline;">
                 Zu den Belohnungen →
             </a>
