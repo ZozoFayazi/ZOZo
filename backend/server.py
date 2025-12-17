@@ -23,6 +23,7 @@ from product_endpoints import create_product_router
 from pos_service import POSService
 from pos_models import POSProvider, POSStatus, POSConfigInput, POSConfigResponse
 from rate_limiter import RateLimiter
+from totp_service import TOTPService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
