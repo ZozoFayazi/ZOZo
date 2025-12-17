@@ -32,6 +32,7 @@ const RewardsPage = lazy(() => import('./pages/RewardsPage'));
 const StartGroupOrder = lazy(() => import('./pages/StartGroupOrder'));
 const GroupOrderPage = lazy(() => import('./pages/GroupOrderPage'));
 const POSSettings = lazy(() => import('./pages/POSSettings'));
+const LocationDetailPage = lazy(() => import('./pages/LocationDetailPage'));
 
 // Loading component
 const PageLoader = () => (
