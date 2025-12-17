@@ -204,6 +204,45 @@ export default function SecurityDashboard() {
           </Button>
         </div>
 
+        {/* 2FA Card */}
+        <Card className={twoFAStatus?.enabled ? 'border-[hsl(var(--success)/0.5)]' : 'border-[hsl(var(--warning)/0.5)]'}>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${twoFAStatus?.enabled ? 'bg-[hsl(var(--success)/0.1)]' : 'bg-[hsl(var(--warning)/0.1)]'}`}>
+                  <Smartphone className={`h-5 w-5 ${twoFAStatus?.enabled ? 'text-[hsl(var(--success))]' : 'text-[hsl(var(--warning))]'}`} />
+                </div>
+                <div>
+                  <p className="font-medium">Zwei-Faktor-Authentifizierung</p>
+                  <p className="text-sm text-muted-foreground">
+                    {twoFAStatus?.enabled 
+                      ? `Aktiviert • ${twoFAStatus.backup_codes_remaining} Backup-Codes übrig`
+                      : 'Nicht aktiviert'
+                    }
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {twoFAStatus?.enabled ? (
+                  <Badge className="bg-[hsl(var(--success)/0.12)] text-[hsl(var(--success))]">
+                    <CheckCircle2 className="h-3 w-3 mr-1" /> Aktiv
+                  </Badge>
+                ) : (
+                  <>
+                    {twoFAStatus?.required && (
+                      <Badge variant="destructive" className="mr-2">Erforderlich</Badge>
+                    )}
+                    <Button onClick={() => setShow2FASetup(true)} data-testid="enable-2fa-button">
+                      <Shield className="h-4 w-4 mr-2" />
+                      2FA aktivieren
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
