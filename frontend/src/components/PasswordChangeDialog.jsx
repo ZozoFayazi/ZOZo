@@ -95,7 +95,7 @@ export const PasswordChangeDialog = ({ open, onOpenChange, forced = false }) => 
   return (
     <Dialog open={open} onOpenChange={forced ? undefined : onOpenChange}>
       <DialogContent 
-        className="sm:max-w-[450px]" 
+        className={`sm:max-w-[450px] ${forced ? '[&>button]:hidden' : ''}`}
         data-testid="password-change-dialog"
         onPointerDownOutside={forced ? (e) => e.preventDefault() : undefined}
         onEscapeKeyDown={forced ? (e) => e.preventDefault() : undefined}
