@@ -18,6 +18,7 @@ from models import *
 from admin_auth import AdminAuth, get_current_admin, require_permission, require_super_admin
 from admin_models import AdminLoginRequest, AdminLoginResponse, PasswordChangeRequest
 from audit_service import AuditService
+from location_models import LocationCreate, LocationUpdate, LocationResponse
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
