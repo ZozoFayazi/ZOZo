@@ -27,57 +27,78 @@ def get_email_logo_url():
     return "https://customer-assets.emergentagent.com/job_zozofinal/artifacts/ucrdxkwy_IMG_8154.jpeg"
 
 def get_base_email_template(content: str, title: str = "ZOZO Burger") -> str:
-    """Base HTML template for all emails"""
+    """Base HTML template for all emails - optimized for email clients (Gmail, iPhone Mail, Outlook)"""
     logo_url = get_email_logo_url()
     
     return f"""
     <!DOCTYPE html>
-    <html>
+    <html lang="de">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{title}</title>
+        <!--[if mso]>
+        <noscript>
+            <xml>
+                <o:OfficeDocumentSettings>
+                    <o:PixelsPerInch>96</o:PixelsPerInch>
+                </o:OfficeDocumentSettings>
+            </xml>
+        </noscript>
+        <![endif]-->
+        <style type="text/css">
+            /* Reset styles for email clients */
+            body, table, td, a {{ -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }}
+            table, td {{ mso-table-lspace: 0pt; mso-table-rspace: 0pt; }}
+            img {{ -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }}
             body {{
-                margin: 0;
-                padding: 0;
-                font-family: 'Helvetica Neue', Arial, sans-serif;
+                margin: 0 !important;
+                padding: 0 !important;
+                font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
                 background-color: #0a0a0a;
                 color: #ffffff;
+                width: 100% !important;
+                height: 100% !important;
             }}
             .container {{
                 max-width: 600px;
                 margin: 0 auto;
-                background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+                background-color: #1a1a1a;
             }}
             .header {{
-                background: #b91c1c;
+                background-color: #1a1a1a;
                 padding: 30px 20px;
                 text-align: center;
-                border-bottom: 4px solid #dc2626;
             }}
             .header img {{
-                max-width: 200px;
+                max-width: 180px;
                 height: auto;
+                display: block;
+                margin: 0 auto;
             }}
             .content {{
                 padding: 40px 30px;
                 line-height: 1.8;
+                background-color: #1a1a1a;
             }}
             .content h1 {{
                 color: #dc2626;
-                font-size: 28px;
-                margin-bottom: 20px;
+                font-size: 24px;
+                margin: 0 0 20px 0;
                 text-align: center;
+                font-weight: bold;
             }}
             .content p {{
                 color: #e5e5e5;
                 font-size: 16px;
-                margin-bottom: 15px;
+                margin: 0 0 15px 0;
+                line-height: 1.6;
             }}
             .button {{
                 display: inline-block;
-                padding: 15px 40px;
-                background: #dc2626;
+                padding: 16px 40px;
+                background-color: #dc2626;
                 color: #ffffff !important;
                 text-decoration: none;
                 border-radius: 8px;
@@ -86,11 +107,8 @@ def get_base_email_template(content: str, title: str = "ZOZO Burger") -> str:
                 margin: 20px 0;
                 text-align: center;
             }}
-            .button:hover {{
-                background: #b91c1c;
-            }}
             .code-box {{
-                background: #1a1a1a;
+                background-color: #0a0a0a;
                 border: 2px solid #dc2626;
                 border-radius: 8px;
                 padding: 20px;
@@ -105,17 +123,17 @@ def get_base_email_template(content: str, title: str = "ZOZO Burger") -> str:
                 font-family: 'Courier New', monospace;
             }}
             .info-box {{
-                background: rgba(220, 38, 38, 0.1);
+                background-color: rgba(220, 38, 38, 0.15);
                 border-left: 4px solid #dc2626;
                 padding: 15px 20px;
                 margin: 20px 0;
-                border-radius: 4px;
+                border-radius: 0 4px 4px 0;
             }}
             .footer {{
-                background: #0a0a0a;
+                background-color: #0a0a0a;
                 padding: 30px 20px;
                 text-align: center;
-                border-top: 2px solid #1a1a1a;
+                border-top: 1px solid #333333;
             }}
             .footer p {{
                 color: #666666;
