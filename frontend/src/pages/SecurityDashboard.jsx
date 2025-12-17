@@ -88,10 +88,24 @@ export default function SecurityDashboard() {
     }
   };
 
+  // Fetch 2FA status
+  const fetch2FAStatus = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/admin/auth/2fa/status`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to fetch 2FA status');
+      const data = await response.json();
+      setTwoFAStatus(data);
+    } catch (error) {
+      console.error('2FA status fetch error:', error);
+    }
+  };
+
   useEffect(() => {
     if (token && isSuperAdmin()) {
       setLoading(true);
-      Promise.all([fetchSummary(), fetchLogs()])
+      Promise.all([fetchSummary(), fetchLogs(), fetch2FAStatus()])
         .finally(() => setLoading(false));
     }
   }, [token]);
