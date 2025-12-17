@@ -29,16 +29,15 @@ export default function AdminLogin() {
       console.log('Login successful:', result);
       toast.success('Login erfolgreich!');
       
-      // Force navigation with replace to avoid back-button issues
-      navigate('/admin/dashboard', { replace: true });
-      
-      // Force a small delay to ensure state is updated
+      // Navigate to dashboard - using replace to prevent back button issues
+      // Small delay to ensure state is fully updated before navigation
       setTimeout(() => {
-        window.location.href = '/admin/dashboard';
-      }, 100);
+        navigate('/admin/dashboard', { replace: true });
+      }, 150);
     } catch (error) {
       console.error('Login error:', error);
       toast.error(error.message || 'Login fehlgeschlagen');
+    } finally {
       setLoading(false);
     }
   };
