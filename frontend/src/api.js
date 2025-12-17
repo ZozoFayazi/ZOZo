@@ -10,8 +10,14 @@ const api = axios.create({
 });
 
 // Add auth token to requests if available
+// Check both admin (sessionStorage) and customer (localStorage) tokens
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('zozoAuthToken');
+  // Check admin token first (from AdminAuthContext)
+  const adminToken = sessionStorage.getItem('adminToken');
+  // Then check customer token
+  const customerToken = localStorage.getItem('zozoAuthToken');
+  
+  const token = adminToken || customerToken;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
