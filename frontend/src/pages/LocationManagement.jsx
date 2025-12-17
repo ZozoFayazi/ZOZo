@@ -228,6 +228,7 @@ export default function LocationManagement() {
                     variant="outline" 
                     size="sm" 
                     className="flex-1"
+                    onClick={() => handleEditClick(location)}
                     data-testid={`location-edit-${location.slug}`}
                   >
                     <Edit className="h-4 w-4 mr-1" />
@@ -237,6 +238,7 @@ export default function LocationManagement() {
                     <Button 
                       variant="outline" 
                       size="sm"
+                      onClick={() => handleDeleteClick(location)}
                       className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
                       data-testid={`location-delete-${location.slug}`}
                     >
