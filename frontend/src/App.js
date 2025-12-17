@@ -201,7 +201,7 @@ function App() {
             path="/admin/menu" 
             element={
               <ProtectedAdminRoute>
-                <MenuManagement />
+                <ProductManagement />
               </ProtectedAdminRoute>
             } 
           />
