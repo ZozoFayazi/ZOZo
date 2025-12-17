@@ -2160,11 +2160,17 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             {"$set": {"last_login": datetime.utcnow()}}
         )
         
+        # Record successful login (resets rate limit counter)
+        await rate_limiter.record_attempt(http_request, "admin_login", success=True)
+        
         # Log successful login
         await audit_service.log_action(
             actor_email=request.email,
-            action="admin_login",
-            result="success"
+            action=AuditAction.LOGIN_SUCCESS.value,
+            result="success",
+            category=AuditCategory.AUTH.value,
+            ip_address=client_ip,
+            details={"role": admin["role"]}
         )
         
         # Prepare admin response
