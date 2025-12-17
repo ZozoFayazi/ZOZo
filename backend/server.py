@@ -1999,7 +1999,8 @@ async def admin_login(request: AdminLoginRequest):
             "role": admin["role"],
             "branch_ids": admin.get("branch_ids", []),
             "permissions": AdminAuth.get_permissions(admin["role"]),
-            "totp_enabled": admin.get("totp_enabled", False)
+            "totp_enabled": admin.get("totp_enabled", False),
+            "must_change_password": admin.get("must_change_password", True)  # Force password change on first login
         }
         
         return AdminLoginResponse(
