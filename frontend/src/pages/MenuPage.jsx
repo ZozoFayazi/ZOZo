@@ -6,6 +6,18 @@ import ProductCustomizer from '../components/ProductCustomizer';
 import CategoryUpsellDialog from '../components/CategoryUpsellDialog';
 import QuickReorder from '../components/QuickReorder';
 
+// Helper function to build full image URL
+const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  // If it's already a full URL (http/https), return as-is
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  // If it's a local path, prepend the backend URL
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+  return `${backendUrl}${imageUrl}`;
+};
+
 function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [locations, setLocations] = useState([]);
   const [menu, setMenu] = useState([]);
