@@ -219,7 +219,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
         {item.image_url && (
           <div className="aspect-video overflow-hidden">
             <img
-              src={item.image_url}
+              src={getImageUrl(item.image_url)}
               alt={item.name}
               className="w-full h-full object-cover"
             />
