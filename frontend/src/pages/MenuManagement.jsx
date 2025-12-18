@@ -7,6 +7,19 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
+// Helper function to build full image URL
+const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  // Convert /uploads/... to /api/uploads/... for Kubernetes Ingress routing
+  if (imageUrl.startsWith('/uploads/')) {
+    return `${API_URL}/api${imageUrl}`;
+  }
+  return `${API_URL}${imageUrl}`;
+};
+
 function MenuManagement() {
   const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
