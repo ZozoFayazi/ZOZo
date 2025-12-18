@@ -200,24 +200,38 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
           <div className="space-y-2">
             <Label>Produktbild</Label>
             {imagePreview ? (
-              <div className="relative">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="absolute top-2 right-2"
-                  onClick={() => {
-                    setImagePreview('');
-                    setImageFile(null);
-                  }}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+              <div className="space-y-3">
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={() => {
+                      setImagePreview('');
+                      setImageFile(null);
+                      setFormData(prev => ({ ...prev, image_url: '' }));
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                {/* Option to change image */}
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="text-sm"
+                    data-testid="product-image-change"
+                  />
+                  <span className="text-xs text-muted-foreground">Neues Bild wählen</span>
+                </div>
               </div>
             ) : (
               <div className="border-2 border-dashed rounded-lg p-8 text-center">
