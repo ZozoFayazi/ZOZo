@@ -281,45 +281,80 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
             />
           </div>
           
-          {/* Prices */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="price_normal">Preis Normal (€)</Label>
-              <Input
-                id="price_normal"
-                type="number"
-                step="0.01"
-                value={formData.price_normal}
-                onChange={(e) => setFormData(prev => ({ ...prev, price_normal: e.target.value }))}
-                placeholder="9.99"
-                data-testid="product-price-normal"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="price_medium">Preis Medium (€)</Label>
-              <Input
-                id="price_medium"
-                type="number"
-                step="0.01"
-                value={formData.price_medium}
-                onChange={(e) => setFormData(prev => ({ ...prev, price_medium: e.target.value }))}
-                placeholder="11.99"
-                data-testid="product-price-medium"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="price_large">Preis Large (€)</Label>
-              <Input
-                id="price_large"
-                type="number"
-                step="0.01"
-                value={formData.price_large}
-                onChange={(e) => setFormData(prev => ({ ...prev, price_large: e.target.value }))}
-                placeholder="13.99"
-                data-testid="product-price-large"
-              />
-            </div>
-          </div>
+          {/* Prices - dynamically show based on category */}
+          {(() => {
+            // Get selected category
+            const selectedCategory = categories.find(c => c.id === formData.category_id);
+            const categorySlug = selectedCategory?.slug?.toLowerCase() || '';
+            
+            // Categories that have size variations (Normal/Medium/Large or similar)
+            const hasSizeVariations = 
+              categorySlug.includes('pizza') || 
+              categorySlug.includes('burger') ||
+              categorySlug.includes('pasta') ||
+              categorySlug.includes('wrap') ||
+              categorySlug.includes('menu');
+            
+            if (hasSizeVariations) {
+              return (
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="price_normal">Preis Normal (€)</Label>
+                    <Input
+                      id="price_normal"
+                      type="number"
+                      step="0.01"
+                      value={formData.price_normal}
+                      onChange={(e) => setFormData(prev => ({ ...prev, price_normal: e.target.value }))}
+                      placeholder="9.99"
+                      data-testid="product-price-normal"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price_medium">Preis Medium (€)</Label>
+                    <Input
+                      id="price_medium"
+                      type="number"
+                      step="0.01"
+                      value={formData.price_medium}
+                      onChange={(e) => setFormData(prev => ({ ...prev, price_medium: e.target.value }))}
+                      placeholder="11.99"
+                      data-testid="product-price-medium"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price_large">Preis Large (€)</Label>
+                    <Input
+                      id="price_large"
+                      type="number"
+                      step="0.01"
+                      value={formData.price_large}
+                      onChange={(e) => setFormData(prev => ({ ...prev, price_large: e.target.value }))}
+                      placeholder="13.99"
+                      data-testid="product-price-large"
+                    />
+                  </div>
+                </div>
+              );
+            } else {
+              // Single price for categories without size variations (Salate, Getränke, Dips, etc.)
+              return (
+                <div className="space-y-2">
+                  <Label htmlFor="price_normal">Preis (€) *</Label>
+                  <Input
+                    id="price_normal"
+                    type="number"
+                    step="0.01"
+                    value={formData.price_normal}
+                    onChange={(e) => setFormData(prev => ({ ...prev, price_normal: e.target.value }))}
+                    placeholder="10.79"
+                    className="max-w-xs"
+                    data-testid="product-price-normal"
+                  />
+                </div>
+              );
+            }
+          })()}
         </div>
         
         <DialogFooter>
