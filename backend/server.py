@@ -1045,11 +1045,12 @@ async def update_menu_item(
     return serialize_doc(updated_item)
 
 # Product Image Upload
+@api_router.post("/admin/products/{item_id}/upload-image")
 @api_router.post("/admin/menu-items/{item_id}/upload-image")
 async def upload_product_image(
     item_id: str,
     file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Upload product image for menu item"""
     import os
