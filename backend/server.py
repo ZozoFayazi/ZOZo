@@ -1009,11 +1009,12 @@ async def update_featured_status(
     updated_item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
     return serialize_doc(updated_item)
 
+@api_router.put("/admin/products/{item_id}")
 @api_router.patch("/admin/menu-items/{item_id}")
 async def update_menu_item(
     item_id: str,
     update: MenuItemUpdate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Update menu item"""
     # Check if item exists
