@@ -6,6 +6,16 @@ import OrderTypeSelection from '../components/OrderTypeSelection';
 import Reviews from '../components/Reviews';
 import useEmblaCarousel from 'embla-carousel-react';
 
+// Helper function to build full image URL
+const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+  return `${backendUrl}${imageUrl}`;
+};
+
 function HomePage({ selectedLocation, setSelectedLocation }) {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
