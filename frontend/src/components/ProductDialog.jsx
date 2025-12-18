@@ -334,12 +334,12 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
               );
             }
             
-            // Pizza: Medium (25cm) und Large (32cm)
+            // Pizza: Medium (ca. 26cm) und Large (ca. 30cm)
             if (categorySlug.includes('pizza') || categoryName.includes('pizza')) {
               return (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="price_medium">Medium (25cm) €</Label>
+                    <Label htmlFor="price_medium">Medium (ca. 26cm) €</Label>
                     <Input
                       id="price_medium"
                       type="number"
@@ -351,7 +351,7 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price_large">Large (32cm) €</Label>
+                    <Label htmlFor="price_large">Large (ca. 30cm) €</Label>
                     <Input
                       id="price_large"
                       type="number"
