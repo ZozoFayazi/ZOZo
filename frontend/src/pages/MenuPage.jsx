@@ -13,8 +13,12 @@ const getImageUrl = (imageUrl) => {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl;
   }
-  // If it's a local path, prepend the backend URL
+  // If it's a local path, prepend /api to route through Kubernetes Ingress to backend
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+  // Convert /uploads/... to /api/uploads/...
+  if (imageUrl.startsWith('/uploads/')) {
+    return `${backendUrl}/api${imageUrl}`;
+  }
   return `${backendUrl}${imageUrl}`;
 };
 
