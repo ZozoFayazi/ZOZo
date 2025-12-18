@@ -952,10 +952,12 @@ async def get_all_menu_items(
     """Get all menu items (admin)"""
     query = {}
     
-    if current_user.get('role') == 'manager' and current_user.get('location_id'):
+    # Filter by admin's branch access if applicable
+    branch_ids = admin.get('branch_ids', [])
+    if branch_ids:
         query["$or"] = [
             {"location_id": None},
-            {"location_id": current_user['location_id']}
+            {"location_id": {"$in": branch_ids}}
         ]
     elif location_id:
         query["location_id"] = location_id
