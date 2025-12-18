@@ -977,9 +977,10 @@ async def create_menu_item(
     """Create a new menu item"""
     item_doc = item.dict()
     
-    # If user is location manager, set location_id
-    if current_user.get('role') == 'manager' and current_user.get('location_id'):
-        item_doc['location_id'] = current_user['location_id']
+    # If admin has specific branch access, set location_id
+    branch_ids = admin.get('branch_ids', [])
+    if branch_ids and len(branch_ids) == 1:
+        item_doc['location_id'] = branch_ids[0]
     
     result = await db.menu_items.insert_one(item_doc)
     item_doc['_id'] = result.inserted_id
