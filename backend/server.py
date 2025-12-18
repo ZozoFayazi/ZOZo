@@ -354,6 +354,7 @@ async def check_delivery_zone(postal_code: str = Query(..., description="Custome
 
 # Categories
 @api_router.get("/categories")
+@api_router.get("/admin/categories")
 async def get_categories():
     """Get all active categories"""
     categories = await db.categories.find({"active": True}).sort("order", 1).to_list(length=100)
