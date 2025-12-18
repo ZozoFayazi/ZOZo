@@ -352,6 +352,23 @@ async def check_delivery_zone(postal_code: str = Query(..., description="Custome
         "message": f"Lieferung nach {postal_code} möglich!"
     }
 
+# Categories
+@api_router.get("/categories")
+async def get_categories():
+    """Get all active categories"""
+    categories = await db.categories.find({"active": True}).sort("order", 1).to_list(length=100)
+    
+    result = []
+    for cat in categories:
+        result.append({
+            "id": str(cat.get("_id")),
+            "name": cat.get("name"),
+            "slug": cat.get("slug"),
+            "order": cat.get("order", 0)
+        })
+    
+    return {"categories": result}
+
 # Menu
 @api_router.get("/menu")
 async def get_menu(location_id: str = Query(...)):
