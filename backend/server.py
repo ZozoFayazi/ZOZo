@@ -2020,7 +2020,7 @@ async def invite_to_group_order(group_code: str, data: GroupOrderInvite):
         # Send invitation email
         from email_service import send_group_order_invite_email
         
-        share_link = f"https://burger-ready.preview.emergentagent.com/group-order/{group_code.upper()}"
+        share_link = f"https://burger-admin-2.preview.emergentagent.com/group-order/{group_code.upper()}"
         sender_name = data.sender_name or group_order.get("host_name", "Ein Freund")
         
         success = send_group_order_invite_email(
