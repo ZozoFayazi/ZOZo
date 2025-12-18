@@ -143,7 +143,7 @@ function FeaturedProducts() {
                         {/* Image */}
                         {item.image_url && (
                           <img
-                            src={item.image_url}
+                            src={getImageUrl(item.image_url)}
                             alt={item.name}
                             className="w-20 h-20 object-cover rounded-lg"
                           />
