@@ -966,7 +966,7 @@ async def get_all_menu_items(
         query["category_id"] = category_id
     
     items = await db.menu_items.find(query).to_list(length=1000)
-    return serialize_doc(items)
+    return {"products": serialize_doc(items)}
 
 @api_router.post("/admin/products")
 @api_router.post("/admin/menu-items")
