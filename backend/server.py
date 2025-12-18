@@ -940,11 +940,13 @@ async def update_order_status(
     return serialize_doc(updated_order)
 
 # Menu Management
+# Admin Products/Menu Items Routes (same endpoint, different names for compatibility)
+@api_router.get("/admin/products")
 @api_router.get("/admin/menu-items")
 async def get_all_menu_items(
     location_id: Optional[str] = None,
     category_id: Optional[str] = None,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Get all menu items (admin)"""
     query = {}
