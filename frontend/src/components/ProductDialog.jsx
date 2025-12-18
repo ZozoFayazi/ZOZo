@@ -286,74 +286,88 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
             // Get selected category
             const selectedCategory = categories.find(c => c.id === formData.category_id);
             const categorySlug = selectedCategory?.slug?.toLowerCase() || '';
+            const categoryName = selectedCategory?.name?.toLowerCase() || '';
             
-            // Categories that have size variations (Normal/Medium/Large or similar)
-            const hasSizeVariations = 
-              categorySlug.includes('pizza') || 
-              categorySlug.includes('burger') ||
-              categorySlug.includes('pasta') ||
-              categorySlug.includes('wrap') ||
-              categorySlug.includes('menu');
-            
-            if (hasSizeVariations) {
+            // Burger: Medium (125g) und Large (180g)
+            if (categorySlug.includes('burger') || categoryName.includes('burger')) {
               return (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="price_normal">Preis Normal (€)</Label>
-                    <Input
-                      id="price_normal"
-                      type="number"
-                      step="0.01"
-                      value={formData.price_normal}
-                      onChange={(e) => setFormData(prev => ({ ...prev, price_normal: e.target.value }))}
-                      placeholder="9.99"
-                      data-testid="product-price-normal"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="price_medium">Preis Medium (€)</Label>
+                    <Label htmlFor="price_medium">Medium (125g) €</Label>
                     <Input
                       id="price_medium"
                       type="number"
                       step="0.01"
                       value={formData.price_medium}
                       onChange={(e) => setFormData(prev => ({ ...prev, price_medium: e.target.value }))}
-                      placeholder="11.99"
+                      placeholder="7.99"
                       data-testid="product-price-medium"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price_large">Preis Large (€)</Label>
+                    <Label htmlFor="price_large">Large (180g) €</Label>
                     <Input
                       id="price_large"
                       type="number"
                       step="0.01"
                       value={formData.price_large}
                       onChange={(e) => setFormData(prev => ({ ...prev, price_large: e.target.value }))}
-                      placeholder="13.99"
+                      placeholder="9.99"
                       data-testid="product-price-large"
                     />
                   </div>
                 </div>
               );
-            } else {
-              // Single price for categories without size variations (Salate, Getränke, Dips, etc.)
+            }
+            
+            // Pizza: Medium (25cm) und Large (32cm)
+            if (categorySlug.includes('pizza') || categoryName.includes('pizza')) {
               return (
-                <div className="space-y-2">
-                  <Label htmlFor="price_normal">Preis (€) *</Label>
-                  <Input
-                    id="price_normal"
-                    type="number"
-                    step="0.01"
-                    value={formData.price_normal}
-                    onChange={(e) => setFormData(prev => ({ ...prev, price_normal: e.target.value }))}
-                    placeholder="10.79"
-                    className="max-w-xs"
-                    data-testid="product-price-normal"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="price_medium">Medium (25cm) €</Label>
+                    <Input
+                      id="price_medium"
+                      type="number"
+                      step="0.01"
+                      value={formData.price_medium}
+                      onChange={(e) => setFormData(prev => ({ ...prev, price_medium: e.target.value }))}
+                      placeholder="9.99"
+                      data-testid="product-price-medium"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price_large">Large (32cm) €</Label>
+                    <Input
+                      id="price_large"
+                      type="number"
+                      step="0.01"
+                      value={formData.price_large}
+                      onChange={(e) => setFormData(prev => ({ ...prev, price_large: e.target.value }))}
+                      placeholder="12.99"
+                      data-testid="product-price-large"
+                    />
+                  </div>
                 </div>
               );
             }
+            
+            // All other categories: Single price (Salate, Getränke, Pasta, Wraps, etc.)
+            return (
+              <div className="space-y-2">
+                <Label htmlFor="price_normal">Preis (€) *</Label>
+                <Input
+                  id="price_normal"
+                  type="number"
+                  step="0.01"
+                  value={formData.price_normal}
+                  onChange={(e) => setFormData(prev => ({ ...prev, price_normal: e.target.value }))}
+                  placeholder="10.79"
+                  className="max-w-xs"
+                  data-testid="product-price-normal"
+                />
+              </div>
+            );
           })()}
         </div>
         
