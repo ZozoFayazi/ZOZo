@@ -965,10 +965,11 @@ async def get_all_menu_items(
     items = await db.menu_items.find(query).to_list(length=1000)
     return serialize_doc(items)
 
+@api_router.post("/admin/products")
 @api_router.post("/admin/menu-items")
 async def create_menu_item(
     item: MenuItemCreate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Create a new menu item"""
     item_doc = item.dict()
