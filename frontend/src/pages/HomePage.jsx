@@ -181,7 +181,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                             <div key={product.id} className="flex-[0_0_100%] min-w-0">
                               <div className="aspect-square glass-premium relative">
                                 <img loading="lazy"
-                                  src={product.image_url || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop'}
+                                  src={getImageUrl(product.image_url) || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop'}
                                   alt={product.name}
                                   className="w-full h-full object-cover"
                                 />
