@@ -28,6 +28,20 @@ import {
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Upload, Search, Package, FolderPlus } from 'lucide-react';
 
+// Helper function to build full image URL
+const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+  // Convert /uploads/... to /api/uploads/... for Kubernetes Ingress routing
+  if (imageUrl.startsWith('/uploads/')) {
+    return `${backendUrl}/api${imageUrl}`;
+  }
+  return `${backendUrl}${imageUrl}`;
+};
+
 export default function ProductManagement() {
   const { token, hasPermission } = useAdminAuth();
   const [products, setProducts] = useState([]);
