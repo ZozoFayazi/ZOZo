@@ -3177,7 +3177,9 @@ app.include_router(api_router)
 app.include_router(product_router, prefix="/api")
 
 # Mount static files for product images
+# Note: Mount under /api/uploads so it works with the Kubernetes Ingress routing
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/api/uploads", StaticFiles(directory="uploads"), name="api_uploads")
 
 app.add_middleware(
     CORSMiddleware,
