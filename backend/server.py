@@ -1063,9 +1063,10 @@ async def upload_product_image(
     if not item:
         raise HTTPException(status_code=404, detail="Menu item not found")
     
-    # Check access
-    if current_user.get('role') == 'manager':
-        if item.get('location_id') and item['location_id'] != current_user.get('location_id'):
+    # Check access - admin can upload for their branches
+    branch_ids = admin.get('branch_ids', [])
+    if branch_ids and item.get('location_id'):
+        if item['location_id'] not in branch_ids:
             raise HTTPException(status_code=403, detail="Access denied")
     
     # Validate file type
