@@ -102,7 +102,8 @@ export default function ProductManagement() {
       // Create simple category objects from the data
       const cats = data.categories || [];
       setCategories(cats.map(cat => ({
-        id: cat.slug || cat._id || cat.id,
+        id: cat.id || cat._id,  // Use ObjectId as ID to match product.category_id
+        slug: cat.slug,
         name: cat.name
       })));
     } catch (error) {
