@@ -285,8 +285,8 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
           {(() => {
             // Get selected category
             const selectedCategory = categories.find(c => c.id === formData.category_id);
-            const categorySlug = selectedCategory?.slug?.toLowerCase() || '';
-            const categoryName = selectedCategory?.name?.toLowerCase() || '';
+            const categorySlug = (selectedCategory?.slug || selectedCategory?.name || '').toLowerCase();
+            const categoryName = (selectedCategory?.name || '').toLowerCase();
             
             // Burger: Medium (125g) und Large (180g)
             if (categorySlug.includes('burger') || categoryName.includes('burger')) {
