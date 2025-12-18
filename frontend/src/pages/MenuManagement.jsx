@@ -132,7 +132,7 @@ function MenuManagement() {
               <div className="aspect-video rounded-lg overflow-hidden bg-accent flex items-center justify-center">
                 {item.image_url ? (
                   <img
-                    src={`${API_URL}${item.image_url}`}
+                    src={getImageUrl(item.image_url)}
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
