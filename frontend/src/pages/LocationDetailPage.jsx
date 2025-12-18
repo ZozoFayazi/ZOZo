@@ -27,6 +27,10 @@ const getImageUrl = (imageUrl) => {
     return imageUrl;
   }
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+  // Convert /uploads/... to /api/uploads/... for Kubernetes Ingress routing
+  if (imageUrl.startsWith('/uploads/')) {
+    return `${backendUrl}/api${imageUrl}`;
+  }
   return `${backendUrl}${imageUrl}`;
 };
 
