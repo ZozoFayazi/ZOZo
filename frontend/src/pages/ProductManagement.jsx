@@ -370,7 +370,7 @@ export default function ProductManagement() {
                           <TableCell>
                             {product.image_url ? (
                               <img
-                                src={product.image_url}
+                                src={getImageUrl(product.image_url)}
                                 alt={product.name}
                                 className="h-12 w-12 object-cover rounded"
                               />
