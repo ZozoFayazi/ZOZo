@@ -2362,6 +2362,7 @@ class POSConfigUpdate(BaseModel):
     username: Optional[str] = None
     secret: Optional[str] = None
     base_url: Optional[str] = None
+    terminal_id: Optional[str] = None  # Cash-X Terminal ID
     settings: Optional[dict] = None
 
 class POSTestRequest(BaseModel):
