@@ -104,7 +104,7 @@ class POSService:
         new_creds = {}
         
         # Only update credentials if they are provided (not empty strings)
-        for field in ['api_key', 'merchant_id', 'username', 'secret', 'base_url']:
+        for field in ['api_key', 'merchant_id', 'username', 'secret', 'base_url', 'terminal_id']:
             if config_data.get(field):
                 new_creds[field] = config_data[field]
             elif existing_creds.get(field):
