@@ -652,6 +652,57 @@ export default function POSSettings() {
                   </div>
                 </div>
               )}
+
+              {/* Cash-X specific fields */}
+              {formData.provider === 'cashx' && (
+                <div className="space-y-4">
+                  <Separator />
+                  <p className="text-sm font-medium">Cash-X Cloud Konfiguration</p>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="cashx_base_url">API URL *</Label>
+                    <Input
+                      id="cashx_base_url"
+                      value={formData.base_url}
+                      onChange={(e) => setFormData({ ...formData, base_url: e.target.value })}
+                      placeholder="https://cashx.zozo-burger.de"
+                      data-testid="pos-cashx-base-url-input"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Cloud-URL Ihres Cash-X Servers
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cashx_api_key">API Key *</Label>
+                    <Input
+                      id="cashx_api_key"
+                      type="password"
+                      value={formData.api_key}
+                      onChange={(e) => setFormData({ ...formData, api_key: e.target.value })}
+                      placeholder={posConfig?.has_api_key ? "••••••••" : "Ihr API-Schlüssel"}
+                      data-testid="pos-cashx-api-key-input"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Geheimer Schlüssel zur Authentifizierung
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cashx_terminal_id">Terminal ID (optional)</Label>
+                    <Input
+                      id="cashx_terminal_id"
+                      value={formData.terminal_id || ''}
+                      onChange={(e) => setFormData({ ...formData, terminal_id: e.target.value })}
+                      placeholder="KASSE-1"
+                      data-testid="pos-cashx-terminal-id-input"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Identifikation der Kasse (Standard: KASSE-1)
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <DialogFooter>
