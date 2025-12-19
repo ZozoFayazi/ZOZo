@@ -77,9 +77,17 @@ function SortableTableRow({ product, categories, canManageProducts, onEdit, onTo
     backgroundColor: isDragging ? 'hsl(var(--accent))' : undefined,
   };
 
-  // Find category name by ID
+  // Find category name by ID - check multiple possible matches
   const getCategoryName = (categoryId) => {
-    const category = categories.find(c => c.id === categoryId || c.slug === categoryId);
+    if (!categoryId) return '-';
+    // Try to find category by id, slug, or partial match
+    const category = categories.find(c => 
+      c.id === categoryId || 
+      c.slug === categoryId ||
+      c.id?.toString() === categoryId?.toString() ||
+      // For ObjectId stored as string - check if the categoryId contains the category's ObjectId
+      categoryId.includes && c.id && categoryId.includes(c.id.slice(-12))
+    );
     return category?.name || categoryId || '-';
   };
 
