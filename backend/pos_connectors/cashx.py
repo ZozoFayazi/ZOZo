@@ -238,7 +238,7 @@ class CashXConnector(BasePOSConnector):
                 "is_test_mode": False
             }
         
-        api_url = f"{self.base_url}/api/orders"
+        api_url = f"{self.base_url}/api/cashx/orders"
         logger.info(f"Cash-X Bestellung senden: POST {api_url} - {order_number}")
         
         try:
