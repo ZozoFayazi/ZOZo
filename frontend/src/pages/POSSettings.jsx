@@ -72,7 +72,8 @@ export default function POSSettings() {
     api_key: '',
     username: '',
     secret: '',
-    base_url: ''
+    base_url: '',
+    terminal_id: ''
   });
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
