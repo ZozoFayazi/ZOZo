@@ -206,7 +206,7 @@ class CashXConnector(BasePOSConnector):
             "details": {
                 "simulated": True,
                 "terminal": self.terminal_id,
-                "api_url": f"{self.base_url}/api/health"
+                "api_url": f"{self.base_url}/api/cashx/health"
             },
             "is_test_mode": True
         }
