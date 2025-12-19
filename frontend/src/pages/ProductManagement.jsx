@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import AdminLayout from '../components/AdminLayout';
 import ProductDialog from '../components/ProductDialog';
@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge';
 import { Switch } from '../components/ui/switch';
 import { Label } from '../components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
   Dialog,
   DialogContent,
@@ -26,7 +25,25 @@ import {
   TableRow,
 } from '../components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Upload, Search, Package, FolderPlus } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Package, FolderPlus, GripVertical, Save } from 'lucide-react';
+
+// DnD Kit imports
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 // Helper function to build full image URL
 const getImageUrl = (imageUrl) => {
@@ -42,6 +59,124 @@ const getImageUrl = (imageUrl) => {
   return `${backendUrl}${imageUrl}`;
 };
 
+// Sortable Table Row Component
+function SortableTableRow({ product, categories, canManageProducts, onEdit, onToggleActive, onToggleStock, onDelete }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: product.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    backgroundColor: isDragging ? 'hsl(var(--accent))' : undefined,
+  };
+
+  // Find category name by ID
+  const getCategoryName = (categoryId) => {
+    const category = categories.find(c => c.id === categoryId || c.slug === categoryId);
+    return category?.name || categoryId || '-';
+  };
+
+  return (
+    <TableRow ref={setNodeRef} style={style} data-testid={`product-row-${product.id}`}>
+      {canManageProducts && (
+        <TableCell className="w-10">
+          <button
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent"
+            data-testid={`product-drag-${product.id}`}
+          >
+            <GripVertical className="h-5 w-5 text-muted-foreground" />
+          </button>
+        </TableCell>
+      )}
+      <TableCell>
+        {product.image_url ? (
+          <img
+            src={getImageUrl(product.image_url)}
+            alt={product.name}
+            className="h-12 w-12 object-cover rounded"
+          />
+        ) : (
+          <div className="h-12 w-12 bg-muted rounded flex items-center justify-center">
+            <Package className="h-6 w-6 text-muted-foreground" />
+          </div>
+        )}
+      </TableCell>
+      <TableCell className="font-medium">
+        {product.name}
+      </TableCell>
+      <TableCell className="text-muted-foreground">
+        {getCategoryName(product.category_id)}
+      </TableCell>
+      <TableCell>
+        {product.price_normal 
+          ? `${product.price_normal.toFixed(2)}€` 
+          : product.price_medium 
+            ? `${product.price_medium.toFixed(2)}€` 
+            : '-'}
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={product.active ?? true}
+            onCheckedChange={() => onToggleActive(product.id, product.active ?? true)}
+            data-testid={`product-active-${product.id}`}
+          />
+          <Badge variant={product.active ?? true ? "default" : "secondary"}>
+            {product.active ?? true ? 'Aktiv' : 'Inaktiv'}
+          </Badge>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={product.in_stock ?? true}
+            onCheckedChange={() => onToggleStock(product.id, product.in_stock ?? true)}
+            data-testid={`product-stock-${product.id}`}
+          />
+          <Badge 
+            variant={product.in_stock ?? true ? "default" : "destructive"}
+            className={product.in_stock ?? true ? "bg-[hsl(var(--success))]" : ""}
+          >
+            {product.in_stock ?? true ? 'Verfügbar' : 'Ausverkauft'}
+          </Badge>
+        </div>
+      </TableCell>
+      {canManageProducts && (
+        <TableCell>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onEdit(product)}
+              data-testid={`product-edit-${product.id}`}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              onClick={() => onDelete(product.id, product.name)}
+              data-testid={`product-delete-${product.id}`}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </TableCell>
+      )}
+    </TableRow>
+  );
+}
+
 export default function ProductManagement() {
   const { token, hasPermission } = useAdminAuth();
   const [products, setProducts] = useState([]);
@@ -52,8 +187,22 @@ export default function ProductManagement() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [categoryName, setCategoryName] = useState('');
+  const [hasOrderChanges, setHasOrderChanges] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
   
   const canManageProducts = hasPermission('manage_products');
+  
+  // DnD Kit sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   
   useEffect(() => {
     if (token) {
@@ -76,7 +225,14 @@ export default function ProductManagement() {
       }
       
       const data = await response.json();
-      setProducts(data.products);
+      // Sort by sort_order if available, otherwise by name
+      const sortedProducts = (data.products || []).sort((a, b) => {
+        if (a.sort_order !== undefined && b.sort_order !== undefined) {
+          return a.sort_order - b.sort_order;
+        }
+        return (a.name || '').localeCompare(b.name || '');
+      });
+      setProducts(sortedProducts);
     } catch (error) {
       console.error('Fetch products error:', error);
       toast.error('Fehler beim Laden der Produkte');
@@ -102,7 +258,7 @@ export default function ProductManagement() {
       // Create simple category objects from the data
       const cats = data.categories || [];
       setCategories(cats.map(cat => ({
-        id: cat.id || cat._id,  // Use ObjectId as ID to match product.category_id
+        id: cat.id || cat._id,
         slug: cat.slug,
         name: cat.name
       })));
@@ -166,7 +322,8 @@ export default function ProductManagement() {
       
       const newCategory = await response.json();
       setCategories(prev => [...prev, {
-        id: newCategory.slug || newCategory.id,
+        id: newCategory.id || newCategory.slug,
+        slug: newCategory.slug,
         name: newCategory.name
       }]);
       
@@ -272,10 +429,68 @@ export default function ProductManagement() {
     }
   };
   
-  const filteredProducts = products.filter(product =>
-    product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Drag and Drop Handler
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    
+    if (active.id !== over?.id) {
+      setProducts((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        
+        const newItems = arrayMove(items, oldIndex, newIndex);
+        setHasOrderChanges(true);
+        return newItems;
+      });
+    }
+  };
+  
+  // Save new order to backend
+  const handleSaveOrder = async () => {
+    setSavingOrder(true);
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      
+      // Create order data with new sort_order values
+      const orderData = products.map((product, index) => ({
+        id: product.id,
+        sort_order: index
+      }));
+      
+      const response = await fetch(`${backendUrl}/api/admin/products/reorder`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(orderData)
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Fehler beim Speichern');
+      }
+      
+      setHasOrderChanges(false);
+      toast.success('Reihenfolge gespeichert');
+    } catch (error) {
+      console.error('Save order error:', error);
+      toast.error(error.message || 'Fehler beim Speichern der Reihenfolge');
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+  
+  // Filter products based on search term
+  const filteredProducts = useMemo(() => {
+    return products.filter(product =>
+      product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [products, searchTerm]);
+  
+  // Get product IDs for sortable context
+  const productIds = useMemo(() => filteredProducts.map(p => p.id), [filteredProducts]);
   
   if (loading) {
     return (
@@ -299,22 +514,36 @@ export default function ProductManagement() {
               </h1>
               <p className="text-muted-foreground mt-1">
                 {canManageProducts 
-                  ? 'Verwalten Sie Ihr komplettes Produktsortiment' 
+                  ? 'Verwalten Sie Ihr komplettes Produktsortiment - Drag & Drop zum Sortieren' 
                   : 'Produkte aktivieren/deaktivieren'}
               </p>
             </div>
-            {canManageProducts && (
-              <div className="flex gap-2">
-                <Button onClick={handleCreateProduct} data-testid="products-add-button">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Neues Produkt
+            <div className="flex gap-2">
+              {canManageProducts && hasOrderChanges && (
+                <Button 
+                  onClick={handleSaveOrder} 
+                  disabled={savingOrder}
+                  variant="default"
+                  className="bg-green-600 hover:bg-green-700"
+                  data-testid="save-order-button"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {savingOrder ? 'Speichert...' : 'Reihenfolge speichern'}
                 </Button>
-                <Button variant="outline" onClick={() => setCategoryDialogOpen(true)} data-testid="categories-add-button">
-                  <FolderPlus className="h-4 w-4 mr-2" />
-                  Kategorie
-                </Button>
-              </div>
-            )}
+              )}
+              {canManageProducts && (
+                <>
+                  <Button onClick={handleCreateProduct} data-testid="products-add-button">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Neues Produkt
+                  </Button>
+                  <Button variant="outline" onClick={() => setCategoryDialogOpen(true)} data-testid="categories-add-button">
+                    <FolderPlus className="h-4 w-4 mr-2" />
+                    Kategorie
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
           
           {/* Search */}
@@ -336,8 +565,14 @@ export default function ProductManagement() {
           {/* Products Table */}
           <Card>
             <CardHeader>
-              <CardTitle>
-                Produkte ({filteredProducts.length})
+              <CardTitle className="flex items-center justify-between">
+                <span>Produkte ({filteredProducts.length})</span>
+                {canManageProducts && (
+                  <span className="text-sm font-normal text-muted-foreground">
+                    <GripVertical className="h-4 w-4 inline mr-1" />
+                    Ziehen Sie Produkte zum Sortieren
+                  </span>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -353,101 +588,42 @@ export default function ProductManagement() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Bild</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Kategorie</TableHead>
-                        <TableHead>Preis</TableHead>
-                        <TableHead>Aktiv</TableHead>
-                        <TableHead>Lagerbestand</TableHead>
-                        {canManageProducts && <TableHead>Aktionen</TableHead>}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredProducts.map((product) => (
-                        <TableRow key={product.id} data-testid={`product-row-${product.id}`}>
-                          <TableCell>
-                            {product.image_url ? (
-                              <img
-                                src={getImageUrl(product.image_url)}
-                                alt={product.name}
-                                className="h-12 w-12 object-cover rounded"
-                              />
-                            ) : (
-                              <div className="h-12 w-12 bg-muted rounded flex items-center justify-center">
-                                <Package className="h-6 w-6 text-muted-foreground" />
-                              </div>
-                            )}
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {product.name}
-                          </TableCell>
-                          <TableCell className="text-muted-foreground">
-                            {product.category_id}
-                          </TableCell>
-                          <TableCell>
-                            {product.price_normal 
-                              ? `${product.price_normal.toFixed(2)}€` 
-                              : product.price_medium 
-                                ? `${product.price_medium.toFixed(2)}€` 
-                                : '-'}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Switch
-                                checked={product.active ?? true}
-                                onCheckedChange={() => handleToggleActive(product.id, product.active ?? true)}
-                                data-testid={`product-active-${product.id}`}
-                              />
-                              <Badge variant={product.active ?? true ? "default" : "secondary"}>
-                                {product.active ?? true ? 'Aktiv' : 'Inaktiv'}
-                              </Badge>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Switch
-                                checked={product.in_stock ?? true}
-                                onCheckedChange={() => handleToggleStock(product.id, product.in_stock ?? true)}
-                                data-testid={`product-stock-${product.id}`}
-                              />
-                              <Badge 
-                                variant={product.in_stock ?? true ? "default" : "destructive"}
-                                className={product.in_stock ?? true ? "bg-[hsl(var(--success))]" : ""}
-                              >
-                                {product.in_stock ?? true ? 'Verfügbar' : 'Ausverkauft'}
-                              </Badge>
-                            </div>
-                          </TableCell>
-                          {canManageProducts && (
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleEditProduct(product)}
-                                  data-testid={`product-edit-${product.id}`}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                                  onClick={() => handleDelete(product.id, product.name)}
-                                  data-testid={`product-delete-${product.id}`}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          )}
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          {canManageProducts && <TableHead className="w-10"></TableHead>}
+                          <TableHead>Bild</TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Kategorie</TableHead>
+                          <TableHead>Preis</TableHead>
+                          <TableHead>Aktiv</TableHead>
+                          <TableHead>Lagerbestand</TableHead>
+                          {canManageProducts && <TableHead>Aktionen</TableHead>}
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <SortableContext items={productIds} strategy={verticalListSortingStrategy}>
+                        <TableBody>
+                          {filteredProducts.map((product) => (
+                            <SortableTableRow
+                              key={product.id}
+                              product={product}
+                              categories={categories}
+                              canManageProducts={canManageProducts}
+                              onEdit={handleEditProduct}
+                              onToggleActive={handleToggleActive}
+                              onToggleStock={handleToggleStock}
+                              onDelete={handleDelete}
+                            />
+                          ))}
+                        </TableBody>
+                      </SortableContext>
+                    </Table>
+                  </DndContext>
                 </div>
               )}
             </CardContent>
