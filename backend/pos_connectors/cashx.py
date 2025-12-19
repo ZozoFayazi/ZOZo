@@ -81,7 +81,7 @@ class CashXConnector(BasePOSConnector):
                 "is_test_mode": False
             }
         
-        api_url = f"{self.base_url}/api/health"
+        api_url = f"{self.base_url}/api/cashx/health"
         logger.info(f"Cash-X Verbindungstest: GET {api_url}")
         
         try:
