@@ -1,7 +1,8 @@
 """Product Management Endpoints with Role-Based Access Control"""
-from fastapi import APIRouter, HTTPException, Depends, File, UploadFile
-from typing import Optional
+from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Body
+from typing import Optional, List
 from pathlib import Path
+from pydantic import BaseModel
 import uuid
 import logging
 
@@ -9,6 +10,11 @@ from admin_auth import get_current_admin, AdminAuth
 from utils import serialize_doc, parse_object_id
 from models import MenuItemCreate, MenuItemUpdate
 from audit_service import AuditService
+
+
+class ProductOrderItem(BaseModel):
+    id: str
+    sort_order: int
 
 logger = logging.getLogger(__name__)
 
