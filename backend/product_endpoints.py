@@ -349,7 +349,7 @@ def create_product_router(db, audit_service: AuditService):
     
     @router.patch("/reorder")
     async def reorder_products(
-        product_orders: list,
+        product_orders: List[ProductOrderItem] = Body(...),
         admin: dict = Depends(get_current_admin)
     ):
         """Reorder products by updating their sort_order field"""
@@ -363,14 +363,10 @@ def create_product_router(db, audit_service: AuditService):
             
             # Update each product's sort_order
             for item in product_orders:
-                product_id = item.get("id")
-                sort_order = item.get("sort_order")
-                
-                if product_id and sort_order is not None:
-                    await db.menu_items.update_one(
-                        {"_id": parse_object_id(product_id)},
-                        {"$set": {"sort_order": sort_order}}
-                    )
+                await db.menu_items.update_one(
+                    {"_id": parse_object_id(item.id)},
+                    {"$set": {"sort_order": item.sort_order}}
+                )
             
             # Audit log
             await audit_service.log_action(
