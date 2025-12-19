@@ -341,4 +341,44 @@ def create_product_router(db, audit_service: AuditService):
             logger.error(f"Upload image error: {str(e)}")
             raise HTTPException(status_code=500, detail="Failed to upload image")
     
+    @router.patch("/reorder")
+    async def reorder_products(
+        product_orders: list,
+        admin: dict = Depends(get_current_admin)
+    ):
+        """Reorder products by updating their sort_order field"""
+        try:
+            # Check permission
+            if not can_manage_products(admin):
+                raise HTTPException(
+                    status_code=403,
+                    detail="Nur Super Admin und Rellingen Admin dürfen Produkte sortieren"
+                )
+            
+            # Update each product's sort_order
+            for item in product_orders:
+                product_id = item.get("id")
+                sort_order = item.get("sort_order")
+                
+                if product_id and sort_order is not None:
+                    await db.menu_items.update_one(
+                        {"_id": parse_object_id(product_id)},
+                        {"$set": {"sort_order": sort_order}}
+                    )
+            
+            # Audit log
+            await audit_service.log_action(
+                actor_email=admin["email"],
+                action="products_reordered",
+                result="success",
+                details={"count": len(product_orders)}
+            )
+            
+            return {"success": True, "message": f"{len(product_orders)} Produkte neu sortiert"}
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Reorder products error: {str(e)}")
+            raise HTTPException(status_code=500, detail="Failed to reorder products")
+    
     return router
