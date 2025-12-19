@@ -2613,9 +2613,13 @@ async def get_pos_providers(admin: dict = Depends(get_current_admin)):
             {
                 "id": "cashx",
                 "name": "Cash-X",
-                "description": "Cash-X Kassensystem (in Vorbereitung)",
-                "available": False,
-                "fields": []
+                "description": "Cash-X Cloud Kassensystem",
+                "available": True,
+                "fields": [
+                    {"key": "base_url", "label": "API URL", "required": True, "placeholder": "https://cashx.zozo-burger.de"},
+                    {"key": "api_key", "label": "API Key", "required": True},
+                    {"key": "terminal_id", "label": "Terminal ID", "required": False, "default": "KASSE-1"}
+                ]
             }
         ]
     }
