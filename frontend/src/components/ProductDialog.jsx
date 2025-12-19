@@ -295,14 +295,53 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
             />
           </div>
           
-          {/* Prices - dynamically show based on category */}
+          {/* Prices - dynamically show based on category and product name */}
           {(() => {
             // Get selected category
             const selectedCategory = categories.find(c => c.id === formData.category_id);
             const categorySlug = (selectedCategory?.slug || selectedCategory?.name || '').toLowerCase();
             const categoryName = (selectedCategory?.name || '').toLowerCase();
+            const productName = (formData.name || '').toLowerCase();
             
-            // Burger: Medium (125g) und Large (180g)
+            // Burger with SINGLE SIZE (no medium/large):
+            // Crunchy Chicken, Veggie, 250, 360 Burger
+            const singleSizeBurgers = [
+              'crunchy chicken burger',
+              'crunchy chicken bacon burger', 
+              'double crunchy chicken burger',
+              'veggie burger',
+              '250 burger',
+              'twohundred fifty burger',
+              '360 burger',
+              'three hundred sixty burger'
+            ];
+            
+            const isSingleSizeBurger = singleSizeBurgers.some(b => 
+              productName.includes(b) || 
+              productName.replace(/\s+/g, '').includes(b.replace(/\s+/g, ''))
+            );
+            
+            // Check for single size burger first
+            if ((categorySlug.includes('burger') || categoryName.includes('burger')) && isSingleSizeBurger) {
+              return (
+                <div className="space-y-2">
+                  <Label htmlFor="price_normal">Preis (€) *</Label>
+                  <Input
+                    id="price_normal"
+                    type="number"
+                    step="0.01"
+                    value={formData.price_normal}
+                    onChange={(e) => setFormData(prev => ({ ...prev, price_normal: e.target.value }))}
+                    placeholder="8.99"
+                    className="max-w-xs"
+                    data-testid="product-price-normal"
+                  />
+                  <p className="text-xs text-muted-foreground">Dieser Burger hat nur eine Größe</p>
+                </div>
+              );
+            }
+            
+            // Regular Burger: Medium (125g) und Large (180g)
             if (categorySlug.includes('burger') || categoryName.includes('burger')) {
               return (
                 <div className="grid grid-cols-2 gap-4">
