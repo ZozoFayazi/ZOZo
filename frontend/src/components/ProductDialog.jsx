@@ -305,20 +305,19 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
             
             // Burger with SINGLE SIZE (no medium/large):
             // Crunchy Chicken, Veggie, 250, 360 Burger
-            const singleSizeBurgers = [
-              'crunchy chicken burger',
-              'crunchy chicken bacon burger', 
-              'double crunchy chicken burger',
+            const singleSizeKeywords = [
+              'crunchy chicken',
+              'crunchy chickenburger',
+              'double crunchy',
               'veggie burger',
-              '250 burger',
-              'twohundred fifty burger',
-              '360 burger',
-              'three hundred sixty burger'
+              '250',
+              'twohundred fifty',
+              '360',
+              'three hundred sixty'
             ];
             
-            const isSingleSizeBurger = singleSizeBurgers.some(b => 
-              productName.includes(b) || 
-              productName.replace(/\s+/g, '').includes(b.replace(/\s+/g, ''))
+            const isSingleSizeBurger = singleSizeKeywords.some(keyword => 
+              productName.includes(keyword)
             );
             
             // Check for single size burger first
