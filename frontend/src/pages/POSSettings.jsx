@@ -165,7 +165,8 @@ export default function POSSettings() {
       api_key: '',
       username: '',
       secret: '',
-      base_url: posConfig?.base_url || ''
+      base_url: posConfig?.base_url || '',
+      terminal_id: posConfig?.terminal_id || 'KASSE-1'
     });
     setConfigDialogOpen(true);
   };
