@@ -197,6 +197,13 @@ export default function ProductManagement() {
   const [categoryName, setCategoryName] = useState('');
   const [hasOrderChanges, setHasOrderChanges] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
+  const [permissions, setPermissions] = useState({
+    can_create: false,
+    can_edit: false,
+    can_delete: false,
+    can_toggle_status: true,
+    is_master: false
+  });
   
   const canManageProducts = hasPermission('manage_products');
   
