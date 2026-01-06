@@ -106,16 +106,25 @@ function Footer() {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} ZOZO Burger. Alle Rechte vorbehalten.
           </p>
-          <div className="flex gap-6 text-sm">
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-sm">
+            <Link to="/impressum" className="text-muted-foreground hover:text-primary transition-colors">
               Impressum
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link to="/datenschutz" className="text-muted-foreground hover:text-primary transition-colors">
               Datenschutz
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link to="/rechtliches" className="text-muted-foreground hover:text-primary transition-colors">
               AGB
-            </a>
+            </Link>
+            <Link to="/kontakt" className="text-muted-foreground hover:text-primary transition-colors">
+              Kontakt
+            </Link>
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('openCookieSettings'))}
+              className="text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+            >
+              Cookie-Einstellungen
+            </button>
           </div>
         </div>
       </div>
