@@ -218,18 +218,6 @@ export default function AdminLogin() {
         }}
       />
       
-      {/* Passkey Setup Dialog (forced for Super Admin) */}
-      <PasskeySetupDialog
-        open={requirePasskeySetup}
-        onOpenChange={() => {}} // Not closable when required
-        onSuccess={() => {
-          toast.success('Passkey erfolgreich eingerichtet! Sie können sich jetzt anmelden.');
-          setRequirePasskeySetup(false);
-          setEmail('');
-          setPassword('');
-        }}
-      />
-      
       {/* Legacy 2FA Dialog (TOTP - fallback) */}
       {require2FA && (
         <TwoFactorVerify
