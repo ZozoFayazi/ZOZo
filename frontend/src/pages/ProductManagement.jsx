@@ -377,12 +377,16 @@ export default function ProductManagement() {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
       const response = await fetch(
-        `${backendUrl}/api/admin/products/${productId}/toggle-active?is_active=${!currentStatus}`,
+        `${backendUrl}/api/admin/products/${productId}/toggle`,
         {
-          method: 'PATCH',
+          method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-          }
+          },
+          body: JSON.stringify({
+            is_active: !currentStatus
+          })
         }
       );
       
@@ -391,14 +395,15 @@ export default function ProductManagement() {
         throw new Error(error.detail || 'Fehler beim Ändern des Status');
       }
       
-      const updatedProduct = await response.json();
-      
       // Update local state
       setProducts(prev => prev.map(p => 
-        p.id === productId ? { ...p, active: updatedProduct.active } : p
+        p.id === productId ? { ...p, is_active: !currentStatus, active: !currentStatus } : p
       ));
       
       toast.success(`Produkt ${!currentStatus ? 'aktiviert' : 'deaktiviert'}`);
+      
+      // Reload to get fresh data with overrides
+      fetchProducts();
     } catch (error) {
       console.error('Toggle active error:', error);
       toast.error(error.message || 'Fehler beim Ändern des Status');
@@ -409,12 +414,16 @@ export default function ProductManagement() {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
       const response = await fetch(
-        `${backendUrl}/api/admin/products/${productId}/toggle-stock?in_stock=${!currentStatus}`,
+        `${backendUrl}/api/admin/products/${productId}/toggle`,
         {
-          method: 'PATCH',
+          method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-          }
+          },
+          body: JSON.stringify({
+            in_stock: !currentStatus
+          })
         }
       );
       
@@ -423,14 +432,15 @@ export default function ProductManagement() {
         throw new Error(error.detail || 'Fehler beim Ändern des Lagerstatus');
       }
       
-      const updatedProduct = await response.json();
-      
       // Update local state
       setProducts(prev => prev.map(p => 
-        p.id === productId ? { ...p, in_stock: updatedProduct.in_stock } : p
+        p.id === productId ? { ...p, in_stock: !currentStatus } : p
       ));
       
       toast.success(`Produkt ${!currentStatus ? 'verfügbar' : 'ausverkauft'}`);
+      
+      // Reload to get fresh data with overrides
+      fetchProducts();
     } catch (error) {
       console.error('Toggle stock error:', error);
       toast.error(error.message || 'Fehler beim Ändern des Lagerstatus');
