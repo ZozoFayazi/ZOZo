@@ -408,6 +408,14 @@ async def get_menu(location_id: str = Query(...)):
     
     return result
 
+
+@api_router.get("/modifier-groups")
+async def get_modifier_groups():
+    """Get all modifier groups"""
+    groups = await db.modifier_groups.find({}).to_list(100)
+    return serialize_doc(groups)
+
+
 # Public Deals Endpoint
 @api_router.get("/deals")
 async def get_active_deals():
