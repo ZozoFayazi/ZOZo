@@ -225,7 +225,10 @@ class WebAuthnService:
         
         logger.info(f"WebAuthn authentication started for {admin_email}")
         
-        return options_to_json(options)
+        # Convert to JSON and parse back to dict
+        import json
+        options_json = options_to_json(options)
+        return json.loads(options_json)
     
     async def verify_authentication(
         self, 
