@@ -49,13 +49,28 @@ export function PasskeyVerifyDialog({ open, email, onSuccess, onBackupCode }) {
       
       const options = await optionsResponse.json();
       
+      // Helper: Decode base64url to Uint8Array
+      const base64urlToUint8Array = (base64url) => {
+        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+        const padding = '='.repeat((4 - base64.length % 4) % 4);
+        const padded = base64 + padding;
+        
+        try {
+          const binary = atob(padded);
+          return Uint8Array.from(binary, c => c.charCodeAt(0));
+        } catch (e) {
+          const binary = atob(base64);
+          return Uint8Array.from(binary, c => c.charCodeAt(0));
+        }
+      };
+      
       // Convert base64 strings
-      options.challenge = Uint8Array.from(atob(options.challenge), c => c.charCodeAt(0));
+      options.challenge = base64urlToUint8Array(options.challenge);
       
       if (options.allowCredentials) {
         options.allowCredentials = options.allowCredentials.map(cred => ({
           ...cred,
-          id: Uint8Array.from(atob(cred.id), c => c.charCodeAt(0))
+          id: base64urlToUint8Array(cred.id)
         }));
       }
       
