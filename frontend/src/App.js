@@ -171,6 +171,14 @@ function App() {
           <Route path="/rewards" element={<RewardsPage />} />
           <Route path="/start-group-order" element={<StartGroupOrder selectedLocation={selectedLocation} setSelectedLocation={setSelectedLocation} />} />
           <Route path="/group-order/:groupCode" element={<GroupOrderPage addToCart={addToCart} selectedLocation={selectedLocation} />} />
+          
+          {/* Legal Pages */}
+          <Route path="/impressum" element={<Impressum />} />
+          <Route path="/datenschutz" element={<Datenschutz />} />
+          <Route path="/kontakt" element={<Kontakt />} />
+          <Route path="/rechtliches" element={<Rechtliches />} />
+          <Route path="/agb" element={<Rechtliches />} />
+          
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route 
