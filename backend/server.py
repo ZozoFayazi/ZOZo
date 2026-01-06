@@ -2224,20 +2224,30 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             )
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
-        # Check if 2FA is enabled and not bypassed
-        # Note: For 2FA verification, use a separate endpoint or Union response type
-        # This has been temporarily simplified for the Go-Live demo
+        # PASSKEY CHECK - Before creating JWT token
+        # If Passkey is enabled, require Passkey verification (do NOT issue JWT yet)
+        if admin.get("passkey_enabled"):
+            # Passkey verification required
+            await rate_limiter.record_attempt(http_request, "admin_login", success=True)
+            
+            return {
+                "require_passkey": True,
+                "email": admin["email"],
+                "message": "Passkey-Verifizierung erforderlich"
+            }
+        
+        # Check if Passkey setup is required (Super Admin policy)
+        require_passkey_setup = (
+            admin.get("role") == "super_admin" 
+            and not admin.get("passkey_enabled")
+        )
+        
+        # Check if 2FA is enabled (legacy TOTP - fallback)
         if admin.get("totp_enabled") and admin.get("totp_secret"):
-            # 2FA is configured - require verification via separate flow
-            # For now, we proceed with normal login but mark it in the response
-            # TODO: Implement proper 2FA flow with Union response type
+            # TOTP 2FA is configured - this is fallback, Passkey takes priority
             pass
         
-        # Check if 2FA should be enforced (Super Admin without 2FA)
-        # Note: Use explicit require_2fa_setup flag from DB if set, otherwise default based on role
-        require_2fa_setup = admin.get("require_2fa_setup", False)
-        
-        # Create JWT token
+        # Create JWT token (only if Passkey not required)
         token = AdminAuth.create_token(
             email=admin["email"],
             role=admin["role"],
@@ -2260,7 +2270,7 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             result="success",
             category=AuditCategory.AUTH.value,
             ip_address=client_ip,
-            details={"role": admin["role"], "2fa_enabled": admin.get("totp_enabled", False)}
+            details={"role": admin["role"], "passkey_enabled": admin.get("passkey_enabled", False)}
         )
         
         # Prepare admin response
@@ -2272,8 +2282,9 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             "branch_ids": admin.get("branch_ids", []),
             "permissions": AdminAuth.get_permissions(admin["role"]),
             "totp_enabled": admin.get("totp_enabled", False),
+            "passkey_enabled": admin.get("passkey_enabled", False),
             "must_change_password": admin.get("must_change_password", True),
-            "require_2fa_setup": require_2fa_setup  # Super Admin without 2FA
+            "require_passkey_setup": require_passkey_setup
         }
         
         return AdminLoginResponse(
