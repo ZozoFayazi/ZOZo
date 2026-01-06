@@ -42,7 +42,8 @@ rate_limiter = RateLimiter(db)
 totp_service = TOTPService(db)
 
 # Create product router with admin authentication
-product_router = create_product_router(db, audit_service)
+# V2: Master-Slave architecture (Rellingen = Master, Henstedt = Override only)
+product_router = create_product_router_v2(db, audit_service)
 
 # Create the main app without a prefix
 app = FastAPI()
