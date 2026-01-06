@@ -49,7 +49,7 @@ async def send_pos_failure_alert(
             recipients.append(location_email)
         
         # Build email subject
-        subject = f"🚨 [DRINGEND] POS FEHLER – Bestellung {order_number} NICHT übertragen ({location_name})"
+        subject = f"🚨 [KRITISCH] POS FEHLER – Bestellung {order_number} nicht übertragen ({location_name})"
         
         # Build email body
         error_type_label = "Verbindungsfehler" if error_type == "hard" else "API-Fehler"
