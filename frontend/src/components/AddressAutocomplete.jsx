@@ -3,7 +3,7 @@ import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocom
 import { Input } from './ui/input';
 import { MapPin } from 'lucide-react';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8';
+const GOOGLE_MAPS_API_KEY = 'AIzaSyB9ajs9pBKft5TDHAmumGGTceb_VJXdhbU';
 
 /**
  * Google Maps Autocomplete for Address Input
