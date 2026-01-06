@@ -250,6 +250,14 @@ function App() {
             } 
           />
           <Route 
+            path="/admin/pos/failed-orders" 
+            element={
+              <ProtectedAdminRoute>
+                <FailedPOSOrders />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
             path="/admin/security" 
             element={
               <ProtectedAdminRoute>
