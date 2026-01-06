@@ -435,6 +435,7 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
           <ProductCustomizer
             item={customizingItem}
             size={customizingSize}
+            modifierGroups={modifierGroups}
             onAddToCart={(cartItem) => {
               addToCart(cartItem);
               
