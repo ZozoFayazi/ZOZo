@@ -29,11 +29,12 @@ const parseExtras = (extrasArray) => {
   });
 };
 
-function ProductCustomizer({ item, size, onAddToCart, onClose }) {
+function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = [] }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [selectedRemovals, setSelectedRemovals] = useState([]);
   const [specialInstructions, setSpecialInstructions] = useState('');
+  const [selectedModifiers, setSelectedModifiers] = useState({});
   
   // Menu upgrade state
   const [upgradeToMenu, setUpgradeToMenu] = useState(false);
@@ -42,6 +43,11 @@ function ProductCustomizer({ item, size, onAddToCart, onClose }) {
   
   // Bun selection state (for burgers)
   const [selectedBun, setSelectedBun] = useState('');
+  
+  // Get modifier groups for this product
+  const productModifiers = modifierGroups.filter(g => 
+    item.modifier_group_ids?.includes(g.id)
+  );
 
   // Get product-specific removable ingredients and extras
   const removableIngredients = item.removable_ingredients || [];
