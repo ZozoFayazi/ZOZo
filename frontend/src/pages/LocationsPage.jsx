@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { getLocations } from '../api';
 import { MapPin, Clock, Phone, Mail, ChevronRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import MapPlaceholder from '../components/MapPlaceholder';
 
 function LocationsPage({ setSelectedLocation }) {
   const navigate = useNavigate();
