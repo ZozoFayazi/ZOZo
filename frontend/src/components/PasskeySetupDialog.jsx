@@ -28,6 +28,7 @@ export function PasskeySetupDialog({ open, onOpenChange, onSuccess }) {
   const token = sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
 
   const startRegistration = async () => {
+    // This function MUST be called from a button click (user gesture required for iOS Safari)
     setRegistering(true);
     setError('');
     
@@ -52,7 +53,8 @@ export function PasskeySetupDialog({ open, onOpenChange, onSuccess }) {
       
       // Helper: Decode base64url to Uint8Array
       const base64urlToUint8Array = (base64url) => {
-        // Add padding if needed
+        if (!base64url) return new Uint8Array();
+        
         const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
         const padding = '='.repeat((4 - base64.length % 4) % 4);
         const padded = base64 + padding;
@@ -61,7 +63,6 @@ export function PasskeySetupDialog({ open, onOpenChange, onSuccess }) {
           const binary = atob(padded);
           return Uint8Array.from(binary, c => c.charCodeAt(0));
         } catch (e) {
-          // Fallback: try without padding
           const binary = atob(base64);
           return Uint8Array.from(binary, c => c.charCodeAt(0));
         }
@@ -72,6 +73,7 @@ export function PasskeySetupDialog({ open, onOpenChange, onSuccess }) {
       options.user.id = base64urlToUint8Array(options.user.id);
       
       // Step 2: Create credential via WebAuthn API
+      // IMPORTANT: This MUST be called in response to user gesture for iOS Safari
       setStep(2);
       
       const credential = await navigator.credentials.create({ publicKey: options });
