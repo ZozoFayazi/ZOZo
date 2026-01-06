@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import MobileBottomNav from './components/MobileBottomNav';
+import CookieBanner from './components/CookieBanner';
 import { AdminAuthProvider } from './contexts/AdminAuthContext';
 import { ProtectedAdminRoute } from './components/ProtectedAdminRoute';
 import HomePage from './pages/HomePage';
