@@ -50,8 +50,13 @@ export default function AdminLogin() {
       }
       
       // Check if Passkey setup is required (Super Admin)
+      // Token is already stored by login() function
+      // Navigate to dashboard, ProtectedAdminRoute will show forced setup
       if (result.require_passkey_setup || result.admin?.require_passkey_setup) {
-        setRequirePasskeySetup(true);
+        toast.info('Passkey-Einrichtung erforderlich');
+        setTimeout(() => {
+          navigate('/admin/dashboard', { replace: true });
+        }, 150);
         setLoading(false);
         return;
       }
