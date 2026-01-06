@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { ScrollArea } from '../components/ui/scroll-area';
 import { Separator } from '../components/ui/separator';
 import { toast } from 'sonner';
+import { PasskeySetupDialog } from '../components/PasskeySetupDialog';
 import {
   Shield,
   AlertTriangle,
@@ -18,6 +19,7 @@ import {
   Lock,
   User,
   Clock,
+  Fingerprint,
   Search,
   RefreshCw,
   Filter,
