@@ -50,9 +50,26 @@ export function PasskeySetupDialog({ open, onOpenChange, onSuccess }) {
       
       const options = await optionsResponse.json();
       
+      // Helper: Decode base64url to Uint8Array
+      const base64urlToUint8Array = (base64url) => {
+        // Add padding if needed
+        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+        const padding = '='.repeat((4 - base64.length % 4) % 4);
+        const padded = base64 + padding;
+        
+        try {
+          const binary = atob(padded);
+          return Uint8Array.from(binary, c => c.charCodeAt(0));
+        } catch (e) {
+          // Fallback: try without padding
+          const binary = atob(base64);
+          return Uint8Array.from(binary, c => c.charCodeAt(0));
+        }
+      };
+      
       // Convert base64 strings to Uint8Array
-      options.challenge = Uint8Array.from(atob(options.challenge), c => c.charCodeAt(0));
-      options.user.id = Uint8Array.from(atob(options.user.id), c => c.charCodeAt(0));
+      options.challenge = base64urlToUint8Array(options.challenge);
+      options.user.id = base64urlToUint8Array(options.user.id);
       
       // Step 2: Create credential via WebAuthn API
       setStep(2);
