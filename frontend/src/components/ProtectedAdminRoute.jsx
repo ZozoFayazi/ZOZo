@@ -42,11 +42,39 @@ export const ProtectedAdminRoute = ({ children, requiredPermission, requiredBran
     );
   }
 
-  // SECURITY CHECK 2: Super Admin 2FA Setup Required
+  // SECURITY CHECK 2: Super Admin Passkey Setup Required  
+  // This blocks Super Admins who haven't set up Passkey (modern 2FA)
+  const requiresPasskeySetup = isSuperAdmin() && 
+    admin.require_passkey_setup === true && 
+    !admin.passkey_enabled &&
+    !passkeySetupComplete;
+  
+  if (requiresPasskeySetup) {
+    const handlePasskeySuccess = () => {
+      setPasskeySetupComplete(true);
+      // Update admin data
+      if (updateAdminData) {
+        updateAdminData({ passkey_enabled: true, require_passkey_setup: false });
+      }
+    };
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4" data-testid="forced-passkey-setup-screen">
+        <PasskeySetupDialog
+          open={true}
+          onOpenChange={() => {}} // Cannot be closed until complete
+          onSuccess={handlePasskeySuccess}
+        />
+      </div>
+    );
+  }
+
+  // SECURITY CHECK 3: Legacy 2FA Setup (fallback - TOTP)
   // This blocks Super Admins who haven't set up 2FA
   // Note: Only enforce if require_2fa_setup is explicitly true from backend
   const requiresTwoFASetup = isSuperAdmin() && 
     admin.require_2fa_setup === true && 
+    !admin.passkey_enabled && // Passkey takes priority
     !twoFASetupComplete;
   
   if (requiresTwoFASetup) {
