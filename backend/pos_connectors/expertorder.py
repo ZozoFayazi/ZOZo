@@ -483,10 +483,10 @@ class ExpertOrderConnector(BasePOSConnector):
         ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         deliverytime_str = delivery_time.strftime("%Y-%m-%dT%H:%M:%SZ")
         
-        # Payment type mapping - EOCloud uses integers:
-        # 0 = Cash, 1 = Card, etc.
+        # Payment type mapping - ExpertOrder uses integers:
+        # 1 = Cash (Bar), 0 = Card, etc.
         payment_method = order_data.get('payment_method', 'cash')
-        payment_type = 0 if payment_method == 'cash' else 1  # Integer type required
+        payment_type = 1 if payment_method == 'cash' else 0  # 1 = Cash!
         
         # Build the OSP payload with ALL required ExpertOrder fields (from official API doc)
         payload = {
