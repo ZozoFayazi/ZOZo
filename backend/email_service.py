@@ -7,6 +7,12 @@ import resend
 from datetime import datetime
 from typing import Optional
 import logging
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+env_path = Path(__file__).parent / '.env'
+load_dotenv(env_path)
 
 logger = logging.getLogger(__name__)
 
