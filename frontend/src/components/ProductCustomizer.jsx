@@ -284,6 +284,44 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
             </div>
           )}
 
+
+          {/* Modifier Groups (Required selections like Dressing, Pasta Type) */}
+          {productModifiers.length > 0 && (
+            <div className="space-y-4">
+              {productModifiers.map((group) => (
+                <div key={group.id}>
+                  <h3 className="font-semibold mb-3">
+                    {group.title}
+                    {group.required && <span className="text-red-500 ml-1">*</span>}
+                  </h3>
+                  <div className="space-y-2">
+                    {group.options.map((option) => {
+                      const isSelected = selectedModifiers[group.id] === option.name;
+                      const priceText = option.price > 0 ? ` (+€${option.price.toFixed(2)})` : '';
+                      
+                      return (
+                        <button
+                          key={option.name}
+                          onClick={() => setSelectedModifiers({...selectedModifiers, [group.id]: option.name})}
+                          className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                            isSelected
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border hover:border-primary/40'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium">{option.name}{priceText}</span>
+                            {isSelected && <Check className="h-4 w-4 text-primary" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Extras */}
           {availableExtras.length > 0 && (
             <div>
