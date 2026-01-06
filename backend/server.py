@@ -2626,6 +2626,112 @@ async def get_pos_providers(admin: dict = Depends(get_current_admin)):
     }
 
 
+@api_router.get("/admin/pos/failed-orders")
+async def get_failed_pos_orders(admin: dict = Depends(get_current_admin)):
+    """
+    Get failed POS orders that need manual retry
+    - Super Admin: sees all failed orders
+    - Branch Admin: sees only failed orders from their locations
+    """
+    try:
+        # Determine location filter based on role
+        location_slug = None
+        if admin["role"] != "super_admin":
+            # Branch admin - filter by their assigned branches
+            branch_ids = admin.get("branch_ids", [])
+            if not branch_ids:
+                return {"failed_orders": [], "count": 0}
+            # For branch admin, we need to filter by locations they manage
+            # Since failed_pos_orders stores location_slug, we use that
+            location_slug = branch_ids  # Will filter as {"location_slug": {"$in": branch_ids}}
+        
+        # Get failed orders via service
+        if location_slug and isinstance(location_slug, list):
+            # Branch admin case - get orders for all their locations
+            all_orders = []
+            for slug in location_slug:
+                orders = await pos_service.get_failed_orders(location_slug=slug, status="pending")
+                all_orders.extend(orders)
+            failed_orders = all_orders
+        else:
+            # Super admin case - get all pending orders
+            failed_orders = await pos_service.get_failed_orders(location_slug=None, status="pending")
+        
+        # Get count
+        if admin["role"] != "super_admin":
+            count = len(failed_orders)
+        else:
+            count = await pos_service.get_failed_orders_count()
+        
+        return {
+            "failed_orders": failed_orders,
+            "count": count
+        }
+    
+    except Exception as e:
+        logging.error(f"Get failed POS orders error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Fehler beim Abrufen der fehlgeschlagenen Bestellungen")
+
+
+@api_router.post("/admin/pos/failed-orders/{failed_order_id}/retry")
+async def retry_failed_pos_order(
+    failed_order_id: str,
+    admin: dict = Depends(get_current_admin)
+):
+    """
+    Manually retry a failed POS order from the queue
+    
+    - Verifies admin has access to the location
+    - Attempts to push order to POS
+    - Updates order status and failed_pos_orders status on success
+    """
+    try:
+        # Get the failed order first to check access
+        try:
+            failed = await db.failed_pos_orders.find_one({"_id": ObjectId(failed_order_id)})
+        except Exception:
+            raise HTTPException(status_code=400, detail="Ungültige Failed Order ID")
+        
+        if not failed:
+            raise HTTPException(status_code=404, detail="Fehlgeschlagene Bestellung nicht gefunden")
+        
+        location_slug = failed.get("location_slug")
+        
+        # Check access - Branch admin can only retry orders from their locations
+        if admin["role"] != "super_admin":
+            branch_ids = admin.get("branch_ids", [])
+            if location_slug not in branch_ids:
+                raise HTTPException(status_code=403, detail="Zugriff auf diese Bestellung verweigert")
+        
+        # Retry via service
+        result = await pos_service.retry_failed_order(
+            failed_order_id=failed_order_id,
+            admin_email=admin["email"]
+        )
+        
+        # Audit log
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="pos_failed_order_retry",
+            result="success" if result.get("success") else "failure",
+            target=failed_order_id,
+            target_type="failed_pos_order",
+            details={
+                "order_number": failed.get("order_number"),
+                "location_slug": location_slug,
+                "result": result.get("message")
+            }
+        )
+        
+        return result
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Retry failed POS order error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Fehler beim erneuten Senden der Bestellung")
+
+
 # ============================================================================
 # LOCATION MANAGEMENT ENDPOINTS
 # ============================================================================
