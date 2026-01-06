@@ -483,10 +483,17 @@ class ExpertOrderConnector(BasePOSConnector):
         ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         deliverytime_str = delivery_time.strftime("%Y-%m-%dT%H:%M:%SZ")
         
-        # Payment type mapping - ExpertOrder uses integers:
-        # 1 = Cash (Bar), 0 = Card, etc.
+        # Payment type mapping - ExpertOrder spec:
+        # 0 = Barzahlung (Cash)
+        # 1 = EC mit PIN vor Ort
+        # 3 = Onlinezahlung
         payment_method = order_data.get('payment_method', 'cash')
-        payment_type = 1 if payment_method == 'cash' else 0  # 1 = Cash!
+        if payment_method == 'cash':
+            payment_type = 0  # Barzahlung
+        elif payment_method == 'paypal' or payment_method == 'online':
+            payment_type = 3  # Onlinezahlung
+        else:
+            payment_type = 1  # EC mit PIN
         
         # Build the OSP payload with ALL required ExpertOrder fields (from official API doc)
         payload = {
