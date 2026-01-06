@@ -492,34 +492,39 @@ class ExpertOrderConnector(BasePOSConnector):
         payment_method = order_data.get('payment_method', 'cash')
         payment_type = 0 if payment_method == 'cash' else 1  # Integer type required
         
-        # Build the OSP payload with all required EOCloud fields
+        # Build the OSP payload with ALL required ExpertOrder fields (from official API doc)
         payload = {
-            "version": 1,  # Required by EOCloud - must be INTEGER
-            "id": order_data.get('order_number', str(uuid.uuid4())),  # Required
-            "ordertime": ordertime_str,  # ISO 8601 string
-            "deliverytime": deliverytime_str,  # ISO 8601 string
+            "version": 1,  # Required - Integer
+            "broker": "ZOZO Burger",  # Required - Shop name
+            "fromMobile": False,  # Optional
+            "clientIp": "127.0.0.1",  # Optional
+            "id": order_data.get('order_number', str(uuid.uuid4())),  # Required - Order ID
+            "ordertime": ordertime_str,  # Required - ISO 8601
+            "deliverytime": deliverytime_str,  # Required - ISO 8601
+            "customerinfo": order_data.get('notes', ''),  # Optional
             "orderprice": float(order_data.get('total', 0)),  # Required
-            "orderdiscount": 0.0,  # Required
-            "payment": {
-                "type": payment_type,  # Integer: 0=cash, 1=card
-                "amount": float(order_data.get('total', 0)),
-                "provider": "",  # Required by EOCloud
-                "transactionid": "",  # Required by EOCloud
-                "prepaid": 0.0  # Required by EOCloud - Number, 0.0 = not prepaid
-            },
+            "orderdiscount": 0,  # Required - must be 0 or negative
+            "bonuscard": "",  # Optional
+            "notification": order_data.get('delivery_type') == 'pickup',  # Boolean - true for pickup
+            "deliverycost": 0,  # Optional - delivery fee
+            "tip": 0,  # Optional
             "customer": {
-                "name": order_data.get('customer_name', ''),
                 "phone": order_data.get('customer_phone', ''),
                 "email": order_data.get('customer_email', ''),
+                "name": order_data.get('customer_name', ''),
                 "street": street,  # Required
                 "zip": zip_code,  # Required
                 "location": location  # Required (city)
             },
-            "items": items,
-            "deliveryType": order_data.get('delivery_type', 'delivery'),
-            "notes": order_data.get('notes', '')
+            "payment": {
+                "type": payment_type,  # Required - Integer: 1=cash, 0=card
+                "provider": "",  # Optional
+                "transactionid": "",  # Optional
+                "prepaid": 0  # Required - Number
+            },
+            "items": items  # Required - array of items
         }
         
-        logger.info(f"EOCloud payload: {payload}")
+        logger.info(f"ExpertOrder payload: {payload}")
         
         return payload
