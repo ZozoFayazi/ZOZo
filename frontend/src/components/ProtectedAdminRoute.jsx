@@ -4,6 +4,7 @@ import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { Loader2 } from 'lucide-react';
 import PasswordChangeDialog from './PasswordChangeDialog';
 import TwoFactorSetup from './TwoFactorSetup';
+import { PasskeySetupDialog } from './PasskeySetupDialog';
 
 export const ProtectedAdminRoute = ({ children, requiredPermission, requiredBranch }) => {
   const { admin, loading, hasPermission, canAccessBranch, mustChangePassword, isSuperAdmin, updateAdminData } = useAdminAuth();
