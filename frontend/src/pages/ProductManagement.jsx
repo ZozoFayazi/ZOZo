@@ -560,13 +560,19 @@ export default function ProductManagement() {
                 Produktverwaltung
               </h1>
               <p className="text-muted-foreground mt-1">
-                {canManageProducts 
-                  ? 'Verwalten Sie Ihr komplettes Produktsortiment - Drag & Drop zum Sortieren' 
-                  : 'Produkte aktivieren/deaktivieren'}
+                {permissions.is_master
+                  ? 'Master-Menü: Verwalten Sie Ihr komplettes Produktsortiment - Drag & Drop zum Sortieren' 
+                  : `${permissions.location_slug?.toUpperCase() || 'Standort'}-Verwaltung: Produktstatus anpassen (Verfügbarkeit)`}
               </p>
+              {!permissions.is_master && (
+                <p className="text-sm text-orange-600 mt-1">
+                  ℹ️ Produkte können nur vom Master-Standort ({permissions.master_location?.toUpperCase()}) bearbeitet werden. 
+                  Sie können hier nur Verfügbarkeit steuern.
+                </p>
+              )}
             </div>
             <div className="flex gap-2">
-              {canManageProducts && hasOrderChanges && (
+              {permissions.can_reorder && hasOrderChanges && (
                 <Button 
                   onClick={handleSaveOrder} 
                   disabled={savingOrder}
@@ -578,7 +584,7 @@ export default function ProductManagement() {
                   {savingOrder ? 'Speichert...' : 'Reihenfolge speichern'}
                 </Button>
               )}
-              {canManageProducts && (
+              {permissions.can_create && (
                 <>
                   <Button onClick={handleCreateProduct} data-testid="products-add-button">
                     <Plus className="h-4 w-4 mr-2" />
