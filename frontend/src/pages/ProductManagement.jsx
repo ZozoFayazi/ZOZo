@@ -60,7 +60,7 @@ const getImageUrl = (imageUrl) => {
 };
 
 // Sortable Table Row Component
-function SortableTableRow({ product, categories, canManageProducts, onEdit, onToggleActive, onToggleStock, onDelete }) {
+function SortableTableRow({ product, categories, permissions, onEdit, onToggleActive, onToggleStock, onDelete }) {
   const {
     attributes,
     listeners,
