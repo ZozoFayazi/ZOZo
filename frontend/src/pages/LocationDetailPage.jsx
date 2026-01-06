@@ -271,16 +271,11 @@ export default function LocationDetailPage({ setSelectedLocation }) {
 
         {/* Hero Section with Map */}
         <div className="relative">
-          <div className="aspect-[21/9] md:aspect-[21/6] bg-muted">
-            <iframe
-              title={`Karte von ${location.name}`}
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(location.address + ', ' + location.city)}&zoom=15`}
-              className="w-full h-full border-0"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allowFullScreen
-            />
-          </div>
+          <MapPlaceholder 
+            address={location.address}
+            city={location.city}
+            className="aspect-[21/9] md:aspect-[21/6]"
+          />
           
           {/* Overlay Card */}
           <div className="container-custom">
