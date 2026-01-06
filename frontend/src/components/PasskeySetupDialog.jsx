@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Alert, AlertDescription } from './ui/alert';
 import { toast } from 'sonner';
-import { Fingerprint, Shield, Download, Copy, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Fingerprint, Shield, Download, Copy, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
 
 /**
  * WebAuthn/Passkey Setup Dialog
