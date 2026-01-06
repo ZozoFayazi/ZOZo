@@ -73,7 +73,7 @@ function MapPlaceholder({ address, city, className = '' }) {
     setMapLoaded(true);
   };
 
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(address + ', ' + city)}&zoom=15`;
+  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyB9ajs9pBKft5TDHAmumGGTceb_VJXdhbU&q=${encodeURIComponent(address + ', ' + city)}&zoom=15`;
 
   if (mapLoaded) {
     return (
