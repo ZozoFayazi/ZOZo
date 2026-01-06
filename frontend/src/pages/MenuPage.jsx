@@ -64,10 +64,26 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   };
 
   useEffect(() => {
+    loadLocations();
+    loadModifierGroups();
+  }, []);
+
+  useEffect(() => {
     if (selectedLocation) {
       loadMenu(selectedLocation.id);
     }
   }, [selectedLocation]);
+  
+  const loadModifierGroups = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${backendUrl}/api/modifier-groups`);
+      const data = await response.json();
+      setModifierGroups(data);
+    } catch (error) {
+      console.error('Error loading modifier groups:', error);
+    }
+  };
 
   const loadMenu = async (locationId) => {
     setLoading(true);
