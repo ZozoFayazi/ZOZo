@@ -486,6 +486,89 @@ class ZOZOBurgerAPITester:
                 return True
         return success
 
+    def test_get_failed_pos_orders(self):
+        """Test getting failed POS orders queue"""
+        if not self.token:
+            print("   ⚠️  Skipping - No auth token available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Failed POS Orders",
+            "GET",
+            "admin/pos/failed-orders",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, list):
+                print(f"   📋 Found {len(response)} failed POS orders in queue")
+                return True
+        return success
+
+    def test_get_product_permissions(self):
+        """Test getting product management permissions (Master-Slave)"""
+        if not self.token:
+            print("   ⚠️  Skipping - No auth token available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Product Permissions",
+            "GET",
+            "admin/products/permissions",
+            200
+        )
+        
+        if success and response:
+            print(f"   🔐 Permissions:")
+            print(f"      Can Create: {response.get('can_create')}")
+            print(f"      Can Edit: {response.get('can_edit')}")
+            print(f"      Can Reorder: {response.get('can_reorder')}")
+            print(f"      Is Master: {response.get('is_master')}")
+            print(f"      Location: {response.get('location_slug')}")
+            return True
+        return success
+
+    def test_get_modifier_groups(self):
+        """Test getting modifier groups"""
+        success, response = self.run_test(
+            "Get Modifier Groups",
+            "GET",
+            "modifier-groups",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, list):
+                print(f"   🍝 Found {len(response)} modifier groups")
+                for group in response[:2]:  # Show first 2
+                    print(f"      - {group.get('title')}: {len(group.get('options', []))} options")
+                return True
+        return success
+
+    def test_get_products_admin(self):
+        """Test getting products (admin) with master-slave info"""
+        if not self.token:
+            print("   ⚠️  Skipping - No auth token available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Products (Admin)",
+            "GET",
+            "admin/products",
+            200
+        )
+        
+        if success and response:
+            products = response.get('products', [])
+            print(f"   🍔 Found {len(products)} products")
+            if products:
+                sample = products[0]
+                print(f"      Sample: {sample.get('name')}")
+                print(f"      Active: {sample.get('active')}")
+                print(f"      In Stock: {sample.get('in_stock')}")
+            return True
+        return success
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("=" * 70)
