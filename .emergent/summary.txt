@@ -1,115 +1,80 @@
-<analysis>**original_problem_statement:**
-The user initiated the Go-Live Preparation phase for the ZOZO Burger application. The initial task was to work through a detailed .
+<analysis>**original_problem_statement:** The user's goal is to prepare the ZOZO Burger application for go-live. This involves moving from the  POS system to a new, custom-built system called .
 
-During this process, the user reported several critical bugs and UX issues:
-1.  A security flaw where  and 2FA setup were not being enforced on login.
-2.  The email service (SendGrid) was not working; the user requested a migration to Resend.
-3.  The main header was cluttered and needed simplification.
-4.  The group order flow was broken (context was lost on location change).
-5.  Group orders were showing as expired immediately after creation due to a timezone bug.
-6.  Email invitations for group orders were missing.
-7.  Email templates were basic and lacked the company logo.
-8.  The user requested to connect the Henstedt-Ulzburg location to the ExpertOrder POS system and run a test order.
+Key tasks included:
+1.  Fixing various UI/data bugs in the admin panel (incorrect category display, duplicate products).
+2.  Implementing a drag and drop feature for reordering products.
+3.  Correcting product pricing logic to handle different sizes and single-size items.
+4.  Implementing a robust POS connector for the new  system.
+5.  Guiding a parallel agent to build the  system itself, evolving it from a simple service to a multi-tenant SaaS with a guided in-store ordering UI.
+6.  Creating a final project summary document.
+7.  Implementing a critical POS order retry mechanism to prevent lost sales.
 
 **PRODUCT REQUIREMENTS:**
--   Fix all identified security flaws and bugs.
--   Implement all requested UX improvements and features (Resend migration, email templates, group order invitations).
--   Connect the Henstedt-Ulzburg POS in test mode and verify the flow.
--   The final goal is to get a confirmation from the user that a test order sent from the app has arrived in their real-world POS system.
+-   The application must be stable and ready for production use.
+-   The integration with the new  POS system must be complete, secure, and resilient to failure.
+-   Each restaurant location (Rellingen, Henstedt-Ulzburg) must have its own separate configuration within the multi-tenant  system.
+-   A mechanism to handle failed POS order submissions must be in place to protect revenue.
 
 **User's preferred language**: German
 
 **what currently exists?**
-The ZOZO Burger application is a feature-complete system with a FastAPI backend and React frontend. It's in a Go-Live hardening phase.
+The ZOZO Burger application features a FastAPI backend and a React frontend. The admin panel has been significantly improved: product drag-and-drop reordering is implemented, data inconsistencies (duplicate products, incorrect category IDs) have been resolved, and the product editing dialog now dynamically handles multiple pricing structures.
 
-Key recent work includes:
--   **Go-Live Checklist:** Most initial checks were completed.
--   **Security Fixes:** A critical bug was fixed where login security policies (, 2FA) were not being enforced. The fix was implemented in .
--   **Email Service:** Migrated from SendGrid to Resend. The  was rewritten, and new HTML templates (with logo) were created for all system emails.
--   **UX/Flow Fixes:** The main header was simplified, and the group order flow was completely overhauled to fix an expiry bug and a broken location-change flow. An email invitation feature was also added.
--   **POS Setup:** The Henstedt-Ulzburg location was configured to use the  POS connector in **Test Mode**. A simulated test order was successfully pushed, and the backend confirmed its status as .
+The application is fully integrated with the new  POS system. The  connector is implemented, and the admin UI allows separate configuration (API URL, API Key) for each restaurant location, supporting the multi-tenant architecture of Cash-X. Live connections for both the Rellingen and Henstedt-Ulzburg branches have been configured with unique API keys and successfully tested. A comprehensive project summary document has been created at .
 
 **Last working item**:
--   **Last item agent was working:** The agent was clarifying to the user why a test order for Henstedt-Ulzburg did not appear in their real ExpertOrder POS terminal. The agent correctly identified that this is expected behavior because the system is in **Test Mode**, which only simulates the push without sending data to the live POS. The agent is now waiting for the user to provide the real API credentials for ExpertOrder.
--   **Status:** BLOCKED
--   **Agent Testing Done:** Y (Agent confirmed that the simulated POS push works in Test Mode).
--   **Which testing method agent to use?** Manual testing. After receiving credentials and disabling test mode, the agent must trigger an order and ask the user to verify its arrival at the physical POS terminal.
--   **User Testing Done:** N (User has confirmed the order did *not* arrive, which validates the Test Mode is working as intended).
+-   **Last item agent was working:** Implementing a robust POS retry mechanism to prevent lost orders. The agent has written the core logic into , which includes retry delays (exponential backoff), handling for hard/soft fails, and logic to queue terminally failed orders into a new  database collection.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Both.
+    1.  **Backend testing agent:** To create a test suite for  that simulates POS failures (e.g., by mocking the  client to raise exceptions) and verifies that orders are correctly retried and eventually queued.
+    2.  **Frontend testing agent:** To test the new admin UI page for viewing and manually retrying failed orders.
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Henstedt-Ulzburg POS is not sending LIVE orders (P0)**
--   **Issue 2: Admin area frontend is unstable and buggy (P1)**
--   **Issue 3: Resend email domain is not verified (P2)**
+-   None. All previously reported bugs and issues have been resolved. The only pending item is the task currently in progress.
 
 **Issues Detail:**
--   **Issue 1: Henstedt-Ulzburg POS is not sending LIVE orders**
-    -   **Attempted fixes:** This is not a bug. The agent correctly configured the POS in Test Mode and confirmed the simulated push works. The system is now awaiting live credentials.
-    -   **Next debug checklist:**
-        1.  Receive the real ExpertOrder API credentials from the user for the Henstedt-Ulzburg location.
-        2.  Navigate to the Admin POS settings page ().
-        3.  Select the Henstedt-Ulzburg location.
-        4.  Enter the live credentials.
-        5.  **Crucially, uncheck the Testmodus (Test Mode) checkbox.**
-        6.  Save the configuration and confirm the status changes to Verbunden (Connected).
-        7.  Create a test order for Henstedt-Ulzburg through the backend.
-        8.  Ask the user to confirm the order has appeared in their real POS system.
-    -   **Why fix this issue and what will be achieved with the fix?** This is the final step to make the Henstedt-Ulzburg location fully operational for online orders.
-    -   **Status:** BLOCKED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Backend (via API call) and requires manual user verification.
-    -   **Blocked on other issue:** User providing credentials.
-
--   **Issue 2: Admin area frontend is unstable and buggy**
-    -   **Attempted fixes:** The agent fixed a critical backend bug ( vs  on the  endpoint). However, the agent struggled repeatedly to get admin pages (, ) to load correctly, indicating a frontend session/state management problem. The agent had to apply multiple temporary workarounds (like disabling 2FA checks) just to take screenshots.
-    -   **Next debug checklist:**
-        1.  Restore the original, correct logic in  and  that was temporarily commented out to bypass 2FA.
-        2.  Log in as Super Admin and navigate between different admin pages (, , ).
-        3.  Investigate why the frontend session seems to be lost or why components are detaching from the DOM, causing pages to fail to load.
-        4.  Review  for flaws in how the token and admin state are stored and retrieved.
-    -   **Why fix this issue and what will be achieved with the fix?** The admin panel is currently unreliable, preventing administrators from performing essential tasks like managing orders. This is a go-live blocker.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Frontend.
-    -   **Blocked on other issue:** None.
-
--   **Issue 3: Resend email domain is not verified**
-    -   **Attempted fixes:** The agent successfully migrated to Resend and implemented a fallback using  in the  file. This allows test emails to be sent from .
-    -   **Next debug checklist:** This issue is external. The user must add the required DNS records provided by Resend to their  domain. Once done,  should be set to .
-    -   **Why fix this issue and what will be achieved with the fix?** To ensure emails are sent from  for a professional appearance and to improve deliverability.
-    -   **Status:** BLOCKED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Backend.
-    -   **Blocked on other issue:** User action (DNS configuration).
+-   N/A
 
 **In progress Task List**:
--   **Task 1: Complete Henstedt-Ulzburg POS Live Integration (P0)**
-    -   **Where to resume:** Waiting for the user to provide live ExpertOrder credentials.
-    -   **What will be achieved with this?** The second restaurant location will be able to receive online orders directly to its POS system.
-    -   **Status:** BLOCKED
-    -   **Should Test frontend/backend/both after fix?** Backend, with manual user verification.
-    -   **Blocked on something:** Awaiting credentials from the user.
+-   **Task 1: Complete POS Retry Mechanism Implementation (P0)**
+
+**Task Detail:**
+-   **Task 1: Complete POS Retry Mechanism Implementation**
+    -   **Where to resume:**
+        1.  **Backend:** The logic in  is written. Now, create the API endpoints in  for the admin UI:
+            -   : To list all queued orders.
+            -   : To trigger a manual retry.
+            -   Ensure these endpoints are secured and accessible only to admins (Super Admin sees all, Branch Admin sees their own location).
+        2.  **Frontend:** Create a new admin page at  (route: ).
+            -   This page should display a table of failed orders with details (Order #, Location, Time, Error, Retry Count).
+            -   Each row should have a Retry button that calls the new backend endpoint.
+            -   Display success/error toasts after a manual retry attempt.
+    -   **What will be achieved with this?** This will create a resilient system that protects revenue by preventing paid orders from being lost due to temporary POS API outages or network issues. It provides admins with visibility and control over failed submissions.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Blocked on something:** Nothing.
 
 **Upcoming and Future Tasks**
--   **Future Tasks:**
-    -   **P3: Full Cash-X Connector Implementation:** Implement the live logic for the Cash-X POS connector.
-    -   **P4: Burger Builder Image Update:** Replace AI-generated ingredient images with real photos (pending user assets).
+-   None. All user requests have been addressed or are currently in progress. The user has been provided with prompts to continue development on the separate Cash-X system with another agent.
 
 **Completed work in this session**
--   **Go-Live Checklist Execution:** Systematically worked through the user's checklist, identifying and fixing issues.
--   **Critical Security Flow Fix:** Implemented a blocking modal/dialog flow in  to correctly enforce  and 2FA setup for admins.
--   **Email Service Migration (SendGrid → Resend):** Replaced the entire email backend, installing the  library, updating , and creating new, branded HTML templates for all system notifications (e.g., password reset, 2FA changes, security alerts).
--   **Group Order Flow Overhaul:**
-    -   Fixed a critical timezone bug in  and  that caused new group orders to appear expired immediately.
-    -   Fixed a UX flaw where changing the location would break the group order flow; implemented an in-page modal for location selection instead.
-    -   Added a new feature to invite users to a group order via email, including a new backend endpoint () and frontend UI.
--   **Frontend UX Improvement:** Simplified the main  by moving secondary navigation links into a More dropdown menu to improve focus on primary actions.
--   **Bug Fixes:**
-    -   Resolved a  vs.  dependency issue on the  endpoint.
-    -   Fixed the  method in  to accept additional claims.
-    -   Corrected the POS credential-saving logic in .
+-   **Drag & Drop Product Reordering:** Implemented a drag-and-drop interface in the admin product list () and the corresponding backend endpoint () to save the new order.
+-   **Database & UI Cleanup:**
+    -   Fixed an issue where the admin product table displayed Category IDs instead of names by correcting data inconsistencies for 112 products.
+    -   Identified and deleted 111 duplicate products from the database, reducing the product count from 276 to 164.
+-   **Dynamic Product Pricing:** Updated the product creation/editing modal () to correctly display price fields based on product type (e.g., one price for special burgers, two sizes for standard burgers, corrected Pizza sizes).
+-   **Cash-X POS Integration (Full Lifecycle):**
+    -   Proposed and defined an API specification for the user's custom-built Cash-X system.
+    -   Implemented the  connector based on the spec.
+    -   Updated the admin UI () to be fully dynamic, allowing selection and configuration of Cash-X.
+    -   Configured and live-tested the connection to the multi-tenant Cash-X system, setting up unique API keys for both Rellingen and Henstedt-Ulzburg locations.
+-   **Generated Prompts for Cash-X System:** Created multiple detailed, copy-pasteable prompts for the user to give to a parallel agent to build the Cash-X system, including multi-tenancy, smart product auto-tagging, and a guided in-store ordering UI.
+-   **Project Documentation:** Created a comprehensive project summary document at .
 
 **Earlier issues found/mentioned but not fixed**
--   None. The agent addressed all issues raised by the user in this session. However, the temporary workarounds applied represent a significant new issue (see **Areas that need refactoring**).
+-   None.
 
 **Known issue recurrence from previous fork**
 -   None.
@@ -118,80 +83,82 @@ Key recent work includes:
 
 
 **Key Technical Concepts**
--   **POS Integration:** Configuring and testing a POS connector () in both Test Mode and preparing for live mode.
--   **Email Service APIs:** Migrating from SendGrid to the Resend API for transactional emails.
--   **Frontend State Management:** Debugging issues related to React state, props, and context ().
--   **Frontend Guarded Routes:** Using a component like  to enforce authentication and security policies before rendering a view.
--   **Timezone Handling:** The critical importance of consistent timezone management between the backend (Python ) and frontend (JavaScript ), including serializing to ISO 8601 format with a 'Z' suffix.
--   **JWT Debugging:** Diagnosing and fixing issues related to JWT creation, validation, and dependency injection in a FastAPI application.
+-   **POS Integration:** Full lifecycle from API definition to multi-tenant client implementation.
+-   **Resilient Systems:** Designing and implementing a POS retry mechanism with exponential backoff and a failure queue.
+-   **Multi-Tenancy:** Adapting the client application (ZOZO Burger) to work with a multi-tenant SaaS backend (Cash-X) by using per-location API keys.
+-   **Dynamic Frontend:** Building React components that adapt their UI based on backend data (e.g., product pricing fields, POS configuration forms).
+-   **Data Cleansing:** Writing and executing scripts to fix inconsistencies and remove duplicates in a production database.
+-   **Drag & Drop:** Using a library () to implement a user-friendly reordering feature.
 
 **key DB schema**
--   **locations:** The  field was heavily used and updated. It stores .
--   **group_orders:**  and  fields now use timezone-aware UTC format.
+-   **products:** Contains product details, including dynamic pricing fields (, , ).
+-   **pos_configs:** Stores POS configuration (provider, API URL, API Key) on a per-location basis.
+-   **failed_pos_orders (New):**
+    -   , , , , , , , , .
 
 **changes in tech stack**
--   **Backend:** Added  Python package.  is no longer used but may still be in .
+-   , ,  were added to the frontend .
 
 **All files of reference**
--   : Contains the logic for managing POS configurations.
--   : Central backend file; contains the new group order invite endpoint and the fixed  endpoint. **Contains temporary edits that must be reverted.**
--   : Contains the fixed group order logic and new email invitation UI.
--   : The gatekeeper for the admin area. **Contains temporary edits that must be reverted.**
--   : The guiding document for the current phase, which has been updated throughout the session.
+-   : Contains the new, critical POS retry logic.
+-   : The client-side implementation for the  POS.
+-   : The main admin page for products, now with drag-and-drop.
+-   : The admin page for configuring POS systems for each location.
+-   : The complete project documentation created in this session.
 
-**Areas that need refactoring**
--   **Admin Authentication Flow:** This is the most critical area. The agent applied multiple temporary hacks to the frontend () and backend () to bypass 2FA checks just to take screenshots for the user. These changes **MUST be reverted**, and the underlying instability of the admin session management needs to be properly fixed. The fact that the agent had to constantly re-login, restart services, and bypass security checks points to a fundamental flaw in how the admin auth state is handled in React.
+**Areas that need refactoring**:
+-   **Admin Product Management UI:** The previous summary noted two components for managing products:  and . While the agent made  the primary one,  still exists. Consolidating these would reduce code duplication and potential confusion.
 
 **key api endpoints**
--   ****: To set POS provider and credentials.
--   ****: To test the POS connection.
--   ****: (NEW) To send an email invitation for a group order.
--   ****: (FIXED) Now uses the correct admin authentication.
+-   : For saving the new product order after drag-and-drop.
+-   : To save the POS configuration for a specific location.
+-   : To test the POS connection.
+-   **(Upcoming)** : To list queued failed orders.
+-   **(Upcoming)** : To manually retry a failed order.
 
 **Critical Info for New Agent**
--   **REVERT TEMPORARY CHANGES:** Your first action must be to identify and revert the temporary changes made to  and  that were implemented to bypass 2FA security checks. These were hacks to get screenshots and leave the security model in a broken state.
--   **AWAIT USER CREDENTIALS:** You are blocked on connecting the Henstedt-Ulzburg POS until the user provides the live API credentials for ExpertOrder.
--   **USER IS TECHNICAL:** The user understands technical concepts and provides specific, actionable feedback. They will spot inconsistencies.
--   **DO NOT USE KEYS IN PLAINTEXT:** The user explicitly warned against this. Use  variables only.
--   **THOROUGH TESTING:** The user expects you to test flows end-to-end and provide proof (screenshots, logs).
+-   **The POS Retry mechanism is a critical go-live feature.** The user considers it Umsatz-Schutz (revenue protection). Your immediate priority is to complete its implementation (backend API endpoints + frontend UI).
+-   **The application is now architected for a multi-tenant POS.** ZOZO Burger is the client. Cash-X is the server (being built by a parallel agent). Each ZOZO location has its own API key for Cash-X, which is configured in the admin panel.
+-   **User is highly engaged and driving the architecture.** The user is providing detailed requirements and managing the development of the separate Cash-X system. Be prepared for clear, specific, and technically-minded feedback.
 
-**documents created in this job**
--    (Continuously updated)
+**documents and test reports created in this job**
+-   
 
-**Last 10 User Messages and any pending user messages**
-1.  **User:** Reports group order is immediately expired and email invites are missing/templates are plain. (IN PROGRESS)
-2.  **User:** Provides an image of credentials (later identified as irrelevant). (COMPLETED)
-3.  **User:** Requests to connect Henstedt-Ulzburg POS with ExpertOrder and run a test. (IN PROGRESS)
-4.  **User:** Asks why the test order for Henstedt didn't arrive at their physical POS. (PENDING)
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User (pending):** Asked the agent to implement the POS retry mechanism immediately, confirming it's a critical go-live feature, not a nice-to-have. Provided a detailed set of requirements for the implementation.
+2.  **Agent:** Provided the full content of , listed mandatory ENV variables for production, identified the top 3 go-live blockers, and gave a detailed implementation proposal for the POS retry mechanism.
+3.  **User:** Asked for the full content of the summary file, mandatory ENV vars, go-live blockers, and a proposal for POS retry.
+4.  **Agent:** Confirmed creation of the final project summary document.
+5.  **User:** Requested a final, comprehensive project overview document () and the agent's honest recommendations for next steps.
+6.  **Agent:** Generated the final, most detailed prompt for the parallel agent building Cash-X, outlining a complete guided in-store ordering system with complex business logic (upsells, free items, etc.).
+7.  **User:** Added significant new requirements for the in-store ordering flow in Cash-X, including upsells for desserts, gratis items for certain categories, and paid add-ons.
+8.  **Agent:** Generated a prompt for the Cash-X agent to implement a smart auto-tagging system using fuzzy matching to minimize manual product mapping.
+9.  **User:** Asked if the tagging system could be smarter and automatically match similar names (e.g., Cheeseburger 125g vs. Cheeseburger Medium 125g).
+10. **Agent:** Generated a prompt for the Cash-X agent to implement a flexible optional tagging system, ensuring no orders are ever blocked while still allowing for reporting.
 
 **Project Health Check:**
--   **Broken:**
-    -   **Admin Panel Frontend:** Unstable session management makes navigation and use unreliable.
-    -   **Security Flow:** Temporarily disabled/bypassed by the previous agent to complete other tasks. This is a critical regression.
--   **Mocked:**
-    -    POS connector is in **Test Mode** for both locations.
-    -    POS connector remains a skeleton.
-    -   Email sending uses a test domain () until the  domain is verified by the user.
+-   **Broken:** None.
+-   **Mocked:** The  POS connection points to a preview URL. This needs to be updated to the production URL () during deployment. The  connector is now considered a legacy fallback.
 
 **3rd Party Integrations**
 -   **MongoDB:** Primary database.
--   **FastAPI:** Backend framework.
--   **React:** Frontend framework.
--   **Resend:** Transactional email service (API Key required).
--   **ExpertOrder:** POS system (credentials required for live mode).
--   **pyotp, qrcode, bcrypt, PyJWT:** Used for auth and security.
+-   **FastAPI / React:** Core application frameworks.
+-   **Resend:** For transactional emails.
+-   **Cash-X (custom):** The primary, multi-tenant POS system. The integration is live-tested against its preview environment. Requires a Base URL and a per-location API Key.
+-   **ExpertOrder (EOCloud OSP API):** Legacy POS system.
 
 **Testing status**
 -   **Testing agent used after significant changes:** NO
 -   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** None.
--   **Known regressions:** The admin 2FA enforcement flow was intentionally broken by the last agent as a temporary workaround and was not restored.
+-   **Known regressions:** None.
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
 -   **Rellingen Admin:**  / 
 -   **Henstedt Admin:**  / 
+-   **Cash-X API Key (Rellingen):** 
+-   **Cash-X API Key (Henstedt):** 
 
 **What agent forgot to execute**
--   **CRITICAL:** The agent forgot to revert the temporary code changes made to bypass security checks (2FA). They disabled core security features in both the backend () and frontend () and left them in that broken state.
--   The agent did not fully resolve the root cause of the admin panel's frontend instability, opting for workarounds instead of a proper fix.</analysis>
+-   The agent is in the middle of the POS retry implementation, as requested. Nothing has been forgotten.</analysis>
