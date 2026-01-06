@@ -45,6 +45,10 @@ export default function SecurityDashboard() {
   // 2FA state
   const [twoFAStatus, setTwoFAStatus] = useState(null);
   const [show2FASetup, setShow2FASetup] = useState(false);
+  
+  // Passkey state
+  const [passkeyStatus, setPasskeyStatus] = useState(null);
+  const [showPasskeySetup, setShowPasskeySetup] = useState(false);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
   const PAGE_SIZE = 25;
