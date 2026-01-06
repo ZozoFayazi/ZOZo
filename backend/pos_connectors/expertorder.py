@@ -462,21 +462,17 @@ class ExpertOrderConnector(BasePOSConnector):
         zip_code = zip_parts[0] if len(zip_parts) > 0 else ''
         location = zip_parts[1] if len(zip_parts) > 1 else zip_location
         
-        # Build items list with EOCloud required fields
+        # Build items list with ExpertOrder required format
         items = []
         for item in order_data.get('items', []):
-            eocloud_item = {
+            expertorder_item = {
+                "count": item.get('quantity', 1),  # ExpertOrder uses "count"
                 "name": item.get('name', ''),
-                "count": item.get('quantity', 1),  # EOCloud uses "count" not "quantity"
                 "price": float(item.get('price', 0)),
+                "items": []  # Required - nested items for modifiers/extras
             }
             
-            # Add customizations if present
-            customizations = item.get('customizations', [])
-            if customizations:
-                eocloud_item["options"] = customizations
-            
-            items.append(eocloud_item)
+            items.append(expertorder_item)
         
         # Current time for ordertime, delivery time +30 min
         # EOCloud expects ISO 8601 string format: "2025-12-17T16:30:00"
