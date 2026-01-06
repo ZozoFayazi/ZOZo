@@ -158,7 +158,7 @@ function SortableTableRow({ product, categories, permissions, onEdit, onToggleAc
           </Badge>
         </div>
       </TableCell>
-      {canManageProducts && (
+      {permissions.can_edit && (
         <TableCell>
           <div className="flex items-center gap-2">
             <Button
