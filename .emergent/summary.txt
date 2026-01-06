@@ -1,164 +1,195 @@
-<analysis>**original_problem_statement:** The user's goal is to prepare the ZOZO Burger application for go-live. This involves moving from the  POS system to a new, custom-built system called .
-
-Key tasks included:
-1.  Fixing various UI/data bugs in the admin panel (incorrect category display, duplicate products).
-2.  Implementing a drag and drop feature for reordering products.
-3.  Correcting product pricing logic to handle different sizes and single-size items.
-4.  Implementing a robust POS connector for the new  system.
-5.  Guiding a parallel agent to build the  system itself, evolving it from a simple service to a multi-tenant SaaS with a guided in-store ordering UI.
-6.  Creating a final project summary document.
-7.  Implementing a critical POS order retry mechanism to prevent lost sales.
+<analysis>**original_problem_statement:** The user's initial goal was to prepare the ZOZO Burger application for go-live by migrating from the  POS system to , fixing UI/data bugs, and implementing various features. This evolved into a comprehensive go-live readiness check, including legal/DSGVO compliance (Impressum, Cookie Banner), security hardening (2FA), and major architectural changes like a master-slave menu system. The user is very hands-on, providing technical feedback, changing priorities, and introducing new feature requests like a professional-grade menu modifier system and Google Maps address autocomplete.
 
 **PRODUCT REQUIREMENTS:**
--   The application must be stable and ready for production use.
--   The integration with the new  POS system must be complete, secure, and resilient to failure.
--   Each restaurant location (Rellingen, Henstedt-Ulzburg) must have its own separate configuration within the multi-tenant  system.
--   A mechanism to handle failed POS order submissions must be in place to protect revenue.
+-   A stable, production-ready application.
+-   A robust and flexible menu management system suitable for a restaurant chain (Master-Slave architecture).
+-   A modern ordering experience with product customization (Modifier Groups).
+-   Legal compliance with German/EU regulations (DSGVO, TDDDG).
+-   Functional POS integration for all restaurant locations.
 
 **User's preferred language**: German
 
 **what currently exists?**
-The ZOZO Burger application features a FastAPI backend and a React frontend. The admin panel has been significantly improved: product drag-and-drop reordering is implemented, data inconsistencies (duplicate products, incorrect category IDs) have been resolved, and the product editing dialog now dynamically handles multiple pricing structures.
-
-The application is fully integrated with the new  POS system. The  connector is implemented, and the admin UI allows separate configuration (API URL, API Key) for each restaurant location, supporting the multi-tenant architecture of Cash-X. Live connections for both the Rellingen and Henstedt-Ulzburg branches have been configured with unique API keys and successfully tested. A comprehensive project summary document has been created at .
+The application consists of a FastAPI backend and a React frontend. Major architectural and feature work has been completed:
+-   **Master-Slave Menu:** The product architecture was refactored. Rellingen is the master location managing all products, while Henstedt is a slave location that can only toggle product availability (/).
+-   **Legal & Compliance:** Legal pages (Impressum, Datenschutz, etc.), a DSGVO/TDDDG-compliant cookie banner (), and a 2-click consent mechanism for Google Maps are implemented.
+-   **POS Retry Mechanism:** A robust system to handle failed POS order submissions is in place and tested.
+-   **Google Maps Integration:** Google Maps is used for location display (with 2-click consent) and for address autocomplete in the checkout, using a user-provided API key.
+-   **2FA/Passkey (Partially Implemented/Abandoned):** A significant amount of work was done to implement WebAuthn/Passkey for 2FA, but after hitting multiple browser compatibility and implementation issues, the user decided to abandon it for now in favor of no 2FA for the go-live. Much of this code still exists.
+-   **Modifier Groups (Partially Implemented):** The backend data models and setup scripts for modifier groups (e.g., salad dressings, pasta types) have been created. The frontend has been partially updated, but testing is blocked by a pre-existing bug.
+-   **ExpertOrder POS Integration:** The system is configured to connect to ExpertOrder for the Henstedt location. The connection works in test mode but fails in live mode.
 
 **Last working item**:
--   **Last item agent was working:** Implementing a robust POS retry mechanism to prevent lost orders. The agent has written the core logic into , which includes retry delays (exponential backoff), handling for hard/soft fails, and logic to queue terminally failed orders into a new  database collection.
--   **Status:** IN PROGRESS
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** Both.
-    1.  **Backend testing agent:** To create a test suite for  that simulates POS failures (e.g., by mocking the  client to raise exceptions) and verifies that orders are correctly retried and eventually queued.
-    2.  **Frontend testing agent:** To test the new admin UI page for viewing and manually retrying failed orders.
--   **User Testing Done:** N
+-   **Last item agent was working:** Debugging the live connection to the  POS system for the Henstedt-Ulzburg location. The connection consistently fails with an HTTP 403 Broker ist unbekannt error, despite trying multiple API keys and broker names provided by the user.
+-   **Status:** BLOCKED
+-   **Agent Testing Done:** Y
+-   **Which testing method agent to use?** manual testing by curl. The issue is external and requires user action.
+-   **User Testing Done:** Y
 
 **All Pending/In progress Issue list**:
--   None. All previously reported bugs and issues have been resolved. The only pending item is the task currently in progress.
+-   Issue 1: ExpertOrder Live Integration Fails with 403 Error (P0)
+-   Issue 2: Menu Page does not load products correctly (P1)
+-   Issue 3: Passkey/2FA feature is partially implemented and abandoned (P3)
 
 **Issues Detail:**
--   N/A
+-   **Issue 1: ExpertOrder Live Integration Fails with 403 Error**
+    -   **Attempted fixes:** The agent has exhaustively debugged this. It has confirmed the API endpoint (), payload structure, and payment type based on official documentation. It has tried multiple API keys and broker names provided by the user. A test with the official *demo* API key worked (returning a 422 for a pricing mismatch, which is expected), proving the connector code is fundamentally correct. The user's production keys, however, all result in a 403 Broker ist unbekannt error.
+    -   **Next debug checklist:** This issue is external. The user must contact ExpertOrder support and request: Please activate the broker name ZOZO-Burger for the API key and confirm it is ready for the live endpoint .
+    -   **Why fix this issue and what will be achieved with the fix?** This will enable the Henstedt-Ulzburg location to process live orders through its POS system.
+    -   **Status:** BLOCKED
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Backend.
+    -   **Blocked on other issue:** User action required (contacting ExpertOrder).
+
+-   **Issue 2: Menu Page does not load products correctly**
+    -   **Attempted fixes:** The agent identified that the page shows Keine Gerichte gefunden because the location context is not being correctly passed or initialized on direct page load. The agent tried to work around it by navigating through the UI but didn't fix the root cause.
+    -   **Next debug checklist:**
+        1.  Investigate  and its interaction with  or whichever context holds the .
+        2.  Ensure that on page load, if no location is selected, the application either defaults to a location or prompts the user to select one.
+        3.  The  hook that loads the menu should have  as a dependency and handle cases where it's initially null.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical usability bug that currently blocks the testing and completion of the Modifier Groups feature. Fixing it will make the menu system functional and testable.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Frontend.
+
+-   **Issue 3: Passkey/2FA feature is partially implemented and abandoned**
+    -   **Attempted fixes:** A large portion of the session was spent implementing a WebAuthn/Passkey 2FA system. The agent created backend services, API endpoints, and frontend components. However, after numerous bugs and compatibility issues, the user decided to remove 2FA entirely for the go-live.
+    -   **Next debug checklist:**
+        1.  Decide with the user whether to completely remove the Passkey-related code or to keep it for a future implementation.
+        2.  If removing, delete , , , and remove the related API endpoints from  and UI elements from .
+    -   **Why fix this issue and what will be achieved with the fix?** To clean up the codebase, remove dead/confusing code, and prevent future agents from wasting time on an abandoned feature.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Both.
 
 **In progress Task List**:
--   **Task 1: Complete POS Retry Mechanism Implementation (P0)**
+-   **Task 1: Implement Modifier Groups System (P2)**
 
 **Task Detail:**
--   **Task 1: Complete POS Retry Mechanism Implementation**
-    -   **Where to resume:**
-        1.  **Backend:** The logic in  is written. Now, create the API endpoints in  for the admin UI:
-            -   : To list all queued orders.
-            -   : To trigger a manual retry.
-            -   Ensure these endpoints are secured and accessible only to admins (Super Admin sees all, Branch Admin sees their own location).
-        2.  **Frontend:** Create a new admin page at  (route: ).
-            -   This page should display a table of failed orders with details (Order #, Location, Time, Error, Retry Count).
-            -   Each row should have a Retry button that calls the new backend endpoint.
-            -   Display success/error toasts after a manual retry attempt.
-    -   **What will be achieved with this?** This will create a resilient system that protects revenue by preventing paid orders from being lost due to temporary POS API outages or network issues. It provides admins with visibility and control over failed submissions.
+-   **Task 1: Implement Modifier Groups System**
+    -   **Where to resume:** The backend models () and assignment scripts are done. The frontend  component has been partially modified to receive and display modifier groups. The next steps are:
+        1.  Fix the blocking  loading bug (Issue #2).
+        2.  Thoroughly test the display of modifier groups in the  dialog for products that have them (Salads, Pasta).
+        3.  Ensure the selected modifier choices are correctly added to the cart item and reflected in the final price.
+        4.  Ensure the logic for required choices (e.g., Dressingauswahl als Pflicht) is enforced in the UI.
+    -   **What will be achieved with this?** A modern, competitive ordering experience allowing customers to customize their food, which the user has defined as a go-live requirement.
     -   **Status:** IN PROGRESS
     -   **Should Test frontend/backend/both after fix?** Both.
-    -   **Blocked on something:** Nothing.
+    -   **Blocked on something:** Issue #2: Menu Page loading bug.
 
 **Upcoming and Future Tasks**
--   None. All user requests have been addressed or are currently in progress. The user has been provided with prompts to continue development on the separate Cash-X system with another agent.
+-   **P0: Fix  loading bug.** (See Issue #2 for details).
+-   **P1: Finalize  Live Integration.** This is blocked on the user contacting ExpertOrder support.
+-   **P2: Complete Modifier Groups Implementation.** (See In Progress Task #1 for details).
+-   **P3: Implement Modern Product Editor (Phase 2).** The user wants a full wizard-style product editor with live preview to manage products, variants, and modifier groups. A plan exists in .
+-   **P4: Re-implement 2FA.** The user wants a secure system. Post-go-live, 2FA (either TOTP or a revisited Passkey implementation) should be added back, particularly for Super Admins.
 
 **Completed work in this session**
--   **Drag & Drop Product Reordering:** Implemented a drag-and-drop interface in the admin product list () and the corresponding backend endpoint () to save the new order.
--   **Database & UI Cleanup:**
-    -   Fixed an issue where the admin product table displayed Category IDs instead of names by correcting data inconsistencies for 112 products.
-    -   Identified and deleted 111 duplicate products from the database, reducing the product count from 276 to 164.
--   **Dynamic Product Pricing:** Updated the product creation/editing modal () to correctly display price fields based on product type (e.g., one price for special burgers, two sizes for standard burgers, corrected Pizza sizes).
--   **Cash-X POS Integration (Full Lifecycle):**
-    -   Proposed and defined an API specification for the user's custom-built Cash-X system.
-    -   Implemented the  connector based on the spec.
-    -   Updated the admin UI () to be fully dynamic, allowing selection and configuration of Cash-X.
-    -   Configured and live-tested the connection to the multi-tenant Cash-X system, setting up unique API keys for both Rellingen and Henstedt-Ulzburg locations.
--   **Generated Prompts for Cash-X System:** Created multiple detailed, copy-pasteable prompts for the user to give to a parallel agent to build the Cash-X system, including multi-tenancy, smart product auto-tagging, and a guided in-store ordering UI.
--   **Project Documentation:** Created a comprehensive project summary document at .
+-   **POS Retry Mechanism:** Implemented and E2E tested a system to queue and retry failed POS order submissions.
+-   **DSGVO/Legal Compliance:** Created legal pages (Impressum, Datenschutz, etc.) and a compliant Cookie Banner with granular consent.
+-   **Google Maps Integration:** Implemented 2-click consent for maps and address autocomplete for the checkout, including setting up a user-provided API key.
+-   **Master-Slave Menu Architecture:** Refactored the entire product database and application logic to support a central menu (Rellingen) with location-specific overrides (Henstedt).
+-   **Session Handling:** Fixed a critical bug where 401 Unauthorized errors would crash the UI; now it correctly redirects to the login page.
+-   **Resend Email Integration:** Verified the user's domain with Resend and confirmed that transactional emails are sent correctly from .
+-   **Numerous Bug Fixes:** Addressed a wide range of issues, from UI bugs to critical backend errors, throughout the session.
 
 **Earlier issues found/mentioned but not fixed**
--   None.
+-   ** loading bug:** The menu page fails to load products unless the user navigates through a specific flow. This pre-existing bug became a blocker for testing new menu features and was not resolved.
 
 **Known issue recurrence from previous fork**
--   None.
+-   None identified.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **POS Integration:** Full lifecycle from API definition to multi-tenant client implementation.
--   **Resilient Systems:** Designing and implementing a POS retry mechanism with exponential backoff and a failure queue.
--   **Multi-Tenancy:** Adapting the client application (ZOZO Burger) to work with a multi-tenant SaaS backend (Cash-X) by using per-location API keys.
--   **Dynamic Frontend:** Building React components that adapt their UI based on backend data (e.g., product pricing fields, POS configuration forms).
--   **Data Cleansing:** Writing and executing scripts to fix inconsistencies and remove duplicates in a production database.
--   **Drag & Drop:** Using a library () to implement a user-friendly reordering feature.
+-   **Master-Slave Data Architecture:** Products are global, with a separate  collection for location-specific overrides (, ).
+-   **External API Integration & Debugging:** Extensive work on integrating with the  POS, including deep-diving into documentation to correct endpoints and payloads.
+-   **DSGVO/TDDDG Compliance:** Implementation of a cookie consent banner, 2-click content loaders, and static legal pages.
+-   **React Context & State Management:** Used for managing authentication state, location selection, and cart data. The fragility of this was exposed by the menu loading bug.
+-   **WebAuthn (Passkey):** The agent attempted a full implementation, demonstrating knowledge of the spec (challenges, credentials, etc.), but it was ultimately abandoned.
 
 **key DB schema**
--   **products:** Contains product details, including dynamic pricing fields (, , ).
--   **pos_configs:** Stores POS configuration (provider, API URL, API Key) on a per-location basis.
--   **failed_pos_orders (New):**
-    -   , , , , , , , , .
+-   **products:** Global list of all products.  is now deprecated/null.
+-   **branch_product_settings:** 
+-   **modifier_groups:** 
+-   **product_modifiers:**  (Junction table/collection)
 
 **changes in tech stack**
--   , ,  were added to the frontend .
+-   **frontend:** , 
+-   **backend:** 
 
 **All files of reference**
--   : Contains the new, critical POS retry logic.
--   : The client-side implementation for the  POS.
--   : The main admin page for products, now with drag-and-drop.
--   : The admin page for configuring POS systems for each location.
--   : The complete project documentation created in this session.
+-   : Contains the heavily-debugged connector for the blocked POS integration.
+-   : The main product admin page, showcasing the master-slave implementation.
+-   : The public menu page that has the critical loading bug.
+-   : The dialog for adding items to the cart, now with partial modifier group support.
+-   : User-approved plan for the next major feature.
 
 **Areas that need refactoring**:
--   **Admin Product Management UI:** The previous summary noted two components for managing products:  and . While the agent made  the primary one,  still exists. Consolidating these would reduce code duplication and potential confusion.
+-   **Passkey/WebAuthn Code:** The feature was abandoned. The associated backend service, API endpoints, and frontend components should be cleanly removed to avoid technical debt.
+-   **Frontend State Management:** The bug on  indicates that the  state is not robustly managed across the application. A review of the relevant React Context and how it's initialized/persisted is needed.
+-   ** vs :** The agent noted an inconsistency where different parts of the auth flow used different storage mechanisms, causing bugs. This should be standardized to  or  throughout.
 
 **key api endpoints**
--   : For saving the new product order after drag-and-drop.
--   : To save the POS configuration for a specific location.
--   : To test the POS connection.
--   **(Upcoming)** : To list queued failed orders.
--   **(Upcoming)** : To manually retry a failed order.
+-   : Now handles updates to master product data.
+-   : New endpoint for slave admins to toggle  and .
+-   : New endpoint to fetch all modifier groups.
+-   : Abandoned endpoints.
 
 **Critical Info for New Agent**
--   **The POS Retry mechanism is a critical go-live feature.** The user considers it Umsatz-Schutz (revenue protection). Your immediate priority is to complete its implementation (backend API endpoints + frontend UI).
--   **The application is now architected for a multi-tenant POS.** ZOZO Burger is the client. Cash-X is the server (being built by a parallel agent). Each ZOZO location has its own API key for Cash-X, which is configured in the admin panel.
--   **User is highly engaged and driving the architecture.** The user is providing detailed requirements and managing the development of the separate Cash-X system. Be prepared for clear, specific, and technically-minded feedback.
+-   **User has de-prioritized go-live security steps.** The user's focus shifted from finalizing 2FA and other go-live tasks to implementing the new Modifier Groups feature. You should confirm if this is still the top priority.
+-   **Fix the  loading bug first.** You cannot test the modifier group implementation without fixing the bug that prevents products from loading on the menu page.
+-   **The  integration is blocked externally.** Do not waste time debugging it further. The user needs to contact ExpertOrder support. Recommend they use the working  integration for both locations as a workaround.
+-   **The Passkey/2FA feature was abandoned.** The user explicitly requested to remove 2FA requirements for now. The leftover code should be cleaned up.
 
 **documents and test reports created in this job**
--   
+-   /app/GO_LIVE_SECURITY_LEGAL_REPORT.md
+-   /app/RESEND_DOMAIN_SETUP.md
+-   /app/ADMIN_SECURITY_SETUP.md
+-   /app/GO_LIVE_PREFLIGHT_CHECKLIST.md
+-   /app/PHASE2_MODERN_PRODUCT_EDITOR.md
+-   /app/FINAL_SMOKE_TEST.md
+-   /app/READY_FOR_YOUR_ACTIONS.md
+-   /app/test_reports/iteration_6.json
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (pending):** Asked the agent to implement the POS retry mechanism immediately, confirming it's a critical go-live feature, not a nice-to-have. Provided a detailed set of requirements for the implementation.
-2.  **Agent:** Provided the full content of , listed mandatory ENV variables for production, identified the top 3 go-live blockers, and gave a detailed implementation proposal for the POS retry mechanism.
-3.  **User:** Asked for the full content of the summary file, mandatory ENV vars, go-live blockers, and a proposal for POS retry.
-4.  **Agent:** Confirmed creation of the final project summary document.
-5.  **User:** Requested a final, comprehensive project overview document () and the agent's honest recommendations for next steps.
-6.  **Agent:** Generated the final, most detailed prompt for the parallel agent building Cash-X, outlining a complete guided in-store ordering system with complex business logic (upsells, free items, etc.).
-7.  **User:** Added significant new requirements for the in-store ordering flow in Cash-X, including upsells for desserts, gratis items for certain categories, and paid add-ons.
-8.  **Agent:** Generated a prompt for the Cash-X agent to implement a smart auto-tagging system using fuzzy matching to minimize manual product mapping.
-9.  **User:** Asked if the tagging system could be smarter and automatically match similar names (e.g., Cheeseburger 125g vs. Cheeseburger Medium 125g).
-10. **Agent:** Generated a prompt for the Cash-X agent to implement a flexible optional tagging system, ensuring no orders are ever blocked while still allowing for reporting.
+1.  User provides OpenAPI spec for ExpertOrder. (Agent confirms it's the same info).
+2.  User asks to try a different API key. (Agent tests, still 403).
+3.  User asks to try a different broker name. (Agent tests, still 403).
+4.  User confirms they enabled the broker. (Agent tests, still 403).
+5.  User provides a screenshot of two different ExpertOrder configs. (Agent tests both, both fail).
+6.  User provides full JSON payload example from docs. (Agent corrects payment type, still fails).
+7.  User provides screenshot of new active API key. (Agent tests, still fails).
+8.  User provides official API documentation link. (Agent finds correct endpoint and test key, makes progress).
+9.  User asks to try the  as the API key. (Agent tests, fails).
+10. Agent concludes the user's API key is not yet active on ExpertOrder's side and recommends using Cash-X instead.
 
 **Project Health Check:**
--   **Broken:** None.
--   **Mocked:** The  POS connection points to a preview URL. This needs to be updated to the production URL () during deployment. The  connector is now considered a legacy fallback.
+-   **Broken:**
+    -    live POS integration.
+    -    product loading on direct navigation.
+-   **Mocked:**
+    -    is set to  to prevent the app from failing on live order attempts.
 
 **3rd Party Integrations**
--   **MongoDB:** Primary database.
--   **FastAPI / React:** Core application frameworks.
--   **Resend:** For transactional emails.
--   **Cash-X (custom):** The primary, multi-tenant POS system. The integration is live-tested against its preview environment. Requires a Base URL and a per-location API Key.
--   **ExpertOrder (EOCloud OSP API):** Legacy POS system.
+-   **ExpertOrder:** POS system for Henstedt. Integration is written but blocked by an external 403 error on the live endpoint.
+-   **Cash-X:** POS system for Rellingen. Integration is complete and was previously working.
+-   **Google Maps API:** Used for , , . Requires a user-provided API key with correct domain referrers.
+-   **Resend:** Used for transactional emails. Domain is verified.
+-   **cookie-though:** Frontend library for cookie consent banner.
 
 **Testing status**
--   **Testing agent used after significant changes:** NO
+-   **Testing agent used after significant changes:** YES
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None.
--   **Known regressions:** None.
+-   **Test files created:** None by the agent itself.
+-   **Known regressions:** The menu page loading issue seems to be a pre-existing bug that has become more critical due to new feature development.
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
--   **Rellingen Admin:**  / 
+-   **Rellingen Admin:**  /  (will be forced to change)
 -   **Henstedt Admin:**  / 
--   **Cash-X API Key (Rellingen):** 
--   **Cash-X API Key (Henstedt):** 
 
 **What agent forgot to execute**
--   The agent is in the middle of the POS retry implementation, as requested. Nothing has been forgotten.</analysis>
+-   The agent did not fix the root cause of the  loading bug, which now blocks further development on the user's highest priority feature (Modifier Groups).
+-   The agent did not clean up the abandoned Passkey/WebAuthn feature code, leaving technical debt.</analysis>
