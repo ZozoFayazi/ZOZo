@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { createOrder } from '../api';
 import axios from 'axios';
 import EmailVerification from './EmailVerification';
+import { AddressAutocomplete, loadGoogleMapsScript } from './AddressAutocomplete';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
