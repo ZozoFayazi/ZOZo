@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
 
+const CONSENT_KEY = 'zozo_cookie_consent';
+const CONSENT_VERSION = '1.0';
+
 /**
  * 2-Klick Google Maps Lösung (DSGVO/TDDDG-konform)
  * 
