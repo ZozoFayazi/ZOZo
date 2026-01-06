@@ -68,7 +68,9 @@ class WebAuthnService:
             user_name=admin_email,
             user_display_name=admin.get('name', admin_email),
             authenticator_selection=AuthenticatorSelectionCriteria(
-                authenticator_attachment=AuthenticatorAttachment.PLATFORM,
+                # Don't force platform - allow both platform (FaceID) and cross-platform (Security Keys)
+                # This ensures compatibility across all devices
+                authenticator_attachment=None,  # More compatible than PLATFORM
                 resident_key=ResidentKeyRequirement.PREFERRED,
                 user_verification=UserVerificationRequirement.PREFERRED,
             ),
