@@ -64,7 +64,7 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   };
 
   useEffect(() => {
-    loadLocations();
+    loadLocationsWithStatus();
     loadModifierGroups();
   }, []);
 
