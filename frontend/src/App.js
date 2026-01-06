@@ -288,6 +288,7 @@ function App() {
           cartItemCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
           onCartClick={() => setCartOpen(true)}
         />
+        <CookieBanner />
         <Toaster
           position="bottom-right"
           toastOptions={{
