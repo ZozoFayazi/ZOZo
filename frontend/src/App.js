@@ -231,6 +231,14 @@ function App() {
             } 
           />
           <Route 
+            path="/admin/products" 
+            element={
+              <ProtectedAdminRoute>
+                <ProductManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
             path="/admin/discount-codes" 
             element={
               <ProtectedAdminRoute>
