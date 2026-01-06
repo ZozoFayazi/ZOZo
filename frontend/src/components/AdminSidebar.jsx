@@ -71,6 +71,13 @@ const AdminSidebar = () => {
       permission: null // All admins can see their POS settings
     },
     {
+      title: 'POS Fehler-Queue',
+      icon: AlertTriangle,
+      path: '/admin/pos/failed-orders',
+      permission: null, // All admins can see failed orders from their locations
+      badge: true // Will show count badge if there are failed orders
+    },
+    {
       title: 'Sicherheit',
       icon: Shield,
       path: '/admin/security',
