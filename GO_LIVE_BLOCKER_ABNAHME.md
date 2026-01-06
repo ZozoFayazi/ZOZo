@@ -264,13 +264,15 @@ Automatisch bei FINAL FAIL nach 4 Retries
 - Fehlermeldung
 - Button: "Im Admin-Panel prüfen" → `/admin/pos/failed-orders`
 
-**Optional (nur wenn `INCLUDE_ORDER_DETAILS_IN_ALERT_EMAIL=true`):**
-- ⚠️ Kundenname
-- ⚠️ Telefon
-- ⚠️ Adresse (nur bei Lieferung)
-- ⚠️ Bestellpositionen
+**Optional (Notfall-Modus):**
+- ENV: `INCLUDE_ORDER_DETAILS_IN_ALERT_EMAIL=true`
+- Zusätzlich: Kundenname, Telefon, Adresse, Bestellpositionen
+- Warnung im Header: "Enthält Kundendaten - nur intern!"
 
-**Default:** `INCLUDE_ORDER_DETAILS_IN_ALERT_EMAIL=false` (DSGVO-sicher)
+**⚠️ WICHTIG - Datenschutz-Risikoabwägung:**
+Der Notfallmodus darf NUR bei akutem POS-Ausfall verwendet werden und ist ausschließlich für interne Zwecke bestimmt, da er personenbezogene Kundendaten per unverschlüsselter E-Mail versendet. Nach DSGVO Art. 32 ist dies nur in Notfällen zur Geschäftsfortführung vertretbar.
+
+**Default:** `false` (DSGVO-konform, empfohlen)
 
 ### Test
 
