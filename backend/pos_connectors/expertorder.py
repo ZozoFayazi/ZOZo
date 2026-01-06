@@ -235,8 +235,8 @@ class ExpertOrderConnector(BasePOSConnector):
                 "is_test_mode": True
             }
         
-        # Check if base_url looks valid
-        if not self.base_url or self.base_url == self.DEFAULT_EOCLOUD_BASE:
+        # Check if base_url looks valid (must include merchant_id)
+        if not self.base_url or not self.merchant_id:
             return {
                 "success": False,
                 "message": "[TESTMODUS] Base URL nicht konfiguriert - Merchant ID fehlt",
