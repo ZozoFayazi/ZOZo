@@ -292,6 +292,21 @@ class POSService:
             order_oid=order_oid
         )
         
+        # Send alert email to admins
+        try:
+            from pos_alert_email import send_pos_failure_alert
+            await send_pos_failure_alert(
+                db=self.db,
+                order_number=order_number,
+                location_slug=location_slug,
+                error=last_error,
+                error_type=last_error_type,
+                order_data=order_data,
+                retry_count=total_attempts
+            )
+        except Exception as e:
+            logger.error(f"Failed to send POS alert email: {str(e)}")
+        
         # Update order status if we have the OID
         if order_oid:
             await self.db.orders.update_one(
