@@ -11,43 +11,29 @@ logger = logging.getLogger(__name__)
 
 class ExpertOrderConnector(BasePOSConnector):
     """
-    Connector for ExpertOrder / EOCloud POS system
+    Connector for ExpertOrder / EOCloud OSP Push API
     
-    API Documentation:
-    - Base URL: https://s1.eocloud.de/{merchant_id}
-    - Send Order: PUT /api/v1/osp
-    - Check Status: GET /api/v1/osp
+    Official API Documentation: https://osp.expertorder.de/api-doc/push
+    - Endpoint: PUT /push
+    - Base URL: https://osp.expertorder.de
+    - Auth: API_KEY header
     """
     
-    # Default EOCloud base URL (without merchant path)
-    DEFAULT_EOCLOUD_BASE = "https://s1.eocloud.de"
+    # Official OSP base URL
+    DEFAULT_OSP_BASE = "https://osp.expertorder.de"
     
     def __init__(self, config: Dict):
         super().__init__(config)
         
-        # EOCloud uses merchant_id as part of the URL path
-        self.merchant_id = config.get('merchant_id', '')
+        # Use provided base_url or default to official OSP
+        self.base_url = config.get('base_url', self.DEFAULT_OSP_BASE).rstrip('/')
         
-        # Build the correct base URL
-        # If base_url is provided and contains the merchant path, use it directly
-        # Otherwise, construct it from DEFAULT_EOCLOUD_BASE + merchant_id
-        provided_base = config.get('base_url', '')
-        if provided_base and '/c' in provided_base:
-            # User provided full base URL like https://s1.eocloud.de/c102285
-            self.base_url = provided_base.rstrip('/')
-        elif self.merchant_id:
-            # Construct from merchant_id
-            self.base_url = f"{self.DEFAULT_EOCLOUD_BASE}/{self.merchant_id}"
-        else:
-            self.base_url = self.DEFAULT_EOCLOUD_BASE
+        # Official API endpoint
+        self.api_path = "/push"
         
-        # API endpoint path
-        self.api_path = "/api/v1/osp"
-        
-        # Authentication credentials
+        # Authentication
         self.api_key = config.get('api_key')
-        self.username = config.get('username')
-        self.secret = config.get('secret')
+        self.merchant_id = config.get('merchant_id', '')
         self.test_mode = config.get('test_mode', True)
         
         # Test mode simulation settings
