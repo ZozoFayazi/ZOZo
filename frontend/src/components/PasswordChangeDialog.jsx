@@ -76,14 +76,15 @@ export const PasswordChangeDialog = ({ open, onOpenChange, forced = false }) => 
       setNewPassword('');
       setConfirmPassword('');
       
-      // Close dialog if not forced
-      if (!forced) {
-        onOpenChange(false);
-      } else {
-        // If forced, log out and require fresh login
-        toast.info('Bitte melden Sie sich mit Ihrem neuen Passwort an.');
+      // Always logout after password change (JWT rotation makes old token invalid)
+      toast.info('Passwort geändert. Bitte melden Sie sich mit Ihrem neuen Passwort an.', {
+        duration: 5000
+      });
+      
+      // Wait 1 second then logout
+      setTimeout(() => {
         logout();
-      }
+      }, 1000);
     } catch (err) {
       setError(err.message);
       toast.error(err.message);
