@@ -25,6 +25,7 @@ const getImageUrl = (imageUrl) => {
 function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   const [locations, setLocations] = useState([]);
   const [menu, setMenu] = useState([]);
+  const [modifierGroups, setModifierGroups] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
