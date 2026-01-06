@@ -37,11 +37,26 @@ export default function AdminLogin() {
     }
 
     setLoading(true);
+    setLoginEmail(email);
     
     try {
       const result = await login(email, password);
       
-      // Check if 2FA is required
+      // Check if Passkey is required
+      if (result.require_passkey || result.admin?.passkey_enabled) {
+        setRequirePasskey(true);
+        setLoading(false);
+        return;
+      }
+      
+      // Check if Passkey setup is required (Super Admin)
+      if (result.require_passkey_setup || result.admin?.require_passkey_setup) {
+        setRequirePasskeySetup(true);
+        setLoading(false);
+        return;
+      }
+      
+      // Check if 2FA is required (legacy TOTP - fallback)
       if (result.require_2fa) {
         setTempToken(result.temp_token);
         setRequire2FA(true);
