@@ -221,10 +221,32 @@ export default function ProductManagement() {
   
   useEffect(() => {
     if (token) {
+      fetchPermissions();
       fetchProducts();
       fetchCategories();
     }
   }, [token]);
+  
+  const fetchPermissions = async () => {
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${backendUrl}/api/admin/products/permissions`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch permissions');
+      }
+      
+      const data = await response.json();
+      setPermissions(data);
+    } catch (error) {
+      console.error('Fetch permissions error:', error);
+      // Keep defaults
+    }
+  };
   
   const fetchProducts = async () => {
     try {
