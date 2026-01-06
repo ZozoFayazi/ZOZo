@@ -64,7 +64,7 @@ class WebAuthnService:
         options = generate_registration_options(
             rp_id=RP_ID,
             rp_name=RP_NAME,
-            user_id=admin_id,
+            user_id=admin_id.encode('utf-8'),  # Must be bytes!
             user_name=admin_email,
             user_display_name=admin.get('name', admin_email),
             authenticator_selection=AuthenticatorSelectionCriteria(
