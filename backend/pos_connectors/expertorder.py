@@ -13,22 +13,35 @@ class ExpertOrderConnector(BasePOSConnector):
     """
     Connector for ExpertOrder / EOCloud OSP API
     
-    Official API Documentation: https://osp.expertorder.de/swagger-ui/index.html
+    Official API Documentation: https://s1.eocloud.de/{merchant_id}/api/doc/osp
     - Endpoint: PUT /api/v1/osp (for orders)
-    - Base URL: https://osp.expertorder.de
+    - Base URL: https://s1.eocloud.de/{merchant_id}  (NOT osp.expertorder.de!)
     - Auth: API_KEY header
-    """
     
-    # Official OSP base URL
-    DEFAULT_OSP_BASE = "https://osp.expertorder.de"
+    IMPORTANT: Each merchant has their own base URL with their merchant_id!
+    Example: https://s1.eocloud.de/c102285/api/v1/osp
+    """
     
     def __init__(self, config: Dict):
         super().__init__(config)
         
-        # Use provided base_url or default to official OSP
-        self.base_url = config.get('base_url', self.DEFAULT_OSP_BASE).rstrip('/')
+        # CRITICAL: Base URL MUST include the merchant_id!
+        # Format: https://s1.eocloud.de/{merchant_id}
+        # The merchant_id (e.g., "c102285") is provided by ExpertOrder for each location
+        self.merchant_id = config.get('merchant_id', '')
         
-        # CORRECT Official API endpoint (from Swagger docs)
+        if config.get('base_url'):
+            # Use provided base_url if explicitly set
+            self.base_url = config.get('base_url').rstrip('/')
+        elif self.merchant_id:
+            # Construct base_url from merchant_id
+            self.base_url = f"https://s1.eocloud.de/{self.merchant_id}"
+        else:
+            # Fallback - will likely fail without merchant_id
+            self.base_url = "https://s1.eocloud.de"
+            logger.warning("ExpertOrder: No merchant_id provided! API calls will likely fail.")
+        
+        # API endpoint path
         self.api_path = "/api/v1/osp"
         
         # Broker name - must match EXACTLY what's registered in ExpertOrder
