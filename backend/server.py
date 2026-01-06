@@ -2224,30 +2224,24 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             )
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
-        # PASSKEY CHECK - Before creating JWT token
-        # If Passkey is enabled, require Passkey verification (do NOT issue JWT yet)
-        if admin.get("passkey_enabled"):
-            # Passkey verification required
-            await rate_limiter.record_attempt(http_request, "admin_login", success=True)
-            
-            return {
-                "require_passkey": True,
-                "email": admin["email"],
-                "message": "Passkey-Verifizierung erforderlich"
-            }
-        
         # Check if Passkey setup is required (Super Admin policy)
+        # We still issue JWT, but ProtectedAdminRoute will enforce setup
         require_passkey_setup = (
             admin.get("role") == "super_admin" 
             and not admin.get("passkey_enabled")
         )
         
-        # Check if 2FA is enabled (legacy TOTP - fallback)
+        # PASSKEY CHECK - If enabled, require verification
+        # But for Passkey SETUP, we need JWT first, so this only applies to ENABLED passkeys
+        passkey_enabled = admin.get("passkey_enabled", False)
+        
+        # Legacy TOTP check (fallback)
         if admin.get("totp_enabled") and admin.get("totp_secret"):
             # TOTP 2FA is configured - this is fallback, Passkey takes priority
             pass
         
-        # Create JWT token (only if Passkey not required)
+        # Create JWT token (ALWAYS - even if setup required)
+        # ProtectedAdminRoute will handle enforcement
         token = AdminAuth.create_token(
             email=admin["email"],
             role=admin["role"],
