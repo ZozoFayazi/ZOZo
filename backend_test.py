@@ -615,6 +615,22 @@ class ZOZOBurgerAPITester:
         print("\n📌 QUICK REORDER (Premium Feature)")
         print("-" * 70)
         self.test_get_order_history()
+        
+        # POS Integration & Retry Mechanism
+        print("\n📌 POS INTEGRATION & RETRY MECHANISM")
+        print("-" * 70)
+        self.test_get_failed_pos_orders()
+        
+        # Master-Slave Menu Architecture
+        print("\n📌 MASTER-SLAVE MENU ARCHITECTURE")
+        print("-" * 70)
+        self.test_get_product_permissions()
+        self.test_get_products_admin()
+        
+        # Modifier Groups System
+        print("\n📌 MODIFIER GROUPS SYSTEM")
+        print("-" * 70)
+        self.test_get_modifier_groups()
 
         # Print summary
         print("\n" + "=" * 70)
