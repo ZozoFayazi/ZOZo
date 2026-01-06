@@ -34,6 +34,8 @@ class ExpertOrderConnector(BasePOSConnector):
         # Authentication
         self.api_key = config.get('api_key')
         self.merchant_id = config.get('merchant_id', '')
+        self.username = config.get('username')  # Legacy support
+        self.secret = config.get('secret')  # Legacy support
         self.test_mode = config.get('test_mode', True)
         
         # Test mode simulation settings
