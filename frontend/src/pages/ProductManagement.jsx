@@ -93,7 +93,7 @@ function SortableTableRow({ product, categories, permissions, onEdit, onToggleAc
 
   return (
     <TableRow ref={setNodeRef} style={style} data-testid={`product-row-${product.id}`}>
-      {canManageProducts && (
+      {permissions.can_reorder && (
         <TableCell className="w-10">
           <button
             {...attributes}
