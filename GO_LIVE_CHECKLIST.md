@@ -208,7 +208,159 @@ Dann werden Emails von `onboarding@resend.dev` gesendet (nur für interne Tests)
 
 ---
 
-## 9. Offene Risiken
+## 11. POS Retry-Mechanismus (Umsatz-Schutz) ✅ IMPLEMENTIERT
+
+**Feature-Name:** POS Automatic Retry & Failure Queue  
+**Implementierungsdatum:** 18.12.2025  
+**Status:** ✅ PRODUKTIONSBEREIT
+
+### Übersicht
+Das System schützt vor Umsatzverlusten durch automatische Wiederholungsversuche bei POS-Ausfällen und eine manuelle Retry-Queue für terminal fehlgeschlagene Bestellungen.
+
+### Automatische Retry-Logik
+
+**Ablauf bei POS-Ausfall:**
+1. **Versuch 1:** Sofortige Übertragung beim Bestelleingang
+2. **Versuch 2:** Nach 2 Sekunden (bei Fehler)
+3. **Versuch 3:** Nach 5 Sekunden (bei weiterem Fehler)
+4. **Versuch 4:** Nach 10 Sekunden (letzter Auto-Versuch)
+5. **Bei Fehlschlag:** Bestellung landet in Failed-Orders Queue
+
+**Code-Location:** `/app/backend/pos_service.py`  
+**Methode:** `push_order_with_retry()`
+
+### Fehlertypen
+
+| Typ | Beschreibung | Beispiel |
+|-----|-------------|----------|
+| **Hard Fail** | Verbindungsfehler | POS-Server offline, Netzwerkausfall, Timeout |
+| **Soft Fail** | API-Fehler | Ungültige Daten, fehlende Credentials, Rate-Limit |
+
+### Bestellstatus während Retry
+
+| pos_status | Bedeutung |
+|-----------|-----------|
+| `pending` | Wartet auf ersten Versuch |
+| `retrying` | Automatische Wiederholung läuft |
+| `sent` | Erfolgreich an POS übertragen |
+| `error` | Alle Versuche fehlgeschlagen → Queue |
+
+### Failed Orders Queue
+
+**Admin-UI:** `/admin/pos/failed-orders`  
+**Zugriff:**
+- **Super Admin:** Sieht alle fehlgeschlagenen Bestellungen (alle Standorte)
+- **Branch Admin:** Sieht nur fehlgeschlagene Bestellungen des eigenen Standorts
+
+**Funktionen:**
+- ✅ Liste aller fehlgeschlagenen Bestellungen
+- ✅ Manuelle Retry-Funktion (ein Klick)
+- ✅ Anzeige von: Order-Nummer, Standort, Zeitpunkt, Fehlertyp, Fehlermeldung, Retry-Count
+- ✅ Auto-Refresh alle 30 Sekunden
+- ✅ Visuelles Feedback (Success/Error Toasts)
+
+### API Endpoints
+
+```
+GET  /api/admin/pos/failed-orders
+POST /api/admin/pos/failed-orders/{failed_order_id}/retry
+```
+
+### Datenbank Schema
+
+**Collection:** `failed_pos_orders`
+
+```python
+{
+  "_id": ObjectId,
+  "order_id": str,              # ID der Original-Bestellung
+  "order_number": str,          # z.B. "ZOZO-1234"
+  "location_slug": str,         # z.B. "rellingen"
+  "provider": str,              # "cashx" oder "expertorder"
+  "order_data": dict,           # Komplette Bestelldaten für Retry
+  "error": str,                 # Letzte Fehlermeldung
+  "error_type": str,            # "hard" oder "soft"
+  "retry_count": int,           # Anzahl Auto-Retries (meist 4)
+  "status": str,                # "pending" | "resolved" | "retrying"
+  "created_at": datetime,       # Wann fehlgeschlagen
+  "resolved_at": datetime,      # Wann erfolgreich nachgesendet
+  "resolved_by": str            # Email des Admins
+}
+```
+
+### Logs & Audit Trail
+
+**Audit-Logs für folgende Events:**
+- `pos_push_failed` - Bestellung in Queue eingereiht
+- `pos_order_retry` - Manueller Retry-Versuch
+- `push_order_retry_success` - Erfolgreicher Retry nach X Versuchen
+
+**POS-Logs Sammlung:** `pos_logs`  
+**Zugriff:** `/admin/locations/{slug}/pos/logs`
+
+### Bei erfolgreichem Retry
+
+**Änderungen in `orders` Collection:**
+```python
+{
+  "pos_status": "sent",
+  "pos_order_id": "...",
+  "pos_sent_at": datetime.now(),
+  "pos_retry_count": 4  # Anzahl der benötigten Versuche
+}
+```
+
+**Änderungen in `failed_pos_orders` Collection:**
+```python
+{
+  "status": "resolved",
+  "resolved_at": datetime.now(),
+  "resolved_by": "admin@email.de"
+}
+```
+
+### Testing-Anleitung
+
+**Szenario 1: POS absichtlich kaputt machen**
+1. Gehe zu `/admin/pos` (Standort wählen)
+2. Ändere die API-URL zu einer ungültigen Adresse (z.B. `https://invalid-url.local`)
+3. Speichern → Verbindungstest sollte fehlschlagen
+4. Erstelle eine Test-Bestellung über die öffentliche Website
+5. Prüfe Logs: Auto-Retries sollten sichtbar sein (stderr logs)
+6. Nach 4 Fehlversuchen: Bestellung erscheint in `/admin/pos/failed-orders`
+
+**Szenario 2: Erfolgreicher manueller Retry**
+1. POS-Einstellungen korrigieren (richtige URL)
+2. Gehe zu `/admin/pos/failed-orders`
+3. Klicke "Retry" bei der fehlgeschlagenen Bestellung
+4. Toast: "Bestellung ZOZO-XXXX erfolgreich an POS gesendet!"
+5. Bestellung verschwindet aus der Failed-Orders Liste
+
+**Erwartete Log-Ausgaben:**
+```
+INFO: POS push attempt 1/4 for ZOZO-1234
+WARNING: POS hard fail for ZOZO-1234: Connection timeout
+INFO: Waiting 2s before retry 2 for ZOZO-1234
+INFO: POS push attempt 2/4 for ZOZO-1234
+...
+ERROR: POS push FAILED for ZOZO-1234 after 4 attempts
+WARNING: Order ZOZO-1234 queued for manual retry
+```
+
+### Wichtige Hinweise
+
+⚠️ **Umsatz-Schutz garantiert:**  
+Auch bei komplettem POS-Ausfall geht **keine bezahlte Bestellung verloren**. Alle Daten werden lokal gespeichert und können manuell nachgesendet werden.
+
+✅ **Automatisch resilient:**  
+Bei kurzfristigen Netzwerkproblemen (< 17 Sekunden) erfolgt die Übertragung automatisch ohne Admin-Eingriff.
+
+📊 **Monitoring:**  
+Branch Admins sehen nur Failed Orders ihres Standorts → Klare Verantwortlichkeit
+
+---
+
+## 12. Offene Risiken
 
 ### Niedrig
 1. **Cash-X POS** - Skeleton-Implementation ohne Live-Logik
