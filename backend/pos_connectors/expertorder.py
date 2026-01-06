@@ -501,7 +501,7 @@ class ExpertOrderConnector(BasePOSConnector):
         # Build the OSP payload with ALL required ExpertOrder fields (from official API doc)
         payload = {
             "version": 1,  # Required - Integer
-            "broker": "ZOZO Burger",  # Required - Shop name
+            "broker": self.broker_name,  # Required - MUST match registered name EXACTLY
             "fromMobile": False,  # Optional
             "clientIp": "127.0.0.1",  # Optional
             "id": order_data.get('order_number', str(uuid.uuid4())),  # Required - Order ID
