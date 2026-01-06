@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 
 class ExpertOrderConnector(BasePOSConnector):
     """
-    Connector for ExpertOrder / EOCloud OSP Push API
+    Connector for ExpertOrder / EOCloud OSP API
     
-    Official API Documentation: https://osp.expertorder.de/api-doc/push
-    - Endpoint: PUT /push
+    Official API Documentation: https://osp.expertorder.de/swagger-ui/index.html
+    - Endpoint: PUT /api/v1/osp (for orders)
     - Base URL: https://osp.expertorder.de
     - Auth: API_KEY header
     """
@@ -28,8 +28,11 @@ class ExpertOrderConnector(BasePOSConnector):
         # Use provided base_url or default to official OSP
         self.base_url = config.get('base_url', self.DEFAULT_OSP_BASE).rstrip('/')
         
-        # Official API endpoint
-        self.api_path = "/push"
+        # CORRECT Official API endpoint (from Swagger docs)
+        self.api_path = "/api/v1/osp"
+        
+        # Broker name - must match EXACTLY what's registered in ExpertOrder
+        self.broker_name = config.get('broker_name', 'ZOZO-Burger')
         
         # Authentication
         self.api_key = config.get('api_key')
