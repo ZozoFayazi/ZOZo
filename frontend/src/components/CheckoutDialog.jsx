@@ -325,14 +325,35 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
 
               <div>
                 <label className="block text-sm font-medium mb-2">Adresse *</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+                {mapsLoaded ? (
+                  <AddressAutocomplete
+                    initialValue={formData.address}
+                    onAddressSelect={(addressData) => {
+                      setFormData({
+                        ...formData,
+                        address: addressData.address,
+                        postal_code: addressData.postalCode,
+                        city: addressData.city
+                      });
+                      
+                      // Auto-check delivery for this postal code
+                      if (addressData.postalCode) {
+                        checkDeliveryAvailability(addressData.postalCode);
+                      }
+                    }}
+                    placeholder="Straße und Hausnummer"
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Straße und Hausnummer"
+                  />
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
