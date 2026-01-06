@@ -236,6 +236,14 @@ export default function ProductManagement() {
         }
       });
       
+      if (response.status === 401) {
+        // Session expired - redirect to login
+        toast.error('Session abgelaufen. Bitte melden Sie sich erneut an.');
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
+        return;
+      }
+      
       if (!response.ok) {
         throw new Error('Failed to fetch permissions');
       }
@@ -244,7 +252,7 @@ export default function ProductManagement() {
       setPermissions(data);
     } catch (error) {
       console.error('Fetch permissions error:', error);
-      // Keep defaults
+      // Keep defaults - don't crash the UI
     }
   };
   
@@ -256,6 +264,14 @@ export default function ProductManagement() {
           'Authorization': `Bearer ${token}`
         }
       });
+      
+      if (response.status === 401) {
+        // Session expired - redirect to login
+        toast.error('Session abgelaufen. Bitte melden Sie sich erneut an.');
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
+        return;
+      }
       
       if (!response.ok) {
         throw new Error('Failed to fetch products');
