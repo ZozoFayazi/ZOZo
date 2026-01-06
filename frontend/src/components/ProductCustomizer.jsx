@@ -143,6 +143,16 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
   };
 
   const handleAddToCart = () => {
+    // Validation: Check required modifier groups
+    const missingModifiers = productModifiers.filter(g => 
+      g.required && !selectedModifiers[g.id]
+    );
+    
+    if (missingModifiers.length > 0) {
+      toast.error(`Bitte wählen: ${missingModifiers[0].title}`);
+      return;
+    }
+    
     // Validation for bun selection (required for burgers except Smash)
     if (requiresBunSelection && !selectedBun) {
       toast.error('Bitte wähle eine Brötchen-Art');
@@ -156,6 +166,25 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
     }
 
     let customizedName = upgradeToMenu ? `${item.name} Menü` : item.name;
+    
+    // Add modifier selections to name
+    const modifierTexts = [];
+    let modifierPrice = 0;
+    
+    Object.entries(selectedModifiers).forEach(([groupId, optionName]) => {
+      const group = productModifiers.find(g => g.id === groupId);
+      if (group) {
+        const option = group.options.find(o => o.name === optionName);
+        if (option) {
+          modifierTexts.push(optionName);
+          modifierPrice += option.price || 0;
+        }
+      }
+    });
+    
+    if (modifierTexts.length > 0) {
+      customizedName += ` (${modifierTexts.join(', ')})`;
+    }
     
     // Add bun type to name if selected
     if (selectedBun) {
@@ -194,7 +223,9 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       if (selectedRemovals.length > 0) {
         modifications.push(`- ${selectedRemovals.join(', ')}`);
       }
-      customizedName += ` (${modifications.join(' ')})`;
+      if (modifications.length > 0 && !modifierTexts.length) {
+        customizedName += ` (${modifications.join(' ')})`;
+      }
     }
 
     if (specialInstructions) {
@@ -204,11 +235,12 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
     onAddToCart({
       menu_item_id: item.id,
       name: customizedName,
-      price: itemPrice + extrasTotal + sideSurcharge,
+      price: itemPrice + extrasTotal + sideSurcharge + modifierPrice,
       size: size || null,
       quantity: quantity,
       extras: allExtras,
-      removed: selectedRemovals
+      removed: selectedRemovals,
+      modifiers: selectedModifiers
     });
 
     toast.success(`${customizedName} zum Warenkorb hinzugefügt`);
