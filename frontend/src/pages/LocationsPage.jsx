@@ -85,16 +85,12 @@ function LocationsPage({ setSelectedLocation }) {
               className="bg-card border border-border rounded-xl overflow-hidden card-hover"
               data-testid={location.slug === 'rellingen' ? 'rellingen-card' : 'henstedt-card'}
             >
-              {/* Map Embed */}
-              <div className="aspect-video bg-muted relative" data-testid="map-embed">
-                <iframe
-                  title={`Map of ${location.name}`}
-                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(location.address + ', ' + location.city)}&zoom=15`}
-                  className="w-full h-full border-0"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
+              {/* Map Embed - 2-Klick-L\u00f6sung */}
+              <MapPlaceholder 
+                address={location.address}
+                city={location.city}
+                className="aspect-video"
+              />
 
               {/* Details */}
               <div className="p-8 space-y-6">
