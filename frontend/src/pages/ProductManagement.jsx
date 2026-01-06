@@ -649,14 +649,14 @@ export default function ProductManagement() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          {canManageProducts && <TableHead className="w-10"></TableHead>}
+                          {permissions.can_reorder && <TableHead className="w-10"></TableHead>}
                           <TableHead>Bild</TableHead>
                           <TableHead>Name</TableHead>
                           <TableHead>Kategorie</TableHead>
                           <TableHead>Preis</TableHead>
                           <TableHead>Aktiv</TableHead>
                           <TableHead>Lagerbestand</TableHead>
-                          {canManageProducts && <TableHead>Aktionen</TableHead>}
+                          {permissions.can_edit && <TableHead>Aktionen</TableHead>}
                         </TableRow>
                       </TableHeader>
                       <SortableContext items={productIds} strategy={verticalListSortingStrategy}>
@@ -666,7 +666,7 @@ export default function ProductManagement() {
                               key={product.id}
                               product={product}
                               categories={categories}
-                              canManageProducts={canManageProducts}
+                              permissions={permissions}
                               onEdit={handleEditProduct}
                               onToggleActive={handleToggleActive}
                               onToggleStock={handleToggleStock}
