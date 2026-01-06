@@ -25,7 +25,7 @@ export function PasskeySetupDialog({ open, onOpenChange, onSuccess }) {
   const [error, setError] = useState('');
   
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-  const token = localStorage.getItem('adminToken');
+  const token = sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
 
   const startRegistration = async () => {
     setRegistering(true);
