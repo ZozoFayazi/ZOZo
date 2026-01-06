@@ -562,6 +562,17 @@ export default function SecurityDashboard() {
           }
         }}
       />
+      
+      {/* Passkey Setup Dialog */}
+      <PasskeySetupDialog
+        open={showPasskeySetup}
+        onOpenChange={setShowPasskeySetup}
+        onSuccess={() => {
+          fetchPasskeyStatus();
+          toast.success('Passkey erfolgreich eingerichtet!');
+          setShowPasskeySetup(false);
+        }}
+      />
     </AdminLayout>
   );
 }
