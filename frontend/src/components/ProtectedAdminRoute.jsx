@@ -12,6 +12,7 @@ export const ProtectedAdminRoute = ({ children, requiredPermission, requiredBran
   // State for forced dialogs - these track if user has completed the required action in this session
   const [passwordChangeComplete, setPasswordChangeComplete] = useState(false);
   const [twoFASetupComplete, setTwoFASetupComplete] = useState(false);
+  const [passkeySetupComplete, setPasskeySetupComplete] = useState(false);
 
   if (loading) {
     return (
