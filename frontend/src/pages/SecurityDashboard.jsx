@@ -105,11 +105,25 @@ export default function SecurityDashboard() {
       console.error('2FA status fetch error:', error);
     }
   };
+  
+  // Fetch Passkey status
+  const fetchPasskeyStatus = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/admin/security/passkey/status`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to fetch passkey status');
+      const data = await response.json();
+      setPasskeyStatus(data);
+    } catch (error) {
+      console.error('Passkey status fetch error:', error);
+    }
+  };
 
   useEffect(() => {
     if (token && isSuperAdmin()) {
       setLoading(true);
-      Promise.all([fetchSummary(), fetchLogs(), fetch2FAStatus()])
+      Promise.all([fetchSummary(), fetchLogs(), fetch2FAStatus(), fetchPasskeyStatus()])
         .finally(() => setLoading(false));
     }
   }, [token]);
