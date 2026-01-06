@@ -3167,6 +3167,259 @@ async def get_2fa_status(admin: dict = Depends(get_current_admin)):
     return status
 
 
+
+# ============================================================================
+# WEBAUTHN/PASSKEY ENDPOINTS
+# ============================================================================
+
+from webauthn_service import WebAuthnService
+
+webauthn_service = WebAuthnService(db)
+
+
+class PasskeyRegistrationRequest(BaseModel):
+    device_name: Optional[str] = None
+
+
+class PasskeyVerificationRequest(BaseModel):
+    credential: dict
+    device_name: Optional[str] = None
+
+
+class PasskeyAuthRequest(BaseModel):
+    credential: dict
+
+
+class BackupCodeRequest(BaseModel):
+    code: str
+
+
+@api_router.post("/admin/auth/passkey/register-options")
+async def passkey_register_options(admin: dict = Depends(get_current_admin)):
+    """Start passkey registration - returns options for navigator.credentials.create()"""
+    try:
+        options = await webauthn_service.start_registration(admin["email"])
+        
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="passkey_setup_started",
+            result="success",
+            category="auth"
+        )
+        
+        return options
+    except Exception as e:
+        logger.error(f"Passkey register options error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/auth/passkey/register-verify")
+async def passkey_register_verify(
+    request: PasskeyVerificationRequest,
+    admin: dict = Depends(get_current_admin)
+):
+    """Complete passkey registration - verify credential and return backup codes"""
+    try:
+        success, result = await webauthn_service.verify_registration(
+            admin_email=admin["email"],
+            credential=request.credential,
+            device_name=request.device_name
+        )
+        
+        if not success:
+            await audit_service.log_action(
+                actor_email=admin["email"],
+                action="passkey_setup_failed",
+                result="failure",
+                category="auth",
+                details={"error": result}
+            )
+            raise HTTPException(status_code=400, detail=result)
+        
+        # result is backup_codes list
+        backup_codes = result
+        
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="passkey_enabled",
+            result="success",
+            category="auth"
+        )
+        
+        return {
+            "success": True,
+            "message": "Passkey erfolgreich registriert",
+            "backup_codes": backup_codes
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Passkey register verify error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/auth/passkey/login-options")
+async def passkey_login_options(email: str):
+    """Get authentication options for passkey login (after password verification)"""
+    try:
+        options = await webauthn_service.start_authentication(email)
+        return options
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Passkey login options error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/auth/passkey/login-verify")
+async def passkey_login_verify(request: PasskeyAuthRequest, email: str):
+    """Verify passkey authentication and return full JWT"""
+    try:
+        success, message = await webauthn_service.verify_authentication(
+            admin_email=email,
+            credential=request.credential
+        )
+        
+        if not success:
+            await audit_service.log_action(
+                actor_email=email,
+                action="passkey_login_failed",
+                result="failure",
+                category="auth",
+                details={"reason": message}
+            )
+            raise HTTPException(status_code=401, detail=message)
+        
+        # Get admin for full token
+        admin = await db.admins.find_one({"email": email})
+        if not admin:
+            raise HTTPException(status_code=404, detail="Admin nicht gefunden")
+        
+        # Create full JWT
+        from admin_auth import AdminAuth
+        token = AdminAuth.create_token(
+            email=admin["email"],
+            role=admin["role"],
+            branch_ids=admin.get("branch_ids", [])
+        )
+        
+        # Update last login
+        await db.admins.update_one(
+            {"_id": admin["_id"]},
+            {"$set": {"last_login": datetime.now(timezone.utc)}}
+        )
+        
+        await audit_service.log_action(
+            actor_email=email,
+            action="passkey_login_success",
+            result="success",
+            category="auth"
+        )
+        
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+            "admin": {
+                "id": str(admin["_id"]),
+                "email": admin["email"],
+                "name": admin["name"],
+                "role": admin["role"],
+                "branch_ids": admin.get("branch_ids", []),
+                "passkey_enabled": True
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Passkey login verify error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/admin/auth/passkey/backup-code-login")
+async def passkey_backup_code_login(request: BackupCodeRequest, email: str):
+    """Login with backup code (recovery)"""
+    try:
+        success, message = await webauthn_service.verify_backup_code(email, request.code)
+        
+        if not success:
+            await audit_service.log_action(
+                actor_email=email,
+                action="backup_code_login_failed",
+                result="failure",
+                category="auth"
+            )
+            raise HTTPException(status_code=401, detail=message)
+        
+        # Get admin for full token
+        admin = await db.admins.find_one({"email": email})
+        if not admin:
+            raise HTTPException(status_code=404, detail="Admin nicht gefunden")
+        
+        # Create full JWT
+        from admin_auth import AdminAuth
+        token = AdminAuth.create_token(
+            email=admin["email"],
+            role=admin["role"],
+            branch_ids=admin.get("branch_ids", [])
+        )
+        
+        await audit_service.log_action(
+            actor_email=email,
+            action="backup_code_login_success",
+            result="success",
+            category="auth",
+            details={"warning": message}
+        )
+        
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+            "admin": {
+                "id": str(admin["_id"]),
+                "email": admin["email"],
+                "name": admin["name"],
+                "role": admin["role"],
+                "branch_ids": admin.get("branch_ids", [])
+            },
+            "message": message
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Backup code login error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/admin/security/passkey/status")
+async def get_passkey_status(admin: dict = Depends(get_current_admin)):
+    """Get passkey status"""
+    status = await webauthn_service.get_passkey_status(admin["email"])
+    return status
+
+
+@api_router.post("/admin/security/passkey/regenerate-backup-codes")
+async def regenerate_passkey_backup_codes(admin: dict = Depends(get_current_admin)):
+    """Regenerate backup codes (invalidates old ones)"""
+    try:
+        codes = await webauthn_service.regenerate_backup_codes(admin["email"])
+        
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="passkey_backup_codes_regenerated",
+            result="success",
+            category="auth"
+        )
+        
+        return {
+            "success": True,
+            "backup_codes": codes,
+            "message": "Neue Backup Codes generiert. Speichern Sie diese sicher!"
+        }
+    except Exception as e:
+        logger.error(f"Regenerate backup codes error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ============================================================================
 # SECURITY & AUDIT ENDPOINTS
 # ============================================================================
