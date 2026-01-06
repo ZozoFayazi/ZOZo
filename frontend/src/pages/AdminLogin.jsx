@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { toast } from 'sonner';
 import { Lock, Mail, Loader2 } from 'lucide-react';
 import TwoFactorVerify from '../components/TwoFactorVerify';
+import { PasskeyVerifyDialog } from '../components/PasskeyVerifyDialog';
+import { PasskeySetupDialog } from '../components/PasskeySetupDialog';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -15,9 +17,14 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // 2FA state
+  // 2FA state (legacy TOTP)
   const [require2FA, setRequire2FA] = useState(false);
   const [tempToken, setTempToken] = useState(null);
+  
+  // Passkey state
+  const [requirePasskey, setRequirePasskey] = useState(false);
+  const [requirePasskeySetup, setRequirePasskeySetup] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
 
