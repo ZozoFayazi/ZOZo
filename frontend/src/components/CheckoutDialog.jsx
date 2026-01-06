@@ -19,6 +19,7 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
   const [pointsToRedeem, setPointsToRedeem] = useState(0);
   const [emailVerified, setEmailVerified] = useState(false);
   const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [mapsLoaded, setMapsLoaded] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -29,6 +30,15 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
     notes: '',
     payment_method: 'paypal' // Default to PayPal
   });
+  
+  // Load Google Maps on mount
+  useEffect(() => {
+    if (open) {
+      loadGoogleMapsScript(() => {
+        setMapsLoaded(true);
+      });
+    }
+  }, [open]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
