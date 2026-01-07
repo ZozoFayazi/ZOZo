@@ -15,7 +15,7 @@ function Impressum() {
               <div className="flex items-start gap-3">
                 <Building2 className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold">ZOZO Burger GmbH</p>
+                  <p className="font-semibold">ZOZO Burger</p>
                   <p className="text-muted-foreground">Betreiber der Online-Bestellplattform</p>
                 </div>
               </div>
@@ -23,8 +23,19 @@ function Impressum() {
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <p>Musterstraße 123</p>
-                  <p>12345 Musterstadt</p>
+                  <p className="font-semibold">Standort Rellingen:</p>
+                  <p>Möwenstraße 2</p>
+                  <p>25462 Rellingen</p>
+                  <p className="text-muted-foreground mt-1">Deutschland</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold">Standort Henstedt-Ulzburg:</p>
+                  <p>Edisonstraße 11</p>
+                  <p>Henstedt-Ulzburg</p>
                   <p className="text-muted-foreground mt-1">Deutschland</p>
                 </div>
               </div>
