@@ -105,8 +105,9 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                     <DropdownMenuItem asChild>
                       <Link to="/start-group-order" className="flex items-center gap-2 cursor-pointer">
                         👥 Gruppenbestellung
-                    </Link>
-                  </DropdownMenuItem>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
 
