@@ -85,65 +85,31 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         </div>
 
         <div className="container-custom relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Text Content - Left */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[60vh]">
+            {/* Text Content - Left - MINIMALIST */}
             <div className="space-y-8 animate-fade-in" role="region" aria-label="Willkommensnachricht">
-              {/* Location Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                <MapPin className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium">Rellingen · Henstedt-Ulzburg</span>
-              </div>
-
-              {/* Main Headline - Modern & Clean */}
+              
+              {/* Main Headline - Clean & Bold */}
               <div className="space-y-4">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
-                  Frisch. Lecker.
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
+                  Bestell jetzt.
                   <br />
-                  <span className="text-primary">Direkt zu dir.</span>
+                  <span className="text-primary">Frisch geliefert.</span>
                 </h1>
-                <p className="text-xl text-foreground/70 leading-relaxed max-w-lg">
-                  Premium Burger, Pizza & mehr – handgemacht mit besten Zutaten und in kürzester Zeit bei dir.
+                <p className="text-lg text-muted-foreground max-w-md">
+                  In 30-45 Minuten bei dir.
                 </p>
               </div>
 
-              {/* Key Benefits - Modern Cards */}
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-card/80 backdrop-blur-sm rounded-xl border border-border/50">
-                  <Clock className="h-5 w-5 text-primary" />
-                  <span className="font-semibold">30-45 Min</span>
-                  <span className="text-muted-foreground text-sm">Lieferzeit</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-card/80 backdrop-blur-sm rounded-xl border border-border/50">
-                  <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                  <span className="font-semibold">4.9</span>
-                  <span className="text-muted-foreground text-sm">Bewertung</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-card/80 backdrop-blur-sm rounded-xl border border-border/50">
-                  <Check className="h-5 w-5 text-green-500" />
-                  <span className="font-semibold">100%</span>
-                  <span className="text-muted-foreground text-sm">Frisch</span>
-                </div>
-              </div>
-
-              {/* CTAs - Modern Style */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              {/* Single CTA Button */}
+              <div>
                 <button
                   onClick={() => setShowOrderTypeDialog(true)}
-                  className="group relative overflow-hidden bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 active:scale-95"
+                  className="group relative bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-2xl hover:shadow-primary/40 active:scale-95"
                   data-testid="hero-primary-cta-button"
                 >
-                  <span className="relative z-10 flex items-center justify-center gap-3">
+                  <span className="flex items-center gap-3">
                     Jetzt bestellen
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </button>
-                <button
-                  onClick={() => navigate('/menu')}
-                  className="group px-8 py-4 rounded-full font-semibold text-lg border-2 border-foreground/20 hover:border-primary hover:text-primary transition-all active:scale-95"
-                  data-testid="hero-secondary-cta-button"
-                >
-                  <span className="flex items-center justify-center gap-3">
-                    Speisekarte
                     <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </button>
