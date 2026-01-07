@@ -1548,10 +1548,19 @@ async def update_location_settings(
         if location_id != current_user.get('location_id'):
             raise HTTPException(status_code=403, detail="Access denied")
     
-    # Get current location
-    location = await db.locations.find_one({"_id": parse_object_id(location_id)})
+    # Get current location (try both UUID 'id' field and ObjectId '_id' field)
+    location = await db.locations.find_one({"id": location_id})
+    if not location:
+        try:
+            location = await db.locations.find_one({"_id": parse_object_id(location_id)})
+        except:
+            pass
+    
     if not location:
         raise HTTPException(status_code=404, detail="Location not found")
+    
+    # Use the actual _id for updates
+    location_object_id = location['_id']
     
     # Update delivery zone
     current_zone = location.get('delivery_zone', {})
@@ -1567,11 +1576,11 @@ async def update_location_settings(
         current_zone['free_delivery_threshold'] = settings.free_delivery_threshold
     
     await db.locations.update_one(
-        {"_id": parse_object_id(location_id)},
+        {"_id": location_object_id},
         {"$set": {"delivery_zone": current_zone}}
     )
     
-    updated_location = await db.locations.find_one({"_id": parse_object_id(location_id)})
+    updated_location = await db.locations.find_one({"_id": location_object_id})
     return serialize_doc(updated_location)
 
 # ExpertOrder Settings Management
