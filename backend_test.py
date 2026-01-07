@@ -305,12 +305,12 @@ class ZOZOBurgerAPITester:
         saved_owner_token = self.owner_token
         
         credentials = {
-            "email": "info@zozo-burger.de",
-            "password": "ZozoAdmin2024!"
+            "email": "rellingen@zozo.com",
+            "password": "manager_password"
         }
         
         success, response = self.run_test(
-            "Location Manager Login (Rellingen Admin)",
+            "Location Manager Login (Rellingen)",
             "POST",
             "auth/login",
             200,
@@ -324,7 +324,7 @@ class ZOZOBurgerAPITester:
             print(f"   📍 Role: {user.get('role')}")
             # Restore owner token for subsequent admin tests
             self.token = saved_owner_token
-            print(f"   🔄 Restored super admin token")
+            print(f"   🔄 Restored owner token")
             return True
         return success
 
