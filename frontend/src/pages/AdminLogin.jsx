@@ -6,9 +6,6 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from 'sonner';
 import { Lock, Mail, Loader2 } from 'lucide-react';
-import TwoFactorVerify from '../components/TwoFactorVerify';
-import { PasskeyVerifyDialog } from '../components/PasskeyVerifyDialog';
-import { PasskeySetupDialog } from '../components/PasskeySetupDialog';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -16,15 +13,6 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  // 2FA state (legacy TOTP)
-  const [require2FA, setRequire2FA] = useState(false);
-  const [tempToken, setTempToken] = useState(null);
-  
-  // Passkey state
-  const [requirePasskey, setRequirePasskey] = useState(false);
-  const [requirePasskeySetup, setRequirePasskeySetup] = useState(false);
-  const [loginEmail, setLoginEmail] = useState('');
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -37,37 +25,11 @@ export default function AdminLogin() {
     }
 
     setLoading(true);
-    setLoginEmail(email);
     
     try {
       const result = await login(email, password);
       
-      // Check if Passkey is required
-      if (result.require_passkey || result.admin?.passkey_enabled) {
-        setRequirePasskey(true);
-        setLoading(false);
-        return;
-      }
-      
-      // Check if Passkey setup is required (Super Admin)
-      // Token is already stored by login() function
-      // Navigate to dashboard, ProtectedAdminRoute will show forced setup
-      if (result.require_passkey_setup || result.admin?.require_passkey_setup) {
-        toast.info('Passkey-Einrichtung erforderlich');
-        setTimeout(() => {
-          navigate('/admin/dashboard', { replace: true });
-        }, 150);
-        setLoading(false);
-        return;
-      }
-      
-      // Check if 2FA is required (legacy TOTP - fallback)
-      if (result.require_2fa) {
-        setTempToken(result.temp_token);
-        setRequire2FA(true);
-        setLoading(false);
-        return;
-      }
+      // 2FA/Passkey entfernt - direkt zum Dashboard
       
       console.log('Login successful:', result);
       toast.success('Login erfolgreich!');
