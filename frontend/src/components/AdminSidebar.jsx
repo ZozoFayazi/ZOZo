@@ -61,7 +61,7 @@ const AdminSidebar = () => {
     },
     {
       title: 'Tagesangebote',
-      icon: Sparkles,
+      icon: Tag,
       path: '/admin/daily-deals',
       permission: 'manage_products' // Only Rellingen + Super Admin
     },
