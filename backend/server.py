@@ -27,6 +27,7 @@ from rate_limiter import RateLimiter
 from totp_service import TOTPService
 from daily_deals_service import DailyDealsService
 from feature_toggle_service import FeatureToggleService
+from paypal_service import PayPalService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -44,6 +45,7 @@ rate_limiter = RateLimiter(db)
 totp_service = TOTPService(db)
 daily_deals_service = DailyDealsService(db)
 feature_toggle_service = FeatureToggleService(db)
+paypal_service = PayPalService(db)
 
 # Create product router with admin authentication
 # V2: Master-Slave architecture (Rellingen = Master, Henstedt = Override only)
