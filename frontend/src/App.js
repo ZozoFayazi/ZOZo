@@ -264,6 +264,14 @@ function App() {
             } 
           />
           <Route 
+            path="/admin/daily-deals" 
+            element={
+              <ProtectedAdminRoute>
+                <DailyDealsAdmin />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
             path="/admin/pos" 
             element={
               <ProtectedAdminRoute>
