@@ -2044,34 +2044,6 @@ async def start_scheduler():
 async def shutdown_scheduler():
     """Shutdown the scheduler"""
     scheduler.shutdown()
-    
-    if "big_spender" not in account["achievements"] and order_total >= 50:
-        unlocked.append("big_spender")
-    
-    if "custom_king" not in account["achievements"] and custom_burger_count >= 5:
-        unlocked.append("custom_king")
-    
-    # Check variety (3+ categories in one order)
-    if "variety_lover" not in account["achievements"]:
-        categories = set()
-        for item in order_items:
-            # Get menu item to check category
-            menu_item = await db.menu_items.find_one({"_id": parse_object_id(item.get("item_id"))})
-            if menu_item:
-                categories.add(str(menu_item.get("category_id")))
-        if len(categories) >= 3:
-            unlocked.append("variety_lover")
-    
-    # Unlock achievements and award bonus points
-    for achievement_id in unlocked:
-        achievement = next((a for a in ACHIEVEMENTS if a["id"] == achievement_id), None)
-        if achievement:
-            # Add achievement to account
-            await db.loyalty_accounts.update_one(
-                {"customer_email": customer_email},
-                {"$addToSet": {"achievements": achievement_id}}
-            )
-            
 
 
 # ==================== SOCIAL ORDERING ENDPOINTS ====================
