@@ -455,9 +455,10 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                 </div>
               </section>
             ))}
-          </div>
+              </div>
+            )}
+          </>
         )}
-      )}
 
         {/* Product Customizer */}
         {customizerOpen && customizingItem && (
