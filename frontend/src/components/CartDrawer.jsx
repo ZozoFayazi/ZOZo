@@ -178,6 +178,8 @@ function CartDrawer({ open, onClose, cart, cartTotal, removeFromCart, updateCart
         cartTotal={cartTotal}
         deliveryFee={deliveryFee}
         total={total}
+        dailyDealDiscount={dailyDealDiscount}
+        discountInfo={discountInfo}
         selectedLocation={selectedLocation}
         clearCart={clearCart}
         onCloseCart={onClose}
