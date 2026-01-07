@@ -64,23 +64,33 @@ class EOOrder(BaseModel):
 
 
 class ExpertOrderClient:
-    """Client for communicating with ExpertOrder Push API"""
+    """Client for communicating with ExpertOrder EOCloud API"""
     
-    # API Configuration
-    PROD_URL = "https://osp.expertorder.de/push"
-    TEST_URL = "https://osp.expertorder.de/testPush"
-    TEST_API_KEY = "9615d48a-cc88-4c3e-8e43-102047366a71"
+    # NEW API Configuration (EOCloud v1.3.2)
+    # Each merchant has their own base URL: https://s1.eocloud.de/{merchant_id}
+    # API Endpoint: PUT /api/v1/osp
     
-    def __init__(self, api_key: str = None, use_test_mode: bool = False):
+    def __init__(self, api_key: str = None, use_test_mode: bool = False, merchant_id: str = "c102285", base_url: str = None):
         """
-        Initialize ExpertOrder client
+        Initialize ExpertOrder EOCloud client
         
         Args:
-            api_key: ExpertOrder API key for the location
-            use_test_mode: If True, use test endpoint
+            api_key: ExpertOrder API key for the merchant
+            use_test_mode: If True, use test mode (currently same endpoint)
+            merchant_id: ExpertOrder merchant ID (e.g., "c102285")
+            base_url: Full base URL (e.g., "https://s1.eocloud.de/c102285")
         """
-        self.api_key = api_key or self.TEST_API_KEY
-        self.base_url = self.TEST_URL if use_test_mode else self.PROD_URL
+        self.api_key = api_key
+        self.merchant_id = merchant_id
+        
+        # Use provided base_url or construct from merchant_id
+        if base_url:
+            self.base_url = base_url.rstrip('/')
+        else:
+            self.base_url = f"https://s1.eocloud.de/{merchant_id}"
+        
+        self.endpoint = f"{self.base_url}/api/v1/osp"
+        self.use_test_mode = use_test_mode
         self.timeout = 30.0
     
     async def send_order(self, order: EOOrder) -> Dict[str, Any]:
