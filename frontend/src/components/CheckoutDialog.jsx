@@ -303,6 +303,76 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
               Schließen
             </button>
           </div>
+        ) : orderCreated && formData.payment_method === 'paypal' ? (
+          // PayPal Payment Screen
+          <>
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <h2 className="text-lg font-semibold">Mit PayPal bezahlen</h2>
+              <button
+                onClick={handleClose}
+                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Order Summary */}
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                <p className="text-sm text-muted-foreground mb-2">Bestellnummer</p>
+                <p className="text-xl font-bold text-primary mb-4">{orderNumber}</p>
+                
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Zwischensumme</span>
+                    <span>€{cartTotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Liefergebühr</span>
+                    <span>{deliveryFee === 0 ? 'Kostenlos' : `€${deliveryFee.toFixed(2)}`}</span>
+                  </div>
+                  {pointsToRedeem > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Punkte-Rabatt</span>
+                      <span>-€{pointsDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-lg font-semibold pt-2 border-t border-border">
+                    <span>Gesamt</span>
+                    <span className="text-primary">€{finalTotal.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* PayPal Buttons */}
+              <div>
+                <p className="text-sm text-muted-foreground mb-4 text-center">
+                  Klicke auf den PayPal-Button um die Zahlung abzuschließen
+                </p>
+                <PayPalCheckout
+                  locationId={(detectedLocation || selectedLocation)?.id}
+                  orderId={createdOrderId}
+                  orderNumber={orderNumber}
+                  subtotal={cartTotal}
+                  deliveryFee={deliveryFee}
+                  discount={pointsDiscount}
+                  total={finalTotal}
+                  onSuccess={handlePayPalSuccess}
+                  onError={handlePayPalError}
+                />
+              </div>
+
+              {/* Cancel Option */}
+              <div className="text-center">
+                <button
+                  onClick={handleClose}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Abbrechen
+                </button>
+              </div>
+            </div>
+          </>
         ) : (
           // Checkout Form
           <>
