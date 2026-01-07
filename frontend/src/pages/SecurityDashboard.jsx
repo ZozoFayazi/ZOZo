@@ -243,45 +243,7 @@ export default function SecurityDashboard() {
           </CardContent>
         </Card>
 
-        {/* Passkey Card */}
-        <Card className={passkeyStatus?.enabled ? 'border-[hsl(var(--success)/0.5)]' : 'border-[hsl(var(--warning)/0.5)]'}>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${passkeyStatus?.enabled ? 'bg-[hsl(var(--success)/0.1)]' : 'bg-[hsl(var(--warning)/0.1)]'}`}>
-                  <Fingerprint className={`h-5 w-5 ${passkeyStatus?.enabled ? 'text-[hsl(var(--success))]' : 'text-[hsl(var(--warning))]'}`} />
-                </div>
-                <div>
-                  <p className="font-medium">Passkey (WebAuthn)</p>
-                  <p className="text-sm text-muted-foreground">
-                    {passkeyStatus?.enabled 
-                      ? `Aktiviert • ${passkeyStatus.credentials_count} Gerät(e) • ${passkeyStatus.backup_codes_remaining} Backup-Codes`
-                      : 'Moderne 2FA mit Fingerabdruck/FaceID'
-                    }
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {passkeyStatus?.enabled ? (
-                  <Badge className="bg-[hsl(var(--success)/0.12)] text-[hsl(var(--success))]">
-                    <CheckCircle2 className="h-3 w-3 mr-1" /> Aktiv
-                  </Badge>
-                ) : (
-                  <>
-                    {passkeyStatus?.require_passkey_setup && (
-                      <Badge variant="destructive" className="mr-2">Erforderlich</Badge>
-                    )}
-                    <Button onClick={() => setShowPasskeySetup(true)} data-testid="enable-passkey-button">
-                      <Fingerprint className="h-4 w-4 mr-2" />
-                      Passkey einrichten
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
+        {/* 2FA/Passkey entfernt - nicht benötigt für Go-Live */}
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
