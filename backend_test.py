@@ -642,6 +642,96 @@ class ZOZOBurgerAPITester:
                 print(f"   🎛️  Found {len(response)} features (admin view)")
                 return True
         return success
+    
+    def test_create_group_order(self):
+        """Test creating a group order"""
+        if not self.location_id:
+            print("   ⚠️  Skipping - No location_id available")
+            return False
+        
+        success, response = self.run_test(
+            "Create Group Order",
+            "POST",
+            f"group-orders/create?host_name=Test%20Host&location_id={self.location_id}&host_email=test@example.com",
+            200
+        )
+        
+        if success and response:
+            self.group_code = response.get('group_code')
+            print(f"   👥 Group order created: {self.group_code}")
+            return True
+        return success
+    
+    def test_get_group_order(self):
+        """Test getting group order details"""
+        if not hasattr(self, 'group_code') or not self.group_code:
+            print("   ⚠️  Skipping - No group_code available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Group Order",
+            "GET",
+            f"group-orders/{self.group_code}",
+            200
+        )
+        
+        if success and response:
+            print(f"   👥 Group order status: {response.get('status')}")
+            print(f"   📦 Items: {len(response.get('items', []))}")
+            print(f"   👤 Participants: {len(response.get('participants', []))}")
+            return True
+        return success
+    
+    def test_add_items_to_group_order(self):
+        """Test adding items to group order"""
+        if not hasattr(self, 'group_code') or not self.group_code or not self.menu_item_id:
+            print("   ⚠️  Skipping - Missing group_code or menu_item_id")
+            return False
+        
+        items_data = {
+            "participant_name": "Test Participant",
+            "items": [
+                {
+                    "menu_item_id": self.menu_item_id,
+                    "name": "Test Burger",
+                    "price": 9.99,
+                    "size": "medium",
+                    "quantity": 1
+                }
+            ]
+        }
+        
+        success, response = self.run_test(
+            "Add Items to Group Order",
+            "POST",
+            f"group-orders/{self.group_code}/add-items",
+            200,
+            data=items_data
+        )
+        
+        if success and response:
+            print(f"   ✅ Items added to group order")
+            return True
+        return success
+    
+    def test_finalize_group_order(self):
+        """Test finalizing group order"""
+        if not hasattr(self, 'group_code') or not self.group_code:
+            print("   ⚠️  Skipping - No group_code available")
+            return False
+        
+        success, response = self.run_test(
+            "Finalize Group Order",
+            "POST",
+            f"group-orders/{self.group_code}/finalize",
+            200
+        )
+        
+        if success and response:
+            print(f"   ✅ Group order finalized")
+            print(f"   📦 Total items: {len(response.get('items', []))}")
+            return True
+        return success
 
     def test_menu_with_uuid_location(self):
         """Test menu endpoint with UUID location ID (P0 bug fix)"""
