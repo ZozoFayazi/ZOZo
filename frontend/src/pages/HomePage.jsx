@@ -4,6 +4,7 @@ import { MapPin, Clock, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight, 
 import { getLocations } from '../api';
 import OrderTypeSelection from '../components/OrderTypeSelection';
 import Reviews from '../components/Reviews';
+import DailyDealBanner from '../components/DailyDealBanner';
 import useEmblaCarousel from 'embla-carousel-react';
 
 // Helper function to build full image URL
