@@ -453,29 +453,7 @@ export default function SecurityDashboard() {
         </Card>
       </div>
 
-      {/* 2FA Setup Dialog */}
-      <TwoFactorSetup
-        open={show2FASetup}
-        onOpenChange={setShow2FASetup}
-        forced={twoFAStatus?.required && !twoFAStatus?.enabled}
-        onSuccess={() => {
-          fetch2FAStatus();
-          if (updateAdminData) {
-            updateAdminData({ totp_enabled: true });
-          }
-        }}
-      />
-      
-      {/* Passkey Setup Dialog */}
-      <PasskeySetupDialog
-        open={showPasskeySetup}
-        onOpenChange={setShowPasskeySetup}
-        onSuccess={() => {
-          fetchPasskeyStatus();
-          toast.success('Passkey erfolgreich eingerichtet!');
-          setShowPasskeySetup(false);
-        }}
-      />
+      {/* 2FA und Passkey entfernt - nicht benötigt für Go-Live */}
     </AdminLayout>
   );
 }
