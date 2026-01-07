@@ -2044,19 +2044,6 @@ async def start_scheduler():
 async def shutdown_scheduler():
     """Shutdown the scheduler"""
     scheduler.shutdown()
-
-
-    custom_burger_count = await db.custom_burgers.count_documents({"created_by": customer_email})
-    
-    # Check achievements
-    if "first_order" not in account["achievements"] and order_count >= 1:
-        unlocked.append("first_order")
-    
-    if "loyal_customer" not in account["achievements"] and order_count >= 10:
-        unlocked.append("loyal_customer")
-    
-    if "midnight_snacker" not in account["achievements"] and order_time.hour >= 22:
-        unlocked.append("midnight_snacker")
     
     if "big_spender" not in account["achievements"] and order_total >= 50:
         unlocked.append("big_spender")
