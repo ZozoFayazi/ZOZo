@@ -8,6 +8,7 @@ import ScrollToTop from './components/ScrollToTop';
 import MobileBottomNav from './components/MobileBottomNav';
 import CookieBanner from './components/CookieBanner';
 import { AdminAuthProvider } from './contexts/AdminAuthContext';
+import { FeatureProvider } from './contexts/FeatureContext';
 import { ProtectedAdminRoute } from './components/ProtectedAdminRoute';
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
