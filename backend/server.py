@@ -1034,7 +1034,9 @@ async def test_expertorder_connection(
     # Send test order
     client = ExpertOrderClient(
         api_key=api_key,
-        use_test_mode=True  # Always use test mode for connection tests
+        use_test_mode=True,  # Always use test mode for connection tests
+        merchant_id=location_settings.get('expertorder_merchant_id', 'c102285'),
+        base_url=location_settings.get('expertorder_base_url')
     )
     response = await client.send_order(test_order)
     
