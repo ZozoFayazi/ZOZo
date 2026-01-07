@@ -25,6 +25,7 @@ from pos_service import POSService
 from pos_models import POSProvider, POSStatus, POSConfigInput, POSConfigResponse
 from rate_limiter import RateLimiter
 from totp_service import TOTPService
+from daily_deals_service import DailyDealsService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
