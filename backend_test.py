@@ -194,6 +194,7 @@ class ZOZOBurgerAPITester:
         
         if success and response:
             self.token = response.get('access_token')
+            self.owner_token = self.token  # Store owner token
             user = response.get('user', {})
             print(f"   🔑 Logged in as: {user.get('email')} ({user.get('role')})")
             return True
