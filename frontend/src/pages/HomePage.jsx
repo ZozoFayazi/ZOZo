@@ -86,31 +86,41 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
 
         <div className="container-custom relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[60vh]">
-            {/* Text Content - Left - MINIMALIST */}
-            <div className="space-y-8 animate-fade-in" role="region" aria-label="Willkommensnachricht">
+            {/* Text Content - Left - MODERN & ELEGANT */}
+            <div className="space-y-10 animate-fade-in" role="region" aria-label="Willkommensnachricht">
               
-              {/* Main Headline - Clean & Bold */}
-              <div className="space-y-4">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
-                  Bestell jetzt.
-                  <br />
-                  <span className="text-primary">Frisch geliefert.</span>
-                </h1>
-                <p className="text-lg text-muted-foreground max-w-md">
-                  In 30-45 Minuten bei dir.
-                </p>
+              {/* Main Headline - Modern Typography with Visual Separation */}
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.95] tracking-tight">
+                    <span className="inline-block animate-slide-in-left">Bestellen.</span>
+                    <br />
+                    <span className="inline-block text-primary animate-slide-in-left animation-delay-100">Genießen.</span>
+                  </h1>
+                  <p className="text-2xl md:text-3xl font-light text-muted-foreground tracking-wide animate-fade-in animation-delay-200">
+                    So einfach.
+                  </p>
+                </div>
+                
+                {/* Subtle Divider */}
+                <div className="flex items-center gap-4 animate-fade-in animation-delay-300">
+                  <div className="h-[2px] w-16 bg-gradient-to-r from-primary to-transparent"></div>
+                  <p className="text-base text-muted-foreground">
+                    In 30-45 Minuten bei dir
+                  </p>
+                </div>
               </div>
 
-              {/* Single CTA Button */}
-              <div>
+              {/* Single CTA Button - Enhanced */}
+              <div className="animate-fade-in animation-delay-400">
                 <button
                   onClick={() => setShowOrderTypeDialog(true)}
-                  className="group relative bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-2xl hover:shadow-primary/40 active:scale-95"
+                  className="group relative bg-primary hover:bg-primary/90 text-white px-12 py-6 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-2xl hover:shadow-primary/40 active:scale-95 hover:scale-105"
                   data-testid="hero-primary-cta-button"
                 >
                   <span className="flex items-center gap-3">
                     Jetzt bestellen
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
                   </span>
                 </button>
               </div>
