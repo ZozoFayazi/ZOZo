@@ -164,38 +164,6 @@ export default function AdminLogin() {
           </div>
         </CardContent>
       </Card>
-      
-      {/* Passkey Verification Dialog */}
-      <PasskeyVerifyDialog
-        open={requirePasskey}
-        email={loginEmail}
-        onSuccess={(result) => {
-          // Store token and admin data
-          localStorage.setItem('adminToken', result.access_token);
-          toast.success('Passkey-Authentifizierung erfolgreich!');
-          navigate('/admin/dashboard', { replace: true });
-        }}
-        onBackupCode={() => {
-          // Backup code flow handled in PasskeyVerifyDialog
-        }}
-      />
-      
-      {/* Legacy 2FA Dialog (TOTP - fallback) */}
-      {require2FA && (
-        <TwoFactorVerify
-          tempToken={tempToken}
-          onSuccess={(token) => {
-            localStorage.setItem('adminToken', token);
-            toast.success('2FA-Verifizierung erfolgreich!');
-            navigate('/admin/dashboard', { replace: true });
-          }}
-          onCancel={() => {
-            setRequire2FA(false);
-            setTempToken(null);
-            setLoading(false);
-          }}
-        />
-      )}
     </div>
   );
 }
