@@ -125,7 +125,7 @@ class ExpertOrderClient:
             
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.put(
-                    self.base_url,
+                    self.endpoint,  # KORRIGIERT: Muss endpoint sein, nicht base_url!
                     json=order_dict,
                     headers=headers
                 )
