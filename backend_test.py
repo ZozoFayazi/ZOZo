@@ -10,6 +10,7 @@ class ZOZOBurgerAPITester:
     def __init__(self, base_url="https://zozopos.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.token = None
+        self.owner_token = None  # Store owner token separately
         self.tests_run = 0
         self.tests_passed = 0
         self.failed_tests = []
