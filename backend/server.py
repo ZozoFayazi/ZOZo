@@ -2363,24 +2363,9 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             )
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
-        # Check if Passkey setup is required (Super Admin policy)
-        # We still issue JWT, but ProtectedAdminRoute will enforce setup
-        require_passkey_setup = (
-            admin.get("role") == "super_admin" 
-            and not admin.get("passkey_enabled")
-        )
+        # 2FA/Passkey entfernt - nicht benötigt für Go-Live
         
-        # PASSKEY CHECK - If enabled, require verification
-        # But for Passkey SETUP, we need JWT first, so this only applies to ENABLED passkeys
-        passkey_enabled = admin.get("passkey_enabled", False)
-        
-        # Legacy TOTP check (fallback)
-        if admin.get("totp_enabled") and admin.get("totp_secret"):
-            # TOTP 2FA is configured - this is fallback, Passkey takes priority
-            pass
-        
-        # Create JWT token (ALWAYS - even if setup required)
-        # ProtectedAdminRoute will handle enforcement
+        # Create JWT token
         token = AdminAuth.create_token(
             email=admin["email"],
             role=admin["role"],
@@ -2403,10 +2388,10 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             result="success",
             category=AuditCategory.AUTH.value,
             ip_address=client_ip,
-            details={"role": admin["role"], "passkey_enabled": admin.get("passkey_enabled", False)}
+            details={"role": admin["role"]}
         )
         
-        # Prepare admin response
+        # Prepare admin response (ohne Passkey-Felder)
         admin_response = {
             "id": str(admin["_id"]),
             "email": admin["email"],
@@ -2414,10 +2399,7 @@ async def admin_login(request: AdminLoginRequest, http_request: Request):
             "role": admin["role"],
             "branch_ids": admin.get("branch_ids", []),
             "permissions": AdminAuth.get_permissions(admin["role"]),
-            "totp_enabled": admin.get("totp_enabled", False),
-            "passkey_enabled": admin.get("passkey_enabled", False),
-            "must_change_password": admin.get("must_change_password", True),
-            "require_passkey_setup": require_passkey_setup
+            "must_change_password": admin.get("must_change_password", True)
         }
         
         return AdminLoginResponse(
