@@ -172,28 +172,41 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
 
       const response = await createOrder(orderData);
       setOrderNumber(response.order_number);
-      setOrderPlaced(true);
+      setCreatedOrderId(response.id);
+      setCreatedOrderData(response);
       
-      // Show points earned notification
-      if (response.points_earned) {
-        setTimeout(() => {
-          toast.success(`🎉 ${response.points_earned} Treuepunkte verdient!`, {
-            duration: 5000
-          });
-        }, 1000);
-      }
-      
-      // Show achievement notifications
-      if (response.unlocked_achievements && response.unlocked_achievements.length > 0) {
-        setTimeout(() => {
-          response.unlocked_achievements.forEach((achievementId, index) => {
-            setTimeout(() => {
-              toast.success(`🏆 Achievement freigeschaltet: ${achievementId}!`, {
-                duration: 6000
-              });
-            }, (index + 1) * 1500);
-          });
-        }, 2000);
+      // If PayPal is selected, show PayPal payment screen
+      if (formData.payment_method === 'paypal') {
+        setOrderCreated(true);
+        toast.success('Bestellung erstellt! Bitte schließe die Zahlung mit PayPal ab.');
+      } else {
+        // For cash/card, order is complete
+        setOrderPlaced(true);
+        
+        // Show points earned notification
+        if (response.points_earned) {
+          setTimeout(() => {
+            toast.success(`🎉 ${response.points_earned} Treuepunkte verdient!`, {
+              duration: 5000
+            });
+          }, 1000);
+        }
+        
+        // Show achievement notifications
+        if (response.unlocked_achievements && response.unlocked_achievements.length > 0) {
+          setTimeout(() => {
+            response.unlocked_achievements.forEach((achievementId, index) => {
+              setTimeout(() => {
+                toast.success(`🏆 Achievement freigeschaltet: ${achievementId}!`, {
+                  duration: 6000
+                });
+              }, (index + 1) * 1500);
+            });
+          }, 2000);
+        }
+        
+        clearCart();
+        toast.success('Bestellung erfolgreich aufgegeben!');
       }
       
       // Save customer info for quick reorder
@@ -204,8 +217,6 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
         localStorage.setItem('lastCustomerPhone', formData.phone);
       }
       
-      clearCart();
-      toast.success('Bestellung erfolgreich aufgegeben!');
     } catch (error) {
       console.error('Order error:', error);
       const errorMessage = error.response?.data?.detail || 'Fehler bei der Bestellung. Bitte versuche es erneut.';
@@ -213,6 +224,27 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePayPalSuccess = (paymentData) => {
+    // Payment successful
+    setOrderPlaced(true);
+    setOrderCreated(false);
+    
+    // Show success notifications
+    if (createdOrderData?.points_earned) {
+      setTimeout(() => {
+        toast.success(`🎉 ${createdOrderData.points_earned} Treuepunkte verdient!`, {
+          duration: 5000
+        });
+      }, 1000);
+    }
+    
+    clearCart();
+  };
+
+  const handlePayPalError = (error) => {
+    toast.error('PayPal-Zahlung fehlgeschlagen. Bitte versuche es erneut.');
   };
 
   const handleClose = () => {
