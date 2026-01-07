@@ -47,6 +47,7 @@ const TARGET_TYPES = [
 ];
 
 function DailyDealsAdmin() {
+  const navigate = useNavigate();
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingDeal, setEditingDeal] = useState(null);
