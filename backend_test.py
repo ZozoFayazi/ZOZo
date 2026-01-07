@@ -812,9 +812,8 @@ class ZOZOBurgerAPITester:
         print("-" * 70)
         self.test_admin_login()
         self.test_get_current_user()
-        self.test_location_manager_login()
-
-        # Admin endpoints (auth required)
+        
+        # Admin endpoints (auth required) - Run BEFORE manager login to avoid token issues
         print("\n📌 ADMIN ENDPOINTS")
         print("-" * 70)
         self.test_get_admin_orders()
@@ -863,6 +862,11 @@ class ZOZOBurgerAPITester:
         print("-" * 70)
         self.test_get_public_features()
         self.test_get_admin_features()
+        
+        # Test manager login AFTER admin tests
+        print("\n📌 LOCATION MANAGER AUTHENTICATION")
+        print("-" * 70)
+        self.test_location_manager_login()
         
         # P0 Bug Fix Verification
         print("\n📌 P0 BUG FIX VERIFICATION (MenuPage UUID Fix)")
