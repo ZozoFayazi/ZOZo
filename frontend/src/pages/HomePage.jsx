@@ -281,6 +281,9 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         </div>
       </section>
 
+      {/* Daily Deal Banner */}
+      <DailyDealBanner />
+
       {/* Social Ordering CTA */}
       <section className="py-12 bg-gradient-to-br from-primary/10 to-accent">
         <div className="container-custom">
