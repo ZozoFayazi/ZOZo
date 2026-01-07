@@ -257,17 +257,20 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                   >
                     🎁 Belohnungen
                   </Link>
-                  <Link
-                    to="/start-group-order"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                      isActive('/start-group-order') 
-                        ? 'text-primary bg-primary/10' 
-                        : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
-                    }`}
-                  >
-                    👥 Gruppenbestellung
-                  </Link>
+                  )}
+                  {isFeatureEnabled('group_orders') && (
+                    <Link
+                      to="/start-group-order"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                        isActive('/start-group-order') 
+                          ? 'text-primary bg-primary/10' 
+                          : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
+                      }`}
+                    >
+                      👥 Gruppenbestellung
+                    </Link>
+                  )}
                 </div>
 
                 {/* Location Badge */}
