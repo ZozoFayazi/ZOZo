@@ -117,6 +117,7 @@ function App() {
   return (
     <ErrorBoundary>
       <AdminAuthProvider>
+        <FeatureProvider>
         <Router>
           <div className="min-h-screen bg-background text-foreground">
           {/* Skip to main content for keyboard users */}
