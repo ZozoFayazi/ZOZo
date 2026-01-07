@@ -66,14 +66,14 @@ function Footer() {
                 <p className="font-medium text-foreground mb-1">Rellingen</p>
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <span>Hauptstraße 30<br />25462 Rellingen</span>
+                  <span>Möwenstraße 2<br />25462 Rellingen</span>
                 </div>
               </div>
               <div>
                 <p className="font-medium text-foreground mb-1">Henstedt-Ulzburg</p>
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <span>Hamburger Straße 115<br />24558 Henstedt-Ulzburg</span>
+                  <span>Edisonstraße 11<br />Henstedt-Ulzburg</span>
                 </div>
               </div>
             </div>
