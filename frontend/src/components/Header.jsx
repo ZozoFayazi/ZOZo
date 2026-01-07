@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { useFeatures } from '../contexts/FeatureContext';
 
 function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation, cartOpen, setCartOpen }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
