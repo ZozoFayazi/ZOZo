@@ -147,7 +147,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                 >
                   <span className="flex items-center justify-center gap-2">
                     Speisekarte ansehen
-                    <Sparkles className="h-5 w-5" />
+                    <ArrowRight className="h-5 w-5" />
                   </span>
                 </button>
               </div>
