@@ -680,8 +680,15 @@ async def vote_custom_burger(burger_id: str):
 @api_router.post("/orders")
 async def create_order(order: OrderCreate):
     """Create a new order"""
-    # Verify location exists
-    location = await db.locations.find_one({"_id": ObjectId(order.location_id), "active": True})
+    # Verify location exists (try both UUID 'id' field and ObjectId '_id' field)
+    location = await db.locations.find_one({"id": order.location_id, "active": True})
+    if not location:
+        # Fallback: try as ObjectId
+        try:
+            location = await db.locations.find_one({"_id": ObjectId(order.location_id), "active": True})
+        except:
+            pass
+    
     if not location:
         raise HTTPException(status_code=404, detail="Location not found")
     
