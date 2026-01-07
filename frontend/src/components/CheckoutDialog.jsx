@@ -259,6 +259,9 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       payment_method: 'paypal'
     });
     setOrderPlaced(false);
+    setOrderCreated(false);
+    setCreatedOrderId(null);
+    setCreatedOrderData(null);
     setOrderNumber('');
     onClose();
     if (orderPlaced) {
