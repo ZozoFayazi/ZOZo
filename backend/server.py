@@ -945,7 +945,9 @@ async def send_order_to_expertorder(
     # Send to ExpertOrder
     client = ExpertOrderClient(
         api_key=location_settings['expertorder_api_key'],
-        use_test_mode=location_settings.get('expertorder_test_mode', False)
+        use_test_mode=location_settings.get('expertorder_test_mode', False),
+        merchant_id=location_settings.get('expertorder_merchant_id', 'c102285'),
+        base_url=location_settings.get('expertorder_base_url')
     )
     eo_response = await client.send_order(eo_order)
     
