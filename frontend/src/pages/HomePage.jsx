@@ -164,10 +164,10 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                         {featuredProducts.map((product) => {
                           const getBadgeStyle = (badge) => {
                             const styles = {
-                              new: 'bg-blue-500',
-                              limited: 'bg-orange-500',
-                              bestseller: 'bg-green-500',
-                              hot: 'bg-red-500'
+                              new: 'bg-gradient-to-r from-blue-500 to-blue-600',
+                              limited: 'bg-gradient-to-r from-amber-500 to-orange-500',
+                              bestseller: 'bg-gradient-to-r from-emerald-500 to-green-600',
+                              hot: 'bg-gradient-to-r from-red-500 to-rose-600'
                             };
                             return styles[badge] || 'bg-gray-500';
                           };
@@ -175,71 +175,90 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                           const getBadgeLabel = (badge) => {
                             const labels = {
                               new: 'NEU',
-                              limited: 'Nur kurze Zeit',
+                              limited: 'Limitiert',
                               bestseller: 'Bestseller',
-                              hot: 'Hot Deal'
+                              hot: '🔥 Hot'
                             };
                             return labels[badge] || badge;
                           };
 
+                          const price = product.price_normal || product.price_medium || 0;
+                          const priceWhole = Math.floor(price);
+                          const priceCents = Math.round((price - priceWhole) * 100).toString().padStart(2, '0');
+
                           return (
                             <div key={product.id} className="flex-[0_0_100%] min-w-0">
-                              <div className="aspect-square glass-premium relative">
+                              <div className="aspect-square relative group overflow-hidden rounded-3xl">
+                                {/* Background Image with subtle zoom on hover */}
                                 <img loading="lazy"
                                   src={getImageUrl(product.image_url) || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop'}
                                   alt={product.name}
-                                  className="w-full h-full object-cover"
+                                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
                                 
-                                {/* Product Info Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex items-end p-8">
-                                  <div className="text-white w-full space-y-3">
+                                {/* Elegant Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+                                
+                                {/* Badge - Modern Pill Style */}
+                                {product.badge && (
+                                  <div className="absolute top-6 right-6 z-10">
+                                    <div className={`${getBadgeStyle(product.badge)} text-white px-5 py-2 rounded-full text-sm font-bold shadow-xl backdrop-blur-sm border border-white/20`}>
+                                      {getBadgeLabel(product.badge)}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Content Container */}
+                                <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
+                                  {/* Product Info */}
+                                  <div className="space-y-4">
+                                    {/* Category Tag (optional) */}
+                                    {product.category_name && (
+                                      <span className="inline-block text-xs uppercase tracking-widest text-white/70 font-medium">
+                                        {product.category_name}
+                                      </span>
+                                    )}
+                                    
                                     {/* Product Name */}
-                                    <h3 className="text-3xl md:text-4xl font-serif font-bold leading-tight">
+                                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight">
                                       {product.name}
                                     </h3>
                                     
-                                    {/* Description/Ingredients */}
+                                    {/* Description */}
                                     {product.description && (
-                                      <p className="text-base text-white/90 leading-relaxed line-clamp-2">
+                                      <p className="text-base md:text-lg text-white/80 leading-relaxed line-clamp-2 max-w-lg">
                                         {product.description}
                                       </p>
                                     )}
                                     
-                                    {/* Price */}
-                                    <div className="flex items-center justify-between pt-2">
-                                      <div className="flex items-baseline gap-2">
-                                        <span className="text-4xl font-bold text-primary font-numeric">
-                                          €{(product.price_normal || product.price_medium || 0).toFixed(2)}
+                                    {/* Price & CTA Row */}
+                                    <div className="flex items-end justify-between pt-4">
+                                      {/* Modern Price Display */}
+                                      <div className="flex items-start gap-1">
+                                        <span className="text-white/60 text-lg mt-1">€</span>
+                                        <span className="text-5xl md:text-6xl font-bold text-white tracking-tight">
+                                          {priceWhole}
                                         </span>
-                                        {product.price_medium && (
-                                          <span className="text-sm text-white/60">
-                                            ab
-                                          </span>
-                                        )}
+                                        <span className="text-2xl font-bold text-white/80 mt-1">
+                                          {priceCents}
+                                        </span>
                                       </div>
                                       
-                                      {/* Quick Order Button */}
+                                      {/* CTA Button */}
                                       <button
                                         onClick={() => {
                                           setShowOrderTypeDialog(true);
                                         }}
-                                        className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full font-semibold transition-all hover:scale-105 flex items-center gap-2"
+                                        className="group/btn relative overflow-hidden bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 flex items-center gap-3"
                                         data-testid={`featured-order-${product.id}`}
                                       >
-                                        Bestellen
-                                        <ArrowRight className="h-4 w-4" />
+                                        <span className="relative z-10">Jetzt bestellen</span>
+                                        <ArrowRight className="h-5 w-5 relative z-10 transition-transform group-hover/btn:translate-x-1" />
+                                        <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                                       </button>
                                     </div>
                                   </div>
                                 </div>
-
-                                {/* Badge */}
-                                {product.badge && (
-                                  <div className={`absolute top-6 right-6 ${getBadgeStyle(product.badge)} text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg`}>
-                                    {getBadgeLabel(product.badge)}
-                                  </div>
-                                )}
                               </div>
                             </div>
                           );
