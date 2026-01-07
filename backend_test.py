@@ -693,7 +693,7 @@ class ZOZOBurgerAPITester:
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("=" * 70)
-        print("🧪 ZOZO Burger Backend API Test Suite - Phase 3")
+        print("🧪 ZOZO Burger Backend API Test Suite - Iteration 7")
         print("=" * 70)
         print(f"Base URL: {self.base_url}")
         print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
