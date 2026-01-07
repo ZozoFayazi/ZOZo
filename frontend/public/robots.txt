@@ -5,7 +5,7 @@ Disallow: /admin
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://zozopos.preview.emergentagent.com/sitemap.xml
+Sitemap: https://zozo-prelaunch.preview.emergentagent.com/sitemap.xml
 
 # Crawl-delay for bots
 Crawl-delay: 1
