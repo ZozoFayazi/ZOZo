@@ -273,6 +273,14 @@ function App() {
             } 
           />
           <Route 
+            path="/admin/features" 
+            element={
+              <ProtectedAdminRoute>
+                <FeatureToggles />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
             path="/admin/pos" 
             element={
               <ProtectedAdminRoute>
