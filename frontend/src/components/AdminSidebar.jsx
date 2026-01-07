@@ -85,6 +85,12 @@ const AdminSidebar = () => {
       badge: true // Will show count badge if there are failed orders
     },
     {
+      title: 'Features',
+      icon: Settings,
+      path: '/admin/features',
+      permission: '*' // Super Admin only - Feature Toggle Management
+    },
+    {
       title: 'Sicherheit',
       icon: Shield,
       path: '/admin/security',
