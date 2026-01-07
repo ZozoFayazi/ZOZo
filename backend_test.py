@@ -319,6 +319,8 @@ class ZOZOBurgerAPITester:
             user = response.get('user', {})
             print(f"   🔑 Manager logged in: {user.get('email')}")
             print(f"   📍 Location: {user.get('location_id')}")
+            # Restore owner token for subsequent admin tests
+            self.token = self.owner_token
             return True
         return success
 
