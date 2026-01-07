@@ -604,6 +604,177 @@ async def admin_initialize_features(admin: dict = Depends(get_current_admin)):
         raise HTTPException(status_code=403, detail="Nur Super Admin")
     
     features = await feature_toggle_service.initialize_features()
+
+
+# ==================== PAYPAL PAYMENT INTEGRATION ====================
+
+# Pydantic Models for PayPal
+class PayPalOrderCreate(BaseModel):
+    location_id: str
+    order_id: str
+    order_number: str
+    subtotal: float
+    delivery_fee: float
+    discount: float
+    total: float
+    currency: str = "EUR"
+    return_url: Optional[str] = None
+    cancel_url: Optional[str] = None
+
+class PayPalOrderCapture(BaseModel):
+    paypal_order_id: str
+    zozo_order_id: str  # Our internal order ID
+
+class PayPalSettings(BaseModel):
+    paypal_client_id: Optional[str] = None
+    paypal_client_secret: Optional[str] = None
+    paypal_enabled: bool = False
+    paypal_sandbox_mode: bool = True
+
+# Public: Create PayPal Order
+@api_router.post("/paypal/create-order")
+async def create_paypal_order(order_request: PayPalOrderCreate):
+    """Create a PayPal order for payment"""
+    try:
+        result = await paypal_service.create_order(
+            location_id=order_request.location_id,
+            order_data=order_request.dict()
+        )
+        return result
+    except Exception as e:
+        logging.error(f"PayPal create order error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Public: Capture PayPal Payment
+@api_router.post("/paypal/capture-order")
+async def capture_paypal_order(capture_request: PayPalOrderCapture):
+    """Capture a PayPal payment after customer approval"""
+    try:
+        # Get the ZOZO order to find location
+        order = await db.orders.find_one({"_id": parse_object_id(capture_request.zozo_order_id)})
+        if not order:
+            raise HTTPException(status_code=404, detail="Order not found")
+        
+        # Capture PayPal payment
+        result = await paypal_service.capture_order(
+            location_id=order['location_id'],
+            paypal_order_id=capture_request.paypal_order_id
+        )
+        
+        if result.get('success'):
+            # Update order with PayPal transaction details
+            await db.orders.update_one(
+                {"_id": parse_object_id(capture_request.zozo_order_id)},
+                {
+                    "$set": {
+                        "payment_status": "paid",
+                        "paypal_transaction_id": result.get('transaction_id'),
+                        "paypal_order_id": result.get('paypal_order_id'),
+                        "paid_at": datetime.utcnow(),
+                        "updated_at": datetime.utcnow()
+                    }
+                }
+            )
+        
+        return result
+    except Exception as e:
+        logging.error(f"PayPal capture order error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Admin: Get PayPal Settings for Location
+@api_router.get("/admin/paypal-settings/{location_id}")
+async def get_paypal_settings(
+    location_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get PayPal settings for a location"""
+    # Check access
+    if current_user.get('role') == 'manager':
+        if location_id != current_user.get('location_id'):
+            raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get or create settings
+    settings = await db.location_settings.find_one({"location_id": location_id})
+    if not settings:
+        # Create default settings
+        settings = {
+            "location_id": location_id,
+            "paypal_client_id": "",
+            "paypal_client_secret": "",
+            "paypal_enabled": False,
+            "paypal_sandbox_mode": True,
+            "created_at": datetime.utcnow()
+        }
+        await db.location_settings.insert_one(settings)
+    
+    # Don't expose secret in response
+    response = serialize_doc(settings)
+    if 'paypal_client_secret' in response and response['paypal_client_secret']:
+        response['paypal_client_secret'] = '****' + response['paypal_client_secret'][-4:]
+    
+    return response
+
+# Admin: Update PayPal Settings for Location
+@api_router.patch("/admin/paypal-settings/{location_id}")
+async def update_paypal_settings(
+    location_id: str,
+    settings: PayPalSettings,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update PayPal settings for a location (owner only)"""
+    if current_user.get('role') != 'owner':
+        raise HTTPException(status_code=403, detail="Only owners can update PayPal settings")
+    
+    # Get or create settings
+    existing = await db.location_settings.find_one({"location_id": location_id})
+    
+    update_data = {
+        "updated_at": datetime.utcnow()
+    }
+    
+    if settings.paypal_client_id is not None:
+        update_data["paypal_client_id"] = settings.paypal_client_id
+    if settings.paypal_client_secret is not None:
+        update_data["paypal_client_secret"] = settings.paypal_client_secret
+    if settings.paypal_enabled is not None:
+        update_data["paypal_enabled"] = settings.paypal_enabled
+    if settings.paypal_sandbox_mode is not None:
+        update_data["paypal_sandbox_mode"] = settings.paypal_sandbox_mode
+    
+    if existing:
+        await db.location_settings.update_one(
+            {"location_id": location_id},
+            {"$set": update_data}
+        )
+    else:
+        update_data["location_id"] = location_id
+        update_data["created_at"] = datetime.utcnow()
+        await db.location_settings.insert_one(update_data)
+    
+    updated = await db.location_settings.find_one({"location_id": location_id})
+    
+    # Don't expose secret in response
+    response = serialize_doc(updated)
+    if 'paypal_client_secret' in response and response['paypal_client_secret']:
+        response['paypal_client_secret'] = '****' + response['paypal_client_secret'][-4:]
+    
+    return response
+
+# Public: Get PayPal Client ID for Frontend
+@api_router.get("/paypal/client-id/{location_id}")
+async def get_paypal_client_id(location_id: str):
+    """Get PayPal Client ID for frontend (public endpoint)"""
+    settings = await db.location_settings.find_one({"location_id": location_id})
+    
+    if not settings or not settings.get('paypal_enabled'):
+        raise HTTPException(status_code=404, detail="PayPal not enabled for this location")
+    
+    return {
+        "client_id": settings.get('paypal_client_id'),
+        "sandbox_mode": settings.get('paypal_sandbox_mode', True)
+    }
+
+
     return {"success": True, "features": features}
 
 
