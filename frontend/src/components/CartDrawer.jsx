@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { X, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
 import { createOrder } from '../api';
 import CheckoutDialog from './CheckoutDialog';
+import DailyDealDiscount from './DailyDealDiscount';
 
 function CartDrawer({ open, onClose, cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation }) {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [dailyDealDiscount, setDailyDealDiscount] = useState(0);
+  const [discountInfo, setDiscountInfo] = useState(null);
+
+  const handleDiscountCalculated = useCallback((amount, info) => {
+    setDailyDealDiscount(amount || 0);
+    setDiscountInfo(info);
+  }, []);
 
   const deliveryFee = cartTotal < 15 ? 2.50 : 0;
-  const total = cartTotal + deliveryFee;
+  const discountedSubtotal = Math.max(0, cartTotal - dailyDealDiscount);
+  const total = discountedSubtotal + deliveryFee;
 
   const handleCheckout = () => {
     if (!selectedLocation) {
