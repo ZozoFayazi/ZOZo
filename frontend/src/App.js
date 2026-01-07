@@ -23,6 +23,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const LocationSettings = lazy(() => import('./pages/LocationSettings'));
 const LocationManagement = lazy(() => import('./pages/LocationManagement'));
 const DealsManagement = lazy(() => import('./pages/DealsManagement'));
+const DailyDealsAdmin = lazy(() => import('./pages/DailyDealsAdmin'));
 const ExpertOrderSettings = lazy(() => import('./pages/ExpertOrderSettings'));
 const MenuManagement = lazy(() => import('./pages/MenuManagement'));
 const ProductManagement = lazy(() => import('./pages/ProductManagement'));
