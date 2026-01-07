@@ -418,6 +418,135 @@ async def get_modifier_groups():
     return serialize_doc(groups)
 
 
+# ==================== DAILY DEALS (TAGESANGEBOTE) ====================
+
+# Pydantic Models für Daily Deals
+from pydantic import BaseModel
+from typing import Optional, List
+
+class DailyDealCreate(BaseModel):
+    weekday: int  # 0=Montag, 6=Sonntag
+    title: str
+    description: str
+    discount_type: str  # "percentage", "2for1"
+    discount_value: Optional[float] = 0
+    target_type: str  # "category", "product", "size"
+    target_value: str  # Kategorie-Slug, Produkt-ID
+    target_size: Optional[str] = None
+    requires_same_item: Optional[bool] = False
+    image_url: Optional[str] = None
+    badge_text: Optional[str] = "Tagesangebot"
+    badge_color: Optional[str] = "#FF6B35"
+    active: Optional[bool] = True
+    applies_to_all_locations: Optional[bool] = True
+    location_ids: Optional[List[str]] = []
+
+class DailyDealUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    discount_type: Optional[str] = None
+    discount_value: Optional[float] = None
+    target_type: Optional[str] = None
+    target_value: Optional[str] = None
+    target_size: Optional[str] = None
+    requires_same_item: Optional[bool] = None
+    image_url: Optional[str] = None
+    badge_text: Optional[str] = None
+    badge_color: Optional[str] = None
+    active: Optional[bool] = None
+    applies_to_all_locations: Optional[bool] = None
+    location_ids: Optional[List[str]] = None
+
+class CartDiscountRequest(BaseModel):
+    items: List[dict]
+    location_id: Optional[str] = None
+
+# Public: Heutiges Tagesangebot
+@api_router.get("/daily-deal")
+async def get_today_daily_deal():
+    """Holt das aktive Tagesangebot für heute (für Homepage)"""
+    deal = await daily_deals_service.get_today_deal()
+    return deal or {"message": "Kein Tagesangebot heute"}
+
+# Public: Alle Tagesangebote (Wochenübersicht)
+@api_router.get("/daily-deals")
+async def get_all_daily_deals():
+    """Holt alle Tagesangebote für die Wochenübersicht"""
+    deals = await daily_deals_service.get_all_deals()
+    return deals
+
+# Public: Warenkorb-Rabatt berechnen
+@api_router.post("/daily-deal/calculate")
+async def calculate_daily_deal_discount(request: CartDiscountRequest):
+    """
+    Berechnet den Tagesangebot-Rabatt für den Warenkorb.
+    
+    Erwartet:
+    {
+        "items": [
+            {"menu_item_id": "...", "name": "Pasta Bolognese", "category": "pasta", "price": 12.90, "quantity": 2, "size": "normal"},
+            ...
+        ],
+        "location_id": "..." (optional)
+    }
+    
+    Gibt zurück:
+    {
+        "deal": {...},
+        "discount_amount": 5.16,
+        "discount_details": [...]
+    }
+    """
+    result = await daily_deals_service.calculate_cart_discounts(request.items, request.location_id)
+    return result
+
+# Admin: Alle Tagesangebote verwalten
+@api_router.get("/admin/daily-deals")
+async def admin_get_daily_deals(admin: dict = Depends(get_current_admin)):
+    """Admin: Alle Tagesangebote abrufen"""
+    deals = await daily_deals_service.get_all_deals()
+    return deals
+
+@api_router.post("/admin/daily-deals")
+async def admin_create_daily_deal(
+    deal: DailyDealCreate,
+    admin: dict = Depends(get_current_admin)
+):
+    """Admin: Tagesangebot erstellen oder aktualisieren"""
+    result = await daily_deals_service.create_deal(deal.dict(), admin.get("email", "admin"))
+    return result
+
+@api_router.patch("/admin/daily-deals/{deal_id}")
+async def admin_update_daily_deal(
+    deal_id: str,
+    update: DailyDealUpdate,
+    admin: dict = Depends(get_current_admin)
+):
+    """Admin: Tagesangebot aktualisieren"""
+    update_data = {k: v for k, v in update.dict().items() if v is not None}
+    result = await daily_deals_service.update_deal(deal_id, update_data, admin.get("email", "admin"))
+    if not result:
+        raise HTTPException(status_code=404, detail="Tagesangebot nicht gefunden")
+    return result
+
+@api_router.delete("/admin/daily-deals/{deal_id}")
+async def admin_delete_daily_deal(
+    deal_id: str,
+    admin: dict = Depends(get_current_admin)
+):
+    """Admin: Tagesangebot löschen (deaktivieren)"""
+    success = await daily_deals_service.delete_deal(deal_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Tagesangebot nicht gefunden")
+    return {"success": True, "message": "Tagesangebot deaktiviert"}
+
+@api_router.post("/admin/daily-deals/setup-defaults")
+async def admin_setup_default_deals(admin: dict = Depends(get_current_admin)):
+    """Admin: Standard-Tagesangebote einrichten"""
+    deals = await daily_deals_service.setup_default_deals()
+    return {"success": True, "message": f"{len(deals)} Tagesangebote eingerichtet", "deals": deals}
+
+
 # Public Deals Endpoint
 @api_router.get("/deals")
 async def get_active_deals():
