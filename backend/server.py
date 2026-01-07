@@ -549,6 +549,54 @@ async def admin_setup_default_deals(admin: dict = Depends(get_current_admin)):
     return {"success": True, "message": f"{len(deals)} Tagesangebote eingerichtet", "deals": deals}
 
 
+# ==================== FEATURE TOGGLES ====================
+
+# Public: Feature-Status abrufen (für Frontend)
+@api_router.get("/features")
+async def get_public_features():
+    """Holt den Status aller Features für das Frontend"""
+    features = await feature_toggle_service.get_public_features()
+    return features
+
+# Admin: Alle Features mit Details
+@api_router.get("/admin/features")
+async def admin_get_all_features(admin: dict = Depends(get_current_admin)):
+    """Admin: Alle Features mit Details abrufen"""
+    features = await feature_toggle_service.get_all_features()
+    return features
+
+# Admin: Feature togglen (nur Super Admin)
+@api_router.patch("/admin/features/{feature_key}")
+async def admin_toggle_feature(
+    feature_key: str,
+    enabled: bool,
+    admin: dict = Depends(get_current_admin)
+):
+    """Admin: Feature aktivieren/deaktivieren (nur Super Admin)"""
+    if admin.get("role") != "super_admin":
+        raise HTTPException(status_code=403, detail="Nur Super Admin kann Features ändern")
+    
+    try:
+        result = await feature_toggle_service.toggle_feature(
+            feature_key, 
+            enabled, 
+            admin.get("email", "admin")
+        )
+        return {"success": True, "feature": feature_key, "enabled": enabled}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+# Admin: Feature-Toggles initialisieren
+@api_router.post("/admin/features/initialize")
+async def admin_initialize_features(admin: dict = Depends(get_current_admin)):
+    """Admin: Feature-Toggles initialisieren"""
+    if admin.get("role") != "super_admin":
+        raise HTTPException(status_code=403, detail="Nur Super Admin")
+    
+    features = await feature_toggle_service.initialize_features()
+    return {"success": True, "features": features}
+
+
 # Public Deals Endpoint
 @api_router.get("/deals")
 async def get_active_deals():
