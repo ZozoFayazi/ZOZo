@@ -111,11 +111,15 @@ function Impressum() {
             </p>
           </div>
 
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-md p-4 mt-6">
-            <p className="text-sm text-blue-600">
-              <strong>Hinweis:</strong> Die obigen Angaben sind Platzhalter und müssen durch die 
-              tatsächlichen Unternehmensdaten ersetzt werden.
-            </p>
+          <div className="border-t border-border pt-6 space-y-3">
+            <h3 className="text-lg font-semibold">Gestaltung und Umsetzung</h3>
+            <p className="text-muted-foreground">Diese Website wurde erstellt von:</p>
+            <div className="mt-2">
+              <p className="font-semibold">Zonik Solutions</p>
+              <p>Subyr Fayazi</p>
+              <p>Friedrichshulder Weg 157A</p>
+              <p>25469 Halstenbek</p>
+            </div>
           </div>
         </div>
       </div>
