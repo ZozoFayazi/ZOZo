@@ -47,8 +47,8 @@ function Impressum() {
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-primary" />
-                <a href="tel:+4940123456" className="hover:text-primary transition-colors">
-                  +49 (0) 40 123 456
+                <a href="tel:+4941013984850" className="hover:text-primary transition-colors">
+                  04101 3984 850
                 </a>
               </div>
               <div className="flex items-center gap-3">
@@ -62,15 +62,16 @@ function Impressum() {
 
           <div className="border-t border-border pt-6 space-y-3">
             <h3 className="text-lg font-semibold">Vertreten durch</h3>
-            <p>Geschäftsführer: Max Mustermann</p>
+            <p className="text-muted-foreground">Inhaber: [Bitte ergänzen]</p>
+            <p className="text-sm text-amber-600">⚠️ Rechtlicher Hinweis: Bitte vollständige Inhaberdaten vor Go-Live eintragen</p>
           </div>
 
           <div className="border-t border-border pt-6 space-y-3">
             <h3 className="text-lg font-semibold">Registereintrag</h3>
             <div className="space-y-1 text-muted-foreground">
-              <p>Eintragung im Handelsregister</p>
-              <p>Registergericht: Amtsgericht Musterstadt</p>
-              <p>Registernummer: HRB 12345</p>
+              <p className="text-sm text-amber-600">⚠️ Falls Eintragung vorhanden, bitte ergänzen:</p>
+              <p>Registergericht: [Bitte ergänzen]</p>
+              <p>Registernummer: [Bitte ergänzen]</p>
             </div>
           </div>
 
@@ -79,12 +80,13 @@ function Impressum() {
             <p className="text-muted-foreground">
               Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:
             </p>
-            <p className="font-mono">DE123456789</p>
+            <p className="font-mono">[Bitte USt-IdNr. ergänzen]</p>
+            <p className="text-sm text-amber-600">⚠️ Falls vorhanden, bitte vor Go-Live eintragen</p>
           </div>
 
           <div className="border-t border-border pt-6 space-y-3">
             <h3 className="text-lg font-semibold">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
-            <p>Max Mustermann</p>
+            <p>[Inhaber - Bitte ergänzen]</p>
             <p className="text-muted-foreground">Anschrift wie oben</p>
           </div>
 
