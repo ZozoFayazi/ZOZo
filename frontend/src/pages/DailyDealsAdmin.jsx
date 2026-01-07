@@ -274,7 +274,7 @@ function DailyDealsAdmin() {
           
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" />
+              <Tag className="h-6 w-6 text-primary" />
               Tagesangebote
             </h1>
             <p className="text-muted-foreground">
