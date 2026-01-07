@@ -70,24 +70,25 @@ class ExpertOrderClient:
     # Each merchant has their own base URL: https://s1.eocloud.de/{merchant_id}
     # API Endpoint: PUT /api/v1/osp
     
-    def __init__(self, api_key: str = None, use_test_mode: bool = False, merchant_id: str = "c102285", base_url: str = None):
+    def __init__(self, api_key: str = None, use_test_mode: bool = False, merchant_id: str = "zozo", base_url: str = None):
         """
         Initialize ExpertOrder EOCloud client
         
         Args:
             api_key: ExpertOrder API key for the merchant
             use_test_mode: If True, use test mode (currently same endpoint)
-            merchant_id: ExpertOrder merchant ID (e.g., "c102285")
-            base_url: Full base URL (e.g., "https://s1.eocloud.de/c102285")
+            merchant_id: ExpertOrder merchant ID (e.g., "zozo")
+            base_url: Full base URL (e.g., "https://zozo.eocloud.de")
         """
         self.api_key = api_key
         self.merchant_id = merchant_id
         
-        # Use provided base_url or construct from merchant_id
+        # Use provided base_url or construct default
         if base_url:
             self.base_url = base_url.rstrip('/')
         else:
-            self.base_url = f"https://s1.eocloud.de/{merchant_id}"
+            # Default to ZOZO's custom subdomain
+            self.base_url = "https://zozo.eocloud.de"
         
         self.endpoint = f"{self.base_url}/api/v1/osp"
         self.use_test_mode = use_test_mode
