@@ -50,14 +50,16 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
               >
                 STANDORTE
               </Link>
-              <Link
-                to="/order-tracking"
-                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
-                  isActive('/order-tracking') ? 'text-primary' : 'text-foreground/70'
-                }`}
-              >
-                BESTELLSTATUS
-              </Link>
+              {isFeatureEnabled('order_tracking') && (
+                <Link
+                  to="/order-tracking"
+                  className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                    isActive('/order-tracking') ? 'text-primary' : 'text-foreground/70'
+                  }`}
+                >
+                  BESTELLSTATUS
+                </Link>
+              )}
             </div>
 
             {/* CENTER: Logo */}
@@ -85,19 +87,24 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                   MEHR <ChevronDown className="h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem asChild>
-                    <Link to="/burger-builder" className="flex items-center gap-2 cursor-pointer">
-                      🍔 Burger Builder
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/rewards" className="flex items-center gap-2 cursor-pointer">
-                      🎁 Belohnungen
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/start-group-order" className="flex items-center gap-2 cursor-pointer">
-                      👥 Gruppenbestellung
+                  {isFeatureEnabled('burger_builder') && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/burger-builder" className="flex items-center gap-2 cursor-pointer">
+                        🍔 Burger Builder
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  {isFeatureEnabled('rewards') && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/rewards" className="flex items-center gap-2 cursor-pointer">
+                        🎁 Belohnungen
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  {isFeatureEnabled('group_orders') && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/start-group-order" className="flex items-center gap-2 cursor-pointer">
+                        👥 Gruppenbestellung
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
