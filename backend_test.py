@@ -545,6 +545,127 @@ class ZOZOBurgerAPITester:
                 return True
         return success
 
+    def test_get_today_daily_deal(self):
+        """Test getting today's daily deal (public)"""
+        success, response = self.run_test(
+            "Get Today's Daily Deal",
+            "GET",
+            "daily-deal",
+            200
+        )
+        
+        if success and response:
+            if 'message' in response:
+                print(f"   📅 {response.get('message')}")
+            else:
+                print(f"   🎁 Today's Deal: {response.get('title')}")
+                print(f"      Type: {response.get('discount_type')}")
+                print(f"      Target: {response.get('target_value')}")
+            return True
+        return success
+
+    def test_get_all_daily_deals(self):
+        """Test getting all daily deals (public)"""
+        success, response = self.run_test(
+            "Get All Daily Deals",
+            "GET",
+            "daily-deals",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, list):
+                print(f"   📅 Found {len(response)} daily deals")
+                for deal in response[:2]:
+                    weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                    day = weekdays[deal.get('weekday', 0)]
+                    print(f"      - {day}: {deal.get('title')}")
+                return True
+        return success
+
+    def test_get_admin_daily_deals(self):
+        """Test getting daily deals (admin)"""
+        if not self.token:
+            print("   ⚠️  Skipping - No auth token available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Daily Deals (Admin)",
+            "GET",
+            "admin/daily-deals",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, list):
+                print(f"   📅 Found {len(response)} daily deals (admin view)")
+                return True
+        return success
+
+    def test_get_public_features(self):
+        """Test getting public features"""
+        success, response = self.run_test(
+            "Get Public Features",
+            "GET",
+            "features",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, dict):
+                enabled_count = sum(1 for v in response.values() if isinstance(v, dict) and v.get('enabled'))
+                print(f"   🎛️  Found {len(response)} features")
+                print(f"      Enabled: {enabled_count}")
+                # Show first 3 features
+                for i, (key, feature) in enumerate(list(response.items())[:3]):
+                    if isinstance(feature, dict):
+                        status = "✅" if feature.get('enabled') else "❌"
+                        print(f"      {status} {feature.get('name', key)}")
+                return True
+        return success
+
+    def test_get_admin_features(self):
+        """Test getting all features (admin)"""
+        if not self.token:
+            print("   ⚠️  Skipping - No auth token available")
+            return False
+        
+        success, response = self.run_test(
+            "Get Features (Admin)",
+            "GET",
+            "admin/features",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, dict):
+                print(f"   🎛️  Found {len(response)} features (admin view)")
+                return True
+        return success
+
+    def test_menu_with_uuid_location(self):
+        """Test menu endpoint with UUID location ID (P0 bug fix)"""
+        if not self.location_id:
+            print("   ⚠️  Skipping - No location_id available")
+            return False
+        
+        # This tests the critical fix: backend now accepts UUID-based location IDs
+        success, response = self.run_test(
+            "Get Menu with UUID Location ID (P0 Fix)",
+            "GET",
+            f"menu?location_id={self.location_id}",
+            200
+        )
+        
+        if success and response:
+            if isinstance(response, list) and len(response) > 0:
+                print(f"   ✅ P0 FIX VERIFIED: Menu loads with UUID location ID")
+                print(f"   📋 Found {len(response)} categories")
+                return True
+            else:
+                print(f"   ⚠️  Menu returned but no categories found")
+        return success
+
     def test_get_products_admin(self):
         """Test getting products (admin) with master-slave info"""
         if not self.token:
