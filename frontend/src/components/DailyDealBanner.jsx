@@ -110,7 +110,7 @@ function DailyDealBanner() {
 
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="h-4 w-4 text-primary" />
+                  <Tag className="h-4 w-4 text-primary" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-primary">
                     {deal.weekday_name} Angebot
                   </span>
