@@ -329,6 +329,7 @@ function App() {
         />
           </div>
         </Router>
+        </FeatureProvider>
       </AdminAuthProvider>
     </ErrorBoundary>
   );
