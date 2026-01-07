@@ -37,6 +37,7 @@ const POSSettings = lazy(() => import('./pages/POSSettings'));
 const FailedPOSOrders = lazy(() => import('./pages/FailedPOSOrders'));
 const LocationDetailPage = lazy(() => import('./pages/LocationDetailPage'));
 const SecurityDashboard = lazy(() => import('./pages/SecurityDashboard'));
+const FeatureToggles = lazy(() => import('./pages/FeatureToggles'));
 const Impressum = lazy(() => import('./pages/Impressum'));
 const Datenschutz = lazy(() => import('./pages/Datenschutz'));
 const Kontakt = lazy(() => import('./pages/Kontakt'));
