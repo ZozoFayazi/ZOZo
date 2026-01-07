@@ -366,7 +366,7 @@ function BurgerBuilder({ addToCart }) {
               {/* Preview */}
               <div className="bg-accent rounded-lg p-6 mb-4">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
+                  <Star className="h-5 w-5 text-primary" />
                   Deine Kreation
                 </h3>
                 <div className="space-y-2 text-sm">
