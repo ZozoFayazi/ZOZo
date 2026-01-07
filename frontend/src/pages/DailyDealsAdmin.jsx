@@ -11,7 +11,7 @@ import {
   X,
   Check,
   AlertCircle,
-  Sparkles,
+  Tag,
   RefreshCw,
   ArrowLeft
 } from 'lucide-react';
