@@ -13,6 +13,7 @@ import { useFeatures } from '../contexts/FeatureContext';
 function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation, cartOpen, setCartOpen }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { isFeatureEnabled } = useFeatures();
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
