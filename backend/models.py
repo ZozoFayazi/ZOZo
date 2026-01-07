@@ -326,8 +326,6 @@ class GroupOrder(BaseModel):
 class GroupOrderAddItems(BaseModel):
     participant_name: str
     items: List[dict]
-
-    expires_at: datetime  # Code expires after 10 minutes
     
     class Config:
         allow_population_by_field_name = True
