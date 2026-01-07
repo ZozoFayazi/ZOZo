@@ -66,14 +66,14 @@ function Footer() {
                 <p className="font-medium text-foreground mb-1">Rellingen</p>
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <span>ZOZO Burger Rellingen</span>
+                  <span>Hauptstraße 30<br />25462 Rellingen</span>
                 </div>
               </div>
               <div>
                 <p className="font-medium text-foreground mb-1">Henstedt-Ulzburg</p>
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <span>ZOZO Burger Henstedt-Ulzburg</span>
+                  <span>Hamburger Straße 115<br />24558 Henstedt-Ulzburg</span>
                 </div>
               </div>
             </div>
@@ -85,16 +85,20 @@ function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <span>+49 123 456789</span>
+                <a href="tel:+4941013984850" className="hover:text-primary transition-colors">
+                  04101 3984 850
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 flex-shrink-0" />
-                <span>info@zozoburger.de</span>
+                <a href="mailto:info@zozo-burger.de" className="hover:text-primary transition-colors">
+                  info@zozo-burger.de
+                </a>
               </li>
               <li className="flex items-start gap-2">
                 <Clock className="h-4 w-4 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p>Mo-So: 11:00 - 22:00</p>
+                  <p>Mo-So: 11:00 - 22:45 Uhr</p>
                 </div>
               </li>
             </ul>
