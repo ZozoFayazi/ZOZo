@@ -281,23 +281,24 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
 
         {/* Menu Items */}
         {selectedLocation && (
-          loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="text-muted-foreground mt-4">Lade Speisekarte...</p>
-          </div>
-        ) : filteredMenu.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Keine Gerichte gefunden</p>
-            <button
-              onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
-              className="mt-4 text-primary hover:underline"
-            >
-              Alle anzeigen
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-12">
+          <>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                <p className="text-muted-foreground mt-4">Lade Speisekarte...</p>
+              </div>
+            ) : filteredMenu.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Keine Gerichte gefunden</p>
+                <button
+                  onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
+                  className="mt-4 text-primary hover:underline"
+                >
+                  Alle anzeigen
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-12">
             {filteredMenu.map((category) => (
               <section key={category.id} className="animate-fade-in">
                 <h2 className="text-2xl font-serif font-semibold mb-6 pb-2 border-b border-border">
