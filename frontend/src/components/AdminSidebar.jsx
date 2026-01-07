@@ -17,7 +17,8 @@ import {
   Package,
   Cable,
   Shield,
-  AlertTriangle
+  AlertTriangle,
+  Sparkles
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
