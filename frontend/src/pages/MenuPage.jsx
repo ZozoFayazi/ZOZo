@@ -176,6 +176,30 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="container-custom">
+        {/* No Location Selected Warning */}
+        {!selectedLocation && (
+          <div className="mb-8 p-6 bg-amber-500/10 border border-amber-500/20 rounded-xl" data-testid="no-location-warning">
+            <div className="flex items-start gap-3">
+              <MapPin className="h-6 w-6 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-amber-900 dark:text-amber-100 mb-1">
+                  Kein Standort ausgewählt
+                </h3>
+                <p className="text-sm text-amber-800 dark:text-amber-200 mb-3">
+                  Bitte wähle einen Standort aus, um die Speisekarte anzuzeigen.
+                </p>
+                <a
+                  href="/standorte"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors text-sm font-medium"
+                >
+                  <MapPin className="h-4 w-4" />
+                  Standort auswählen
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
