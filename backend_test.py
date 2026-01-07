@@ -860,6 +860,14 @@ class ZOZOBurgerAPITester:
         print("\n📌 P0 BUG FIX VERIFICATION (MenuPage UUID Fix)")
         print("-" * 70)
         self.test_menu_with_uuid_location()
+        
+        # Group Orders System (CRITICAL FOR PRE-LAUNCH)
+        print("\n📌 GROUP ORDERS SYSTEM (CRITICAL)")
+        print("-" * 70)
+        self.test_create_group_order()
+        self.test_get_group_order()
+        self.test_add_items_to_group_order()
+        self.test_finalize_group_order()
 
         # Print summary
         print("\n" + "=" * 70)
