@@ -41,6 +41,7 @@ audit_service = AuditService(db)
 pos_service = POSService(db)
 rate_limiter = RateLimiter(db)
 totp_service = TOTPService(db)
+daily_deals_service = DailyDealsService(db)
 
 # Create product router with admin authentication
 # V2: Master-Slave architecture (Rellingen = Master, Henstedt = Override only)
