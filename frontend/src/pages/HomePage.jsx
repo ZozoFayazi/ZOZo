@@ -88,66 +88,63 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Text Content - Left */}
             <div className="space-y-8 animate-fade-in" role="region" aria-label="Willkommensnachricht">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-primary/20">
+              {/* Location Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
                 <MapPin className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium tracking-wide">RELLINGEN • HENSTEDT-ULZBURG</span>
+                <span className="text-sm font-medium">Rellingen · Henstedt-Ulzburg</span>
               </div>
 
-              {/* Main Headline */}
+              {/* Main Headline - Modern & Clean */}
               <div className="space-y-4">
-                <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif font-bold leading-none tracking-tight">
-                  ZOZO<br />
-                  <span className="text-primary">BURGER</span>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
+                  Frisch. Lecker.
+                  <br />
+                  <span className="text-primary">Direkt zu dir.</span>
                 </h1>
-                <div className="flex items-center gap-3 text-muted-foreground text-sm tracking-[0.2em] uppercase">
-                  <span className="w-12 h-px bg-primary" />
-                  <span>Burger · Pizza · Pasta & More</span>
+                <p className="text-xl text-foreground/70 leading-relaxed max-w-lg">
+                  Premium Burger, Pizza & mehr – handgemacht mit besten Zutaten und in kürzester Zeit bei dir.
+                </p>
+              </div>
+
+              {/* Key Benefits - Modern Cards */}
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-card/80 backdrop-blur-sm rounded-xl border border-border/50">
+                  <Clock className="h-5 w-5 text-primary" />
+                  <span className="font-semibold">30-45 Min</span>
+                  <span className="text-muted-foreground text-sm">Lieferzeit</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-card/80 backdrop-blur-sm rounded-xl border border-border/50">
+                  <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+                  <span className="font-semibold">4.9</span>
+                  <span className="text-muted-foreground text-sm">Bewertung</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-card/80 backdrop-blur-sm rounded-xl border border-border/50">
+                  <Check className="h-5 w-5 text-green-500" />
+                  <span className="font-semibold">100%</span>
+                  <span className="text-muted-foreground text-sm">Frisch</span>
                 </div>
               </div>
 
-              {/* Description */}
-              <p className="text-lg text-foreground/80 leading-relaxed max-w-lg">
-                Premium Qualität, frisch zubereitet und in <span className="text-primary font-semibold">30-45 Minuten</span> bei dir. 
-                Genieße beste Zutaten und authentischen Geschmack.
-              </p>
-
-              {/* Stats/Features */}
-              <div className="grid grid-cols-3 gap-6 pt-4">
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-primary">4.9</p>
-                  <p className="text-xs text-muted-foreground mt-1">★★★★★</p>
-                </div>
-                <div className="text-center border-x border-border px-2">
-                  <p className="text-3xl font-bold text-primary">30min</p>
-                  <p className="text-xs text-muted-foreground mt-1">Lieferzeit</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-primary">100%</p>
-                  <p className="text-xs text-muted-foreground mt-1">Frisch</p>
-                </div>
-              </div>
-
-              {/* CTAs - Mobile Optimized */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6">
+              {/* CTAs - Modern Style */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <button
                   onClick={() => setShowOrderTypeDialog(true)}
-                  className="btn-primary group relative overflow-hidden shadow-lg shadow-primary/30 py-4 sm:py-3 text-lg sm:text-base active:scale-95 transition-transform"
+                  className="group relative overflow-hidden bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 active:scale-95"
                   data-testid="hero-primary-cta-button"
                 >
-                  <span className="relative z-10 flex items-center justify-center gap-2">
+                  <span className="relative z-10 flex items-center justify-center gap-3">
                     Jetzt bestellen
                     <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </button>
                 <button
                   onClick={() => navigate('/menu')}
-                  className="btn-secondary group py-4 sm:py-3 text-lg sm:text-base active:scale-95 transition-transform"
+                  className="group px-8 py-4 rounded-full font-semibold text-lg border-2 border-foreground/20 hover:border-primary hover:text-primary transition-all active:scale-95"
                   data-testid="hero-secondary-cta-button"
                 >
-                  <span className="flex items-center justify-center gap-2">
-                    Speisekarte ansehen
-                    <ArrowRight className="h-5 w-5" />
+                  <span className="flex items-center justify-center gap-3">
+                    Speisekarte
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </button>
               </div>
