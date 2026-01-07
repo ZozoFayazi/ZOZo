@@ -114,12 +114,27 @@ function CartDrawer({ open, onClose, cart, cartTotal, removeFromCart, updateCart
 
         {/* Footer */}
         <div className="border-t border-border p-6 space-y-4">
+          {/* Daily Deal Discount */}
+          {cart.length > 0 && (
+            <DailyDealDiscount 
+              cartItems={cart}
+              locationId={selectedLocation?.id}
+              onDiscountCalculated={handleDiscountCalculated}
+            />
+          )}
+
           {/* Summary */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Zwischensumme</span>
               <span>€{cartTotal.toFixed(2)}</span>
             </div>
+            {dailyDealDiscount > 0 && (
+              <div className="flex justify-between text-sm text-green-600">
+                <span>Tagesangebot-Rabatt</span>
+                <span>-€{dailyDealDiscount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Liefergebühr</span>
               <span>{deliveryFee === 0 ? 'Kostenlos' : `€${deliveryFee.toFixed(2)}`}</span>
