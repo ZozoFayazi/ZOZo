@@ -301,6 +301,9 @@ class ZOZOBurgerAPITester:
 
     def test_location_manager_login(self):
         """Test location manager login"""
+        # Save owner token before manager login
+        saved_owner_token = self.owner_token
+        
         credentials = {
             "email": "rellingen@zozo.com",
             "password": "manager_password"
@@ -320,7 +323,8 @@ class ZOZOBurgerAPITester:
             print(f"   🔑 Manager logged in: {user.get('email')}")
             print(f"   📍 Location: {user.get('location_id')}")
             # Restore owner token for subsequent admin tests
-            self.token = self.owner_token
+            self.token = saved_owner_token
+            print(f"   🔄 Restored owner token for admin tests")
             return True
         return success
 
