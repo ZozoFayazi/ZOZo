@@ -1,0 +1,49 @@
+{
+  "backup_date": "2026-01-07T17:45:00Z",
+  "status": "PRODUCTION_READY",
+  "base_url": "https://zozo.eocloud.de",
+  "broker_name": "zozo-burger.de",
+  
+  "rellingen": {
+    "location_name": "ZOZO Burger Rellingen",
+    "location_id": "49aff347-a6c3-407c-ad4a-59d5d0852314",
+    "expertorder_api_key": "4bbc443c82674f93e910399ca7931b37b45e55ba",
+    "expertorder_base_url": "https://zozo.eocloud.de",
+    "expertorder_broker_name": "zozo-burger.de",
+    "expertorder_enabled": true,
+    "expertorder_test_mode": false,
+    "status": "LIVE - VERBINDUNG GETESTET UND FUNKTIONAL"
+  },
+  
+  "henstedt_ulzburg": {
+    "location_name": "ZOZO Burger Henstedt-Ulzburg",
+    "location_id": "422cac42-cfdf-4869-b2cb-0b09aa24d02c",
+    "expertorder_api_key": "90dd43e5c58b7c2a8ddd1eb4916ae8196d8e1073",
+    "expertorder_base_url": "https://zozo.eocloud.de",
+    "expertorder_broker_name": "zozo-burger.de",
+    "expertorder_enabled": true,
+    "expertorder_test_mode": false,
+    "status": "LIVE - VERBINDUNG GETESTET UND FUNKTIONAL"
+  },
+  
+  "test_results": {
+    "rellingen_test_order_id": "1273C1CF90BF3CEF7D82E7B817EB5881AE267CB3",
+    "henstedt_test_order_id": "6C44625F43851586FC95C0409C3B2B9B2A1E93A6",
+    "both_tests_successful": true,
+    "test_date": "2026-01-07"
+  },
+  
+  "admin_accounts": {
+    "super_admin": "admin@zonik-solutions.de",
+    "rellingen_admin": "info@zozo-burger.de",
+    "note": "Passwörter sind in Datenbank als Hash gespeichert"
+  },
+  
+  "wichtige_hinweise": [
+    "Diese Konfiguration ist in MongoDB test_database gespeichert",
+    "Collection: location_settings",
+    "Beide API Keys wurden erfolgreich getestet",
+    "Base URL: https://zozo.eocloud.de (NICHT s1.eocloud.de/c102285!)",
+    "Bestellungen werden automatisch an ExpertOrder gesendet"
+  ]
+}
