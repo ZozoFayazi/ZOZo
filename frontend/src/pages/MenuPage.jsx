@@ -232,53 +232,56 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
           </div>
 
           {/* Search and Filters */}
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1" data-testid="menu-search">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Suche nach Gerichten..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
+          {selectedLocation && (
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Search */}
+              <div className="relative flex-1" data-testid="menu-search">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Suche nach Gerichten..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
 
-            {/* Category Tabs */}
-            <div className="flex overflow-x-auto gap-2 pb-2 md:pb-0" data-testid="menu-tabs">
-              <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
-                  selectedCategory === 'all'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-card border border-border hover:border-primary/40'
-                }`}
-              >
-                Alle
-              </button>
-              {menu.map((category) => (
+              {/* Category Tabs */}
+              <div className="flex overflow-x-auto gap-2 pb-2 md:pb-0" data-testid="menu-tabs">
                 <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.slug)}
+                  onClick={() => setSelectedCategory('all')}
                   className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
-                    selectedCategory === category.slug
+                    selectedCategory === 'all'
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-card border border-border hover:border-primary/40'
                   }`}
                 >
-                  {category.name}
+                  Alle
                 </button>
-              ))}
+                {menu.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategory(category.slug)}
+                    className={`px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+                      selectedCategory === category.slug
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-card border border-border hover:border-primary/40'
+                    }`}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Quick Reorder */}
-        <QuickReorder addToCart={addToCart} />
+        {selectedLocation && <QuickReorder addToCart={addToCart} />}
 
         {/* Menu Items */}
-        {loading ? (
+        {selectedLocation && (
+          loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
             <p className="text-muted-foreground mt-4">Lade Speisekarte...</p>
