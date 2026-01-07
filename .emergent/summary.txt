@@ -1,195 +1,167 @@
-<analysis>**original_problem_statement:** The user's initial goal was to prepare the ZOZO Burger application for go-live by migrating from the  POS system to , fixing UI/data bugs, and implementing various features. This evolved into a comprehensive go-live readiness check, including legal/DSGVO compliance (Impressum, Cookie Banner), security hardening (2FA), and major architectural changes like a master-slave menu system. The user is very hands-on, providing technical feedback, changing priorities, and introducing new feature requests like a professional-grade menu modifier system and Google Maps address autocomplete.
+<analysis>**original_problem_statement:** The user's initial goal was to prepare the ZOZO Burger application for go-live by migrating from the  POS system to , fixing UI/data bugs, and implementing various features. In this session, the focus shifted to fixing the live ExpertOrder integration, and then implementing several new user-requested features: a daily deals system, a feature-toggle system for admins, and multiple UI/UX redesigns.
 
 **PRODUCT REQUIREMENTS:**
 -   A stable, production-ready application.
--   A robust and flexible menu management system suitable for a restaurant chain (Master-Slave architecture).
--   A modern ordering experience with product customization (Modifier Groups).
--   Legal compliance with German/EU regulations (DSGVO, TDDDG).
+-   A robust and flexible menu management system.
+-   A modern ordering experience with promotions (Daily Deals).
 -   Functional POS integration for all restaurant locations.
+-   A super-admin panel to control feature visibility.
 
 **User's preferred language**: German
 
 **what currently exists?**
-The application consists of a FastAPI backend and a React frontend. Major architectural and feature work has been completed:
--   **Master-Slave Menu:** The product architecture was refactored. Rellingen is the master location managing all products, while Henstedt is a slave location that can only toggle product availability (/).
--   **Legal & Compliance:** Legal pages (Impressum, Datenschutz, etc.), a DSGVO/TDDDG-compliant cookie banner (), and a 2-click consent mechanism for Google Maps are implemented.
--   **POS Retry Mechanism:** A robust system to handle failed POS order submissions is in place and tested.
--   **Google Maps Integration:** Google Maps is used for location display (with 2-click consent) and for address autocomplete in the checkout, using a user-provided API key.
--   **2FA/Passkey (Partially Implemented/Abandoned):** A significant amount of work was done to implement WebAuthn/Passkey for 2FA, but after hitting multiple browser compatibility and implementation issues, the user decided to abandon it for now in favor of no 2FA for the go-live. Much of this code still exists.
--   **Modifier Groups (Partially Implemented):** The backend data models and setup scripts for modifier groups (e.g., salad dressings, pasta types) have been created. The frontend has been partially updated, but testing is blocked by a pre-existing bug.
--   **ExpertOrder POS Integration:** The system is configured to connect to ExpertOrder for the Henstedt location. The connection works in test mode but fails in live mode.
+The application consists of a FastAPI backend and a React frontend. The following key systems are in place:
+-   **ExpertOrder POS Integration:** The previously blocked integration is now fully functional and connected to the live endpoint (). A real test order was successfully sent.
+-   **Daily Deals System:** A new, full-stack feature allowing admins to create and manage daily promotions (e.g., 20% off Pasta on Mondays). This includes an admin management UI, a banner on the homepage, and automatic discount calculation in the shopping cart.
+-   **Feature Toggle System:** A new backend and frontend system that allows a super-admin to enable or disable major features (like Burger Builder and Order Status) across the site. The frontend navigation and UI elements respect these toggles.
+-   **UI/UX Redesigns:** The homepage hero section, product cards, and group order page have been significantly redesigned based on direct user feedback for a more modern and professional look.
+-   **2FA/Passkey Removal:** All code related to the abandoned 2FA/Passkey feature has been successfully removed from the backend and frontend, resolving an issue where a dialog was still appearing at login.
 
 **Last working item**:
--   **Last item agent was working:** Debugging the live connection to the  POS system for the Henstedt-Ulzburg location. The connection consistently fails with an HTTP 403 Broker ist unbekannt error, despite trying multiple API keys and broker names provided by the user.
--   **Status:** BLOCKED
+-   **Last item agent was working:** Redesigning the homepage hero section to be more minimalistic, as requested by the user.
+-   **Status:** USER VERIFICATION PENDING
 -   **Agent Testing Done:** Y
--   **Which testing method agent to use?** manual testing by curl. The issue is external and requires user action.
--   **User Testing Done:** Y
+-   **Which testing method agent to use?** screenshot tool
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   Issue 1: ExpertOrder Live Integration Fails with 403 Error (P0)
--   Issue 2: Menu Page does not load products correctly (P1)
--   Issue 3: Passkey/2FA feature is partially implemented and abandoned (P3)
+-   Issue 1: Menu Page does not load products (P0)
 
 **Issues Detail:**
--   **Issue 1: ExpertOrder Live Integration Fails with 403 Error**
-    -   **Attempted fixes:** The agent has exhaustively debugged this. It has confirmed the API endpoint (), payload structure, and payment type based on official documentation. It has tried multiple API keys and broker names provided by the user. A test with the official *demo* API key worked (returning a 422 for a pricing mismatch, which is expected), proving the connector code is fundamentally correct. The user's production keys, however, all result in a 403 Broker ist unbekannt error.
-    -   **Next debug checklist:** This issue is external. The user must contact ExpertOrder support and request: Please activate the broker name ZOZO-Burger for the API key and confirm it is ready for the live endpoint .
-    -   **Why fix this issue and what will be achieved with the fix?** This will enable the Henstedt-Ulzburg location to process live orders through its POS system.
-    -   **Status:** BLOCKED
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Backend.
-    -   **Blocked on other issue:** User action required (contacting ExpertOrder).
-
--   **Issue 2: Menu Page does not load products correctly**
-    -   **Attempted fixes:** The agent identified that the page shows Keine Gerichte gefunden because the location context is not being correctly passed or initialized on direct page load. The agent tried to work around it by navigating through the UI but didn't fix the root cause.
+-   **Issue 1: Menu Page does not load products**
+    -   **Attempted fixes:** This issue was not worked on in this session. The agent encountered it (Message 225: Fehler beim Laden der Speisekarte) and identified it as a known, pre-existing bug.
     -   **Next debug checklist:**
-        1.  Investigate  and its interaction with  or whichever context holds the .
-        2.  Ensure that on page load, if no location is selected, the application either defaults to a location or prompts the user to select one.
-        3.  The  hook that loads the menu should have  as a dependency and handle cases where it's initially null.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a critical usability bug that currently blocks the testing and completion of the Modifier Groups feature. Fixing it will make the menu system functional and testable.
+        1.  Investigate .
+        2.  Analyze how  state is passed to and used by the page.
+        3.  Ensure the  hook responsible for fetching products correctly handles an initially  or changing .
+        4.  Verify that the necessary data (products, categories) exists in the  for the menu to display.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical (P0) bug that prevents users from seeing the menu and adding items to the cart. It blocks the visual testing of all cart-related features, including the new Daily Deals discount logic.
     -   **Status:** NOT STARTED
     -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Frontend.
-
--   **Issue 3: Passkey/2FA feature is partially implemented and abandoned**
-    -   **Attempted fixes:** A large portion of the session was spent implementing a WebAuthn/Passkey 2FA system. The agent created backend services, API endpoints, and frontend components. However, after numerous bugs and compatibility issues, the user decided to remove 2FA entirely for the go-live.
-    -   **Next debug checklist:**
-        1.  Decide with the user whether to completely remove the Passkey-related code or to keep it for a future implementation.
-        2.  If removing, delete , , , and remove the related API endpoints from  and UI elements from .
-    -   **Why fix this issue and what will be achieved with the fix?** To clean up the codebase, remove dead/confusing code, and prevent future agents from wasting time on an abandoned feature.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on other issue:** None
 
 **In progress Task List**:
--   **Task 1: Implement Modifier Groups System (P2)**
-
-**Task Detail:**
--   **Task 1: Implement Modifier Groups System**
-    -   **Where to resume:** The backend models () and assignment scripts are done. The frontend  component has been partially modified to receive and display modifier groups. The next steps are:
-        1.  Fix the blocking  loading bug (Issue #2).
-        2.  Thoroughly test the display of modifier groups in the  dialog for products that have them (Salads, Pasta).
-        3.  Ensure the selected modifier choices are correctly added to the cart item and reflected in the final price.
-        4.  Ensure the logic for required choices (e.g., Dressingauswahl als Pflicht) is enforced in the UI.
-    -   **What will be achieved with this?** A modern, competitive ordering experience allowing customers to customize their food, which the user has defined as a go-live requirement.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Both.
-    -   **Blocked on something:** Issue #2: Menu Page loading bug.
+-   None
 
 **Upcoming and Future Tasks**
--   **P0: Fix  loading bug.** (See Issue #2 for details).
--   **P1: Finalize  Live Integration.** This is blocked on the user contacting ExpertOrder support.
--   **P2: Complete Modifier Groups Implementation.** (See In Progress Task #1 for details).
--   **P3: Implement Modern Product Editor (Phase 2).** The user wants a full wizard-style product editor with live preview to manage products, variants, and modifier groups. A plan exists in .
--   **P4: Re-implement 2FA.** The user wants a secure system. Post-go-live, 2FA (either TOTP or a revisited Passkey implementation) should be added back, particularly for Super Admins.
+- **Upcoming Tasks:**
+    - P0: Fix the  loading bug (see Issue 1). This is the highest priority.
+- **Future Tasks:**
+    - P1: Complete the Modifier Groups feature (partially implemented in a previous session). This is currently blocked by the Menu Page bug.
+    - P2: Implement the Modern Product Editor (wizard-style editor), for which a plan exists at .
 
 **Completed work in this session**
--   **POS Retry Mechanism:** Implemented and E2E tested a system to queue and retry failed POS order submissions.
--   **DSGVO/Legal Compliance:** Created legal pages (Impressum, Datenschutz, etc.) and a compliant Cookie Banner with granular consent.
--   **Google Maps Integration:** Implemented 2-click consent for maps and address autocomplete for the checkout, including setting up a user-provided API key.
--   **Master-Slave Menu Architecture:** Refactored the entire product database and application logic to support a central menu (Rellingen) with location-specific overrides (Henstedt).
--   **Session Handling:** Fixed a critical bug where 401 Unauthorized errors would crash the UI; now it correctly redirects to the login page.
--   **Resend Email Integration:** Verified the user's domain with Resend and confirmed that transactional emails are sent correctly from .
--   **Numerous Bug Fixes:** Addressed a wide range of issues, from UI bugs to critical backend errors, throughout the session.
+- **ExpertOrder POS Integration (FIXED):** Debugged and resolved the live connection issue by identifying and implementing the correct merchant-specific base URL ().
+- **Daily Deals Feature (DONE):**
+    - Backend: Implemented  and API endpoints.
+    - Frontend: Created  for management,  for the homepage, and integrated  into the cart.
+- **Feature Toggle System (DONE):**
+    - Backend: Implemented  and API endpoints.
+    - Frontend: Created  for super-admins and integrated a  to conditionally render UI, successfully hiding the Order Status and Burger Builder features.
+- **2FA/Passkey Cleanup (DONE):** Completely removed the abandoned Passkey/2FA feature from , , and backend  login logic.
+- **UI/UX Redesigns (DONE):**
+    - : Iteratively redesigned the hero section to a final minimalistic state and redesigned product cards. Removed unwanted image overlays.
+    - : Improved the UI for location selection to make it more intuitive.
+    - : Added a Back button for better navigation.
+- **Code Cleanup (DONE):** Removed all specified Sparkles icons from the UI.
+- **Database Debugging (DONE):** Identified and resolved a critical bug where the agent was writing to the wrong database () while the application was reading from . All setup scripts now correctly target .
 
 **Earlier issues found/mentioned but not fixed**
--   ** loading bug:** The menu page fails to load products unless the user navigates through a specific flow. This pre-existing bug became a blocker for testing new menu features and was not resolved.
+-   **Issue 1: Menu Page does not load products**
+    -   **Debug checklist:** See All Pending/In progress Issue list above.
+    -   **Why to solve this issue and what will be achieved with this?** This is a critical blocker for user-facing functionality and testing of any cart features.
+    -   **Should Test frontend/backend/both after fix:** Frontend
+    -   **Is recurring issue?** Y
 
 **Known issue recurrence from previous fork**
--   None identified.
+-   **Issue recurrence in previous fork:** The  bug that prevents products from loading was identified in the previous fork's summary and persists.
+-   **Recurrence count:** 2+
+-   **Status:** NOT STARTED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Master-Slave Data Architecture:** Products are global, with a separate  collection for location-specific overrides (, ).
--   **External API Integration & Debugging:** Extensive work on integrating with the  POS, including deep-diving into documentation to correct endpoints and payloads.
--   **DSGVO/TDDDG Compliance:** Implementation of a cookie consent banner, 2-click content loaders, and static legal pages.
--   **React Context & State Management:** Used for managing authentication state, location selection, and cart data. The fragility of this was exposed by the menu loading bug.
--   **WebAuthn (Passkey):** The agent attempted a full implementation, demonstrating knowledge of the spec (challenges, credentials, etc.), but it was ultimately abandoned.
+-   **External API Integration & Debugging:** The session involved in-depth debugging of the ExpertOrder POS API, culminating in a fix by discovering the correct merchant-specific base URL from user-provided documentation.
+-   **Full-Stack Feature Development:** Two complete features (Daily Deals, Feature Toggles) were built from scratch, including backend models/services/APIs and corresponding frontend components/pages.
+-   **React Context for Global State:** A  was created to provide application-wide access to feature flag states, enabling conditional rendering of major UI parts like navigation.
+-   **Database State Management:** The agent debugged and fixed a critical issue caused by writing setup data to the wrong database instance ( instead of ).
+-   **Iterative UI/UX Refinement:** The agent performed multiple, rapid redesigns of key UI components ( hero, product cards) based on direct and concise user feedback.
 
 **key DB schema**
--   **products:** Global list of all products.  is now deprecated/null.
--   **branch_product_settings:** 
--   **modifier_groups:** 
--   **product_modifiers:**  (Junction table/collection)
+-   **daily_deals:** 
+-   **feature_toggles:** 
 
 **changes in tech stack**
--   **frontend:** , 
--   **backend:** 
+-   No new third-party libraries were added.
 
 **All files of reference**
--   : Contains the heavily-debugged connector for the blocked POS integration.
--   : The main product admin page, showcasing the master-slave implementation.
--   : The public menu page that has the critical loading bug.
--   : The dialog for adding items to the cart, now with partial modifier group support.
--   : User-approved plan for the next major feature.
+-   : Contains the fixed, working connector for the ExpertOrder POS.
+-   : The file containing the critical (P0) bug that needs to be fixed next.
+-   : Core backend logic for the new Daily Deals feature.
+-   : Core backend logic for the new Feature Toggles feature.
+-   : Contains the heavily redesigned hero section and product cards.
+-   : The provider that controls UI visibility based on feature flags.
 
 **Areas that need refactoring**:
--   **Passkey/WebAuthn Code:** The feature was abandoned. The associated backend service, API endpoints, and frontend components should be cleanly removed to avoid technical debt.
--   **Frontend State Management:** The bug on  indicates that the  state is not robustly managed across the application. A review of the relevant React Context and how it's initialized/persisted is needed.
--   ** vs :** The agent noted an inconsistency where different parts of the auth flow used different storage mechanisms, causing bugs. This should be standardized to  or  throughout.
+-   **Frontend State Management for Location:** The recurring  bug highlights a fragility in how the  state is managed and propagated through the app. This context or state logic needs to be reviewed for robustness.
 
 **key api endpoints**
--   : Now handles updates to master product data.
--   : New endpoint for slave admins to toggle  and .
--   : New endpoint to fetch all modifier groups.
--   : Abandoned endpoints.
+-    (on ): The now-working ExpertOrder endpoint.
+-   : Fetches all deals for the admin UI.
+-   : Seeds the database with default deals.
+-   : Gets the active deal for the current day.
+-   : Calculates discounts for a given cart.
+-   : Fetches all feature flags for the admin UI.
+-   : Updates a feature flag's state.
+-   : Gets all feature flags for public-facing UI.
 
 **Critical Info for New Agent**
--   **User has de-prioritized go-live security steps.** The user's focus shifted from finalizing 2FA and other go-live tasks to implementing the new Modifier Groups feature. You should confirm if this is still the top priority.
--   **Fix the  loading bug first.** You cannot test the modifier group implementation without fixing the bug that prevents products from loading on the menu page.
--   **The  integration is blocked externally.** Do not waste time debugging it further. The user needs to contact ExpertOrder support. Recommend they use the working  integration for both locations as a workaround.
--   **The Passkey/2FA feature was abandoned.** The user explicitly requested to remove 2FA requirements for now. The leftover code should be cleaned up.
+-   **The top priority is to fix the  bug.** This issue blocks the ability to view products and properly test any cart functionality. Do not start new features until this is resolved.
+-   **The application's active database is **. A significant portion of the session was spent debugging an issue where the agent was seeding data into  while the app was reading from . Ensure all database operations target the correct DB.
+-   **The user gives direct, iterative feedback on UI/UX.** Be prepared to make multiple design changes to components until the user is satisfied. The current hero section is minimalistic by request.
+-   **The ExpertOrder POS integration is fixed and LIVE.** The configuration is stored in the database for the Henstedt-Ulzburg location.
+-   **Burger Builder and Order Status features are hidden by default** using the new Feature Toggle system. They can be re-enabled from the Feature-Verwaltung page in the super-admin dashboard.
 
 **documents and test reports created in this job**
--   /app/GO_LIVE_SECURITY_LEGAL_REPORT.md
--   /app/RESEND_DOMAIN_SETUP.md
--   /app/ADMIN_SECURITY_SETUP.md
--   /app/GO_LIVE_PREFLIGHT_CHECKLIST.md
--   /app/PHASE2_MODERN_PRODUCT_EDITOR.md
--   /app/FINAL_SMOKE_TEST.md
--   /app/READY_FOR_YOUR_ACTIONS.md
--   /app/test_reports/iteration_6.json
+-   None.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  User provides OpenAPI spec for ExpertOrder. (Agent confirms it's the same info).
-2.  User asks to try a different API key. (Agent tests, still 403).
-3.  User asks to try a different broker name. (Agent tests, still 403).
-4.  User confirms they enabled the broker. (Agent tests, still 403).
-5.  User provides a screenshot of two different ExpertOrder configs. (Agent tests both, both fail).
-6.  User provides full JSON payload example from docs. (Agent corrects payment type, still fails).
-7.  User provides screenshot of new active API key. (Agent tests, still fails).
-8.  User provides official API documentation link. (Agent finds correct endpoint and test key, makes progress).
-9.  User asks to try the  as the API key. (Agent tests, fails).
-10. Agent concludes the user's API key is not yet active on ExpertOrder's side and recommends using Cash-X instead.
+-   **10. 1**: User confirms choice for a minimalist redesign of the hero section. (Status: Implemented, pending final user approval).
+-   **9. 1**: User confirms the text/left side of the hero section is the part they dislike. (Status: Addressed).
+-   **8. ja aber der header bereich gefällt mir immer noch nicht.**: User expresses dissatisfaction with the redesigned hero section. (Status: Addressed with further redesign).
+-   **7. User dislikes hero section, wants it redesigned. Points out unclear location selection on group order page.**: (Status: Both points were addressed. Hero was redesigned, and group order location selection UI was improved).
+-   **6. User dislikes Sparkles icon. Wants Bestellstatus & Burgerbuilder hidden via a super admin feature toggle.**: (Status: All points implemented. Icons removed, feature toggle system created and features hidden).
+-   **5. User dislikes red overlay on product photos. Points out a missing back button in the admin dashboard menu.**: (Status: Both points addressed. Overlay removed from product card, back button added to Daily Deals admin page).
+-   **4. User dislikes the product card design, wants it more modern/professional.**: (Status: Addressed. Product card was redesigned).
+-   **3. User points out that the Passkey/2FA dialog is still appearing on login.**: (Status: Addressed. All 2FA/Passkey logic was removed from the login flow).
+-   **2. ich möchte jetzt die artikel bearbeiten wie mache ich das ?**: User asks how to edit articles. The agent interpreted this as editing the newly created Daily Deals and provided instructions. (Status: Resolved).
+-   **1. User provides answers to clarifying questions about the Daily Deals feature.**: (Status: Information was used to implement the feature).
 
 **Project Health Check:**
 -   **Broken:**
-    -    live POS integration.
-    -    product loading on direct navigation.
+    -    product loading on direct navigation or after location selection.
 -   **Mocked:**
-    -    is set to  to prevent the app from failing on live order attempts.
+    -   None.
 
 **3rd Party Integrations**
--   **ExpertOrder:** POS system for Henstedt. Integration is written but blocked by an external 403 error on the live endpoint.
--   **Cash-X:** POS system for Rellingen. Integration is complete and was previously working.
--   **Google Maps API:** Used for , , . Requires a user-provided API key with correct domain referrers.
--   **Resend:** Used for transactional emails. Domain is verified.
--   **cookie-though:** Frontend library for cookie consent banner.
+-   **ExpertOrder:** POS system. Integration is fixed and configured for the live environment.
+-   **Cash-X:** POS system. Integration exists but was not touched in this session.
+-   **Google Maps API:** Used for location services.
+-   **Resend:** Used for transactional emails.
+-   **cookie-though:** Frontend library for cookie consent.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES
+-   **Testing agent used after significant changes:** NO
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None by the agent itself.
--   **Known regressions:** The menu page loading issue seems to be a pre-existing bug that has become more critical due to new feature development.
+-   **Test files created:** None
+-   **Known regressions:** The  loading bug persists from a previous session and is now a critical blocker.
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
--   **Rellingen Admin:**  /  (will be forced to change)
+-   **Rellingen Admin:**  / 
 -   **Henstedt Admin:**  / 
 
 **What agent forgot to execute**
--   The agent did not fix the root cause of the  loading bug, which now blocks further development on the user's highest priority feature (Modifier Groups).
--   The agent did not clean up the abandoned Passkey/WebAuthn feature code, leaving technical debt.</analysis>
+-   The agent did not fix the root cause of the  loading bug, despite encountering it during testing. This is the most significant pending task and should have been prioritized over new features once it became a blocker for testing the cart.</analysis>
