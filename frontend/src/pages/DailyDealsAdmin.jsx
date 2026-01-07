@@ -259,16 +259,28 @@ function DailyDealsAdmin() {
 
   return (
     <div className="space-y-6" data-testid="daily-deals-admin">
-      {/* Header */}
+      {/* Header with Back Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            Tagesangebote
-          </h1>
-          <p className="text-muted-foreground">
-            Verwalte die automatischen Tagesangebote für jeden Wochentag
-          </p>
+        <div className="flex items-center gap-4">
+          {/* Back Button */}
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => navigate('/admin/dashboard')}
+            className="shrink-0"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <Sparkles className="h-6 w-6 text-primary" />
+              Tagesangebote
+            </h1>
+            <p className="text-muted-foreground">
+              Verwalte die automatischen Tagesangebote für jeden Wochentag
+            </p>
+          </div>
         </div>
         
         <div className="flex gap-2">
