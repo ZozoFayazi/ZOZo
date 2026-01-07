@@ -400,7 +400,7 @@ def send_review_request_email(order: dict, location: dict) -> bool:
         <div style="text-align: center; margin-top: 40px;">
             <p><strong>🎁 Noch mehr Vorteile?</strong></p>
             <p>Sammle Treuepunkte bei jeder Bestellung und sichere dir leckere Belohnungen!</p>
-            <a href="https://zozo-prelaunch.preview.emergentagent.com/rewards" 
+            <a href="{os.environ.get('APP_URL', 'http://localhost:3000')}/rewards" 
                style="color: #dc2626; text-decoration: underline;">
                 Zu den Belohnungen →
             </a>
