@@ -448,7 +448,8 @@ def send_group_order_invite_email(to_email: str, group_code: str, host_name: str
 
 def send_password_reset_email(email: str, reset_token: str) -> bool:
     """Send password reset email"""
-    reset_link = f"https://zozo-prelaunch.preview.emergentagent.com/admin/reset-password?token={reset_token}"
+    app_url = os.environ.get('APP_URL', 'http://localhost:3000')
+    reset_link = f"{app_url}/admin/reset-password?token={reset_token}"
     
     content = f"""
         <h1>🔑 Passwort zurücksetzen</h1>
