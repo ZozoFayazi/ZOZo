@@ -16,14 +16,15 @@ function Impressum() {
                 <Building2 className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">ZOZO Burger</p>
-                  <p className="text-muted-foreground">Betreiber der Online-Bestellplattform</p>
+                  <p className="text-muted-foreground">Einzelunternehmen</p>
+                  <p className="text-muted-foreground">Inhaber: Kereschma Fayazi</p>
                 </div>
               </div>
               
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold">Standort Rellingen:</p>
+                  <p className="font-semibold">Hauptsitz:</p>
                   <p>Möwenstraße 2</p>
                   <p>25462 Rellingen</p>
                   <p className="text-muted-foreground mt-1">Deutschland</p>
@@ -33,7 +34,7 @@ function Impressum() {
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold">Standort Henstedt-Ulzburg:</p>
+                  <p className="font-semibold">Weitere Filiale:</p>
                   <p>Edisonstraße 11</p>
                   <p>Henstedt-Ulzburg</p>
                   <p className="text-muted-foreground mt-1">Deutschland</p>
@@ -62,17 +63,7 @@ function Impressum() {
 
           <div className="border-t border-border pt-6 space-y-3">
             <h3 className="text-lg font-semibold">Vertreten durch</h3>
-            <p className="text-muted-foreground">Inhaber: [Bitte ergänzen]</p>
-            <p className="text-sm text-amber-600">⚠️ Rechtlicher Hinweis: Bitte vollständige Inhaberdaten vor Go-Live eintragen</p>
-          </div>
-
-          <div className="border-t border-border pt-6 space-y-3">
-            <h3 className="text-lg font-semibold">Registereintrag</h3>
-            <div className="space-y-1 text-muted-foreground">
-              <p className="text-sm text-amber-600">⚠️ Falls Eintragung vorhanden, bitte ergänzen:</p>
-              <p>Registergericht: [Bitte ergänzen]</p>
-              <p>Registernummer: [Bitte ergänzen]</p>
-            </div>
+            <p>Inhaber: Kereschma Fayazi</p>
           </div>
 
           <div className="border-t border-border pt-6 space-y-3">
@@ -80,13 +71,17 @@ function Impressum() {
             <p className="text-muted-foreground">
               Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:
             </p>
-            <p className="font-mono">[Bitte USt-IdNr. ergänzen]</p>
-            <p className="text-sm text-amber-600">⚠️ Falls vorhanden, bitte vor Go-Live eintragen</p>
+            <p className="font-mono">DE318093819</p>
+          </div>
+
+          <div className="border-t border-border pt-6 space-y-3">
+            <h3 className="text-lg font-semibold">Aufsichtsbehörde</h3>
+            <p className="text-muted-foreground">Gewerbeaufsichtsamt Gemeinde Rellingen</p>
           </div>
 
           <div className="border-t border-border pt-6 space-y-3">
             <h3 className="text-lg font-semibold">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
-            <p>[Inhaber - Bitte ergänzen]</p>
+            <p>Kereschma Fayazi</p>
             <p className="text-muted-foreground">Anschrift wie oben</p>
           </div>
 
