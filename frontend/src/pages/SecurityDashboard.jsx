@@ -23,10 +23,8 @@ import {
   Filter,
   Activity,
   Loader2,
-  Smartphone,
   Key
 } from 'lucide-react';
-import TwoFactorSetup from '../components/TwoFactorSetup';
 
 export default function SecurityDashboard() {
   const { token, admin, isSuperAdmin, updateAdminData } = useAdminAuth();
