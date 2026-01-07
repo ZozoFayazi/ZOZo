@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Percent, Gift, Sparkles } from 'lucide-react';
+import { Clock, Percent, Gift, Tag } from 'lucide-react';
 
 /**
  * DailyDealBanner - Zeigt das aktuelle Tagesangebot auf der Startseite
