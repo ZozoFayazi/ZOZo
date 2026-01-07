@@ -91,7 +91,7 @@ function DailyDealDiscount({ cartItems, locationId, onDiscountCalculated }) {
               className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{ backgroundColor: deal.badge_color || '#4CAF50' }}
             >
-              <Sparkles className="h-5 w-5 text-white" />
+              <Gift className="h-5 w-5 text-white" />
             </div>
             
             <div>
