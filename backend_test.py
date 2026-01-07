@@ -180,12 +180,12 @@ class ZOZOBurgerAPITester:
     def test_admin_login(self):
         """Test admin login"""
         credentials = {
-            "email": "admin@zonik-solutions.de",
-            "password": "Nila1605!"
+            "email": "owner@zozo.com",
+            "password": "owner_password"
         }
         
         success, response = self.run_test(
-            "Admin Login (Super Admin)",
+            "Admin Login (Owner)",
             "POST",
             "auth/login",
             200,
