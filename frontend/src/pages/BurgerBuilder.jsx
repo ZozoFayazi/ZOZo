@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChefHat, Share2, Save, ShoppingCart, Heart, Sparkles } from 'lucide-react';
+import { ChefHat, Share2, Save, ShoppingCart, Heart, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import BurgerPreview from '../components/BurgerPreview';
 
