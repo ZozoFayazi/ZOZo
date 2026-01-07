@@ -14,8 +14,6 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -28,8 +26,6 @@ export default function AdminLogin() {
     
     try {
       const result = await login(email, password);
-      
-      // 2FA/Passkey entfernt - direkt zum Dashboard
       
       console.log('Login successful:', result);
       toast.success('Login erfolgreich!');
@@ -45,39 +41,6 @@ export default function AdminLogin() {
       setLoading(false);
     }
   };
-
-  // Handle successful 2FA verification
-  const handle2FASuccess = async (data) => {
-    // Store token and admin data
-    sessionStorage.setItem('adminToken', data.access_token);
-    sessionStorage.setItem('admin', JSON.stringify(data.admin));
-    
-    toast.success('Login erfolgreich!');
-    
-    // Force page reload to update auth context
-    window.location.href = '/admin/dashboard';
-  };
-
-  // Cancel 2FA and go back to login
-  const handle2FACancel = () => {
-    setRequire2FA(false);
-    setTempToken(null);
-    setPassword('');
-  };
-
-  // Show 2FA verification screen
-  if (require2FA && tempToken) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <TwoFactorVerify
-          tempToken={tempToken}
-          onSuccess={handle2FASuccess}
-          onCancel={handle2FACancel}
-          backendUrl={backendUrl}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
