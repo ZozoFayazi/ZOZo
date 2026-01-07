@@ -380,8 +380,15 @@ async def get_categories():
 @api_router.get("/menu")
 async def get_menu(location_id: str = Query(...)):
     """Get menu for a specific location with categories"""
-    # Verify location exists
-    location = await db.locations.find_one({"_id": ObjectId(location_id), "active": True})
+    # Verify location exists (try both UUID 'id' field and ObjectId '_id' field)
+    location = await db.locations.find_one({"id": location_id, "active": True})
+    if not location:
+        # Fallback: try as ObjectId
+        try:
+            location = await db.locations.find_one({"_id": ObjectId(location_id), "active": True})
+        except:
+            pass
+    
     if not location:
         raise HTTPException(status_code=404, detail="Location not found")
     
@@ -392,7 +399,8 @@ async def get_menu(location_id: str = Query(...)):
     menu_items = await db.menu_items.find({
         "$or": [
             {"location_id": None},
-            {"location_id": location_id}
+            {"location_id": location_id},
+            {"location_id": str(location.get("_id"))}
         ],
         "active": True
     }).to_list(length=1000)
