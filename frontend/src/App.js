@@ -59,7 +59,7 @@ function App() {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
 
-  // Load cart from localStorage
+  // Load cart and location from localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem('zozoCart');
     if (savedCart) {
@@ -69,12 +69,30 @@ function App() {
         console.error('Error loading cart:', e);
       }
     }
+
+    const savedLocation = localStorage.getItem('zozoSelectedLocation');
+    if (savedLocation) {
+      try {
+        setSelectedLocation(JSON.parse(savedLocation));
+      } catch (e) {
+        console.error('Error loading location:', e);
+      }
+    }
   }, []);
 
   // Save cart to localStorage
   useEffect(() => {
     localStorage.setItem('zozoCart', JSON.stringify(cart));
   }, [cart]);
+
+  // Save location to localStorage
+  useEffect(() => {
+    if (selectedLocation) {
+      localStorage.setItem('zozoSelectedLocation', JSON.stringify(selectedLocation));
+    } else {
+      localStorage.removeItem('zozoSelectedLocation');
+    }
+  }, [selectedLocation]);
 
   const addToCart = (item) => {
     const existingItemIndex = cart.findIndex(
