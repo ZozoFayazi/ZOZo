@@ -200,50 +200,57 @@ function StartGroupOrder({ selectedLocation, setSelectedLocation }) {
               />
             </div>
 
-            {/* Location Selection - Inline Dialog */}
-            {selectedLocation ? (
-              <div className="bg-background rounded-lg p-4 border border-border" data-testid="selected-location-box">
-                <div className="flex items-center justify-between">
+            {/* Location Selection - Prominent */}
+            <div className="mb-2">
+              <label className="block text-sm font-medium mb-2">
+                Standort <span className="text-red-500">*</span>
+              </label>
+              {selectedLocation ? (
+                <div className="bg-background rounded-lg p-4 border border-green-500/50" data-testid="selected-location-box">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                        <Check className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">{selectedLocation.name}</p>
+                        <p className="text-sm text-muted-foreground">{selectedLocation.address}</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleChangeLocation}
+                      data-testid="change-location-button"
+                    >
+                      Ändern
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleChangeLocation}
+                  className="w-full bg-primary/10 border-2 border-dashed border-primary/50 rounded-lg p-4 hover:bg-primary/20 transition-colors text-left"
+                  data-testid="select-location-prompt"
+                >
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <MapPin className="h-5 w-5 text-primary" />
+                    <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                      <MapPin className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Ausgewählter Standort:</p>
-                      <p className="font-semibold">{selectedLocation.name}</p>
+                      <p className="font-semibold text-primary">
+                        Standort auswählen
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Wähle die Filiale für deine Gruppenbestellung
+                      </p>
                     </div>
+                    <ArrowRight className="h-5 w-5 text-primary ml-auto" />
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleChangeLocation}
-                    data-testid="change-location-button"
-                  >
-                    Ändern
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div 
-                className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 cursor-pointer hover:bg-yellow-500/20 transition-colors"
-                onClick={handleChangeLocation}
-                data-testid="select-location-prompt"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-yellow-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-yellow-600 dark:text-yellow-500">
-                      Bitte wähle zuerst einen Standort aus
-                    </p>
-                    <p className="text-xs text-yellow-600/70 dark:text-yellow-500/70">
-                      Klicke hier, um einen Standort zu wählen
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+                </button>
+              )}
+            </div>
 
             <button
               onClick={createGroupOrder}
