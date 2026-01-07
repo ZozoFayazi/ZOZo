@@ -752,6 +752,24 @@ class ZOZOBurgerAPITester:
         print("\n📌 MODIFIER GROUPS SYSTEM")
         print("-" * 70)
         self.test_get_modifier_groups()
+        
+        # Daily Deals System (NEW)
+        print("\n📌 DAILY DEALS SYSTEM (NEW FEATURE)")
+        print("-" * 70)
+        self.test_get_today_daily_deal()
+        self.test_get_all_daily_deals()
+        self.test_get_admin_daily_deals()
+        
+        # Feature Toggles System (NEW)
+        print("\n📌 FEATURE TOGGLES SYSTEM (NEW FEATURE)")
+        print("-" * 70)
+        self.test_get_public_features()
+        self.test_get_admin_features()
+        
+        # P0 Bug Fix Verification
+        print("\n📌 P0 BUG FIX VERIFICATION (MenuPage UUID Fix)")
+        print("-" * 70)
+        self.test_menu_with_uuid_location()
 
         # Print summary
         print("\n" + "=" * 70)
