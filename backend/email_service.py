@@ -357,7 +357,7 @@ def send_status_update_email(order: dict, new_status: str, location: dict) -> bo
         <p>Du kannst den Status deiner Bestellung jederzeit online verfolgen.</p>
         
         <div style="text-align: center;">
-            <a href="https://zozo-prelaunch.preview.emergentagent.com/order-tracking" 
+            <a href="{os.environ.get('APP_URL', 'http://localhost:3000')}/order-tracking" 
                class="button">
                 📍 Bestellung verfolgen
             </a>
