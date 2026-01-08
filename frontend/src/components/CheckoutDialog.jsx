@@ -392,6 +392,39 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {/* Pickup/Delivery Toggle */}
+              <div>
+                <label className="block text-sm font-medium mb-3">Bestellart *</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsPickup(false)}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      !isPickup
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                    data-testid="order-type-delivery"
+                  >
+                    <p className="font-semibold">🚚 Lieferung</p>
+                    <p className="text-xs mt-1 opacity-80">30-45 Min</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsPickup(true)}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      isPickup
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                    data-testid="order-type-pickup"
+                  >
+                    <p className="font-semibold">🏪 Abholung</p>
+                    <p className="text-xs mt-1 opacity-80">15 Min</p>
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium mb-2">Name *</label>
                 <input
