@@ -311,6 +311,13 @@ class ExpertOrderConnector(BasePOSConnector):
                 
                 logger.info(f"EOCloud order response: status={response.status_code}")
                 
+                # Log response body for debugging
+                try:
+                    response_text = response.text[:500]  # First 500 chars
+                    logger.info(f"EOCloud response body: {response_text}")
+                except:
+                    pass
+                
                 # Check for redirects
                 if response.status_code == 302:
                     return {
