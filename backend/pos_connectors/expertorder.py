@@ -502,41 +502,53 @@ class ExpertOrderConnector(BasePOSConnector):
             
             items.append(expertorder_item)
         
-        # Current time for ordertime, delivery time +30 min
-        # EOCloud expects ISO 8601 string format: "2025-12-17T16:30:00"
+        # Current time for ordertime
+        # deliverytime = ordertime (KEINE Zeitbestellung, sofort!)
+        # Laut API Docs: "Wenn die Zeit nicht festgelegt wurde, dann soll diese Zeit gleich der Zeit der Bestellung sein"
         now = datetime.utcnow()
-        delivery_time = now + timedelta(minutes=30)
         
-        # Format as ISO strings
-        ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%SZ")
-        deliverytime_str = delivery_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+        # Format as ISO strings - BEIDE GLEICH (keine Zeitbestellung!)
+        ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        deliverytime_str = ordertime_str  # GLEICH = sofortige Bestellung, NICHT Zeitbestellung!
         
         # Payment type mapping - ExpertOrder spec:
         # 0 = Barzahlung (Cash)
         # 1 = EC mit PIN vor Ort
-        # 3 = Onlinezahlung
+        # 3 = Onlinezahlung (PayPal, etc.)
         payment_method = order_data.get('payment_method', 'cash')
+        payment_type = 0  # Default: Barzahlung
+        payment_provider = ""
+        transaction_id = ""
+        prepaid_amount = 0
+        
         if payment_method == 'cash':
             payment_type = 0  # Barzahlung
-        elif payment_method == 'paypal' or payment_method == 'online':
+        elif payment_method == 'card':
+            payment_type = 1  # EC mit PIN vor Ort
+        elif payment_method == 'paypal':
             payment_type = 3  # Onlinezahlung
-        else:
-            payment_type = 1  # EC mit PIN
+            payment_provider = "PayPal"
+            transaction_id = order_data.get('paypal_transaction_id', '')
+            prepaid_amount = float(order_data.get('total', 0))  # Bei PayPal: Volle Summe vorausbezahlt
+        
+        # notification Feld: true = ABHOLUNG, false = LIEFERUNG
+        # Laut API: "Gibt an, ob der Kunde keine Lieferung wünscht, sondern selbst abholen möchte"
+        is_pickup = order_data.get('delivery_type') == 'pickup'
         
         # Build the OSP payload with ALL required ExpertOrder fields (from official API doc)
         payload = {
-            "version": 0,  # Required - Integer (0 basierend auf erfolgreichem Test gestern)
+            "version": 0,  # Required - Integer (0 basierend auf erfolgreichem Test)
             "broker": self.broker_name,  # Required - MUST match registered name EXACTLY
             "fromMobile": False,  # Optional
             "clientIp": "127.0.0.1",  # Optional
             "id": order_data.get('order_number', str(uuid.uuid4())),  # Required - Order ID
             "ordertime": ordertime_str,  # Required - ISO 8601
-            "deliverytime": deliverytime_str,  # Required - ISO 8601
+            "deliverytime": deliverytime_str,  # Required - GLEICH wie ordertime = SOFORT (keine Zeitbestellung!)
             "customerinfo": order_data.get('notes') or '',  # Must be string, not None
             "orderprice": float(order_data.get('total', 0)),  # Required
             "orderdiscount": 0,  # Required - must be 0 or negative
             "bonuscard": "",  # Optional
-            "notification": False,  # Boolean - always False for now
+            "notification": is_pickup,  # TRUE = ABHOLUNG, FALSE = LIEFERUNG
             "deliverycost": 0,  # Optional - delivery fee
             "tip": 0,  # Optional
             "customer": {
@@ -549,9 +561,9 @@ class ExpertOrderConnector(BasePOSConnector):
             },
             "payment": {
                 "type": payment_type,  # Required - Integer: 0=cash, 1=card, 3=online
-                "provider": "",  # Optional
-                "transactionid": "",  # Optional
-                "prepaid": 0  # Required - Number
+                "provider": payment_provider,  # "PayPal" für type=3
+                "transactionid": transaction_id,  # PayPal Transaction ID
+                "prepaid": prepaid_amount  # Bei PayPal: Volle Summe
             },
             "items": items  # Required - array of items
         }
