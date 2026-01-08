@@ -881,6 +881,47 @@ async def capture_paypal_order(capture_request: PayPalOrderCapture):
                     }
                 }
             )
+            
+            # NOW push to POS after successful payment
+            try:
+                order_refreshed = await db.orders.find_one({"_id": parse_object_id(capture_request.zozo_order_id)})
+                location = await db.locations.find_one({"id": order_refreshed['location_id']})
+                
+                pos_order_data = {
+                    "order_id": str(order_refreshed['_id']),
+                    "order_number": order_refreshed['order_number'],
+                    "customer_name": order_refreshed['customer']['name'],
+                    "customer_email": order_refreshed['customer'].get('email'),
+                    "customer_phone": order_refreshed['customer']['phone'],
+                    "items": order_refreshed['items'],
+                    "total": order_refreshed['total'],
+                    "delivery_type": "pickup" if order_refreshed.get('is_pickup') else "delivery",
+                    "delivery_address": f"{order_refreshed['customer']['address']}, {order_refreshed['customer']['postal_code']} {order_refreshed['customer']['city']}",
+                    "payment_method": "paypal",
+                    "notes": order_refreshed['customer'].get('notes', '')
+                }
+                
+                # Push to POS
+                pos_result = await pos_service.push_order(pos_order_data, location.get('slug', ''))
+                
+                # Update order with POS status
+                pos_update = {
+                    "pos_status": pos_result.get('pos_status', 'not_applicable'),
+                    "pos_pushed_at": datetime.utcnow() if pos_result.get('success') else None,
+                    "pos_order_id": pos_result.get('pos_order_id'),
+                    "pos_is_test_mode": pos_result.get('is_test_mode', True)
+                }
+                
+                if not pos_result.get('success') and pos_result.get('pos_status') == 'error':
+                    pos_update["pos_error"] = pos_result.get('message', 'Unknown error')
+                
+                await db.orders.update_one(
+                    {"_id": parse_object_id(capture_request.zozo_order_id)},
+                    {"$set": pos_update}
+                )
+                
+            except Exception as e:
+                logging.error(f"POS push after PayPal payment failed: {str(e)}")
         
         return result
     except Exception as e:
