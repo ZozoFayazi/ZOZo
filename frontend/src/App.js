@@ -324,7 +324,7 @@ function App() {
             path="/admin/pos/failed-orders" 
             element={
               <ProtectedAdminRoute>
-                <FailedPOSOrders />
+                <FailedOrdersQueue />
               </ProtectedAdminRoute>
             } 
           />
