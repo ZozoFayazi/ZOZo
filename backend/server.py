@@ -1216,7 +1216,9 @@ async def create_order(order: OrderCreate, request: Request):
         print(f"Loyalty points award failed: {str(e)}")
     
     # ===== POS INTEGRATION: Auto-push to configured POS system =====
-    try:
+    # ONLY for non-PayPal orders - PayPal orders will be pushed after payment capture
+    if order.payment_method != 'paypal':
+        try:
         # Build POS order data
         pos_order_data = {
             "order_id": str(result.inserted_id),
