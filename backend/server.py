@@ -488,6 +488,78 @@ async def delete_category(category_id: str, admin: dict = Depends(get_current_ad
 async def reorder_categories(reorder: CategoryReorder, admin: dict = Depends(get_current_admin)):
     """Reorder categories"""
     for item in reorder.categories:
+
+
+# ==================== FAILED POS ORDERS MANAGEMENT ====================
+
+@api_router.get("/admin/pos/failed-orders")
+async def get_failed_orders(admin: dict = Depends(get_current_admin)):
+    """Get all failed POS orders"""
+    query = {}
+    
+    # Filter by admin's branch access
+    branch_ids = admin.get('branch_ids', [])
+    if branch_ids:
+        query["location_slug"] = {"$in": [loc.get('slug') for loc in await db.locations.find({"id": {"$in": branch_ids}}).to_list(10)]}
+    
+    orders = await db.failed_pos_orders.find(query).sort("created_at", -1).to_list(length=100)
+    return serialize_doc(orders)
+
+@api_router.post("/admin/pos/retry-failed-order/{order_id}")
+async def retry_failed_order(order_id: str, admin: dict = Depends(get_current_admin)):
+    """Retry sending a failed order to POS"""
+    from bson import ObjectId
+    
+    # Get failed order
+    failed_order = await db.failed_pos_orders.find_one({"_id": ObjectId(order_id)})
+    if not failed_order:
+        raise HTTPException(status_code=404, detail="Failed order not found")
+    
+    # Get location slug
+    location_slug = failed_order.get('location_slug')
+    order_data = failed_order.get('order_data', {})
+    
+    # Retry push
+    result = await pos_service.push_order(order_data, location_slug)
+    
+    if result.get('success'):
+        # Mark as resolved
+        await db.failed_pos_orders.update_one(
+            {"_id": ObjectId(order_id)},
+            {
+                "$set": {
+                    "status": "resolved",
+                    "resolved_at": datetime.utcnow(),
+                    "resolved_by": admin.get('email')
+                }
+            }
+        )
+        return {"success": True, "message": "Order successfully sent to POS"}
+    else:
+        return {"success": False, "message": result.get('message', 'Failed to send')}
+
+@api_router.post("/admin/pos/resolve-failed-order/{order_id}")
+async def resolve_failed_order(order_id: str, admin: dict = Depends(get_current_admin)):
+    """Mark a failed order as manually resolved"""
+    from bson import ObjectId
+    
+    result = await db.failed_pos_orders.update_one(
+        {"_id": ObjectId(order_id)},
+        {
+            "$set": {
+                "status": "manual",
+                "resolved_at": datetime.utcnow(),
+                "resolved_by": admin.get('email')
+            }
+        }
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Failed order not found")
+    
+    return {"success": True, "message": "Order marked as resolved"}
+
+
         cat_id = item.get('id')
         order = item.get('order')
         
