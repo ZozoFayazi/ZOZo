@@ -541,7 +541,7 @@ class ExpertOrderConnector(BasePOSConnector):
             "tip": 0,  # Optional
             "customer": {
                 "phone": order_data.get('customer_phone', ''),
-                "email": order_data.get('customer_email', '') or '',  # MUST be string, not None
+                "email": order_data.get('customer_email') or 'noreply@zozo-burger.de',  # Must be valid email
                 "name": order_data.get('customer_name', ''),
                 "street": street,  # Required
                 "zip": zip_code,  # Required
