@@ -54,7 +54,7 @@ async def create_scheduled_order():
         },
         "payment_method": "cash",
         "is_pickup": False,
-        "scheduled_time": "2026-01-08T18:50:00Z"  # Gewünschte Lieferzeit
+        "scheduled_time": "2026-01-08T17:50:00Z"  # 17:50 UTC = 18:50 MEZ
     }
     
     print("\n🚀 Sende Zeitbestellung...")
