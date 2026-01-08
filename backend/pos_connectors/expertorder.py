@@ -25,6 +25,11 @@ class ExpertOrderConnector(BasePOSConnector):
     def __init__(self, config: Dict):
         super().__init__(config)
         
+        # DEBUG: Log the entire config
+        logger.info(f"ExpertOrder __init__ called with config keys: {list(config.keys())}")
+        logger.info(f"ExpertOrder config base_url: {config.get('base_url')}")
+        logger.info(f"ExpertOrder config merchant_id: {config.get('merchant_id')}")
+        
         # CRITICAL: Base URL MUST include the merchant_id!
         # Format: https://s1.eocloud.de/{merchant_id}
         # The merchant_id (e.g., "c102285") is provided by ExpertOrder for each location
