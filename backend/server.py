@@ -1704,12 +1704,16 @@ async def update_menu_item(
     admin: dict = Depends(get_current_admin)
 ):
     """Update menu item"""
-    # Check if item exists
-    item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    # Try to find by ObjectId string
+    try:
+        item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    except:
+        item = None
+    
     if not item:
         raise HTTPException(status_code=404, detail="Menu item not found")
     
-    # Check access - admin can upload for their branches
+    # Check access - admin can update for their branches
     branch_ids = admin.get('branch_ids', [])
     if branch_ids and item.get('location_id'):
         if item['location_id'] not in branch_ids:
@@ -1720,12 +1724,16 @@ async def update_menu_item(
     if not update_data:
         raise HTTPException(status_code=400, detail="No fields to update")
     
+    # Add updated_at timestamp
+    update_data["updated_at"] = datetime.utcnow()
+    
+    # Use the actual _id from the found item
     await db.menu_items.update_one(
-        {"_id": parse_object_id(item_id)},
+        {"_id": item["_id"]},
         {"$set": update_data}
     )
     
-    updated_item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    updated_item = await db.menu_items.find_one({"_id": item["_id"]})
     return serialize_doc(updated_item)
 
 
