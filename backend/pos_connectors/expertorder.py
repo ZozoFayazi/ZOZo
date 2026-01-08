@@ -532,7 +532,7 @@ class ExpertOrderConnector(BasePOSConnector):
             "id": order_data.get('order_number', str(uuid.uuid4())),  # Required - Order ID
             "ordertime": ordertime_str,  # Required - ISO 8601
             "deliverytime": deliverytime_str,  # Required - ISO 8601
-            "customerinfo": order_data.get('notes', ''),  # Optional
+            "customerinfo": order_data.get('notes') or '',  # Must be string, not None
             "orderprice": float(order_data.get('total', 0)),  # Required
             "orderdiscount": 0,  # Required - must be 0 or negative
             "bonuscard": "",  # Optional
