@@ -1043,6 +1043,39 @@ async def get_featured_products():
     items = await cursor.to_list(length=20)
     return serialize_doc(items)
 
+
+# ==================== PRODUCT ANALYTICS & BADGES ====================
+
+@api_router.get("/analytics/bestsellers")
+async def get_bestsellers(days: int = 30, location_id: Optional[str] = None):
+    """Get bestselling products based on actual sales data"""
+    bestsellers = await product_analytics_service.calculate_bestsellers(days=days, location_id=location_id)
+    return {"bestsellers": bestsellers, "period_days": days}
+
+@api_router.get("/analytics/trending")
+async def get_trending_products():
+    """Get trending products (fast-growing sales)"""
+    trending = await product_analytics_service.calculate_trending_products(days=7)
+    return {"trending": trending, "period": "last 7 days"}
+
+@api_router.get("/analytics/summary")
+async def get_analytics_summary():
+    """Get complete analytics summary (for admin dashboard)"""
+    summary = await product_analytics_service.get_product_analytics_summary()
+    return summary
+
+@api_router.post("/admin/analytics/update-badges")
+async def update_product_badges(admin: dict = Depends(get_current_admin)):
+    """Manually trigger product badge update (admin only)"""
+    if admin.get("role") != "super_admin":
+        raise HTTPException(status_code=403, detail="Nur Super Admin kann Badges manuell aktualisieren")
+    
+    result = await product_analytics_service.update_product_badges()
+    return result
+
+# End of Product Analytics endpoints
+
+
 # Order History
 @api_router.get("/order-history/{email}")
 async def get_order_history(email: str, limit: int = 5):
