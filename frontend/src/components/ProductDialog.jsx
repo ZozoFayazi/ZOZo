@@ -464,6 +464,13 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
           </Button>
         </DialogFooter>
       </DialogContent>
+      
+      {/* Quick Add Category Dialog */}
+      <QuickAddCategory
+        open={quickAddOpen}
+        onClose={() => setQuickAddOpen(false)}
+        onCategoryCreated={handleCategoryCreated}
+      />
     </Dialog>
   );
 }
