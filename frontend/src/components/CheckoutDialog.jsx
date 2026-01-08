@@ -406,7 +406,10 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
-                    onClick={() => setIsPickup(false)}
+                    onClick={() => {
+                      setIsPickup(false);
+                      localStorage.setItem('preferredOrderType', 'delivery');
+                    }}
                     className={`p-4 rounded-lg border-2 transition-all ${
                       !isPickup
                         ? 'border-primary bg-primary/10 text-primary'
@@ -419,7 +422,10 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsPickup(true)}
+                    onClick={() => {
+                      setIsPickup(true);
+                      localStorage.setItem('preferredOrderType', 'pickup');
+                    }}
                     className={`p-4 rounded-lg border-2 transition-all ${
                       isPickup
                         ? 'border-primary bg-primary/10 text-primary'
