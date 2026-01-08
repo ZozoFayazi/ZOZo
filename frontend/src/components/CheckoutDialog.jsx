@@ -507,7 +507,8 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                       />
                     )}
                   </div>
-              </div>
+                </>
+              )}
 
               {!isPickup && (
                 <div className="grid grid-cols-2 gap-4">
