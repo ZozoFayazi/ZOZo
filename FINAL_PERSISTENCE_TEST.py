@@ -5,6 +5,7 @@ Testet alle Verbindungen und erstellt Nachweis
 """
 import os
 import sys
+import json
 import asyncio
 from datetime import datetime
 from pymongo import MongoClient
