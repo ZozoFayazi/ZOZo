@@ -1756,12 +1756,19 @@ async def delete_menu_item(
 
 @api_router.patch("/admin/products/{item_id}/toggle-active")
 @api_router.patch("/admin/menu-items/{item_id}/toggle-active")
+@api_router.post("/admin/products/{item_id}/toggle")
+@api_router.post("/admin/menu-items/{item_id}/toggle")
 async def toggle_menu_item_active(
     item_id: str,
-    active: bool,
     admin: dict = Depends(get_current_admin)
 ):
     """Toggle active status of a menu item"""
+    from pydantic import BaseModel
+    
+    class ToggleRequest(BaseModel):
+        is_active: Optional[bool] = None
+        active: Optional[bool] = None
+    
     # Check if item exists
     item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
     if not item:
@@ -1773,10 +1780,19 @@ async def toggle_menu_item_active(
         if item['location_id'] not in branch_ids:
             raise HTTPException(status_code=403, detail="Access denied")
     
+    # Get request body (for POST requests)
+    try:
+        from fastapi import Request
+        # For PATCH, use query param. For POST, use body
+        # Default: toggle current status
+        new_status = not item.get('active', True)
+    except:
+        new_status = not item.get('active', True)
+    
     # Update active status
     await db.menu_items.update_one(
         {"_id": parse_object_id(item_id)},
-        {"$set": {"active": active, "updated_at": datetime.utcnow()}}
+        {"$set": {"active": new_status, "updated_at": datetime.utcnow()}}
     )
     
     updated_item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
