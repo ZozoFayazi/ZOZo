@@ -503,13 +503,21 @@ class ExpertOrderConnector(BasePOSConnector):
             items.append(expertorder_item)
         
         # Current time for ordertime
-        # deliverytime = ordertime (KEINE Zeitbestellung, sofort!)
+        # deliverytime: Wenn scheduled_time vorhanden, verwenden; sonst = ordertime (sofort)
         # Laut API Docs: "Wenn die Zeit nicht festgelegt wurde, dann soll diese Zeit gleich der Zeit der Bestellung sein"
         now = datetime.utcnow()
         
-        # Format as ISO strings - BEIDE GLEICH (keine Zeitbestellung!)
-        ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-        deliverytime_str = ordertime_str  # GLEICH = sofortige Bestellung, NICHT Zeitbestellung!
+        # Check if scheduled time is provided
+        scheduled_time_str = order_data.get('scheduled_time')
+        
+        if scheduled_time_str:
+            # Zeitbestellung: deliverytime = gewünschte Zeit
+            ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            deliverytime_str = scheduled_time_str  # Gewünschte Lieferzeit
+        else:
+            # Sofort-Bestellung: deliverytime = ordertime
+            ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            deliverytime_str = ordertime_str  # GLEICH = sofortige Bestellung!
         
         # Payment type mapping - ExpertOrder spec:
         # 0 = Barzahlung (Cash)
