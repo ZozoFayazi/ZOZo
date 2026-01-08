@@ -28,6 +28,7 @@ from totp_service import TOTPService
 from daily_deals_service import DailyDealsService
 from feature_toggle_service import FeatureToggleService
 from paypal_service import PayPalService
+from product_analytics_service import ProductAnalyticsService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -46,6 +47,7 @@ totp_service = TOTPService(db)
 daily_deals_service = DailyDealsService(db)
 feature_toggle_service = FeatureToggleService(db)
 paypal_service = PayPalService(db)
+product_analytics_service = ProductAnalyticsService(db)
 
 # Create product router with admin authentication
 # V2: Master-Slave architecture (Rellingen = Master, Henstedt = Override only)
