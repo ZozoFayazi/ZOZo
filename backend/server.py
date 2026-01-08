@@ -869,28 +869,36 @@ async def create_order(order: OrderCreate):
     delivery_zone = location.get('delivery_zone', {})
     customer_postal_code = order.customer.postal_code
     
-    # Validate postal code is in delivery zone
-    if delivery_zone and customer_postal_code not in delivery_zone.get('postal_codes', []):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Wir liefern leider nicht nach {customer_postal_code}. Bitte wähle einen anderen Standort oder prüfe deine Postleitzahl."
-        )
+    # Skip delivery zone validation for pickup orders
+    is_pickup = getattr(order, 'is_pickup', False)
+    
+    if not is_pickup:
+        # Validate postal code is in delivery zone (only for delivery)
+        if delivery_zone and customer_postal_code not in delivery_zone.get('postal_codes', []):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Wir liefern leider nicht nach {customer_postal_code}. Bitte wähle einen anderen Standort oder prüfe deine Postleitzahl."
+            )
     
     # Calculate totals using location-specific settings
     subtotal = sum(item.price * item.quantity for item in order.items)
-    min_order_value = delivery_zone.get('min_order_value', 0.0) if delivery_zone else 0.0
-    delivery_fee_amount = delivery_zone.get('delivery_fee', 2.50) if delivery_zone else 2.50
-    free_delivery_threshold = delivery_zone.get('free_delivery_threshold', 15.0) if delivery_zone else 15.0
     
-    # Check minimum order value
-    if subtotal < min_order_value:
+    # For pickup, no delivery fee or minimum order checks
+    if is_pickup:
+        min_order_value = 0.0
+        delivery_fee = 0.0
+    else:
+        min_order_value = delivery_zone.get('min_order_value', 0.0) if delivery_zone else 0.0
+        delivery_fee_amount = delivery_zone.get('delivery_fee', 2.50) if delivery_zone else 2.50
+        free_delivery_threshold = delivery_zone.get('free_delivery_threshold', 15.0) if delivery_zone else 15.0
+        delivery_fee = delivery_fee_amount if subtotal < free_delivery_threshold else 0.0
+    
+    # Check minimum order value (skip for pickup)
+    if not is_pickup and subtotal < min_order_value:
         raise HTTPException(
             status_code=400,
             detail=f"Mindestbestellwert: €{min_order_value:.2f}. Deine Bestellung: €{subtotal:.2f}"
         )
-    
-    # Calculate delivery fee
-    delivery_fee = delivery_fee_amount if subtotal < free_delivery_threshold else 0.0
     
     # ===== LOYALTY: Apply points redemption =====
     points_discount = 0.0
