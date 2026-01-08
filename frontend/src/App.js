@@ -203,7 +203,7 @@ function App() {
           <Route path="/datenschutz" element={<Datenschutz />} />
           <Route path="/kontakt" element={<Kontakt />} />
           <Route path="/rechtliches" element={<Rechtliches />} />
-          <Route path="/agb" element={<Rechtliches />} />
+          <Route path="/agb" element={<AGB />} />
           
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
