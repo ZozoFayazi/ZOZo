@@ -28,6 +28,7 @@ const DailyDealsAdmin = lazy(() => import('./pages/DailyDealsAdmin'));
 const ExpertOrderSettings = lazy(() => import('./pages/ExpertOrderSettings'));
 const MenuManagement = lazy(() => import('./pages/MenuManagement'));
 const ProductManagement = lazy(() => import('./pages/ProductManagement'));
+const CategoryManagement = lazy(() => import('./pages/CategoryManagement'));
 const DiscountCodes = lazy(() => import('./pages/DiscountCodes'));
 const OrderManagement = lazy(() => import('./pages/OrderManagement'));
 const FeaturedProducts = lazy(() => import('./pages/FeaturedProducts'));
