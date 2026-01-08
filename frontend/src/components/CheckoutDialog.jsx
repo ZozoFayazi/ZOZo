@@ -181,6 +181,13 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
         points_to_redeem: pointsToRedeem,
         is_pickup: isPickup
       };
+      
+      // Add scheduled time if selected
+      if (isScheduled && scheduledDate && scheduledTime) {
+        // Combine date and time, format as ISO string
+        const scheduledDateTime = `${scheduledDate}T${scheduledTime}:00`;
+        orderData.scheduled_time = scheduledDateTime;
+      }
 
       // For PayPal: Don't create order yet, just show PayPal payment screen
       if (formData.payment_method === 'paypal') {
