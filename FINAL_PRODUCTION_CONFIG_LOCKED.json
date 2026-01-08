@@ -1,0 +1,45 @@
+{
+  "backup_timestamp": "2026-01-08T18:47:57.776070",
+  "backup_type": "FINAL_PRODUCTION_LOCK",
+  "status": "LOCKED",
+  "locations": [
+    {
+      "name": "ZOZO Burger Henstedt-Ulzburg",
+      "id": "e5d3dda4-fd50-4388-b08a-9ddfc4098b6f",
+      "slug": "henstedt-ulzburg",
+      "paypal": {
+        "client_id": "AR7Brjjwwg432MxkzLiRMMeZdtynccfZyUZtpFCTllt2NfKNlIa3ftX6jLH_iDssVdrDMRB8YUmcY9kz",
+        "secret_key": "EHTM6aK5qDXaWn_dXWhEPa32PVJjcByO4xoHLb1r3K-v2TMv0MVQ-KmwwTf5KvMCyja7gSi2a7n8wv8J",
+        "sandbox_mode": false,
+        "enabled": true
+      },
+      "pos": {
+        "provider": "expertorder",
+        "enabled": true,
+        "api_key": "90dd43e5c58b7c2a8ddd1eb4916ae8196d8e1073",
+        "base_url": "https://zozo.eocloud.de",
+        "broker_name": "zozo-burger.de",
+        "test_mode": false
+      }
+    },
+    {
+      "name": "ZOZO Burger Rellingen",
+      "id": "87de5af8-e424-4fd0-9094-b77b0bf2be77",
+      "slug": "rellingen",
+      "paypal": {
+        "client_id": "Ac94dFnQk1qbwEndBfUOAODPMQBhskka3iMusznawOaezGYjzSUpKoyPk5EBgLzKNAgwKEK_UHcUdRB7",
+        "secret_key": "EKX-jMnXB6jQkIl5tw1XakUfHIguAKeQimrMfyD9P9bBN_tnCxcRsAyJ88j2F-nSnVCyMDHzc669exAB",
+        "sandbox_mode": false,
+        "enabled": true
+      },
+      "pos": {
+        "provider": "expertorder",
+        "enabled": true,
+        "api_key": "4bbc443c82674f93e910399ca7931b37b45e55ba",
+        "base_url": "https://zozo.eocloud.de",
+        "broker_name": "zozo-burger.de",
+        "test_mode": false
+      }
+    }
+  ]
+}
