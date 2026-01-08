@@ -544,17 +544,18 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                     )}
                   </div>
                   <div>
-                  <label className="block text-sm font-medium mb-2">Stadt *</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
+                    <label className="block text-sm font-medium mb-2">Stadt *</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium mb-2">Anmerkungen (optional)</label>
