@@ -52,7 +52,13 @@ paypal_service = PayPalService(db)
 product_router = create_product_router_v2(db, audit_service)
 
 # Create the main app without a prefix
-app = FastAPI()
+app = FastAPI(
+    title="ZOZO Burger API",
+    description="Professional Food Ordering System API",
+    version="1.0.0",
+    docs_url="/docs",  # Swagger UI
+    redoc_url="/redoc"  # ReDoc
+)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
