@@ -1,0 +1,25 @@
+{
+  "test_timestamp": "2026-01-08T18:48:57.386627",
+  "tests": [
+    {
+      "name": "ExpertOrder rellingen",
+      "status": "SUCCESS",
+      "order_number": "PT-REL-184857"
+    },
+    {
+      "name": "ExpertOrder henstedt-ulzburg",
+      "status": "SUCCESS",
+      "order_number": "PT-HEN-184857"
+    },
+    {
+      "name": "PayPal ZOZO Burger Henstedt-Ulzburg",
+      "status": "CONFIGURED",
+      "mode": "LIVE"
+    },
+    {
+      "name": "PayPal ZOZO Burger Rellingen",
+      "status": "CONFIGURED",
+      "mode": "LIVE"
+    }
+  ]
+}
