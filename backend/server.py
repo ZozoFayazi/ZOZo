@@ -119,6 +119,7 @@ class OrderCreate(BaseModel):
     payment_method: str = "cash"
     is_pickup: bool = False
     points_to_redeem: int = 0
+    scheduled_time: Optional[str] = None  # ISO 8601 format für Zeitbestellung
 
 class OrderStatusUpdate(BaseModel):
     status: str
