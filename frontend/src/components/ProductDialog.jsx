@@ -279,7 +279,19 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
           
           {/* Category */}
           <div className="space-y-2">
-            <Label htmlFor="category">Kategorie *</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="category">Kategorie *</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setQuickAddOpen(true)}
+                data-testid="quick-add-category-btn"
+              >
+                <FolderPlus className="h-4 w-4 mr-2" />
+                Neue Kategorie
+              </Button>
+            </div>
             <Select
               value={formData.category_id}
               onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
@@ -288,7 +300,7 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
                 <SelectValue placeholder="Kategorie wählen" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map(cat => (
+                {localCategories.map(cat => (
                   <SelectItem key={cat.id} value={cat.id}>
                     {cat.name}
                   </SelectItem>
