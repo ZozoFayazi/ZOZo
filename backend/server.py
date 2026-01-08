@@ -111,6 +111,8 @@ class OrderCreate(BaseModel):
     items: List[OrderItem]
     customer: CustomerInfo
     payment_method: str = "cash"
+    is_pickup: bool = False
+    points_to_redeem: int = 0
 
 class OrderStatusUpdate(BaseModel):
     status: str
