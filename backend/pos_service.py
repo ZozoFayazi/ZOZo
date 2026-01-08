@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from bson import ObjectId
 
-from pos_connectors import BasePOSConnector, ExpertOrderConnector, CashXConnector
+from pos_connectors import BasePOSConnector, ExpertOrderConnector
 from pos_models import POSProvider, POSStatus, POSLogEntry
 
 logger = logging.getLogger(__name__)
@@ -15,10 +15,9 @@ logger = logging.getLogger(__name__)
 class POSService:
     """Service for managing POS integrations with automatic retry"""
     
-    # Registry of available connectors
+    # Registry of available connectors - ONLY ExpertOrder
     CONNECTORS = {
-        "expertorder": ExpertOrderConnector,
-        "cashx": CashXConnector
+        "expertorder": ExpertOrderConnector
     }
     
     # Retry configuration: delays in seconds between retries
