@@ -48,6 +48,12 @@ const AdminSidebar = () => {
       permission: null // All admins (but different capabilities)
     },
     {
+      title: 'Kategorien',
+      icon: Tag,
+      path: '/admin/categories',
+      permission: 'manage_products' // Only Rellingen + Super Admin
+    },
+    {
       title: 'Bestellungen',
       icon: ShoppingCart,
       path: '/admin/orders',
