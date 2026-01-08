@@ -22,8 +22,15 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
     return saved === 'pickup';
   });
   const [isScheduled, setIsScheduled] = useState(false);
-  const [scheduledDate, setScheduledDate] = useState('');
-  const [scheduledTime, setScheduledTime] = useState('');
+  const [scheduledDate, setScheduledDate] = useState(() => {
+    // Default: Heute
+    return new Date().toISOString().split('T')[0];
+  });
+  const [scheduledTime, setScheduledTime] = useState(() => {
+    // Default: In 2 Stunden
+    const twoHoursLater = new Date(Date.now() + 2 * 60 * 60 * 1000);
+    return twoHoursLater.toTimeString().slice(0, 5);
+  });
   const [deliveryCheck, setDeliveryCheck] = useState(null);
   const [checkingDelivery, setCheckingDelivery] = useState(false);
   const [detectedLocation, setDetectedLocation] = useState(null);
