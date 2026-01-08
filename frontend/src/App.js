@@ -37,6 +37,8 @@ const StartGroupOrder = lazy(() => import('./pages/StartGroupOrder'));
 const GroupOrderPage = lazy(() => import('./pages/GroupOrderPage'));
 const POSSettings = lazy(() => import('./pages/POSSettings'));
 const FailedPOSOrders = lazy(() => import('./pages/FailedPOSOrders'));
+const FailedOrdersQueue = lazy(() => import('./pages/FailedOrdersQueue'));
+const AGB = lazy(() => import('./pages/AGB'));
 const LocationDetailPage = lazy(() => import('./pages/LocationDetailPage'));
 const SecurityDashboard = lazy(() => import('./pages/SecurityDashboard'));
 const FeatureToggles = lazy(() => import('./pages/FeatureToggles'));
