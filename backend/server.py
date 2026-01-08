@@ -1260,8 +1260,8 @@ async def create_order(order: OrderCreate, request: Request):
     # ONLY for non-PayPal orders - PayPal orders will be pushed after payment capture
     if order.payment_method != 'paypal':
         try:
-        # Build POS order data
-        pos_order_data = {
+            # Build POS order data
+            pos_order_data = {
             "order_id": str(result.inserted_id),
             "order_number": order_number,
             "customer_name": order.customer.name,
