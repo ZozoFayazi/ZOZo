@@ -254,37 +254,21 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
   };
 
   const handlePayPalSuccess = async (paymentData) => {
-    // Payment successful - NOW create the ZOZO order
-    setLoading(true);
+    // Payment successful - order already exists, just mark as paid
+    setOrderPlaced(true);
+    setOrderCreated(false);
     
-    try {
-      const response = await createOrder(createdOrderData);
-      setOrderNumber(response.order_number);
-      setCreatedOrderId(response.id);
-      
-      // Update order with PayPal transaction info
-      // (This will be done by the capture endpoint)
-      
-      setOrderPlaced(true);
-      setOrderCreated(false);
-      
-      // Show success notifications
-      if (response.points_earned) {
-        setTimeout(() => {
-          toast.success(`🎉 ${response.points_earned} Treuepunkte verdient!`, {
-            duration: 5000
-          });
-        }, 1000);
-      }
-      
-      clearCart();
-      toast.success('Zahlung erfolgreich! Bestellung wurde aufgegeben.');
-    } catch (error) {
-      console.error('Order creation after payment error:', error);
-      toast.error('Zahlung erfolgreich, aber Bestellung konnte nicht erstellt werden. Bitte kontaktieren Sie uns.');
-    } finally {
-      setLoading(false);
+    // Show success notifications
+    if (createdOrderData?.points_earned) {
+      setTimeout(() => {
+        toast.success(`🎉 ${createdOrderData.points_earned} Treuepunkte verdient!`, {
+          duration: 5000
+        });
+      }, 1000);
     }
+    
+    clearCart();
+    toast.success('Zahlung erfolgreich! Bestellung wurde an das Restaurant gesendet.');
   };
 
   const handlePayPalError = (error) => {
