@@ -117,8 +117,12 @@ def create_product_router_v2(db, audit_service: AuditService):
         - Slave (Henstedt): Can only create/update override
         """
         try:
-            # Check if product exists
-            product = await db.menu_items.find_one({"_id": ObjectId(product_id)})
+            # Check if product exists - try ObjectId parse
+            try:
+                product = await db.menu_items.find_one({"_id": ObjectId(product_id)})
+            except:
+                product = None
+            
             if not product:
                 raise HTTPException(status_code=404, detail="Produkt nicht gefunden")
             
