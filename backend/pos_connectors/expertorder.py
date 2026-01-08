@@ -504,8 +504,8 @@ class ExpertOrderConnector(BasePOSConnector):
         
         # Current time for ordertime
         # deliverytime: Wenn scheduled_time vorhanden, verwenden; sonst = ordertime (sofort)
-        # Laut API Docs: "Wenn die Zeit nicht festgelegt wurde, dann soll diese Zeit gleich der Zeit der Bestellung sein"
-        # WICHTIG: ExpertOrder erwartet lokale deutsche Zeit, NICHT UTC!
+        # WICHTIG: ExpertOrder arbeitet mit DEUTSCHER LOKALZEIT (keine UTC!)
+        # Format: "2026-01-08T18:50:00" (OHNE Z am Ende!)
         
         from datetime import timezone
         import pytz
@@ -518,23 +518,26 @@ class ExpertOrderConnector(BasePOSConnector):
         scheduled_time_str = order_data.get('scheduled_time')
         
         if scheduled_time_str:
-            # Zeitbestellung: deliverytime = gewünschte Zeit (in deutscher Zeit!)
-            # scheduled_time kommt als UTC, muss zu deutscher Zeit konvertiert werden
+            # Zeitbestellung: deliverytime = gewünschte Zeit
+            # Format OHNE Z = lokale Zeit
+            ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S")
+            
+            # Parse scheduled time and format without Z
             try:
-                # Parse UTC time
-                scheduled_utc = datetime.fromisoformat(scheduled_time_str.replace('Z', '+00:00'))
-                # Convert to German time
-                scheduled_german = scheduled_utc.astimezone(german_tz)
-                
-                ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-                deliverytime_str = scheduled_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                # If it has Z, remove it and parse as UTC, then convert to German
+                if 'Z' in scheduled_time_str or '+' in scheduled_time_str:
+                    scheduled_utc = datetime.fromisoformat(scheduled_time_str.replace('Z', '+00:00'))
+                    scheduled_german = scheduled_utc.astimezone(german_tz)
+                    deliverytime_str = scheduled_german.strftime("%Y-%m-%dT%H:%M:%S")
+                else:
+                    # Already local time format
+                    deliverytime_str = scheduled_time_str
             except:
-                # Fallback: use as-is
-                ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-                deliverytime_str = scheduled_time_str
+                # Fallback
+                deliverytime_str = scheduled_time_str.replace('Z', '')
         else:
-            # Sofort-Bestellung: deliverytime = ordertime (deutsche Zeit)
-            ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            # Sofort-Bestellung: deliverytime = ordertime (OHNE Z!)
+            ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S")
             deliverytime_str = ordertime_str  # GLEICH = sofortige Bestellung!
         
         # Payment type mapping - ExpertOrder spec:
