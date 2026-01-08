@@ -341,7 +341,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
             <div className="group relative overflow-hidden rounded-xl bg-card border border-border card-hover cursor-pointer" onClick={() => navigate('/menu')}>
               <div className="aspect-[4/3] overflow-hidden">
                 <img loading="lazy"
-                  src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=450&fit=crop"
+                  src="https://customer-assets.emergentagent.com/job_zozo-burger-1/artifacts/gulr5auj_ChatGPT%20Image%208.%20Jan.%202026%2C%2019_13_03.png"
                   alt="Pizza"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
