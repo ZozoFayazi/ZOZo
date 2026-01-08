@@ -518,7 +518,7 @@ class ExpertOrderConnector(BasePOSConnector):
         
         # Build the OSP payload with ALL required ExpertOrder fields (from official API doc)
         payload = {
-            "version": 1,  # Required - Integer
+            "version": 0,  # Required - Integer (0 basierend auf erfolgreichem Test gestern)
             "broker": self.broker_name,  # Required - MUST match registered name EXACTLY
             "fromMobile": False,  # Optional
             "clientIp": "127.0.0.1",  # Optional
@@ -529,19 +529,19 @@ class ExpertOrderConnector(BasePOSConnector):
             "orderprice": float(order_data.get('total', 0)),  # Required
             "orderdiscount": 0,  # Required - must be 0 or negative
             "bonuscard": "",  # Optional
-            "notification": order_data.get('delivery_type') == 'pickup',  # Boolean - true for pickup
+            "notification": False,  # Boolean - always False for now
             "deliverycost": 0,  # Optional - delivery fee
             "tip": 0,  # Optional
             "customer": {
                 "phone": order_data.get('customer_phone', ''),
-                "email": order_data.get('customer_email', ''),
+                "email": order_data.get('customer_email') if order_data.get('customer_email') else None,
                 "name": order_data.get('customer_name', ''),
                 "street": street,  # Required
                 "zip": zip_code,  # Required
                 "location": location  # Required (city)
             },
             "payment": {
-                "type": payment_type,  # Required - Integer: 1=cash, 0=card
+                "type": payment_type,  # Required - Integer: 0=cash, 1=card, 3=online
                 "provider": "",  # Optional
                 "transactionid": "",  # Optional
                 "prepaid": 0  # Required - Number
