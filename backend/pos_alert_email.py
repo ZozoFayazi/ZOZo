@@ -189,7 +189,7 @@ async def send_pos_failure_alert(
             
             params = {
                 "from": f"ZOZO Burger Alert <{sender_email}>",
-                "to": recipients,
+                "to": recipients if isinstance(recipients, list) else [recipients],  # Ensure list format
                 "subject": subject,
                 "html": html_body
             }
