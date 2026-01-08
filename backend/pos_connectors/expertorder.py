@@ -541,7 +541,7 @@ class ExpertOrderConnector(BasePOSConnector):
             "tip": 0,  # Optional
             "customer": {
                 "phone": order_data.get('customer_phone', ''),
-                "email": order_data.get('customer_email') if order_data.get('customer_email') else None,
+                "email": order_data.get('customer_email', '') or '',  # MUST be string, not None
                 "name": order_data.get('customer_name', ''),
                 "street": street,  # Required
                 "zip": zip_code,  # Required
