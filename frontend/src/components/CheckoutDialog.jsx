@@ -196,18 +196,18 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
         orderData.scheduled_time = scheduledDateTime;
       }
 
-      // For PayPal: Don't create order yet, just show PayPal payment screen
+      // Create order (for ALL payment methods - but PayPal won't go to POS until paid)
+      const response = await createOrder(orderData);
+      setOrderNumber(response.order_number);
+      setCreatedOrderId(response.id);
+      setCreatedOrderData(response);
+      
+      // If PayPal is selected, show PayPal payment screen
       if (formData.payment_method === 'paypal') {
-        // Store order data for later (after payment)
-        setCreatedOrderData(orderData);
         setOrderCreated(true);
-        toast.success('Bitte schließe die Zahlung mit PayPal ab.');
+        toast.success('Bestellung erstellt! Bitte schließe die Zahlung mit PayPal ab.');
       } else {
-        // For cash/card: Create order immediately
-        const response = await createOrder(orderData);
-        setOrderNumber(response.order_number);
-        setCreatedOrderId(response.id);
-        setCreatedOrderData(response);
+        // For cash/card, order is complete
         setOrderPlaced(true);
         
         // Show points earned notification
