@@ -1776,8 +1776,14 @@ async def toggle_menu_item_active(
         is_active: Optional[bool] = None
         active: Optional[bool] = None
     
-    # Check if item exists
-    item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    # Try to find by 'id' field first (UUID), then by '_id' (ObjectId)
+    item = await db.menu_items.find_one({"id": item_id})
+    if not item:
+        try:
+            item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+        except:
+            pass
+    
     if not item:
         raise HTTPException(status_code=404, detail="Menu item not found")
     
@@ -1787,22 +1793,16 @@ async def toggle_menu_item_active(
         if item['location_id'] not in branch_ids:
             raise HTTPException(status_code=403, detail="Access denied")
     
-    # Get request body (for POST requests)
-    try:
-        from fastapi import Request
-        # For PATCH, use query param. For POST, use body
-        # Default: toggle current status
-        new_status = not item.get('active', True)
-    except:
-        new_status = not item.get('active', True)
+    # Toggle current status
+    new_status = not item.get('active', True)
     
-    # Update active status
+    # Update active status using the actual _id from found item
     await db.menu_items.update_one(
-        {"_id": parse_object_id(item_id)},
+        {"_id": item["_id"]},
         {"$set": {"active": new_status, "updated_at": datetime.utcnow()}}
     )
     
-    updated_item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    updated_item = await db.menu_items.find_one({"_id": item["_id"]})
     return serialize_doc(updated_item)
 
 
