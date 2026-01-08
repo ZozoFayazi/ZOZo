@@ -460,6 +460,75 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                 </div>
               </div>
 
+              {/* Zeit-Auswahl: Sofort vs Später */}
+              <div>
+                <label className="block text-sm font-medium mb-3">Lieferzeit</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsScheduled(false)}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      !isScheduled
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                    data-testid="time-asap"
+                  >
+                    <p className="font-semibold">⚡ Sofort</p>
+                    <p className="text-xs mt-1 opacity-80">{isPickup ? '15 Min' : '30-45 Min'}</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsScheduled(true)}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      isScheduled
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border hover:border-primary/40'
+                    }`}
+                    data-testid="time-scheduled"
+                  >
+                    <p className="font-semibold">🕐 Zu einer Zeit</p>
+                    <p className="text-xs mt-1 opacity-80">Zeitbestellung</p>
+                  </button>
+                </div>
+              </div>
+
+              {/* Zeitauswahl (nur wenn Zeitbestellung gewählt) */}
+              {isScheduled && (
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium mb-2 text-muted-foreground">Datum</label>
+                      <input
+                        type="date"
+                        value={scheduledDate}
+                        onChange={(e) => setScheduledDate(e.target.value)}
+                        min={new Date().toISOString().split('T')[0]}
+                        max={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                        className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        required={isScheduled}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-2 text-muted-foreground">Uhrzeit</label>
+                      <input
+                        type="time"
+                        value={scheduledTime}
+                        onChange={(e) => setScheduledTime(e.target.value)}
+                        min="11:00"
+                        max="22:30"
+                        step="900"
+                        className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        required={isScheduled}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Zeitbestellungen nur während der Öffnungszeiten (11:00 - 22:30 Uhr)
+                  </p>
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium mb-2">Name *</label>
                 <input
