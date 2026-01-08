@@ -502,35 +502,45 @@ class ExpertOrderConnector(BasePOSConnector):
             
             items.append(expertorder_item)
         
-        # Current time for ordertime
-        # deliverytime: Wenn scheduled_time vorhanden, verwenden; sonst = ordertime (sofort)
-        # ExpertOrder Format: "2026-01-08T18:50:00.000Z" - interpretiert als lokale deutsche Zeit
-        # Also: 18:50 im Payload = 18:50 im POS (nicht UTC!)
+        # Current time for ordertime & deliverytime
+        # ExpertOrder interpretiert Zeiten MIT Z-Suffix als UTC
+        # Also: 18:50Z wird zu 19:50 MEZ im POS
+        # Lösung: Um 18:50 MEZ zu erreichen, müssen wir 17:50Z senden
         
-        from datetime import timezone
-        import pytz
-        
-        # Deutsche Zeitzone
-        german_tz = pytz.timezone('Europe/Berlin')
-        now_german = datetime.now(german_tz)
+        now = datetime.utcnow()
         
         # Check if scheduled time is provided
         scheduled_time_str = order_data.get('scheduled_time')
         
         if scheduled_time_str:
-            # Zeitbestellung: deliverytime = gewünschte Zeit
-            # Input Format: "2026-01-08T18:50:00" (lokale deutsche Zeit)
-            # Output Format: "2026-01-08T18:50:00.000Z"
-            ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            # Zeitbestellung: deliverytime = gewünschte Zeit MINUS 1 Stunde (wegen MEZ)
+            ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
             
-            # Ensure scheduled_time has .000Z at the end
-            if not scheduled_time_str.endswith('Z'):
-                deliverytime_str = scheduled_time_str + ".000Z"
-            else:
+            # Parse scheduled time (expected: "2026-01-08T18:50:00" = lokale MEZ Zeit)
+            # Wir müssen 1 Stunde abziehen um UTC zu bekommen
+            try:
+                # Parse without timezone
+                if 'T' in scheduled_time_str:
+                    time_part = scheduled_time_str.split('T')[1].replace('Z', '').split('.')[0]
+                    date_part = scheduled_time_str.split('T')[0]
+                    
+                    # Parse hour
+                    hour = int(time_part.split(':')[0])
+                    minute = int(time_part.split(':')[1])
+                    
+                    # Subtract 1 hour for UTC (MEZ = UTC+1)
+                    hour_utc = hour - 1
+                    if hour_utc < 0:
+                        hour_utc = 23
+                    
+                    deliverytime_str = f"{date_part}T{hour_utc:02d}:{minute:02d}:00.000Z"
+                else:
+                    deliverytime_str = scheduled_time_str
+            except:
                 deliverytime_str = scheduled_time_str
         else:
-            # Sofort-Bestellung: deliverytime = ordertime
-            ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            # Sofort-Bestellung: deliverytime = ordertime (UTC)
+            ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
             deliverytime_str = ordertime_str  # GLEICH = sofortige Bestellung!
         
         # Payment type mapping - ExpertOrder spec:
