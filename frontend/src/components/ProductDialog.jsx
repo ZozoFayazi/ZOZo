@@ -31,6 +31,11 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   
+  // Update local categories when prop changes
+  useEffect(() => {
+    setLocalCategories(categories || []);
+  }, [categories]);
+  
   useEffect(() => {
     if (product) {
       setFormData({
