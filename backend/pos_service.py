@@ -332,10 +332,19 @@ class POSService:
         """Single push attempt without retry logic"""
         
         # Build connector config
-        connector_config = {
-            **pos_config.get('credentials', {}),
-            'test_mode': pos_config.get('test_mode', True)
-        }
+        # Support both flat structure and nested credentials structure
+        if 'credentials' in pos_config:
+            # Legacy format: credentials in sub-object
+            connector_config = {
+                **pos_config.get('credentials', {}),
+                'test_mode': pos_config.get('test_mode', True)
+            }
+        else:
+            # New format: credentials at root level
+            connector_config = {
+                **pos_config,
+                'test_mode': pos_config.get('test_mode', True)
+            }
         
         connector = self.get_connector(provider, connector_config)
         if not connector:
