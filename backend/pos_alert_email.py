@@ -152,7 +152,7 @@ async def send_pos_failure_alert(
             """
         
         # Action button
-        admin_url = "https://zozo-prelaunch.preview.emergentagent.com/admin/pos/failed-orders"
+        admin_url = f"{os.environ.get('APP_URL', 'http://localhost:3000')}/admin/pos/failed-orders"
         
         html_body += f"""
             <div style="background: #dbeafe; border: 1px solid #3b82f6; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
