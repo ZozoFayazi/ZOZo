@@ -1059,8 +1059,13 @@ async def vote_custom_burger(burger_id: str):
 
 # Orders
 @api_router.post("/orders")
-async def create_order(order: OrderCreate):
+async def create_order(order: OrderCreate, request: Request):
     """Create a new order"""
+    # Rate limiting: Max 5 orders per IP per minute
+    client_ip = request.client.host
+    if not await rate_limiter.check_rate_limit(f"order_create_{client_ip}", max_requests=5, window_seconds=60):
+        raise HTTPException(status_code=429, detail="Zu viele Bestellungen. Bitte warten Sie einen Moment.")
+    
     # Verify location exists (try both UUID 'id' field and ObjectId '_id' field)
     location = await db.locations.find_one({"id": order.location_id, "active": True})
     if not location:
