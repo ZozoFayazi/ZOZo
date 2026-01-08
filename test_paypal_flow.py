@@ -78,7 +78,7 @@ async def test_paypal_integration():
             "name": menu_items[0]['name'],
             "price": menu_items[0].get('price_normal', 12.00),
             "size": "normal",
-            "quantity": 1
+            "quantity": 2  # 2 items to exceed minimum
         }],
         "customer": {
             "name": "PayPal Test Kunde",
