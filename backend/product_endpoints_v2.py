@@ -191,6 +191,65 @@ def create_product_router_v2(db, audit_service: AuditService):
             logger.error(f"Toggle product error: {str(e)}")
             raise HTTPException(status_code=500, detail="Fehler beim Aktualisieren")
     
+
+    
+    @router.delete("/{product_id}")
+    async def delete_product(
+        product_id: str,
+        admin: dict = Depends(get_current_admin)
+    ):
+        """
+        Delete (soft delete) a product - Master only
+        
+        - Super Admin: Can delete any product
+        - Master (Rellingen): Can delete products
+        - Slave (Henstedt): Not allowed
+        """
+        try:
+            # Check if product exists - try ObjectId parse
+            try:
+                product = await db.menu_items.find_one({"_id": ObjectId(product_id)})
+            except:
+                product = None
+            
+            if not product:
+                raise HTTPException(status_code=404, detail="Produkt nicht gefunden")
+            
+            # Check permissions
+            branch_ids = admin.get("branch_ids", [])
+            is_master = admin["role"] == "super_admin" or MASTER_LOCATION in branch_ids
+            
+            if not is_master:
+                raise HTTPException(
+                    status_code=403, 
+                    detail="Nur Master-Standort kann Produkte löschen"
+                )
+            
+            # Soft delete
+            await db.menu_items.update_one(
+                {"_id": product["_id"]},
+                {"$set": {"active": False, "updated_at": datetime.now(timezone.utc)}}
+            )
+            
+            logger.info(f"Product {product_id} soft-deleted by {admin['email']}")
+            
+            # Audit log
+            await audit_service.log_action(
+                actor_email=admin["email"],
+                action="product_delete",
+                result="success",
+                target=product_id,
+                details={"product_name": product.get("name")}
+            )
+            
+            return {"success": True, "message": "Produkt deaktiviert"}
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Delete product error: {str(e)}")
+            raise HTTPException(status_code=500, detail="Fehler beim Löschen")
+
     
     @router.get("/permissions")
     async def get_product_permissions(admin: dict = Depends(get_current_admin)):
