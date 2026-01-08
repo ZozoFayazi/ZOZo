@@ -15,6 +15,8 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
   const isEdit = !!product;
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const [localCategories, setLocalCategories] = useState(categories || []);
   
   const [formData, setFormData] = useState({
     name: '',
