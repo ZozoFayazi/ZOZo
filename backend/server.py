@@ -379,6 +379,134 @@ async def get_categories():
         })
     
     return {"categories": result}
+    return {"categories": result}
+
+# Admin: Category Management
+class CategoryCreate(BaseModel):
+    name: str
+    slug: Optional[str] = None
+    active: bool = True
+
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None
+    slug: Optional[str] = None
+    active: Optional[bool] = None
+    order: Optional[int] = None
+
+class CategoryReorder(BaseModel):
+    categories: List[dict]  # [{id, order}, ...]
+
+@api_router.post("/admin/categories")
+async def create_category(category: CategoryCreate, admin: dict = Depends(get_current_admin)):
+    """Create a new category"""
+    import uuid
+    
+    # Auto-generate slug if not provided
+    if not category.slug:
+        import re
+        slug = category.name.lower()
+        slug = slug.replace('ä', 'ae').replace('ö', 'oe').replace('ü', 'ue').replace('ß', 'ss')
+        slug = re.sub(r'[^a-z0-9]+', '-', slug).strip('-')
+        category.slug = slug
+    
+    # Check if slug already exists
+    existing = await db.categories.find_one({"slug": category.slug})
+    if existing:
+        raise HTTPException(status_code=400, detail="Slug bereits vergeben")
+    
+    # Get max order
+    max_order_cat = await db.categories.find_one({}, sort=[("order", -1)])
+    next_order = (max_order_cat.get('order', 0) + 1) if max_order_cat else 0
+    
+    category_doc = {
+        "id": str(uuid.uuid4()),
+        "name": category.name,
+        "slug": category.slug,
+        "active": category.active,
+        "order": next_order,
+        "created_at": datetime.utcnow()
+    }
+    
+    result = await db.categories.insert_one(category_doc)
+    category_doc['_id'] = result.inserted_id
+    
+    return serialize_doc(category_doc)
+
+@api_router.patch("/admin/categories/{category_id}")
+async def update_category(
+    category_id: str,
+    update: CategoryUpdate,
+    admin: dict = Depends(get_current_admin)
+):
+    """Update a category"""
+    update_data = {k: v for k, v in update.dict().items() if v is not None}
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Keine Felder zum Aktualisieren")
+    
+    # Try to find by id field first, then by _id
+    category = await db.categories.find_one({"id": category_id})
+    if not category:
+        category = await db.categories.find_one({"_id": parse_object_id(category_id)})
+    
+    if not category:
+        raise HTTPException(status_code=404, detail="Kategorie nicht gefunden")
+    
+    result = await db.categories.update_one(
+        {"_id": category['_id']},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Kategorie nicht gefunden")
+    
+    updated = await db.categories.find_one({"_id": category['_id']})
+    return serialize_doc(updated)
+
+@api_router.delete("/admin/categories/{category_id}")
+async def delete_category(category_id: str, admin: dict = Depends(get_current_admin)):
+    """Delete a category (soft delete - set active=false)"""
+    # Try to find by id field first, then by _id
+    category = await db.categories.find_one({"id": category_id})
+    if not category:
+        category = await db.categories.find_one({"_id": parse_object_id(category_id)})
+    
+    if not category:
+        raise HTTPException(status_code=404, detail="Kategorie nicht gefunden")
+    
+    result = await db.categories.update_one(
+        {"_id": category['_id']},
+        {"$set": {"active": False}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Kategorie nicht gefunden")
+    
+    return {"success": True, "message": "Kategorie deaktiviert"}
+
+@api_router.post("/admin/categories/reorder")
+async def reorder_categories(reorder: CategoryReorder, admin: dict = Depends(get_current_admin)):
+    """Reorder categories"""
+    for item in reorder.categories:
+        cat_id = item.get('id')
+        order = item.get('order')
+        
+        # Try id field first, then _id
+        category = await db.categories.find_one({"id": cat_id})
+        if not category:
+            category = await db.categories.find_one({"_id": parse_object_id(cat_id)})
+        
+        if category:
+            await db.categories.update_one(
+                {"_id": category['_id']},
+                {"$set": {"order": order}}
+            )
+    
+    return {"success": True, "message": "Reihenfolge aktualisiert"}
+
+# End of category management endpoints
+
+
 
 # Menu
 @api_router.get("/menu")
