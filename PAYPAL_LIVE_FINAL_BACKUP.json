@@ -1,0 +1,50 @@
+{
+  "backup_date": "2026-01-08",
+  "status": "PRODUCTION_LIVE",
+  "mode": "LIVE",
+  "description": "Finale PayPal Live Credentials für beide Standorte",
+  
+  "rellingen": {
+    "location_name": "ZOZO Burger Rellingen",
+    "location_id": "49aff347-a6c3-407c-ad4a-59d5d0852314",
+    "paypal_client_id": "Ac94dFnQk1qbwEndBfUOAODPMQBhskka3iMusznawOaezGYjzSUpKoyPk5EBgLzKNAgwKEK_UHcUdRB7",
+    "paypal_client_secret": "EKX-jMnXB6jQkIl5tw1XakUfHIguAKeQimrMfyD9P9bBN_tnCxcRsAyJ88j2F-nSnVCyMDHzc669exAB",
+    "paypal_enabled": true,
+    "paypal_sandbox_mode": false,
+    "mode": "LIVE",
+    "test_order": "ZOZO-1063",
+    "test_paypal_order_id": "5088648547814250W",
+    "test_status": "SUCCESS - LIVE Mode funktioniert",
+    "test_date": "2026-01-08 14:47:00"
+  },
+  
+  "henstedt_ulzburg": {
+    "location_name": "ZOZO Burger Henstedt-Ulzburg",
+    "location_id": "422cac42-cfdf-4869-b2cb-0b09aa24d02c",
+    "paypal_client_id": "AR7Brjjwwg432MxkzLiRMMeZdtynccfZyUZtpFCTllt2NfKNlIa3ftX6jLH_iDssVdrDMRB8YUmcY9kz",
+    "paypal_client_secret": "EHTM6aK5qDXaWn_dXWhEPa32PVJjcByO4xoHLb1r3K-v2TMv0MVQ-KmwwTf5KvMCyja7gSi2a7n8wv8J",
+    "paypal_enabled": true,
+    "paypal_sandbox_mode": false,
+    "mode": "LIVE",
+    "test_order": "ZOZO-1064",
+    "test_paypal_order_id": "4GY35674RY298584J",
+    "test_status": "SUCCESS - LIVE Mode funktioniert",
+    "test_date": "2026-01-08 14:48:00"
+  },
+  
+  "payment_routing": {
+    "description": "Zahlungen werden automatisch auf das richtige PayPal-Konto geroutet",
+    "rellingen_orders": "→ Rellingen PayPal-Konto (Live)",
+    "henstedt_orders": "→ Henstedt PayPal-Konto (Live)"
+  },
+  
+  "important_notes": [
+    "BEIDE Standorte sind jetzt im LIVE Mode",
+    "Alle PayPal-Transaktionen sind ECHT",
+    "Geld wird tatsächlich transferiert",
+    "Zahlungen gehen auf die jeweiligen standort-spezifischen PayPal-Konten",
+    "Kunden können sich mit ihrer echten PayPal-Email einloggen"
+  ],
+  
+  "restore_instructions": "python /app/restore_paypal_live_config.py"
+}
