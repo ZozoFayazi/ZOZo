@@ -1735,8 +1735,14 @@ async def delete_menu_item(
     admin: dict = Depends(get_current_admin)
 ):
     """Delete (soft delete) a menu item by setting active=false"""
-    # Check if item exists
-    item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+    # Try to find by 'id' field first (UUID), then by '_id' (ObjectId)
+    item = await db.menu_items.find_one({"id": item_id})
+    if not item:
+        try:
+            item = await db.menu_items.find_one({"_id": parse_object_id(item_id)})
+        except:
+            pass
+    
     if not item:
         raise HTTPException(status_code=404, detail="Menu item not found")
     
@@ -1747,8 +1753,9 @@ async def delete_menu_item(
             raise HTTPException(status_code=403, detail="Access denied")
     
     # Soft delete: set active to false
+    # Update using the actual _id from the found item
     await db.menu_items.update_one(
-        {"_id": parse_object_id(item_id)},
+        {"_id": item["_id"]},
         {"$set": {"active": False, "updated_at": datetime.utcnow()}}
     )
     
