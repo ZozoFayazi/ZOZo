@@ -56,7 +56,7 @@ python3 /app/setup_expertorder_credentials.py
 
 ### **Weg 2: Über Admin-Panel (Visuell)**
 
-1. Login: https://zozo-prelaunch.preview.emergentagent.com/admin/login
+1. Login: https://zozo-burger-1.preview.emergentagent.com/admin/login
    - Email: `admin@zonik-solutions.de`
    - Passwort: `Nila1605!`
 
