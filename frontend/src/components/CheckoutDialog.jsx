@@ -16,6 +16,7 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
   const [orderCreated, setOrderCreated] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState(null);
   const [createdOrderData, setCreatedOrderData] = useState(null);
+  const [isPickup, setIsPickup] = useState(false);
   const [deliveryCheck, setDeliveryCheck] = useState(null);
   const [checkingDelivery, setCheckingDelivery] = useState(false);
   const [detectedLocation, setDetectedLocation] = useState(null);
