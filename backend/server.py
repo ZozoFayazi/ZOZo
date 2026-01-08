@@ -1751,15 +1751,27 @@ async def upload_product_image(
         if item['location_id'] not in branch_ids:
             raise HTTPException(status_code=403, detail="Access denied")
     
-    # Validate file type
-    allowed_types = ["image/jpeg", "image/png", "image/jpg", "image/webp"]
-    if file.content_type not in allowed_types:
-        raise HTTPException(status_code=400, detail="Invalid file type. Only JPG, PNG, and WebP allowed")
+    # Validate file type - check both content_type and file extension
+    allowed_content_types = ["image/jpeg", "image/png", "image/jpg", "image/webp", "image/gif"]
+    allowed_extensions = ["jpg", "jpeg", "png", "webp", "gif"]
+    
+    # Get file extension
+    file_extension = file.filename.split('.')[-1].lower() if file.filename else ""
+    
+    # Validate: either content_type OR extension must be valid
+    # (Some browsers don't send correct content_type)
+    content_type_valid = file.content_type in allowed_content_types if file.content_type else False
+    extension_valid = file_extension in allowed_extensions
+    
+    if not (content_type_valid or extension_valid):
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid file format. Allowed: JPG, PNG, WebP, GIF. Received: {file.content_type or 'unknown'}, extension: .{file_extension}"
+        )
     
     # Generate unique filename
-    file_extension = file.filename.split('.')[-1]
     unique_filename = f"{uuid.uuid4()}.{file_extension}"
-    file_path = Path("uploads/products") / unique_filename
+    file_path = Path("/app/backend/uploads/products") / unique_filename
     
     # Save file
     try:
