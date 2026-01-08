@@ -581,24 +581,7 @@ async def resolve_failed_order(order_id: str, admin: dict = Depends(get_current_
     return {"success": True, "message": "Order marked as resolved"}
 
 
-        cat_id = item.get('id')
-        order = item.get('order')
-        
-        # Try id field first, then _id
-        category = await db.categories.find_one({"id": cat_id})
-        if not category:
-            category = await db.categories.find_one({"_id": parse_object_id(cat_id)})
-        
-        if category:
-            await db.categories.update_one(
-                {"_id": category['_id']},
-                {"$set": {"order": order}}
-            )
-    
-    return {"success": True, "message": "Reihenfolge aktualisiert"}
-
-# End of category management endpoints
-
+# End of Failed POS Orders endpoints
 
 
 # Menu
