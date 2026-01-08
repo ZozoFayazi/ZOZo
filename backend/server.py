@@ -91,6 +91,7 @@ class MenuItemCreate(BaseModel):
 class MenuItemUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
+    category_id: Optional[str] = None
     price_medium: Optional[float] = None
     price_large: Optional[float] = None
     price_normal: Optional[float] = None
