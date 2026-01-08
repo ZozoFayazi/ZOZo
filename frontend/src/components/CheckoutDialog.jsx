@@ -21,6 +21,9 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
     const saved = localStorage.getItem('preferredOrderType');
     return saved === 'pickup';
   });
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState('');
+  const [scheduledTime, setScheduledTime] = useState('');
   const [deliveryCheck, setDeliveryCheck] = useState(null);
   const [checkingDelivery, setCheckingDelivery] = useState(false);
   const [detectedLocation, setDetectedLocation] = useState(null);
