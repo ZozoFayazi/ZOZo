@@ -1282,30 +1282,30 @@ async def create_order(order: OrderCreate, request: Request):
             "delivery_address": f"{order.customer.address}, {order.customer.postal_code} {order.customer.city}",
             "payment_method": order.payment_method,
             "notes": order.customer.notes if hasattr(order.customer, 'notes') else ""
-        }
-        
-        # Push to POS via service (uses location's pos_config)
-        pos_result = await pos_service.push_order(pos_order_data, location.get('slug', ''))
-        
-        # Update order with POS status
-        pos_update = {
-            "pos_status": pos_result.get('pos_status', 'not_applicable'),
-            "pos_pushed_at": datetime.utcnow() if pos_result.get('success') else None,
-            "pos_order_id": pos_result.get('pos_order_id'),
-            "pos_is_test_mode": pos_result.get('is_test_mode', True)
-        }
-        
-        if not pos_result.get('success') and pos_result.get('pos_status') == 'error':
-            pos_update["pos_error"] = pos_result.get('message', 'Unknown error')
-        
-        await db.orders.update_one(
-            {"_id": result.inserted_id},
-            {"$set": pos_update}
-        )
-        
-    except Exception as e:
-        # Log error but don't fail the order creation
-        logging.error(f"POS auto-push failed: {str(e)}")
+            }
+            
+            # Push to POS via service (uses location's pos_config)
+            pos_result = await pos_service.push_order(pos_order_data, location.get('slug', ''))
+            
+            # Update order with POS status
+            pos_update = {
+                "pos_status": pos_result.get('pos_status', 'not_applicable'),
+                "pos_pushed_at": datetime.utcnow() if pos_result.get('success') else None,
+                "pos_order_id": pos_result.get('pos_order_id'),
+                "pos_is_test_mode": pos_result.get('is_test_mode', True)
+            }
+            
+            if not pos_result.get('success') and pos_result.get('pos_status') == 'error':
+                pos_update["pos_error"] = pos_result.get('message', 'Unknown error')
+            
+            await db.orders.update_one(
+                {"_id": result.inserted_id},
+                {"$set": pos_update}
+            )
+            
+        except Exception as e:
+            # Log error but don't fail the order creation
+            logging.error(f"POS auto-push failed: {str(e)}")
     
     # ===== EMAIL: Send confirmation email =====
     try:
