@@ -295,7 +295,9 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
               <p className="text-2xl font-bold text-primary">{orderNumber}</p>
             </div>
             <p className="text-sm text-muted-foreground mb-6">
-              Du erhältst deine Bestellung in 30-45 Minuten.
+              {isPickup 
+                ? 'Du kannst deine Bestellung in ca. 15 Minuten abholen.'
+                : 'Du erhältst deine Bestellung in 30-45 Minuten.'}
             </p>
             <button
               onClick={handleClose}
