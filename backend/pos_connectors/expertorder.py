@@ -505,18 +505,36 @@ class ExpertOrderConnector(BasePOSConnector):
         # Current time for ordertime
         # deliverytime: Wenn scheduled_time vorhanden, verwenden; sonst = ordertime (sofort)
         # Laut API Docs: "Wenn die Zeit nicht festgelegt wurde, dann soll diese Zeit gleich der Zeit der Bestellung sein"
-        now = datetime.utcnow()
+        # WICHTIG: ExpertOrder erwartet lokale deutsche Zeit, NICHT UTC!
+        
+        from datetime import timezone
+        import pytz
+        
+        # Deutsche Zeitzone
+        german_tz = pytz.timezone('Europe/Berlin')
+        now_german = datetime.now(german_tz)
         
         # Check if scheduled time is provided
         scheduled_time_str = order_data.get('scheduled_time')
         
         if scheduled_time_str:
-            # Zeitbestellung: deliverytime = gewünschte Zeit
-            ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-            deliverytime_str = scheduled_time_str  # Gewünschte Lieferzeit
+            # Zeitbestellung: deliverytime = gewünschte Zeit (in deutscher Zeit!)
+            # scheduled_time kommt als UTC, muss zu deutscher Zeit konvertiert werden
+            try:
+                # Parse UTC time
+                scheduled_utc = datetime.fromisoformat(scheduled_time_str.replace('Z', '+00:00'))
+                # Convert to German time
+                scheduled_german = scheduled_utc.astimezone(german_tz)
+                
+                ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                deliverytime_str = scheduled_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            except:
+                # Fallback: use as-is
+                ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                deliverytime_str = scheduled_time_str
         else:
-            # Sofort-Bestellung: deliverytime = ordertime
-            ordertime_str = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            # Sofort-Bestellung: deliverytime = ordertime (deutsche Zeit)
+            ordertime_str = now_german.strftime("%Y-%m-%dT%H:%M:%S.000Z")
             deliverytime_str = ordertime_str  # GLEICH = sofortige Bestellung!
         
         # Payment type mapping - ExpertOrder spec:
