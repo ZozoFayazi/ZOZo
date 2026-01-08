@@ -191,6 +191,13 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
     }
   };
   
+  const handleCategoryCreated = (newCategory) => {
+    // Add new category to local list and select it
+    setLocalCategories(prev => [...prev, newCategory]);
+    setFormData(prev => ({ ...prev, category_id: newCategory.id }));
+    toast.success('Kategorie erstellt und ausgewählt!');
+  };
+  
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="product-dialog">
