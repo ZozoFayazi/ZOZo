@@ -76,6 +76,7 @@ async def final_e2e_test():
     
     # Test 5: Pickup Bestellung erstellen
     print("\n5️⃣ Pickup Bestellung...")
+    order_number = None
     try:
         menu_item = await db.menu_items.find_one({"active": True})
         order_data = {
