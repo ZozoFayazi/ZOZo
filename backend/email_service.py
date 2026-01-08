@@ -649,7 +649,7 @@ def send_security_alert_email(email: str, name: str = None, alert_type: str = "n
         </div>
         
         <div style="text-align: center;">
-            <a href="https://zozo-prelaunch.preview.emergentagent.com/admin/login" class="button">
+            <a href="{os.environ.get('APP_URL', 'http://localhost:3000')}/admin/login" class="button">
                 🔐 Zum Admin-Bereich
             </a>
         </div>
