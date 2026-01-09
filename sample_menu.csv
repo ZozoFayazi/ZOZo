@@ -1,0 +1,18 @@
+category,name,description,price,price_medium,price_large,allergens
+Burger,Classic Burger,Saftiges Rindfleisch mit Salat und Tomaten,8.90,,,Gluten
+Burger,Cheese Burger,Mit extra Käse,9.50,,,Gluten;Milch
+Burger,Bacon Burger,Mit knusprigem Speck,10.50,,,Gluten
+Pizza,Margherita,Tomatensauce und Mozzarella,7.50,9.50,12.50,Gluten;Milch
+Pizza,Salami,Mit italienischer Salami,8.50,10.50,13.50,Gluten;Milch
+Pizza,Funghi,Mit frischen Champignons,8.00,10.00,13.00,Gluten;Milch
+Pasta,Spaghetti Bolognese,Mit Hackfleischsauce,9.90,,,Gluten
+Pasta,Penne Arrabbiata,Scharfe Tomatensauce,8.90,,,Gluten
+Pasta,Carbonara,Mit Speck und Sahnesauce,10.90,,,Gluten;Milch;Ei
+Salate,Caesar Salad,Römersalat mit Hähnchen und Parmesan,8.90,,,Milch
+Salate,Greek Salad,Mit Feta und Oliven,7.90,,,Milch
+Salate,Tuna Salad,Mit Thunfisch,9.50,,,Fisch
+Getränke,Coca Cola,0.33l,2.50,,,
+Getränke,Fanta,0.33l,2.50,,,
+Getränke,Sprite,0.33l,2.50,,,
+Desserts,Tiramisu,Hausgemacht,4.50,,,Milch;Ei
+Desserts,Panna Cotta,Mit Beerensauce,4.00,,,Milch
