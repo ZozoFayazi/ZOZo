@@ -30,6 +30,9 @@ const MenuManagement = lazy(() => import('./pages/MenuManagement'));
 const ProductManagement = lazy(() => import('./pages/ProductManagement'));
 const CategoryManagement = lazy(() => import('./pages/CategoryManagement'));
 const OpeningHoursManagement = lazy(() => import('./pages/OpeningHoursManagement'));
+const TenantOnboardingWizard = lazy(() => import('./pages/TenantOnboardingWizard'));
+const TenantsManagement = lazy(() => import('./pages/TenantsManagement'));
+
 
 const DiscountCodes = lazy(() => import('./pages/DiscountCodes'));
 const OrderManagement = lazy(() => import('./pages/OrderManagement'));
