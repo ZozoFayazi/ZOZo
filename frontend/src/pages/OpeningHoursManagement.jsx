@@ -83,6 +83,11 @@ const OpeningHoursManagement = () => {
       // Initialize weekly schedule
       let schedule = data.weekly_schedule || [];
       
+      // Handle different formats
+      if (!Array.isArray(schedule)) {
+        schedule = [];
+      }
+      
       // Ensure all days exist
       if (schedule.length === 0) {
         schedule = DAYS_OF_WEEK.map(day => ({
