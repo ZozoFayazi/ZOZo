@@ -164,7 +164,7 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
                               <div className="aspect-square relative group overflow-hidden rounded-3xl">
                                 {/* Background Image - Original without overlay */}
                                 <img loading="lazy"
-                                  src={getImageUrl(product.image_url) || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=1200&fit=crop'}
+                                  src={getImageUrl(product.image_url) || 'https://customer-assets.emergentagent.com/job_zozo-burger-1/artifacts/1r6wpry3_image.png'}
                                   alt={product.name}
                                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
