@@ -15,8 +15,8 @@ echo ""
 # Create backup directory
 mkdir -p "${BACKUP_DIR}"
 
-# Run backup via Python
-python3 <<'BACKUP_SCRIPT'
+# Run Python backup
+python3 - <<EOF
 import os
 import json
 from pymongo import MongoClient
@@ -43,32 +43,18 @@ backup = {
     "collections": {}
 }
 
-# Backup critical collections
-collections_to_backup = [
-    "tenants",
-    "locations",
-    "menu_items",
-    "categories",
-    "modifier_groups",
-    "discount_codes",
-    "daily_deals"
-]
+collections = ["tenants", "locations", "menu_items", "categories", "modifier_groups", "discount_codes", "daily_deals"]
 
-for coll_name in collections_to_backup:
+for coll_name in collections:
     docs = list(db[coll_name].find({}))
     backup["collections"][coll_name] = serialize(docs)
     print(f"✅ Backed up: {coll_name} ({len(docs)} documents)")
 
-# Write to file
-import sys
-timestamp = sys.argv[1] if len(sys.argv) > 1 else datetime.now().strftime("%Y%m%d_%H%M%S")
-backup_file = f"/app/backups/saas_backup_{timestamp}.json"
-
-with open(backup_file, 'w') as f:
+with open('${BACKUP_FILE}', 'w') as f:
     json.dump(backup, f, indent=2)
 
-print(f"\n✅ Backup complete: {backup_file}")
-BACKUP_SCRIPT $TIMESTAMP
+print(f"\n✅ Backup complete: ${BACKUP_FILE}")
+EOF
 
 echo ""
 echo "✅ BACKUP COMPLETE!"
