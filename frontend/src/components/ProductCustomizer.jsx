@@ -321,9 +321,9 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
           {productModifiers.length > 0 && (
             <div className="space-y-4">
               {productModifiers.map((group) => (
-                <div key={group.id}>
+                <div key={group.id} data-testid={`modifier-group-${group.id}`}>
                   <h3 className="font-semibold mb-3">
-                    {group.title}
+                    {group.name || group.title}
                     {group.required && <span className="text-red-500 ml-1">*</span>}
                   </h3>
                   <div className="space-y-2">
@@ -333,17 +333,23 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
                       
                       return (
                         <button
-                          key={option.name}
+                          key={option.id || option.name}
                           onClick={() => setSelectedModifiers({...selectedModifiers, [group.id]: option.name})}
                           className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
                             isSelected
                               ? 'border-primary bg-primary/10'
                               : 'border-border hover:border-primary/40'
                           }`}
+                          data-testid={`modifier-option-${option.id || option.name.toLowerCase().replace(/\s+/g, '-')}`}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="font-medium">{option.name}{priceText}</span>
-                            {isSelected && <Check className="h-4 w-4 text-primary" />}
+                            <div>
+                              <span className="font-medium">{option.name}{priceText}</span>
+                              {option.description && (
+                                <p className="text-xs text-muted-foreground mt-1">{option.description}</p>
+                              )}
+                            </div>
+                            {isSelected && <Check className="h-5 w-5 text-primary" />}
                           </div>
                         </button>
                       );
