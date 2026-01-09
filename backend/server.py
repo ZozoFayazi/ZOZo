@@ -1079,6 +1079,111 @@ async def update_product_badges(admin: dict = Depends(get_current_admin)):
 # End of Product Analytics endpoints
 
 
+# ==================== OPENING HOURS MANAGEMENT ====================
+
+class WeeklyScheduleUpdate(BaseModel):
+    weekly_schedule: List[dict]
+
+class SpecialDayCreate(BaseModel):
+    date: str  # YYYY-MM-DD
+    is_open: bool
+    time_slots: Optional[List[dict]] = []
+    note: Optional[str] = None
+
+@api_router.get("/locations/{location_slug}/opening-hours")
+async def get_location_opening_hours(location_slug: str):
+    """Get complete opening hours for a location (public)"""
+    hours = await opening_hours_service.get_opening_hours(location_slug)
+    if not hours:
+        raise HTTPException(status_code=404, detail="Location not found")
+    return hours
+
+@api_router.get("/locations/{location_slug}/is-open")
+async def check_location_is_open(location_slug: str):
+    """Check if location is currently open (public)"""
+    status = await opening_hours_service.check_is_open_now(location_slug)
+    return status
+
+@api_router.put("/admin/locations/{location_slug}/opening-hours")
+async def update_weekly_schedule(
+    location_slug: str,
+    schedule: WeeklyScheduleUpdate,
+    admin: dict = Depends(get_current_admin)
+):
+    """Update standard weekly schedule (admin only)"""
+    # Check access
+    if admin.get("role") != "super_admin":
+        # Check if admin manages this location
+        location = await db.locations.find_one({"slug": location_slug})
+        if location:
+            branch_ids = admin.get("branch_ids", [])
+            if location.get("id") not in branch_ids:
+                raise HTTPException(status_code=403, detail="Access denied")
+    
+    success = await opening_hours_service.update_weekly_schedule(
+        location_slug,
+        schedule.weekly_schedule
+    )
+    
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to update schedule")
+    
+    return {"success": True, "message": "Opening hours updated"}
+
+@api_router.post("/admin/locations/{location_slug}/special-days")
+async def add_special_day(
+    location_slug: str,
+    special_day: SpecialDayCreate,
+    admin: dict = Depends(get_current_admin)
+):
+    """Add or update a special day override (admin only)"""
+    # Check access
+    if admin.get("role") != "super_admin":
+        location = await db.locations.find_one({"slug": location_slug})
+        if location:
+            branch_ids = admin.get("branch_ids", [])
+            if location.get("id") not in branch_ids:
+                raise HTTPException(status_code=403, detail="Access denied")
+    
+    result = await opening_hours_service.add_special_day(
+        location_slug,
+        special_day.date,
+        special_day.is_open,
+        special_day.time_slots,
+        special_day.note
+    )
+    
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail=result.get("error", "Failed to add special day"))
+    
+    return result
+
+@api_router.delete("/admin/locations/{location_slug}/special-days/{date_str}")
+async def delete_special_day(
+    location_slug: str,
+    date_str: str,
+    admin: dict = Depends(get_current_admin)
+):
+    """Delete a special day override (admin only)"""
+    # Check access
+    if admin.get("role") != "super_admin":
+        location = await db.locations.find_one({"slug": location_slug})
+        if location:
+            branch_ids = admin.get("branch_ids", [])
+            if location.get("id") not in branch_ids:
+                raise HTTPException(status_code=403, detail="Access denied")
+    
+    success = await opening_hours_service.delete_special_day(location_slug, date_str)
+    
+    if not success:
+        raise HTTPException(status_code=404, detail="Special day not found")
+    
+    return {"success": True, "message": "Special day deleted"}
+
+# End of Opening Hours endpoints
+
+
+
 # Order History
 @api_router.get("/order-history/{email}")
 async def get_order_history(email: str, limit: int = 5):
