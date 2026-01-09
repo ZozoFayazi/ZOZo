@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def serialize(o):
-    \"\"\"Serialize for JSON\"\"\"
+    """Serialize for JSON"""
     from bson import ObjectId
     if isinstance(o, ObjectId): return str(o)
     if isinstance(o, datetime): return o.isoformat()
