@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone
 import logging
+import os
+import json
 
 from admin_auth import get_current_admin
 from tenant_service import TenantService
@@ -14,6 +16,16 @@ from utils import serialize_doc
 from auth import get_password_hash
 
 logger = logging.getLogger(__name__)
+
+
+def serialize(o):
+    \"\"\"Serialize for JSON\"\"\"
+    from bson import ObjectId
+    if isinstance(o, ObjectId): return str(o)
+    if isinstance(o, datetime): return o.isoformat()
+    if isinstance(o, dict): return {k: serialize(v) for k, v in o.items()}
+    if isinstance(o, list): return [serialize(i) for i in o]
+    return o
 
 
 def create_super_admin_router(db):
