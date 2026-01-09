@@ -273,6 +273,16 @@ function App() {
               </ProtectedAdminRoute>
             } 
           />
+          <Route 
+            path="/admin/opening-hours" 
+            element={
+              <ProtectedAdminRoute>
+                <OpeningHoursManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+
+
 
           <Route 
             path="/admin/discount-codes" 
