@@ -283,6 +283,7 @@ function App() {
                 <OpeningHoursManagement />
               </ProtectedAdminRoute>
             } 
+          />
           <Route 
             path="/admin/tenants" 
             element={
