@@ -53,10 +53,15 @@ feature_toggle_service = FeatureToggleService(db)
 paypal_service = PayPalService(db)
 product_analytics_service = ProductAnalyticsService(db)
 opening_hours_service = OpeningHoursService(db)
+tenant_service = TenantService(db)
+csv_import_service = CSVImportService(db)
 
 # Create product router with admin authentication
 # V2: Master-Slave architecture (Rellingen = Master, Henstedt = Override only)
 product_router = create_product_router_v2(db, audit_service)
+
+# Create super admin router
+super_admin_router = create_super_admin_router(db)
 
 # Create the main app without a prefix
 app = FastAPI(
