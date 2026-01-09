@@ -283,6 +283,24 @@ function App() {
                 <OpeningHoursManagement />
               </ProtectedAdminRoute>
             } 
+          <Route 
+            path="/admin/tenants" 
+            element={
+              <ProtectedAdminRoute requireSuperAdmin>
+                <TenantsManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/tenants/new" 
+            element={
+              <ProtectedAdminRoute requireSuperAdmin>
+                <TenantOnboardingWizard />
+              </ProtectedAdminRoute>
+            } 
+          />
+
+
           />
 
 
