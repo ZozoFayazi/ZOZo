@@ -4420,6 +4420,8 @@ async def change_admin_password(
 # Include the routers in the main app
 app.include_router(api_router)
 app.include_router(product_router, prefix="/api")
+app.include_router(super_admin_router, prefix="/api")
+
 
 # Mount static files for product images
 # Note: Mount under /api/uploads so it works with the Kubernetes Ingress routing
