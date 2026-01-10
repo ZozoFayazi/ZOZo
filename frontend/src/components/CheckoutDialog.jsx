@@ -6,6 +6,7 @@ import axios from 'axios';
 import EmailVerification from './EmailVerification';
 import { AddressAutocomplete, loadGoogleMapsScript } from './AddressAutocomplete';
 import PayPalCheckout from './PayPalCheckout';
+import GPSAddressButton from './GPSAddressButton';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
