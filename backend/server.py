@@ -1195,6 +1195,47 @@ async def delete_special_day(
 # End of Opening Hours endpoints
 
 
+# ==================== GEOCODING & GPS SERVICES ====================
+
+@api_router.get("/geocode/reverse")
+async def reverse_geocode(lat: float = Query(...), lng: float = Query(...), request: Request = None):
+    """Convert GPS coordinates to address (DSGVO-safe, no storage)"""
+    # Rate limiting
+    if request:
+        is_allowed, message = await rate_limiter.check_rate_limit(request, "geocode")
+        if not is_allowed:
+            raise HTTPException(status_code=429, detail=message)
+    
+    # Validate coordinates
+    if not (-90 <= lat <= 90) or not (-180 <= lng <= 180):
+        raise HTTPException(status_code=400, detail="Invalid coordinates")
+    
+    result = await geocoding_service.reverse_geocode(lat, lng)
+    
+    if result.get("error"):
+        raise HTTPException(status_code=500, detail=result["error"])
+    
+    return result
+
+@api_router.get("/geocode/autocomplete")
+async def autocomplete_address(
+    input: str = Query(..., min_length=3),
+    lat: float = Query(None),
+    lng: float = Query(None)
+):
+    """Get address suggestions (debounced from frontend)"""
+    location_bias = None
+    if lat and lng:
+        location_bias = {"lat": lat, "lng": lng}
+    
+    suggestions = await geocoding_service.autocomplete_address(input, location_bias)
+    
+    return {"suggestions": suggestions}
+
+# End of Geocoding endpoints
+
+
+
 
 # Order History
 @api_router.get("/order-history/{email}")
