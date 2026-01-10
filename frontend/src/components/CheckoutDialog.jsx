@@ -574,8 +574,33 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
               {/* Address fields - Only for Delivery */}
               {!isPickup && (
                 <>
+                  {/* GPS Address Button */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">Adresse *</label>
+                    <label className="block text-sm font-medium mb-3">Lieferadresse</label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Damit wir dich zuverlässig finden.
+                    </p>
+                    
+                    <GPSAddressButton
+                      onAddressFilled={(address) => {
+                        setFormData({
+                          ...formData,
+                          address: address.street || '',
+                          postal_code: address.postal_code || '',
+                          city: address.city || ''
+                        });
+                        
+                        // Auto-check delivery
+                        if (address.postal_code) {
+                          checkDeliveryAvailability(address.postal_code);
+                        }
+                      }}
+                      disabled={loading}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Straße & Hausnummer *</label>
                     {mapsLoaded ? (
                       <AddressAutocomplete
                         initialValue={formData.address}
@@ -592,7 +617,7 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                             checkDeliveryAvailability(addressData.postalCode);
                           }
                         }}
-                        placeholder="Straße und Hausnummer"
+                        placeholder="Straße und Hausnummer eingeben…"
                       />
                     ) : (
                       <input
