@@ -440,8 +440,10 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                             </span>
                             <button
                               onClick={() => {
-                                // For items with required modifiers, open customizer
-                                if (item.modifier_group_ids && item.modifier_group_ids.length > 0) {
+                                // For items with required modifiers OR customizable ingredients, open customizer
+                                if ((item.modifier_group_ids && item.modifier_group_ids.length > 0) ||
+                                    (item.removable_ingredients && item.removable_ingredients.length > 0) ||
+                                    (item.available_extras && item.available_extras.length > 0)) {
                                   handleCustomize(item, null);
                                 } else {
                                   handleAddToCart(item);
