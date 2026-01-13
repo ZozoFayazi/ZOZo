@@ -608,7 +608,8 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
           {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}
-            className="btn-primary w-full"
+            disabled={isAddToCartDisabled}
+            className={`btn-primary w-full ${isAddToCartDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             data-testid="add-to-cart-final"
           >
             <Plus className="inline h-5 w-5 mr-2" />
