@@ -126,6 +126,23 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
   const itemPrice = upgradeToMenu ? menuUpgradePrice : basePrice;
   const totalPrice = (itemPrice + extrasTotal + sideSurcharge) * quantity;
 
+  // Check if all required modifiers are selected
+  const hasRequiredModifiers = productModifiers.every(group => {
+    if (group.required) {
+      return selectedModifiers[group.id] !== undefined && selectedModifiers[group.id] !== null;
+    }
+    return true;
+  });
+
+  // Disable "Add to Cart" if:
+  // 1. Bun selection is required but not selected
+  // 2. Menu upgrade is selected but side/drink not selected
+  // 3. Required modifiers are not selected
+  const isAddToCartDisabled = 
+    (requiresBunSelection && !selectedBun) ||
+    (upgradeToMenu && (!selectedSide || !selectedDrink)) ||
+    !hasRequiredModifiers;
+
   const toggleExtra = (extra) => {
     if (selectedExtras.find(e => e.name === extra.name)) {
       setSelectedExtras(selectedExtras.filter(e => e.name !== extra.name));
