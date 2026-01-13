@@ -329,8 +329,8 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                         <div>
                           <div className="flex items-start justify-between gap-2">
                             <h3 className="font-semibold text-lg mb-1 flex-1">{item.name}</h3>
-                            {/* Customize button for customizable items (Burger, Pizza, Pasta) */}
-                            {(category.slug === 'burger' || category.slug === 'pizza' || category.slug === 'pasta') && (
+                            {/* Customize button for items with modifier groups */}
+                            {item.modifier_group_ids && item.modifier_group_ids.length > 0 && (
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
