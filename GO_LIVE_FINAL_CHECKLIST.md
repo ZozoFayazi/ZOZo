@@ -88,7 +88,7 @@
 
 ### 1. Impressum vervollständigen
 ```
-Gehen Sie zu: https://zozo-burger-1.preview.emergentagent.com/impressum
+Gehen Sie zu: https://eatease-18.preview.emergentagent.com/impressum
 Ersetzen Sie die Platzhalter [Bitte ergänzen] mit echten Daten:
 - Inhabername
 - ggf. Handelsregister

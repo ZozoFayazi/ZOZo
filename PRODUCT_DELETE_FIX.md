@@ -125,7 +125,7 @@ async def toggle_menu_item_active(item_id: str, admin: dict):
 ### Test 1: Produkt deaktivieren
 ```bash
 # 1. Admin-Panel öffnen
-https://zozo-burger-1.preview.emergentagent.com/admin/products
+https://eatease-18.preview.emergentagent.com/admin/products
 
 # 2. Toggle-Switch umlegen
 # Erwartetes Ergebnis:

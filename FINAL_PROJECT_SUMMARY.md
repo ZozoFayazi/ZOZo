@@ -369,7 +369,7 @@ ZOZO Burger ist ein vollständiges **Restaurant-Bestellsystem** mit:
     test_mode: false,
     status: "connected",
     credentials: {
-      base_url: "https://zozo-burger-1.preview.emergentagent.com",
+      base_url: "https://eatease-18.preview.emergentagent.com",
       api_key: "zozo-3a831ac1-...",
       terminal_id: "RELLINGEN"
     }
