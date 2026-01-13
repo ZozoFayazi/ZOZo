@@ -387,8 +387,8 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                                 </div>
                                 <button
                                   onClick={() => {
-                                    // For burgers, open customizer to select ingredients
-                                    if (category.slug === 'burger') {
+                                    // For items with required modifiers, open customizer
+                                    if (item.modifier_group_ids && item.modifier_group_ids.length > 0) {
                                       handleCustomize(item, 'medium');
                                     } else {
                                       handleAddToCart(item, 'medium');
