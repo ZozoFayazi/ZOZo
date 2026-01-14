@@ -184,30 +184,34 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
 
     let customizedName = upgradeToMenu ? `${item.name} Menü` : item.name;
     
-    // Add modifier selections to name
-    const modifierTexts = [];
-    let modifierPrice = 0;
+    // Build customizations array for POS (separate lines on receipt)
+    const customizations = [];
     
+    // Add modifier selections
+    Object.entries(selectedModifiers).forEach(([groupId, optionName]) => {
+      const group = productModifiers.find(g => g.id === groupId);
+      if (group && optionName) {
+        customizations.push(optionName);
+      }
+    });
+    
+    // Calculate modifier price
+    let modifierPrice = 0;
     Object.entries(selectedModifiers).forEach(([groupId, optionName]) => {
       const group = productModifiers.find(g => g.id === groupId);
       if (group) {
         const option = group.options.find(o => o.name === optionName);
         if (option) {
-          modifierTexts.push(optionName);
           modifierPrice += option.price || 0;
         }
       }
     });
     
-    if (modifierTexts.length > 0) {
-      customizedName += ` (${modifierTexts.join(', ')})`;
-    }
-    
-    // Add bun type to name if selected
+    // Add bun type to customizations (not to name)
     if (selectedBun) {
       const bunName = bunTypes.find(b => b.id === selectedBun)?.name;
       if (bunName) {
-        customizedName += ` (${bunName})`;
+        customizations.push(bunName);
       }
     }
     
