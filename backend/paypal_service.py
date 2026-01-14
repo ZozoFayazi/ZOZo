@@ -108,12 +108,16 @@ class PayPalService:
             order_amount = str(order_data.get('total', 0))
             currency = order_data.get('currency', 'EUR')
             
+            # Generate a temporary reference for PayPal (will be replaced with real order number after payment)
+            import uuid
+            temp_reference = f"DRAFT-{str(uuid.uuid4())[:8]}"
+            
             request.request_body({
                 "intent": "CAPTURE",
                 "purchase_units": [{
-                    "reference_id": order_data.get('order_id', ''),
-                    "description": f"ZOZO Burger Order {order_data.get('order_number', '')}",
-                    "custom_id": order_data.get('order_id', ''),
+                    "reference_id": temp_reference,
+                    "description": "ZOZO Burger Bestellung",
+                    "custom_id": temp_reference,
                     "amount": {
                         "currency_code": currency,
                         "value": order_amount,
