@@ -1522,9 +1522,9 @@ async def create_order(order: OrderCreate, request: Request):
     order_number = f"ZOZO-{count + 1001}"
     
     # Create order document
-    # Manually build items to ensure all customization fields are preserved
+    # Merge Pydantic items with raw request data to preserve customizations
     items_for_db = []
-    for item in order.items:
+    for idx, item in enumerate(order.items):
         item_dict = {
             "menu_item_id": item.menu_item_id,
             "name": item.name,
@@ -1532,10 +1532,18 @@ async def create_order(order: OrderCreate, request: Request):
             "size": item.size,
             "quantity": item.quantity,
             "notes": getattr(item, 'notes', None),
-            "customizations": getattr(item, 'customizations', None) or [],
-            "extras": getattr(item, 'extras', None) or [],
-            "removed_ingredients": getattr(item, 'removed_ingredients', None) or []
+            "customizations": [],
+            "extras": [],
+            "removed_ingredients": []
         }
+        
+        # Get from raw request (workaround for Pydantic issue)
+        if idx < len(raw_items):
+            raw_item = raw_items[idx]
+            item_dict['customizations'] = raw_item.get('customizations', [])
+            item_dict['extras'] = raw_item.get('extras', [])
+            item_dict['removed_ingredients'] = raw_item.get('removed_ingredients', [])
+        
         items_for_db.append(item_dict)
     
     order_doc = {
