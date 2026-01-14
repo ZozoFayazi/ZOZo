@@ -704,43 +704,61 @@ export default function ProductManagement() {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          {permissions.can_reorder && <TableHead className="w-10"></TableHead>}
-                          <TableHead>Bild</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Kategorie</TableHead>
-                          <TableHead>Preis</TableHead>
-                          <TableHead>Aktiv</TableHead>
-                          <TableHead>Lagerbestand</TableHead>
-                          {permissions.can_edit && <TableHead>Aktionen</TableHead>}
-                        </TableRow>
-                      </TableHeader>
-                      <SortableContext items={productIds} strategy={verticalListSortingStrategy}>
-                        <TableBody>
-                          {filteredProducts.map((product) => (
-                            <SortableTableRow
-                              key={product.id}
-                              product={product}
-                              categories={categories}
-                              permissions={permissions}
-                              onEdit={handleEditProduct}
-                              onToggleActive={handleToggleActive}
-                              onToggleStock={handleToggleStock}
-                              onDelete={handleDelete}
-                            />
-                          ))}
-                        </TableBody>
-                      </SortableContext>
-                    </Table>
-                  </DndContext>
+                <div className="space-y-8">
+                  {groupedProducts.map((group, groupIndex) => (
+                    <div key={group.category.id} className="space-y-4" data-testid={`category-group-${group.category.slug}`}>
+                      {/* Category Header */}
+                      <div className="flex items-center gap-3">
+                        <h3 className="text-xl font-bold text-foreground">
+                          {group.category.name}
+                        </h3>
+                        <div className="flex-1 h-px bg-border" />
+                        <Badge variant="secondary" className="text-xs">
+                          {group.products.length} {group.products.length === 1 ? 'Produkt' : 'Produkte'}
+                        </Badge>
+                      </div>
+                      
+                      {/* Products Table for this category */}
+                      <div className="overflow-x-auto">
+                        <DndContext
+                          sensors={sensors}
+                          collisionDetection={closestCenter}
+                          onDragEnd={handleDragEnd}
+                        >
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                {permissions.can_reorder && <TableHead className="w-10"></TableHead>}
+                                <TableHead>Bild</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Kategorie</TableHead>
+                                <TableHead>Preis</TableHead>
+                                <TableHead>Aktiv</TableHead>
+                                <TableHead>Lagerbestand</TableHead>
+                                {permissions.can_edit && <TableHead>Aktionen</TableHead>}
+                              </TableRow>
+                            </TableHeader>
+                            <SortableContext items={group.products.map(p => p.id)} strategy={verticalListSortingStrategy}>
+                              <TableBody>
+                                {group.products.map((product) => (
+                                  <SortableTableRow
+                                    key={product.id}
+                                    product={product}
+                                    categories={categories}
+                                    permissions={permissions}
+                                    onEdit={handleEditProduct}
+                                    onToggleActive={handleToggleActive}
+                                    onToggleStock={handleToggleStock}
+                                    onDelete={handleDelete}
+                                  />
+                                ))}
+                              </TableBody>
+                            </SortableContext>
+                          </Table>
+                        </DndContext>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
