@@ -102,7 +102,7 @@
   "testing": {
     "automated_test": "python /app/test_paypal_both_locations.py",
     "manual_test_steps": [
-      "1. Open https://eatease-18.preview.emergentagent.com",
+      "1. Open https://tastycart-3.preview.emergentagent.com",
       "2. Select location (Rellingen or Henstedt-Ulzburg)",
       "3. Add products to cart",
       "4. Go to checkout",
