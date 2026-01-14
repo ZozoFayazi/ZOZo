@@ -835,19 +835,19 @@ async def admin_initialize_features(admin: dict = Depends(get_current_admin)):
 # Pydantic Models for PayPal
 class PayPalOrderCreate(BaseModel):
     location_id: str
-    order_id: str
-    order_number: str
+    items: List[dict]
+    customer: dict
     subtotal: float
     delivery_fee: float
-    discount: float
+    discount: float = 0
     total: float
+    is_pickup: bool = False
     currency: str = "EUR"
     return_url: Optional[str] = None
     cancel_url: Optional[str] = None
 
 class PayPalOrderCapture(BaseModel):
-    paypal_order_id: str
-    zozo_order_id: str  # Our internal order ID
+    paypal_order_id: str  # PayPal's order ID (from create-order)
 
 class PayPalSettings(BaseModel):
     paypal_client_id: Optional[str] = None
