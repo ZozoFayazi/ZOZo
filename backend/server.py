@@ -1522,10 +1522,10 @@ async def create_order(order: OrderCreate, request: Request):
             "price": item.price,
             "size": item.size,
             "quantity": item.quantity,
-            "notes": item.notes,
-            "customizations": item.customizations if item.customizations else [],
-            "extras": item.extras if item.extras else [],
-            "removed_ingredients": item.removed_ingredients if item.removed_ingredients else []
+            "notes": getattr(item, 'notes', None),
+            "customizations": getattr(item, 'customizations', None) or [],
+            "extras": getattr(item, 'extras', None) or [],
+            "removed_ingredients": getattr(item, 'removed_ingredients', None) or []
         }
         items_for_db.append(item_dict)
     
