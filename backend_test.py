@@ -1013,6 +1013,7 @@ class ZOZOBurgerAPITester:
         print("\n📌 PAYPAL TWO-PHASE FLOW (CRITICAL)")
         print("-" * 70)
         self.test_paypal_create_order_draft()
+        self.test_paypal_capture_note()
         
         # CRITICAL: Cash/Card Regression Test
         print("\n📌 CASH/CARD FLOW - REGRESSION TEST (CRITICAL)")
