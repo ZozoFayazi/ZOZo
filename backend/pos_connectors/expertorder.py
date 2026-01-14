@@ -491,54 +491,85 @@ class ExpertOrderConnector(BasePOSConnector):
         location = zip_parts[1] if len(zip_parts) > 1 else zip_location
         
         # Build items list with ExpertOrder required format
-        # CRITICAL: Send as FLATTENED line items (each modifier as separate item)
+        # CRITICAL: Send as FLATTENED line items with proper ExpertOrder structure
+        # Each item needs: uid, name, count, price, group (optional), type (optional)
         items = []
         
         for item in order_data.get('items', []):
-            # 1. Main product as first line item
-            main_item = {
-                "count": item.get('quantity', 1),
-                "name": item.get('name', ''),
-                "price": float(item.get('price', 0)),
-                "items": []  # Keep empty for flat structure
-            }
-            items.append(main_item)
+            # Determine if this is a menu item
+            is_menu = 'menü' in item.get('name', '').lower() or 'menu' in item.get('name', '').lower()
             
-            # 2. Add each customization as SEPARATE line item (not nested!)
+            # 1. Main product
+            main_item = {
+                "uid": item.get('menu_item_id', ''),  # Product ID for matching
+                "name": item.get('name', ''),
+                "count": item.get('quantity', 1),
+                "price": float(item.get('price', 0)),
+                "items": []  # Child items for menu components
+            }
+            
+            # 2. Add customizations as child items (for menus) or separate items (for non-menus)
             customizations = item.get('customizations', [])
+            
             if customizations:
                 for custom in customizations:
-                    # Each customization as its own line item
-                    items.append({
-                        "count": 1,  # Quantity 1 for modifiers
-                        "name": custom,  # Exact name for matching
-                        "price": 0.0,  # Most modifiers are free
-                        "items": []
-                    })
-            
-            # 3. Add removals as separate line items
-            removals = item.get('removed_ingredients', [])
-            if removals:
-                for removal in removals:
-                    items.append({
+                    child_item = {
+                        "uid": f"MODIFIER-{custom[:20].replace(' ', '-').upper()}",  # Generate UID for modifier
+                        "name": custom,  # Clean name for POS matching
                         "count": 1,
-                        "name": f"- Ohne {removal}",
-                        "price": 0.0,
-                        "items": []
-                    })
+                        "price": 0.0,  # Most modifiers are free
+                        "group": "modifier",  # Mark as modifier
+                        "type": "addon"
+                    }
+                    
+                    if is_menu:
+                        # For menus: add as child item
+                        main_item["items"].append(child_item)
+                    else:
+                        # For non-menus: add as separate top-level item
+                        items.append(child_item)
             
-            # 4. Add extras as separate line items (with price!)
+            # 3. Add extras as child/separate items
             extras = item.get('extras', [])
             if extras:
                 for extra in extras:
                     extra_name = extra.get('name', extra) if isinstance(extra, dict) else extra
                     extra_price = extra.get('price', 0) if isinstance(extra, dict) else 0
-                    items.append({
-                        "count": 1,
+                    
+                    extra_item = {
+                        "uid": f"EXTRA-{extra_name[:20].replace(' ', '-').upper()}",
                         "name": extra_name,
+                        "count": 1,
                         "price": float(extra_price),
-                        "items": []
-                    })
+                        "group": "extra",
+                        "type": "addon"
+                    }
+                    
+                    if is_menu:
+                        main_item["items"].append(extra_item)
+                    else:
+                        items.append(extra_item)
+            
+            # 4. Add removals as child/separate items
+            removals = item.get('removed_ingredients', [])
+            if removals:
+                for removal in removals:
+                    removal_item = {
+                        "uid": f"REMOVE-{removal[:20].replace(' ', '-').upper()}",
+                        "name": f"- Ohne {removal}",
+                        "count": 1,
+                        "price": 0.0,
+                        "group": "removal",
+                        "type": "modifier"
+                    }
+                    
+                    if is_menu:
+                        main_item["items"].append(removal_item)
+                    else:
+                        items.append(removal_item)
+            
+            # Add main item to items array
+            items.append(main_item)
         
         # Current time for ordertime & deliverytime
         # ExpertOrder interpretiert Zeiten MIT Z-Suffix als UTC
