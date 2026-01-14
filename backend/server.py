@@ -1627,22 +1627,14 @@ async def create_order(order: OrderCreate, request: Request):
     # ONLY for non-PayPal orders - PayPal orders will be pushed after payment capture
     if order.payment_method != 'paypal':
         try:
-            # Build POS order data
+            # Build POS order data - use items from DB (includes customizations)
             pos_order_data = {
             "order_id": str(result.inserted_id),
             "order_number": order_number,
             "customer_name": order.customer.name,
             "customer_email": order.customer.email if hasattr(order.customer, 'email') else None,
             "customer_phone": order.customer.phone,
-            "items": [
-                {
-                    "product_id": item.menu_item_id,
-                    "name": item.name,
-                    "quantity": item.quantity,
-                    "price": item.price,
-                    "size": item.size
-                }
-                for item in order.items
+            "items": items_for_db,  # Use DB items (includes customizations/extras/removed)
             ],
             "total": round(total, 2),
             "delivery_type": "pickup" if getattr(order, 'is_pickup', False) else "delivery",
