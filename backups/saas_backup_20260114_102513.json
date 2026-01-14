@@ -1,0 +1,590 @@
+{
+  "backup_timestamp": "2026-01-14T10:25:14.005517",
+  "collections": {
+    "tenants": [
+      {
+        "_id": "6960ba1f2afa0421fdbac790",
+        "tenant_id": "zozo-burger-default",
+        "name": "ZOZO Burger",
+        "slug": "zozo-burger",
+        "status": "active",
+        "language": "de",
+        "timezone": "Europe/Berlin",
+        "branding": {
+          "logo_url": null,
+          "primary_color": "#DC2626",
+          "accent_color": "#F59E0B",
+          "font_family": "Inter"
+        },
+        "template_id": "modern",
+        "domain": "zozo-burger.de",
+        "urls": {
+          "shop": "/",
+          "admin": "/admin"
+        },
+        "subscription": {
+          "plan": "enterprise",
+          "status": "active",
+          "started_at": "2026-01-09T08:19:43.769000"
+        },
+        "created_at": "2026-01-09T08:19:43.769000",
+        "updated_at": "2026-01-09T08:19:43.769000"
+      }
+    ],
+    "locations": [
+      {
+        "_id": "695d4f661f4b6f59ea7bb680",
+        "slug": "henstedt-ulzburg",
+        "address": "Hamburger Stra\u00dfe 115, 24558 Henstedt-Ulzburg",
+        "created_at": "2026-01-06T18:07:34.150000",
+        "id": "e5d3dda4-fd50-4388-b08a-9ddfc4098b6f",
+        "is_master": false,
+        "name": "ZOZO Burger Henstedt-Ulzburg",
+        "pos_config": {
+          "provider": "expertorder",
+          "enabled": true,
+          "api_key": "90dd43e5c58b7c2a8ddd1eb4916ae8196d8e1073",
+          "base_url": "https://zozo.eocloud.de",
+          "broker_name": "zozo-burger.de",
+          "test_mode": false
+        },
+        "paypal_client_id": "AR7Brjjwwg432MxkzLiRMMeZdtynccfZyUZtpFCTllt2NfKNlIa3ftX6jLH_iDssVdrDMRB8YUmcY9kz",
+        "paypal_enabled": true,
+        "paypal_sandbox_mode": false,
+        "paypal_secret_key": "EHTM6aK5qDXaWn_dXWhEPa32PVJjcByO4xoHLb1r3K-v2TMv0MVQ-KmwwTf5KvMCyja7gSi2a7n8wv8J",
+        "updated_at": "2026-01-09T07:59:09.112000",
+        "opening_hours": [
+          {
+            "day": "monday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "22:30"
+              }
+            ]
+          },
+          {
+            "day": "tuesday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "22:30"
+              }
+            ]
+          },
+          {
+            "day": "wednesday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "22:30"
+              }
+            ]
+          },
+          {
+            "day": "thursday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "22:30"
+              }
+            ]
+          },
+          {
+            "day": "friday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "23:00"
+              }
+            ]
+          },
+          {
+            "day": "saturday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "12:00",
+                "end": "23:00"
+              }
+            ]
+          },
+          {
+            "day": "sunday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "12:00",
+                "end": "22:00"
+              }
+            ]
+          }
+        ],
+        "special_opening_days": [
+          {
+            "date": "2026-01-10",
+            "is_open": false,
+            "time_slots": [],
+            "note": "Test: Morgen geschlossen",
+            "created_at": "2026-01-09T07:59:09.107000",
+            "updated_at": "2026-01-09T07:59:09.107000"
+          },
+          {
+            "date": "2026-01-11",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "14:00",
+                "end": "20:00"
+              }
+            ],
+            "note": "Test: Spezielle Zeiten",
+            "created_at": "2026-01-09T07:59:09.107000",
+            "updated_at": "2026-01-09T07:59:09.107000"
+          }
+        ],
+        "timezone": "Europe/Berlin",
+        "tenant_id": "zozo-burger-default"
+      },
+      {
+        "_id": "695d4f661f4b6f59ea7bb682",
+        "slug": "rellingen",
+        "address": "Hauptstra\u00dfe 30, 25462 Rellingen",
+        "created_at": "2026-01-06T18:07:34.150000",
+        "id": "87de5af8-e424-4fd0-9094-b77b0bf2be77",
+        "is_master": true,
+        "name": "ZOZO Burger Rellingen",
+        "pos_config": {
+          "provider": "expertorder",
+          "enabled": true,
+          "api_key": "4bbc443c82674f93e910399ca7931b37b45e55ba",
+          "base_url": "https://zozo.eocloud.de",
+          "broker_name": "zozo-burger.de",
+          "test_mode": false
+        },
+        "paypal_client_id": "Ac94dFnQk1qbwEndBfUOAODPMQBhskka3iMusznawOaezGYjzSUpKoyPk5EBgLzKNAgwKEK_UHcUdRB7",
+        "paypal_enabled": true,
+        "paypal_sandbox_mode": false,
+        "paypal_secret_key": "EKX-jMnXB6jQkIl5tw1XakUfHIguAKeQimrMfyD9P9bBN_tnCxcRsAyJ88j2F-nSnVCyMDHzc669exAB",
+        "updated_at": "2026-01-09T07:59:09.107000",
+        "opening_hours": [
+          {
+            "day": "monday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "22:30"
+              }
+            ]
+          },
+          {
+            "day": "tuesday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "22:30"
+              }
+            ]
+          },
+          {
+            "day": "wednesday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "22:30"
+              }
+            ]
+          },
+          {
+            "day": "thursday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "22:30"
+              }
+            ]
+          },
+          {
+            "day": "friday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "11:00",
+                "end": "14:30"
+              },
+              {
+                "start": "17:00",
+                "end": "23:00"
+              }
+            ]
+          },
+          {
+            "day": "saturday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "12:00",
+                "end": "23:00"
+              }
+            ]
+          },
+          {
+            "day": "sunday",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "12:00",
+                "end": "22:00"
+              }
+            ]
+          }
+        ],
+        "special_opening_days": [
+          {
+            "date": "2026-01-10",
+            "is_open": false,
+            "time_slots": [],
+            "note": "Test: Morgen geschlossen",
+            "created_at": "2026-01-09T07:59:09.107000",
+            "updated_at": "2026-01-09T07:59:09.107000"
+          },
+          {
+            "date": "2026-01-11",
+            "is_open": true,
+            "time_slots": [
+              {
+                "start": "14:00",
+                "end": "20:00"
+              }
+            ],
+            "note": "Test: Spezielle Zeiten",
+            "created_at": "2026-01-09T07:59:09.107000",
+            "updated_at": "2026-01-09T07:59:09.107000"
+          }
+        ],
+        "timezone": "Europe/Berlin",
+        "tenant_id": "zozo-burger-default"
+      }
+    ],
+    "menu_items": [
+      {
+        "_id": "695fed752f90cc7bf1bf39f5",
+        "name": "Test Burger",
+        "description": "Test",
+        "category_id": "test-category-123",
+        "price_normal": 9.9,
+        "active": true,
+        "in_stock": true,
+        "location_id": null,
+        "created_at": "2026-01-08T17:46:29.101000",
+        "updated_at": "2026-01-08T17:46:29.101000",
+        "tenant_id": "zozo-burger-default"
+      },
+      {
+        "_id": "6960b29f181f55e40f20ea0c",
+        "name": "Caesar Salad",
+        "description": "R\u00f6mersalat, H\u00e4hnchen, Parmesan, Caesar Dressing",
+        "category_id": "6960b29f181f55e40f20ea0b",
+        "price_normal": 8.9,
+        "active": true,
+        "in_stock": true,
+        "location_id": null,
+        "modifier_group_ids": [
+          "salad-dressing",
+          "salad-pizzabroetchen"
+        ],
+        "image_url": "/uploads/products/salad-caesar.jpg",
+        "created_at": "2026-01-09T07:47:43.444000",
+        "updated_at": "2026-01-09T07:47:43.444000",
+        "tenant_id": "zozo-burger-default"
+      },
+      {
+        "_id": "6960b29f181f55e40f20ea0d",
+        "name": "Greek Salad",
+        "description": "Tomaten, Gurken, Oliven, Feta, Zwiebeln",
+        "category_id": "6960b29f181f55e40f20ea0b",
+        "price_normal": 7.9,
+        "active": true,
+        "in_stock": true,
+        "location_id": null,
+        "modifier_group_ids": [
+          "salad-dressing",
+          "salad-pizzabroetchen"
+        ],
+        "image_url": "/uploads/products/salad-greek.jpg",
+        "created_at": "2026-01-09T07:47:43.444000",
+        "updated_at": "2026-01-09T07:47:43.444000",
+        "tenant_id": "zozo-burger-default"
+      },
+      {
+        "_id": "6960b29f181f55e40f20ea0e",
+        "name": "Tuna Salad",
+        "description": "Thunfisch, Eisbergsalat, Tomaten, Mais, Zwiebeln",
+        "category_id": "6960b29f181f55e40f20ea0b",
+        "price_normal": 9.5,
+        "active": true,
+        "in_stock": true,
+        "location_id": null,
+        "modifier_group_ids": [
+          "salad-dressing",
+          "salad-pizzabroetchen"
+        ],
+        "image_url": "/uploads/products/salad-tuna.jpg",
+        "created_at": "2026-01-09T07:47:43.444000",
+        "updated_at": "2026-01-09T07:47:43.444000",
+        "tenant_id": "zozo-burger-default"
+      },
+      {
+        "_id": "6960d2db10fceafbd7ec939d",
+        "tenant_id": "zozo-burger-default",
+        "name": "Pure Burger Salad",
+        "description": "Mix Salad, Pure Beef Burger, Cocktail-Tomaten, Karotten und Mais",
+        "category_id": "test",
+        "price_normal": 10.79,
+        "image_url": "https://customer-assets.emergentagent.com/job_zozo-burger-1/artifacts/1r6wpry3_image.png",
+        "is_featured": true,
+        "featured_order": 1,
+        "badge": "bestseller",
+        "active": true,
+        "in_stock": true,
+        "location_id": null,
+        "created_at": "2026-01-09T10:05:15.873000",
+        "updated_at": "2026-01-09T10:05:15.873000"
+      }
+    ],
+    "categories": [
+      {
+        "_id": "6960b29f181f55e40f20ea0b",
+        "id": "salate",
+        "name": "Salate",
+        "slug": "salate",
+        "active": true,
+        "order": 10,
+        "created_at": "2026-01-09T07:47:43.434000",
+        "tenant_id": "zozo-burger-default"
+      }
+    ],
+    "modifier_groups": [
+      {
+        "_id": "6960b24602d871ce3355fcbf",
+        "id": "salad-dressing",
+        "name": "Dressing-Auswahl",
+        "type": "radio",
+        "required": true,
+        "applies_to_categories": [
+          "salate",
+          "salat",
+          "salads"
+        ],
+        "display_order": 1,
+        "options": [
+          {
+            "id": "hausdressing",
+            "name": "Hausdressing",
+            "price": 0.0,
+            "is_default": true
+          },
+          {
+            "id": "joghurtdressing",
+            "name": "Joghurtdressing",
+            "price": 0.0,
+            "is_default": false
+          },
+          {
+            "id": "frenchdressing",
+            "name": "Frenchdressing",
+            "price": 0.0,
+            "is_default": false
+          }
+        ],
+        "updated_at": "2026-01-13T14:49:38.609000"
+      },
+      {
+        "_id": "6960b24602d871ce3355fcc0",
+        "id": "salad-pizzabroetchen",
+        "name": "Mit 3 Pizzabr\u00f6tchen?",
+        "type": "radio",
+        "required": true,
+        "applies_to_categories": [
+          "salate",
+          "salat",
+          "salads"
+        ],
+        "display_order": 2,
+        "options": [
+          {
+            "id": "no-pizzabroetchen",
+            "name": "Ohne Pizzabr\u00f6tchen",
+            "price": 0.0,
+            "is_default": true
+          },
+          {
+            "id": "with-pizzabroetchen",
+            "name": "Mit 3 Pizzabr\u00f6tchen",
+            "price": 0.0,
+            "is_default": false,
+            "description": "Kostenlos dazu"
+          }
+        ],
+        "updated_at": "2026-01-13T14:49:38.615000"
+      }
+    ],
+    "discount_codes": [
+      {
+        "_id": "693c8279f72d142ed4058c90",
+        "id": "891fb13d-f292-4ffc-adb3-5e17b09a9405",
+        "code": "ABHOLER10",
+        "description": "10% Dauerrabatt f\u00fcr Abholer",
+        "discount_type": "percentage",
+        "discount_value": 10,
+        "min_order_value": 0,
+        "order_type": "pickup",
+        "max_uses": null,
+        "current_uses": 0,
+        "valid_from": null,
+        "valid_until": null,
+        "location_ids": [],
+        "active": true,
+        "created_by": "system",
+        "created_at": "2025-12-12T21:00:41.131000",
+        "tenant_id": "zozo-burger-default"
+      }
+    ],
+    "daily_deals": [
+      {
+        "_id": "695e491b0cfd9b33f92e42e4",
+        "id": "db9c3ca6-7d72-48e4-85ca-94a902718483",
+        "weekday": 0,
+        "title": "Pasta-Montag",
+        "description": "20% Rabatt auf alle Pasta-Gerichte",
+        "discount_type": "percentage",
+        "discount_value": 20,
+        "target_type": "category",
+        "target_value": "pasta",
+        "requires_same_item": false,
+        "badge_text": "\ud83c\udf5d -20%",
+        "badge_color": "#FF6B35",
+        "image_url": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800",
+        "active": true,
+        "applies_to_all_locations": true,
+        "location_ids": [],
+        "created_by": "system",
+        "created_at": "2026-01-07T11:52:59.561000",
+        "updated_at": "2026-01-07T11:52:59.561000",
+        "tenant_id": "zozo-burger-default"
+      },
+      {
+        "_id": "695e491b0cfd9b33f92e42e5",
+        "id": "fd31b815-862e-4007-8455-06330fafbdee",
+        "weekday": 1,
+        "title": "Crunchy Chicken Wrap Dienstag",
+        "description": "2 f\u00fcr 1 auf Crunchy Chicken Wrap - Bestelle 2, zahle nur 1!",
+        "discount_type": "2for1",
+        "discount_value": 0,
+        "target_type": "product",
+        "target_value": "crunchy chicken wrap",
+        "requires_same_item": true,
+        "badge_text": "\ud83c\udf2f 2f\u00fcr1",
+        "badge_color": "#4CAF50",
+        "image_url": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800",
+        "active": true,
+        "applies_to_all_locations": true,
+        "location_ids": [],
+        "created_by": "system",
+        "created_at": "2026-01-07T11:52:59.561000",
+        "updated_at": "2026-01-07T11:52:59.561000",
+        "tenant_id": "zozo-burger-default"
+      },
+      {
+        "_id": "695e491b0cfd9b33f92e42e6",
+        "id": "45dc71ae-d899-43c9-ad47-37f0c9b3abd2",
+        "weekday": 2,
+        "title": "Pizza-Mittwoch",
+        "description": "25% Rabatt auf alle Pizzen",
+        "discount_type": "percentage",
+        "discount_value": 25,
+        "target_type": "category",
+        "target_value": "pizza",
+        "requires_same_item": false,
+        "badge_text": "\ud83c\udf55 -25%",
+        "badge_color": "#E91E63",
+        "image_url": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800",
+        "active": true,
+        "applies_to_all_locations": true,
+        "location_ids": [],
+        "created_by": "system",
+        "created_at": "2026-01-07T11:52:59.561000",
+        "updated_at": "2026-01-07T11:52:59.561000",
+        "tenant_id": "zozo-burger-default"
+      },
+      {
+        "_id": "695e491b0cfd9b33f92e42e7",
+        "id": "702aa2a3-00dc-4752-b21b-4b9e38ffb04f",
+        "weekday": 3,
+        "title": "Hamburger-Donnerstag",
+        "description": "25% Rabatt auf Hamburger in Gr\u00f6\u00dfe Klein",
+        "discount_type": "percentage",
+        "discount_value": 25,
+        "target_type": "size",
+        "target_value": "hamburger",
+        "target_size": "klein",
+        "requires_same_item": false,
+        "badge_text": "\ud83c\udf54 -25%",
+        "badge_color": "#FF9800",
+        "image_url": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
+        "active": true,
+        "applies_to_all_locations": true,
+        "location_ids": [],
+        "created_by": "system",
+        "created_at": "2026-01-07T11:52:59.561000",
+        "updated_at": "2026-01-07T11:52:59.561000",
+        "tenant_id": "zozo-burger-default"
+      }
+    ]
+  }
+}
