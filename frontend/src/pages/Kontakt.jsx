@@ -84,10 +84,10 @@ function Kontakt() {
                   25462 Rellingen
                 </p>
                 <a 
-                  href="tel:+494101234567" 
+                  href="tel:+4941013984850" 
                   className="text-primary hover:underline text-sm"
                 >
-                  Tel: +49 (0) 4101 234 567
+                  Tel: 04101 39 84 850
                 </a>
               </div>
 
