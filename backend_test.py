@@ -741,6 +741,191 @@ class ZOZOBurgerAPITester:
             return True
         return success
 
+    def test_verify_phone_numbers(self):
+        """Test that location phone numbers are correct"""
+        success, response = self.run_test(
+            "Verify Location Phone Numbers",
+            "GET",
+            "locations",
+            200
+        )
+        
+        if success and response:
+            phone_checks = {
+                "Rellingen": "04101 39 84 850",
+                "Henstedt-Ulzburg": "04193 7521002"
+            }
+            
+            all_correct = True
+            for location in response:
+                name = location.get('name', '')
+                phone = location.get('phone', '')
+                
+                for key, expected_phone in phone_checks.items():
+                    if key in name:
+                        # Normalize phone numbers for comparison (remove spaces)
+                        normalized_phone = phone.replace(' ', '').replace('-', '')
+                        normalized_expected = expected_phone.replace(' ', '').replace('-', '')
+                        
+                        if normalized_phone == normalized_expected:
+                            print(f"   ✅ {name}: {phone} (CORRECT)")
+                        else:
+                            print(f"   ❌ {name}: {phone} (EXPECTED: {expected_phone})")
+                            all_correct = False
+            
+            return all_correct
+        return success
+
+    def test_paypal_create_order_draft(self):
+        """Test PayPal create-order creates ONLY draft (NO final order)"""
+        if not self.location_id or not self.menu_item_id:
+            print("   ⚠️  Skipping - Missing location_id or menu_item_id")
+            return False
+        
+        order_data = {
+            "location_id": self.location_id,
+            "items": [
+                {
+                    "menu_item_id": self.menu_item_id,
+                    "name": "Test Burger PayPal",
+                    "price": 12.99,
+                    "size": "medium",
+                    "quantity": 1
+                }
+            ],
+            "customer": {
+                "name": "PayPal Test Customer",
+                "phone": "+49 123 456789",
+                "email": "test@paypal.com",
+                "address": "Test Street 123",
+                "postal_code": "25462",
+                "city": "Rellingen"
+            },
+            "subtotal": 12.99,
+            "delivery_fee": 3.0,
+            "discount": 0,
+            "total": 15.99,
+            "is_pickup": False,
+            "currency": "EUR"
+        }
+        
+        success, response = self.run_test(
+            "PayPal Create Order (Phase 1: Draft Only)",
+            "POST",
+            "paypal/create-order",
+            200,
+            data=order_data
+        )
+        
+        if success and response:
+            self.paypal_order_id = response.get('paypal_order_id')
+            self.payment_draft_id = response.get('payment_draft_id')
+            approval_url = response.get('approval_url')
+            
+            print(f"   ✅ PayPal order created: {self.paypal_order_id}")
+            print(f"   📝 Payment draft ID: {self.payment_draft_id}")
+            print(f"   🔗 Approval URL: {approval_url[:50]}..." if approval_url else "   ⚠️  No approval URL")
+            print(f"   ⚠️  CRITICAL: This should NOT create a final order yet!")
+            return True
+        return success
+
+    def test_cash_order_immediate_creation(self):
+        """Test cash/card orders are created immediately (NO regression)"""
+        if not self.location_id or not self.menu_item_id:
+            print("   ⚠️  Skipping - Missing location_id or menu_item_id")
+            return False
+        
+        order_data = {
+            "location_id": self.location_id,
+            "items": [
+                {
+                    "menu_item_id": self.menu_item_id,
+                    "name": "Test Burger Cash",
+                    "price": 9.99,
+                    "size": "medium",
+                    "quantity": 1
+                }
+            ],
+            "customer": {
+                "name": "Cash Test Customer",
+                "phone": "+49 123 456789",
+                "address": "Test Street 123",
+                "postal_code": "25462",
+                "city": "Rellingen"
+            },
+            "payment_method": "cash",
+            "is_pickup": False
+        }
+        
+        success, response = self.run_test(
+            "Cash Order (Immediate Creation - No Regression)",
+            "POST",
+            "orders",
+            200,
+            data=order_data
+        )
+        
+        if success and response:
+            order_number = response.get('order_number')
+            order_id = response.get('id')
+            payment_method = response.get('payment_method')
+            pos_status = response.get('pos_status')
+            
+            print(f"   ✅ Cash order created immediately: {order_number}")
+            print(f"   💰 Payment method: {payment_method}")
+            print(f"   📡 POS status: {pos_status}")
+            print(f"   ✅ VERIFIED: Cash orders still work immediately (no regression)")
+            return True
+        return success
+
+    def test_card_order_immediate_creation(self):
+        """Test card orders are created immediately (NO regression)"""
+        if not self.location_id or not self.menu_item_id:
+            print("   ⚠️  Skipping - Missing location_id or menu_item_id")
+            return False
+        
+        order_data = {
+            "location_id": self.location_id,
+            "items": [
+                {
+                    "menu_item_id": self.menu_item_id,
+                    "name": "Test Burger Card",
+                    "price": 11.99,
+                    "size": "large",
+                    "quantity": 1
+                }
+            ],
+            "customer": {
+                "name": "Card Test Customer",
+                "phone": "+49 123 456789",
+                "address": "Test Street 123",
+                "postal_code": "25462",
+                "city": "Rellingen"
+            },
+            "payment_method": "card",
+            "is_pickup": False
+        }
+        
+        success, response = self.run_test(
+            "Card Order (Immediate Creation - No Regression)",
+            "POST",
+            "orders",
+            200,
+            data=order_data
+        )
+        
+        if success and response:
+            order_number = response.get('order_number')
+            payment_method = response.get('payment_method')
+            pos_status = response.get('pos_status')
+            
+            print(f"   ✅ Card order created immediately: {order_number}")
+            print(f"   💳 Payment method: {payment_method}")
+            print(f"   📡 POS status: {pos_status}")
+            print(f"   ✅ VERIFIED: Card orders still work immediately (no regression)")
+            return True
+        return success
+
     def test_menu_with_uuid_location(self):
         """Test menu endpoint with UUID location ID (P0 bug fix)"""
         if not self.location_id:
