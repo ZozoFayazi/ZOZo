@@ -138,7 +138,7 @@ function App() {
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const deliveryFee = cartTotal < 15 ? 2.50 : 0;
+  const deliveryFee = 0; // Kostenlose Lieferung
 
   return (
     <ErrorBoundary>
