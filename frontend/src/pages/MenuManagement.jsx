@@ -23,6 +23,7 @@ const getImageUrl = (imageUrl) => {
 function MenuManagement() {
   const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploadingItems, setUploadingItems] = useState({});
 
@@ -32,17 +33,21 @@ function MenuManagement() {
       navigate('/admin');
       return;
     }
-    loadMenuItems();
+    loadData();
   }, [navigate]);
 
-  const loadMenuItems = async () => {
+  const loadData = async () => {
     setLoading(true);
     try {
-      const data = await getAdminMenuItems();
-      setMenuItems(data);
+      const [itemsData, categoriesData] = await Promise.all([
+        getAdminMenuItems(),
+        axios.get(`${API_URL}/api/categories`)
+      ]);
+      setMenuItems(itemsData);
+      setCategories(categoriesData.data.categories || []);
     } catch (error) {
-      console.error('Error loading menu items:', error);
-      toast.error('Fehler beim Laden der Menü-Items');
+      console.error('Error loading data:', error);
+      toast.error('Fehler beim Laden der Daten');
     } finally {
       setLoading(false);
     }
