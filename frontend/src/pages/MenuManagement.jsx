@@ -100,6 +100,30 @@ function MenuManagement() {
     }
   };
 
+  // Group menu items by category
+  const groupedItems = categories.reduce((acc, category) => {
+    const items = menuItems.filter(item => item.category_id === category.id);
+    if (items.length > 0) {
+      acc.push({
+        category,
+        items
+      });
+    }
+    return acc;
+  }, []);
+
+  // Items without category
+  const uncategorizedItems = menuItems.filter(
+    item => !item.category_id || !categories.find(cat => cat.id === item.category_id)
+  );
+
+  if (uncategorizedItems.length > 0) {
+    groupedItems.push({
+      category: { id: 'uncategorized', name: 'Ohne Kategorie', slug: 'uncategorized' },
+      items: uncategorizedItems
+    });
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
