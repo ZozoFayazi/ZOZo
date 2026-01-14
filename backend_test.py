@@ -976,7 +976,7 @@ class ZOZOBurgerAPITester:
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("=" * 70)
-        print("🧪 ZOZO Burger Backend API Test Suite - Iteration 7")
+        print("🧪 ZOZO Burger Backend API Test Suite - Iteration 9 (PayPal Flow)")
         print("=" * 70)
         print(f"Base URL: {self.base_url}")
         print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -990,6 +990,24 @@ class ZOZOBurgerAPITester:
         self.test_get_menu()
         self.test_check_delivery_valid()
         self.test_check_delivery_invalid()
+        
+        # CRITICAL: Phone Number Verification
+        print("\n📌 PHONE NUMBER VERIFICATION (CRITICAL)")
+        print("-" * 70)
+        self.test_verify_phone_numbers()
+        
+        # CRITICAL: PayPal Two-Phase Flow
+        print("\n📌 PAYPAL TWO-PHASE FLOW (CRITICAL)")
+        print("-" * 70)
+        self.test_paypal_create_order_draft()
+        
+        # CRITICAL: Cash/Card Regression Test
+        print("\n📌 CASH/CARD FLOW - REGRESSION TEST (CRITICAL)")
+        print("-" * 70)
+        self.test_cash_order_immediate_creation()
+        self.test_card_order_immediate_creation()
+        
+        # Original order creation test
         self.test_create_order()
 
         # Admin authentication
