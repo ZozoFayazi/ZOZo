@@ -858,13 +858,56 @@ class PayPalSettings(BaseModel):
 # Public: Create PayPal Order
 @api_router.post("/paypal/create-order")
 async def create_paypal_order(order_request: PayPalOrderCreate):
-    """Create a PayPal order for payment"""
+    """Create a PayPal order AND payment draft (DOES NOT create final order yet)"""
     try:
-        result = await paypal_service.create_order(
+        # Verify location
+        location = await db.locations.find_one({"id": order_request.location_id, "active": True})
+        if not location:
+            try:
+                location = await db.locations.find_one({"_id": ObjectId(order_request.location_id), "active": True})
+            except:
+                pass
+        
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        
+        # Create PayPal order via service
+        paypal_result = await paypal_service.create_order(
             location_id=order_request.location_id,
             order_data=order_request.dict()
         )
-        return result
+        
+        if not paypal_result.get('success'):
+            raise HTTPException(status_code=500, detail="PayPal order creation failed")
+        
+        # Create payment draft/session (NOT a final order yet!)
+        # This prevents order from going to POS before payment
+        draft_doc = {
+            "payment_draft_id": str(uuid.uuid4()),
+            "paypal_order_id": paypal_result.get('order_id'),
+            "location_id": order_request.location_id,
+            "location_slug": location.get('slug', ''),
+            "order_data": order_request.dict(),  # Store complete order data
+            "payment_status": "pending_payment",
+            "payment_method": "paypal",
+            "total": order_request.total,
+            "created_at": datetime.utcnow(),
+            "expires_at": datetime.utcnow() + timedelta(minutes=15),  # 15 min expiry
+            "finalized": False
+        }
+        
+        # Insert draft
+        draft_result = await db.payment_drafts.insert_one(draft_doc)
+        draft_doc['_id'] = draft_result.inserted_id
+        
+        # Return PayPal order ID + draft ID
+        return {
+            "success": True,
+            "paypal_order_id": paypal_result.get('order_id'),
+            "payment_draft_id": draft_doc['payment_draft_id'],
+            "approval_url": paypal_result.get('approval_url')
+        }
+        
     except Exception as e:
         logging.error(f"PayPal create order error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
