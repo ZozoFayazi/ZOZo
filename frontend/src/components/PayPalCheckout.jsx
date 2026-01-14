@@ -6,15 +6,11 @@ import { toast } from 'sonner';
 const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 function PayPalCheckout({ 
-  locationId, 
-  orderId, 
-  orderNumber, 
-  subtotal, 
-  deliveryFee, 
-  discount, 
-  total, 
+  locationId,
+  orderData,  // Complete order data (items, customer, totals)
   onSuccess, 
-  onError 
+  onError,
+  onCancel
 }) {
   const [clientId, setClientId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,14 +37,16 @@ function PayPalCheckout({
 
   const createOrder = async () => {
     try {
+      // Create PayPal order + payment draft (NO final order yet!)
       const response = await axios.post(`${API_URL}/api/paypal/create-order`, {
         location_id: locationId,
-        order_id: orderId,
-        order_number: orderNumber,
-        subtotal: subtotal,
-        delivery_fee: deliveryFee,
-        discount: discount,
-        total: total,
+        items: orderData.items,
+        customer: orderData.customer,
+        subtotal: orderData.subtotal,
+        delivery_fee: orderData.deliveryFee,
+        discount: orderData.discount || 0,
+        total: orderData.total,
+        is_pickup: orderData.isPickup || false,
         currency: 'EUR',
         return_url: `${window.location.origin}/order-success`,
         cancel_url: `${window.location.origin}/checkout`
@@ -58,7 +56,10 @@ function PayPalCheckout({
         throw new Error(response.data.error || 'PayPal order creation failed');
       }
 
-      return response.data.order_id;
+      // Store payment_draft_id for capture
+      window.paypalDraftId = response.data.payment_draft_id;
+
+      return response.data.paypal_order_id;
     } catch (error) {
       console.error('Create order error:', error);
       toast.error('Fehler beim Erstellen der PayPal-Zahlung');
@@ -68,9 +69,9 @@ function PayPalCheckout({
 
   const onApprove = async (data) => {
     try {
+      // Capture payment and finalize order
       const response = await axios.post(`${API_URL}/api/paypal/capture-order`, {
-        paypal_order_id: data.orderID,
-        zozo_order_id: orderId
+        paypal_order_id: data.orderID
       });
 
       if (response.data.success) {
@@ -87,6 +88,13 @@ function PayPalCheckout({
       if (onError) {
         onError(error);
       }
+    }
+  };
+
+  const onCancelHandler = () => {
+    toast.info('Zahlung abgebrochen');
+    if (onCancel) {
+      onCancel();
     }
   };
 
