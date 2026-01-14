@@ -45,6 +45,8 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
     return (
       slug.includes('burger') ||
       slug.includes('pizza') ||
+      slug.includes('pizzabrötchen') ||
+      slug.includes('pizzabr') ||
       slug.includes('imbiss') ||
       slug.includes('salat')
     );
