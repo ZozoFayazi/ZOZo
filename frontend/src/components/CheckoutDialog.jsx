@@ -256,18 +256,11 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
   };
 
   const handlePayPalSuccess = async (paymentData) => {
-    // Payment successful - order already exists, just mark as paid
+    // Payment successful - final order NOW created by backend
+    setOrderNumber(paymentData.order_number);
+    setCreatedOrderId(paymentData.order_id);
     setOrderPlaced(true);
     setOrderCreated(false);
-    
-    // Show success notifications
-    if (createdOrderData?.points_earned) {
-      setTimeout(() => {
-        toast.success(`🎉 ${createdOrderData.points_earned} Treuepunkte verdient!`, {
-          duration: 5000
-        });
-      }, 1000);
-    }
     
     clearCart();
     toast.success('Zahlung erfolgreich! Bestellung wurde an das Restaurant gesendet.');
@@ -275,6 +268,14 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
 
   const handlePayPalError = (error) => {
     toast.error('PayPal-Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+    // Reset to form so user can try again
+    setOrderCreated(false);
+  };
+
+  const handlePayPalCancel = () => {
+    toast.info('Zahlung abgebrochen. Du kannst es erneut versuchen.');
+    // Reset to form
+    setOrderCreated(false);
   };
 
   const handleClose = () => {
