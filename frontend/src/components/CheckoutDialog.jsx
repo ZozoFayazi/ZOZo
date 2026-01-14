@@ -384,14 +384,18 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                 </p>
                 <PayPalCheckout
                   locationId={(detectedLocation || selectedLocation)?.id}
-                  orderId={createdOrderId}
-                  orderNumber={orderNumber}
-                  subtotal={cartTotal}
-                  deliveryFee={deliveryFee}
-                  discount={pointsDiscount}
-                  total={finalTotal}
+                  orderData={{
+                    items: createdOrderData?.items || [],
+                    customer: createdOrderData?.customer || {},
+                    subtotal: cartTotal,
+                    deliveryFee: deliveryFee,
+                    discount: pointsDiscount,
+                    total: finalTotal,
+                    isPickup: formData.delivery_type === 'pickup'
+                  }}
                   onSuccess={handlePayPalSuccess}
                   onError={handlePayPalError}
+                  onCancel={handlePayPalCancel}
                 />
               </div>
 
