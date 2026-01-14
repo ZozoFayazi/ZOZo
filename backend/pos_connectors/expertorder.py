@@ -491,53 +491,54 @@ class ExpertOrderConnector(BasePOSConnector):
         location = zip_parts[1] if len(zip_parts) > 1 else zip_location
         
         # Build items list with ExpertOrder required format
+        # CRITICAL: Send as FLATTENED line items (each modifier as separate item)
         items = []
+        
         for item in order_data.get('items', []):
-            # Base item
-            expertorder_item = {
-                "count": item.get('quantity', 1),  # ExpertOrder uses "count"
+            # 1. Main product as first line item
+            main_item = {
+                "count": item.get('quantity', 1),
                 "name": item.get('name', ''),
                 "price": float(item.get('price', 0)),
-                "items": []  # Nested items for modifiers/extras
+                "items": []  # Keep empty for flat structure
             }
+            items.append(main_item)
             
-            # Add customizations as SEPARATE nested items (erscheinen untereinander auf Bon)
+            # 2. Add each customization as SEPARATE line item (not nested!)
             customizations = item.get('customizations', [])
             if customizations:
                 for custom in customizations:
-                    # Each customization as separate line item with count=0, price=0
-                    expertorder_item["items"].append({
-                        "count": 0,  # 0 = Modifier/Info line
-                        "name": f"  → {custom}",  # Indent with arrow for clarity
-                        "price": 0.0,
+                    # Each customization as its own line item
+                    items.append({
+                        "count": 1,  # Quantity 1 for modifiers
+                        "name": custom,  # Exact name for matching
+                        "price": 0.0,  # Most modifiers are free
                         "items": []
                     })
             
-            # Add removals as separate items
+            # 3. Add removals as separate line items
             removals = item.get('removed_ingredients', [])
             if removals:
                 for removal in removals:
-                    expertorder_item["items"].append({
-                        "count": 0,
-                        "name": f"  ✗ Ohne {removal}",
+                    items.append({
+                        "count": 1,
+                        "name": f"- Ohne {removal}",
                         "price": 0.0,
                         "items": []
                     })
             
-            # Add extras as separate items
+            # 4. Add extras as separate line items (with price!)
             extras = item.get('extras', [])
             if extras:
                 for extra in extras:
                     extra_name = extra.get('name', extra) if isinstance(extra, dict) else extra
                     extra_price = extra.get('price', 0) if isinstance(extra, dict) else 0
-                    expertorder_item["items"].append({
+                    items.append({
                         "count": 1,
-                        "name": f"  + {extra_name}",
+                        "name": extra_name,
                         "price": float(extra_price),
                         "items": []
                     })
-            
-            items.append(expertorder_item)
         
         # Current time for ordertime & deliverytime
         # ExpertOrder interpretiert Zeiten MIT Z-Suffix als UTC
