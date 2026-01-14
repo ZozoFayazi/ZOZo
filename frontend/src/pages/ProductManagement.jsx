@@ -552,7 +552,55 @@ export default function ProductManagement() {
     );
   }, [products, searchTerm]);
   
-  // Get product IDs for sortable context
+  // Group products by category
+  const groupedProducts = useMemo(() => {
+    const groups = [];
+    
+    // Create a map of category_id to category for quick lookups
+    const categoryMap = new Map(categories.map(cat => [cat.id, cat]));
+    
+    // Group products by category
+    categories.forEach(category => {
+      const categoryProducts = filteredProducts.filter(p => {
+        if (!p.category_id) return false;
+        // Match by id, slug, or partial ObjectId match
+        return p.category_id === category.id ||
+               p.category_id === category.slug ||
+               p.category_id?.toString() === category.id?.toString() ||
+               (p.category_id?.includes && category.id && p.category_id.includes(category.id.slice(-12)));
+      });
+      
+      if (categoryProducts.length > 0) {
+        groups.push({
+          category,
+          products: categoryProducts
+        });
+      }
+    });
+    
+    // Add uncategorized products
+    const uncategorizedProducts = filteredProducts.filter(p => {
+      if (!p.category_id) return true;
+      // Check if product doesn't match any known category
+      return !categories.some(cat => 
+        p.category_id === cat.id ||
+        p.category_id === cat.slug ||
+        p.category_id?.toString() === cat.id?.toString() ||
+        (p.category_id?.includes && cat.id && p.category_id.includes(cat.id.slice(-12)))
+      );
+    });
+    
+    if (uncategorizedProducts.length > 0) {
+      groups.push({
+        category: { id: 'uncategorized', name: 'Ohne Kategorie', slug: 'uncategorized' },
+        products: uncategorizedProducts
+      });
+    }
+    
+    return groups;
+  }, [filteredProducts, categories]);
+  
+  // Get product IDs for sortable context (flattened from all groups)
   const productIds = useMemo(() => filteredProducts.map(p => p.id), [filteredProducts]);
   
   if (loading) {
