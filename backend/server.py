@@ -1513,22 +1513,25 @@ async def create_order(order: OrderCreate, request: Request):
     order_number = f"ZOZO-{count + 1001}"
     
     # Create order document
-    # Explicitly include all item fields (customizations, extras, removed_ingredients)
+    # Manually build items to ensure all customization fields are preserved
     items_for_db = []
     for item in order.items:
-        item_dict = item.dict()
-        # Ensure these fields exist (even if empty) for POS processing
-        if 'customizations' not in item_dict:
-            item_dict['customizations'] = []
-        if 'extras' not in item_dict:
-            item_dict['extras'] = []
-        if 'removed_ingredients' not in item_dict:
-            item_dict['removed_ingredients'] = []
+        item_dict = {
+            "menu_item_id": item.menu_item_id,
+            "name": item.name,
+            "price": item.price,
+            "size": item.size,
+            "quantity": item.quantity,
+            "notes": item.notes,
+            "customizations": item.customizations if item.customizations else [],
+            "extras": item.extras if item.extras else [],
+            "removed_ingredients": item.removed_ingredients if item.removed_ingredients else []
+        }
         items_for_db.append(item_dict)
     
     order_doc = {
         "location_id": order.location_id,
-        "location_slug": location.get('slug', ''),  # Store slug for POS retry
+        "location_slug": location.get('slug', ''),
         "order_number": order_number,
         "items": items_for_db,
         "subtotal": round(subtotal, 2),
