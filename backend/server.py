@@ -1517,7 +1517,7 @@ async def create_order(order: OrderCreate, request: Request):
         "location_id": order.location_id,
         "location_slug": location.get('slug', ''),  # Store slug for POS retry
         "order_number": order_number,
-        "items": [item.dict() for item in order.items],
+        "items": [item.dict(exclude_none=False) for item in order.items],  # Include all fields even if empty
         "subtotal": round(subtotal, 2),
         "delivery_fee": round(delivery_fee, 2),
         "discount": round(points_discount, 2),
