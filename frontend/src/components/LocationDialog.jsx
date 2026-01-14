@@ -58,7 +58,7 @@ export default function LocationDialog({ open, onClose, location, onSuccess }) {
     mode: 'radius',
     radius_km: 5.0,
     postal_codes: [],
-    delivery_fee: 2.50,
+    delivery_fee: 0.0,
     min_order_value: 15.0,
     estimated_delivery_time: '30-45 Min'
   });
