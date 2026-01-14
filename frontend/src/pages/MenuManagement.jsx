@@ -152,85 +152,105 @@ function MenuManagement() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {menuItems.map(item => (
-            <div
-              key={item.id}
-              className="bg-card border border-border rounded-xl p-6 space-y-4"
-            >
-              <div className="aspect-video rounded-lg overflow-hidden bg-accent flex items-center justify-center">
-                {item.image_url ? (
-                  <img
-                    src={getImageUrl(item.image_url)}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-center text-muted-foreground">
-                    <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Kein Bild</p>
-                  </div>
-                )}
-              </div>
+        {groupedItems.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            <p>Keine Menü-Items gefunden</p>
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {groupedItems.map(({ category, items }) => (
+              <div key={category.id} data-testid={`category-section-${category.slug}`}>
+                {/* Category Header */}
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-foreground">{category.name}</h2>
+                  <div className="h-1 w-20 bg-primary rounded-full mt-2" />
+                </div>
 
-              <div>
-                <h3 className="font-semibold text-lg">{item.name}</h3>
-                {item.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                    {item.description}
-                  </p>
-                )}
-                <div className="flex items-center gap-2 mt-2">
-                  {item.price_medium && (
-                    <span className="text-xs text-primary font-semibold">
-                      M: €{item.price_medium.toFixed(2)}
-                    </span>
-                  )}
-                  {item.price_large && (
-                    <span className="text-xs text-primary font-semibold">
-                      L: €{item.price_large.toFixed(2)}
-                    </span>
-                  )}
-                  {item.price_normal && !item.price_medium && !item.price_large && (
-                    <span className="text-xs text-primary font-semibold">
-                      €{item.price_normal.toFixed(2)}
-                    </span>
-                  )}
+                {/* Products Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {items.map(item => (
+                    <div
+                      key={item.id}
+                      className="bg-card border border-border rounded-xl p-6 space-y-4"
+                      data-testid={`menu-item-${item.id}`}
+                    >
+                      <div className="aspect-video rounded-lg overflow-hidden bg-accent flex items-center justify-center">
+                        {item.image_url ? (
+                          <img
+                            src={getImageUrl(item.image_url)}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-center text-muted-foreground">
+                            <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                            <p className="text-sm">Kein Bild</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <h3 className="font-semibold text-lg">{item.name}</h3>
+                        {item.description && (
+                          <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                            {item.description}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 mt-2">
+                          {item.price_medium && (
+                            <span className="text-xs text-primary font-semibold">
+                              M: €{item.price_medium.toFixed(2)}
+                            </span>
+                          )}
+                          {item.price_large && (
+                            <span className="text-xs text-primary font-semibold">
+                              L: €{item.price_large.toFixed(2)}
+                            </span>
+                          )}
+                          {item.price_normal && !item.price_medium && !item.price_large && (
+                            <span className="text-xs text-primary font-semibold">
+                              €{item.price_normal.toFixed(2)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <label
+                        className={`btn-primary w-full flex items-center justify-center gap-2 cursor-pointer ${
+                          uploadingItems[item.id] ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handleImageUpload(item.id, file);
+                            }
+                          }}
+                          disabled={uploadingItems[item.id]}
+                        />
+                        {uploadingItems[item.id] ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="h-4 w-4" />
+                            {item.image_url ? 'Bild ersetzen' : 'Bild hochladen'}
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  ))}
                 </div>
               </div>
-
-              <label
-                className={`btn-primary w-full flex items-center justify-center gap-2 cursor-pointer ${
-                  uploadingItems[item.id] ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-              >
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      handleImageUpload(item.id, file);
-                    }
-                  }}
-                  disabled={uploadingItems[item.id]}
-                />
-                {uploadingItems[item.id] ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4" />
-                    {item.image_url ? 'Bild ersetzen' : 'Bild hochladen'}
-                  </>
-                )}
-              </label>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
