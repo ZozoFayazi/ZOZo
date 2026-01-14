@@ -912,41 +912,175 @@ async def create_paypal_order(order_request: PayPalOrderCreate):
         logging.error(f"PayPal create order error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Public: Capture PayPal Payment
+# Public: Capture PayPal Payment + Finalize Order
 @api_router.post("/paypal/capture-order")
 async def capture_paypal_order(capture_request: PayPalOrderCapture):
-    """Capture a PayPal payment after customer approval"""
+    """Capture PayPal payment and THEN create final order (idempotent)"""
     try:
-        # Get the ZOZO order to find location
-        order = await db.orders.find_one({"_id": parse_object_id(capture_request.zozo_order_id)})
-        if not order:
-            raise HTTPException(status_code=404, detail="Order not found")
+        # Find payment draft
+        draft = await db.payment_drafts.find_one({"paypal_order_id": capture_request.paypal_order_id})
         
-        # Capture PayPal payment
-        result = await paypal_service.capture_order(
-            location_id=order['location_id'],
+        if not draft:
+            raise HTTPException(status_code=404, detail="Payment draft not found")
+        
+        # IDEMPOTENCY CHECK: If already finalized, return existing order
+        if draft.get('finalized'):
+            existing_order = await db.orders.find_one({"payment_draft_id": draft.get('payment_draft_id')})
+            if existing_order:
+                return {
+                    "success": True,
+                    "already_processed": True,
+                    "order_id": str(existing_order.get('_id')),
+                    "order_number": existing_order.get('order_number'),
+                    "message": "Order already finalized"
+                }
+        
+        # Get location
+        location = await db.locations.find_one({"id": draft['location_id'], "active": True})
+        if not location:
+            try:
+                location = await db.locations.find_one({"_id": ObjectId(draft['location_id']), "active": True})
+            except:
+                pass
+        
+        if not location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        
+        # Capture PayPal payment FIRST
+        capture_result = await paypal_service.capture_order(
+            location_id=draft['location_id'],
             paypal_order_id=capture_request.paypal_order_id
         )
         
-        if result.get('success'):
-            # Update order with PayPal transaction details
-            await db.orders.update_one(
-                {"_id": parse_object_id(capture_request.zozo_order_id)},
-                {
-                    "$set": {
-                        "payment_status": "paid",
-                        "paypal_transaction_id": result.get('transaction_id'),
-                        "paypal_order_id": result.get('paypal_order_id'),
-                        "paid_at": datetime.utcnow(),
-                        "updated_at": datetime.utcnow()
-                    }
+        if not capture_result.get('success'):
+            # Mark draft as failed
+            await db.payment_drafts.update_one(
+                {"_id": draft.get('_id')},
+                {"$set": {"payment_status": "payment_failed", "updated_at": datetime.utcnow()}}
+            )
+            raise HTTPException(status_code=400, detail="PayPal payment capture failed")
+        
+        # Payment successful! NOW create the final order
+        order_data = draft.get('order_data', {})
+        
+        # Calculate totals (from draft data)
+        items_data = order_data.get('items', [])
+        subtotal = sum(item.get('price', 0) * item.get('quantity', 1) for item in items_data)
+        delivery_fee = order_data.get('delivery_fee', 0)
+        discount = order_data.get('discount', 0)
+        total = subtotal + delivery_fee - discount
+        
+        # Generate order number
+        count = await db.orders.count_documents({})
+        order_number = f"ZOZO-{count + 1001}"
+        
+        # Create final order document
+        order_doc = {
+            "payment_draft_id": draft.get('payment_draft_id'),
+            "location_id": draft['location_id'],
+            "location_slug": location.get('slug', ''),
+            "order_number": order_number,
+            "items": items_data,
+            "subtotal": round(subtotal, 2),
+            "delivery_fee": round(delivery_fee, 2),
+            "discount": round(discount, 2),
+            "total": round(total, 2),
+            "customer": order_data.get('customer', {}),
+            "is_pickup": order_data.get('is_pickup', False),
+            "status": "confirmed",
+            "payment_method": "paypal",
+            "payment_status": "paid",  # Already paid via PayPal
+            "paypal_order_id": capture_request.paypal_order_id,
+            "paypal_transaction_id": capture_result.get('transaction_id'),
+            "paid_at": datetime.utcnow(),
+            "estimated_time": 30,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow(),
+            "status_history": [{
+                "status": "confirmed",
+                "timestamp": datetime.utcnow().isoformat(),
+                "note": "Bestellung bezahlt und bestätigt (PayPal)"
+            }],
+            "pos_status": "pending"
+        }
+        
+        # Insert final order (IDEMPOTENT: check if draft already finalized)
+        result = await db.orders.insert_one(order_doc)
+        order_doc['_id'] = result.inserted_id
+        
+        # Mark draft as finalized
+        await db.payment_drafts.update_one(
+            {"_id": draft.get('_id')},
+            {
+                "$set": {
+                    "finalized": True,
+                    "payment_status": "captured",
+                    "final_order_id": str(result.inserted_id),
+                    "finalized_at": datetime.utcnow()
                 }
+            }
+        )
+        
+        # NOW push to POS (after payment confirmed)
+        pos_pushed = False
+        try:
+            pos_order_data = {
+                "order_id": str(result.inserted_id),
+                "order_number": order_number,
+                "customer_name": order_doc['customer'].get('name'),
+                "customer_email": order_doc['customer'].get('email'),
+                "customer_phone": order_doc['customer'].get('phone'),
+                "items": order_doc['items'],
+                "total": order_doc['total'],
+                "delivery_type": "pickup" if order_doc.get('is_pickup') else "delivery",
+                "delivery_address": f"{order_doc['customer'].get('address', '')}, {order_doc['customer'].get('postal_code', '')} {order_doc['customer'].get('city', '')}",
+                "payment_method": "paypal",
+                "notes": order_doc['customer'].get('notes', '')
+            }
+            
+            pos_result = await pos_service.push_order(pos_order_data, location.get('slug', ''))
+            
+            pos_update = {
+                "pos_status": pos_result.get('pos_status', 'not_applicable'),
+                "pos_pushed_at": datetime.utcnow() if pos_result.get('success') else None,
+                "pos_order_id": pos_result.get('pos_order_id'),
+                "pos_is_test_mode": pos_result.get('is_test_mode', True)
+            }
+            
+            if not pos_result.get('success') and pos_result.get('pos_status') == 'error':
+                pos_update["pos_error"] = pos_result.get('message', 'Unknown error')
+            
+            await db.orders.update_one(
+                {"_id": result.inserted_id},
+                {"$set": pos_update}
             )
             
-            # NOW push to POS after successful payment
-            try:
-                order_refreshed = await db.orders.find_one({"_id": parse_object_id(capture_request.zozo_order_id)})
-                location = await db.locations.find_one({"id": order_refreshed['location_id']})
+            pos_pushed = pos_result.get('success', False)
+            
+        except Exception as e:
+            logging.error(f"POS push after PayPal payment failed: {str(e)}")
+        
+        # Send confirmation email (after payment confirmed)
+        try:
+            from email_service import send_order_confirmation_email
+            send_order_confirmation_email(order_doc, location)
+        except Exception as e:
+            logging.error(f"Email sending failed: {str(e)}")
+        
+        return {
+            "success": True,
+            "order_id": str(result.inserted_id),
+            "order_number": order_number,
+            "payment_status": "captured",
+            "pos_pushed": pos_pushed,
+            "transaction_id": capture_result.get('transaction_id')
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"PayPal capture order error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
                 
                 pos_order_data = {
                     "order_id": str(order_refreshed['_id']),
