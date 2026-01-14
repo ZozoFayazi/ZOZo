@@ -171,12 +171,12 @@ class OrderItem(BaseModel):
     menu_item_id: str
     name: str
     price: float
-    size: Optional[str] = None  # "medium", "large", "normal"
+    size: Optional[str] = None
     quantity: int = 1
     notes: Optional[str] = None
-    customizations: Optional[List[str]] = None  # For POS: Modifier selections
-    extras: Optional[List[dict]] = None  # Extra items added
-    removed_ingredients: Optional[List[str]] = None  # Removed ingredients
+    customizations: List[str] = Field(default_factory=list)  # Always include, even if empty
+    extras: List[dict] = Field(default_factory=list)  # Always include
+    removed_ingredients: List[str] = Field(default_factory=list)  # Always include
 
 class CustomerInfo(BaseModel):
     name: str
