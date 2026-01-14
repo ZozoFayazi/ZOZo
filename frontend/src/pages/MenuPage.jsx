@@ -382,7 +382,10 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                             {item.price_medium && (
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <span className="text-sm text-muted-foreground mr-2">Medium</span>
+                                  <span className="text-sm text-muted-foreground mr-2">
+                                    {item.category_id?.toLowerCase().includes('getränk') || 
+                                     item.category_id?.toLowerCase().includes('drink') ? '0,5L' : 'Medium'}
+                                  </span>
                                   <span className="font-semibold text-primary">
                                     €{item.price_medium.toFixed(2)}
                                   </span>
@@ -408,7 +411,10 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
                             {item.price_large && (
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <span className="text-sm text-muted-foreground mr-2">Groß</span>
+                                  <span className="text-sm text-muted-foreground mr-2">
+                                    {item.category_id?.toLowerCase().includes('getränk') || 
+                                     item.category_id?.toLowerCase().includes('drink') ? '1L' : 'Groß'}
+                                  </span>
                                   <span className="font-semibold text-primary">
                                     €{item.price_large.toFixed(2)}
                                   </span>
