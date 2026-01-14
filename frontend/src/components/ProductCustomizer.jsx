@@ -230,32 +230,31 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       }
     }
     
-    // Add extras/removals to customer-visible name AND to arrays for POS
-    if (allExtras.length > 0 || selectedRemovals.length > 0) {
-      const modifications = [];
-      if (allExtras.length > 0) {
-        modifications.push(`+ ${allExtras.map(e => e.name).join(', ')}`);
-      }
-      if (selectedRemovals.length > 0) {
-        modifications.push(`- ${selectedRemovals.join(', ')}`);
-      }
-      if (modifications.length > 0) {
-        customizedName += ` (${modifications.join(' ')})`;
-      }
+    // Add extras and removals to customizations (NOT to name in parentheses)
+    // Each will appear as separate line in cart AND on POS receipt
+    if (allExtras.length > 0) {
+      allExtras.forEach(extra => {
+        customizations.push(`+ ${extra.name}`);
+      });
+    }
+    
+    if (selectedRemovals.length > 0) {
+      selectedRemovals.forEach(removal => {
+        customizations.push(`- Ohne ${removal}`);
+      });
     }
 
     if (specialInstructions) {
-      customizedName += ` | Hinweis: ${specialInstructions}`;
       customizations.push(`Hinweis: ${specialInstructions}`);
     }
 
     onAddToCart({
       menu_item_id: item.id,
-      name: customizedName,  // Full name with modifiers for customer display
+      name: customizedName,  // Clean name without parentheses
       price: itemPrice + extrasTotal + sideSurcharge + modifierPrice,
       size: size || null,
       quantity: quantity,
-      customizations: customizations,  // Separate array for POS (appears line-by-line)
+      customizations: customizations,  // All selections as separate lines
       extras: allExtras,
       removed_ingredients: selectedRemovals,
       modifiers: selectedModifiers
