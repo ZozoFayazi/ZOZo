@@ -197,18 +197,19 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
         orderData.scheduled_time = scheduledDateTime;
       }
 
-      // Create order (for ALL payment methods - but PayPal won't go to POS until paid)
-      const response = await createOrder(orderData);
-      setOrderNumber(response.order_number);
-      setCreatedOrderId(response.id);
-      setCreatedOrderData(response);
-      
-      // If PayPal is selected, show PayPal payment screen
+      // CRITICAL CHANGE: For PayPal, do NOT create order yet!
+      // PayPal flow: show payment -> after success -> create final order
       if (formData.payment_method === 'paypal') {
+        // Just prepare the order data and show PayPal buttons
+        setCreatedOrderData(orderData);  // Store for PayPal component
         setOrderCreated(true);
-        toast.success('Bestellung erstellt! Bitte schließe die Zahlung mit PayPal ab.');
+        toast.info('Bitte schließe die Zahlung mit PayPal ab.');
       } else {
-        // For cash/card, order is complete
+        // For cash/card, create order immediately as before
+        const response = await createOrder(orderData);
+        setOrderNumber(response.order_number);
+        setCreatedOrderId(response.id);
+        setCreatedOrderData(response);
         setOrderPlaced(true);
         
         // Show points earned notification
