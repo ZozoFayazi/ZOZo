@@ -337,10 +337,13 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
               'crunchy chickenburger',
               'double crunchy',
               'veggie burger',
+              'veggie',
               '250',
               'twohundred fifty',
+              'two hundred fifty',
               '360',
-              'three hundred sixty'
+              'three hundred sixty',
+              'crunchy chicken bacon'
             ];
             
             const isSingleSizeBurger = singleSizeKeywords.some(keyword => 
