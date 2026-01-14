@@ -434,6 +434,39 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
               );
             }
             
+            // Getränke: 0,5L und 1L (Cola, Fanta, Sprite, etc.)
+            if (categorySlug.includes('getränke') || categorySlug.includes('getraenke') || 
+                categoryName.includes('getränke') || categoryName.includes('drink')) {
+              return (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="price_medium">0,5L (€)</Label>
+                    <Input
+                      id="price_medium"
+                      type="number"
+                      step="0.01"
+                      value={formData.price_medium}
+                      onChange={(e) => setFormData(prev => ({ ...prev, price_medium: e.target.value }))}
+                      placeholder="2.99"
+                      data-testid="product-price-medium"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price_large">1L (€)</Label>
+                    <Input
+                      id="price_large"
+                      type="number"
+                      step="0.01"
+                      value={formData.price_large}
+                      onChange={(e) => setFormData(prev => ({ ...prev, price_large: e.target.value }))}
+                      placeholder="3.89"
+                      data-testid="product-price-large"
+                    />
+                  </div>
+                </div>
+              );
+            }
+            
             // All other categories: Single price (Salate, Getränke, Pasta, Wraps, etc.)
             return (
               <div className="space-y-2">
