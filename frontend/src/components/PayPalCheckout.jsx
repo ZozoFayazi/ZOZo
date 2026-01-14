@@ -149,8 +149,8 @@ function PayPalCheckout({
           }}
           createOrder={createOrder}
           onApprove={onApprove}
+          onCancel={onCancelHandler}
           onError={onErrorHandler}
-          disabled={!orderId}
         />
       </PayPalScriptProvider>
     </div>
