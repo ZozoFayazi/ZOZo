@@ -76,8 +76,18 @@ function CartDrawer({ open, onClose, cart, cartTotal, removeFromCart, updateCart
                 <div className="flex-1">
                   <h3 className="font-medium mb-1">{item.name}</h3>
                   {item.size && (
-                    <p className="text-xs text-muted-foreground mb-2">{item.size}</p>
+                    <p className="text-xs text-muted-foreground mb-1">{item.size}</p>
                   )}
+                  
+                  {/* Show customizations as separate lines */}
+                  {item.customizations && item.customizations.length > 0 && (
+                    <div className="text-xs text-muted-foreground space-y-0.5 mb-2 ml-2">
+                      {item.customizations.map((custom, idx) => (
+                        <div key={idx}>{custom}</div>
+                      ))}
+                    </div>
+                  )}
+                  
                   <p className="text-sm font-semibold text-primary">
                     €{(item.price * item.quantity).toFixed(2)}
                   </p>
