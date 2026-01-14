@@ -1629,19 +1629,18 @@ async def create_order(order: OrderCreate, request: Request):
         try:
             # Build POS order data - use items from DB (includes customizations)
             pos_order_data = {
-            "order_id": str(result.inserted_id),
-            "order_number": order_number,
-            "customer_name": order.customer.name,
-            "customer_email": order.customer.email if hasattr(order.customer, 'email') else None,
-            "customer_phone": order.customer.phone,
-            "items": items_for_db,  # Use DB items (includes customizations/extras/removed)
-            ],
-            "total": round(total, 2),
-            "delivery_type": "pickup" if getattr(order, 'is_pickup', False) else "delivery",
-            "delivery_address": f"{order.customer.address}, {order.customer.postal_code} {order.customer.city}",
-            "payment_method": order.payment_method,
-            "notes": order.customer.notes if hasattr(order.customer, 'notes') else "",
-            "scheduled_time": order.scheduled_time if hasattr(order, 'scheduled_time') else None
+                "order_id": str(result.inserted_id),
+                "order_number": order_number,
+                "customer_name": order.customer.name,
+                "customer_email": order.customer.email if hasattr(order.customer, 'email') else None,
+                "customer_phone": order.customer.phone,
+                "items": items_for_db,  # Use DB items (includes customizations/extras/removed)
+                "total": round(total, 2),
+                "delivery_type": "pickup" if getattr(order, 'is_pickup', False) else "delivery",
+                "delivery_address": f"{order.customer.address}, {order.customer.postal_code} {order.customer.city}",
+                "payment_method": order.payment_method,
+                "notes": order.customer.notes if hasattr(order.customer, 'notes') else "",
+                "scheduled_time": order.scheduled_time if hasattr(order, 'scheduled_time') else None
             }
             
             # Push to POS via service (uses location's pos_config)
