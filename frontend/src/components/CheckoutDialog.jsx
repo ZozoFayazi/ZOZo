@@ -352,8 +352,8 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
             <div className="p-6 space-y-6">
               {/* Order Summary */}
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                <p className="text-sm text-muted-foreground mb-2">Bestellnummer</p>
-                <p className="text-xl font-bold text-primary mb-4">{orderNumber}</p>
+                <p className="text-sm text-muted-foreground mb-2">Zahlungsbetrag</p>
+                <p className="text-2xl font-bold text-primary mb-4">€{finalTotal.toFixed(2)}</p>
                 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
