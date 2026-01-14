@@ -98,10 +98,10 @@ function Kontakt() {
                   24558 Henstedt-Ulzburg
                 </p>
                 <a 
-                  href="tel:+494193234567" 
+                  href="tel:+4941937521002" 
                   className="text-primary hover:underline text-sm"
                 >
-                  Tel: +49 (0) 4193 234 567
+                  Tel: 04193 7521002
                 </a>
               </div>
 
