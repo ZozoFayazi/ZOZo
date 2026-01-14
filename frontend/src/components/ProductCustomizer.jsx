@@ -238,22 +238,34 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       }
     }
     
-    // Don't add extras/removals to name anymore - they go as separate data
-    // (This keeps the product name clean on receipt, details appear below)
+    // Add extras/removals to customer-visible name AND to arrays for POS
+    if (allExtras.length > 0 || selectedRemovals.length > 0) {
+      const modifications = [];
+      if (allExtras.length > 0) {
+        modifications.push(`+ ${allExtras.map(e => e.name).join(', ')}`);
+      }
+      if (selectedRemovals.length > 0) {
+        modifications.push(`- ${selectedRemovals.join(', ')}`);
+      }
+      if (modifications.length > 0) {
+        customizedName += ` (${modifications.join(' ')})`;
+      }
+    }
 
     if (specialInstructions) {
+      customizedName += ` | Hinweis: ${specialInstructions}`;
       customizations.push(`Hinweis: ${specialInstructions}`);
     }
 
     onAddToCart({
       menu_item_id: item.id,
-      name: customizedName,  // Clean name without modifiers in parentheses
+      name: customizedName,  // Full name with modifiers for customer display
       price: itemPrice + extrasTotal + sideSurcharge + modifierPrice,
       size: size || null,
       quantity: quantity,
-      customizations: customizations,  // NEW: Separate array for POS
+      customizations: customizations,  // Separate array for POS (appears line-by-line)
       extras: allExtras,
-      removed_ingredients: selectedRemovals,  // Changed key name for clarity
+      removed_ingredients: selectedRemovals,
       modifiers: selectedModifiers
     });
 
