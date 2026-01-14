@@ -188,18 +188,14 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
     const customizations = [];
     
     // Add modifier selections
+    const modifierTexts = [];
+    let modifierPrice = 0;
+    
     Object.entries(selectedModifiers).forEach(([groupId, optionName]) => {
       const group = productModifiers.find(g => g.id === groupId);
       if (group && optionName) {
-        customizations.push(optionName);
-      }
-    });
-    
-    // Calculate modifier price
-    let modifierPrice = 0;
-    Object.entries(selectedModifiers).forEach(([groupId, optionName]) => {
-      const group = productModifiers.find(g => g.id === groupId);
-      if (group) {
+        modifierTexts.push(optionName);
+        customizations.push(optionName);  // For POS
         const option = group.options.find(o => o.name === optionName);
         if (option) {
           modifierPrice += option.price || 0;
@@ -207,11 +203,17 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       }
     });
     
-    // Add bun type to customizations (not to name)
+    // Add modifiers to customer-visible name
+    if (modifierTexts.length > 0) {
+      customizedName += ` (${modifierTexts.join(', ')})`;
+    }
+    
+    // Add bun type
     if (selectedBun) {
       const bunName = bunTypes.find(b => b.id === selectedBun)?.name;
       if (bunName) {
-        customizations.push(bunName);
+        customizedName += ` (${bunName})`;
+        customizations.push(bunName);  // For POS
       }
     }
     
