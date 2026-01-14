@@ -1434,6 +1434,11 @@ async def vote_custom_burger(burger_id: str):
 @api_router.post("/orders")
 async def create_order(order: OrderCreate, request: Request):
     """Create a new order"""
+    # DEBUG: Log incoming items
+    logging.info(f"Incoming order items count: {len(order.items)}")
+    for idx, item in enumerate(order.items):
+        logging.info(f"Item {idx}: {item.name}, customizations={getattr(item, 'customizations', 'ATTR_MISSING')}")
+    
     # Rate limiting: Check if allowed
     is_allowed, message = await rate_limiter.check_rate_limit(request, "order")
     if not is_allowed:
