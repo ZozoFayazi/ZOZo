@@ -15,7 +15,7 @@ function CartDrawer({ open, onClose, cart, cartTotal, removeFromCart, updateCart
     setDiscountInfo(info);
   }, []);
 
-  const deliveryFee = cartTotal < 15 ? 2.50 : 0;
+  const deliveryFee = 0; // Kostenlose Lieferung
   const discountedSubtotal = Math.max(0, cartTotal - dailyDealDiscount);
   const total = discountedSubtotal + deliveryFee;
 
