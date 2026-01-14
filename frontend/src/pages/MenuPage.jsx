@@ -144,12 +144,7 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
     addToCart(cartItem);
     toast.success(`${item.name} zum Warenkorb hinzugefügt`);
     
-    // Show category upsell for specific categories only
-    const category = menu.find(cat => cat.items.some(i => i.id === item.id));
-    if (category && shouldShowUpsell(category.slug)) {
-      setUpsellCategory(category.name);
-      setUpsellDialogOpen(true);
-    }
+    // Upsell removed from here - will show in cart/checkout instead
   };
 
   const filteredMenu = menu.filter(category => {
