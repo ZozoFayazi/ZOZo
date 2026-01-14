@@ -174,9 +174,9 @@ class OrderItem(BaseModel):
     size: Optional[str] = None  # "medium", "large", "normal"
     quantity: int = 1
     notes: Optional[str] = None
-    customizations: Optional[List[str]] = []  # For POS: Modifier selections (separate lines)
-    extras: Optional[List[dict]] = []  # Extra items added
-    removed_ingredients: Optional[List[str]] = []  # Removed ingredients
+    customizations: Optional[List[str]] = None  # For POS: Modifier selections
+    extras: Optional[List[dict]] = None  # Extra items added
+    removed_ingredients: Optional[List[str]] = None  # Removed ingredients
 
 class CustomerInfo(BaseModel):
     name: str
