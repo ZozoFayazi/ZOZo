@@ -1479,12 +1479,10 @@ async def create_order(order: OrderCreate, request: Request):
     min_order_value = 0.0
     delivery_fee = 0.0  # Kostenlos überall
     
-    # Check minimum order value (skip for pickup)
-    if not is_pickup and subtotal < min_order_value:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Mindestbestellwert: €{min_order_value:.2f}. Deine Bestellung: €{subtotal:.2f}"
-        )
+    # MINDESTBESTELLWERT DEAKTIVIERT - Jeder kann bestellen
+    # (wird später wieder aktiviert wenn Liefergebiete konfiguriert sind)
+    # if not is_pickup and subtotal < min_order_value:
+    #     raise HTTPException(...)
     
     # ===== LOYALTY: Apply points redemption =====
     points_discount = 0.0
