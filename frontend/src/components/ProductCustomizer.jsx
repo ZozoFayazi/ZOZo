@@ -76,10 +76,12 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
     return { type: 'emoji', icon: '🍴' }; // Default icon
   };
   
-  // Check if this is a burger (but not a Smash Burger) - requires bun selection
+  // Check if this is a burger (but not a Smash Burger or Salad) - requires bun selection
   const requiresBunSelection = item.name && 
     (item.name.toLowerCase().includes('burger') && 
-     !item.name.toLowerCase().includes('smash'));
+     !item.name.toLowerCase().includes('smash') &&
+     !item.name.toLowerCase().includes('salad') &&
+     !item.name.toLowerCase().includes('salat'));
   
   // Available bun types
   const bunTypes = [
