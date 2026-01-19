@@ -363,28 +363,32 @@ async def get_location_by_slug(slug: str, include_menu: bool = Query(False)):
 @api_router.get("/check-delivery-zone")
 async def check_delivery_zone(postal_code: str = Query(..., description="Customer postal code")):
     """Check if postal code is in any delivery zone and return location + fees"""
-    # Find location that serves this postal code
-    location = await db.locations.find_one({
-        "active": True,
-        "delivery_zone.postal_codes": postal_code
-    })
+    
+    # TEMPORÄR DEAKTIVIERT - Alle PLZ sind belieferbar
+    # Wir liefern überall bis Liefergebiete konfiguriert sind
+    
+    # Find ANY active location (Rellingen bevorzugt)
+    location = await db.locations.find_one({"active": True, "slug": "rellingen"})
+    
+    if not location:
+        # Fallback: irgendein aktiver Standort
+        location = await db.locations.find_one({"active": True})
     
     if not location:
         return {
             "available": False,
-            "message": f"Leider beliefern wir die Postleitzahl {postal_code} aktuell nicht."
+            "message": "Aktuell ist kein Standort verfügbar."
         }
     
-    delivery_zone = location.get('delivery_zone', {})
-    
+    # ALLE PLZ sind belieferbar
     return {
         "available": True,
         "location": serialize_doc(location),
         "postal_code": postal_code,
-        "min_order_value": delivery_zone.get('min_order_value', 0),
-        "delivery_fee": delivery_zone.get('delivery_fee', 0),
-        "free_delivery_threshold": delivery_zone.get('free_delivery_threshold', 0),
-        "message": f"Lieferung nach {postal_code} möglich!"
+        "min_order_value": 0.0,  # Kein Mindestbestellwert
+        "delivery_fee": 0.0,  # Kostenlos
+        "free_delivery_threshold": 0.0,
+        "message": f"Lieferung nach {postal_code} möglich! (Kostenlos)"
     }
 
 # Categories
