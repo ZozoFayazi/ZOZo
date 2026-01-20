@@ -1582,6 +1582,8 @@ async def create_order(order: OrderCreate, request: Request):
         "subtotal": round(subtotal, 2),
         "delivery_fee": round(delivery_fee, 2),
         "pickup_discount": round(pickup_discount, 2),  # 10% Abholrabatt
+        "daily_deal_discount": round(daily_deal_discount, 2),  # Tagesangebot
+        "daily_deal_info": daily_deal_info.get('title') if daily_deal_info else None,
         "discount": round(points_discount, 2),
         "points_redeemed": points_redeemed,
         "total": round(total, 2),
