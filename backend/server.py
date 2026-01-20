@@ -362,12 +362,9 @@ async def get_location_by_slug(slug: str, include_menu: bool = Query(False)):
 # Delivery Zone Check
 @api_router.get("/check-delivery-zone")
 async def check_delivery_zone(postal_code: str = Query(..., description="Customer postal code")):
-    """Check if postal code is in any delivery zone and return location + fees"""
+    """Check if postal code is in any delivery zone and return location + fees + MBW"""
     
-    # INTELLIGENTE STANDORT-ZUORDNUNG basierend auf PLZ
-    # Versuche beste Filiale für PLZ zu finden
-    
-    # 1. Prüfe ob PLZ in einer Lieferzone ist
+    # 1. Prüfe ob PLZ in einer Lieferzone ist (mit MBW Support)
     location = await db.locations.find_one({
         "active": True,
         "delivery_zone.postal_codes": postal_code
@@ -377,42 +374,43 @@ async def check_delivery_zone(postal_code: str = Query(..., description="Custome
     if not location:
         plz_num = int(postal_code[:2]) if postal_code and postal_code[:2].isdigit() else 0
         
-        # PLZ 245xx, 254xx, 224xx, 225xx → Rellingen (näher zu Hamburg/Pinneberg)
-        # PLZ 246xx, 247xx, 248xx → Henstedt-Ulzburg (näher zu Norderstedt/Kaltenkirchen)
-        
         if plz_num in [24, 22, 25]:
-            # Norddeutschland - prüfe genauer
             if postal_code.startswith('245') or postal_code.startswith('254') or postal_code.startswith('22'):
-                # Rellingen-Gebiet
                 location = await db.locations.find_one({"active": True, "slug": "rellingen"})
             elif postal_code.startswith('246') or postal_code.startswith('247') or postal_code.startswith('248'):
-                # Henstedt-Gebiet
                 location = await db.locations.find_one({"active": True, "slug": {"$regex": "henstedt", "$options": "i"}})
-            else:
-                # Default: Rellingen
-                location = await db.locations.find_one({"active": True, "slug": "rellingen"})
-        else:
-            # Andere PLZ: Rellingen als Default
-            location = await db.locations.find_one({"active": True, "slug": "rellingen"})
-    
-    if not location:
-        # Final fallback
-        location = await db.locations.find_one({"active": True})
     
     if not location:
         return {
             "available": False,
-            "message": "Aktuell ist kein Standort verfügbar."
+            "message": f"Leider liefern wir nicht in die PLZ {postal_code}. Bitte Abholung wählen."
         }
     
-    # ALLE PLZ sind belieferbar (temporär)
+    delivery_zone = location.get('delivery_zone', {})
+    
+    # Get MBW for this specific PLZ
+    postal_code_mbw = delivery_zone.get('postal_code_mbw', {})
+    min_order_value = postal_code_mbw.get(postal_code, delivery_zone.get('default_min_order_value', 0.0))
+    
+    # Check if PLZ is in whitelist
+    allowed_plzs = delivery_zone.get('postal_codes', [])
+    
+    if allowed_plzs and postal_code not in allowed_plzs:
+        return {
+            "available": False,
+            "message": f"Leider liefern wir nicht in die PLZ {postal_code}. Bitte Abholung wählen.",
+            "location": serialize_doc(location)
+        }
+    
     return {
         "available": True,
         "location": serialize_doc(location),
         "postal_code": postal_code,
-        "min_order_value": 0.0,  # Kein Mindestbestellwert
-        "delivery_fee": 0.0,  # Kostenlos
-        "free_delivery_threshold": 0.0,
+        "min_order_value": float(min_order_value),
+        "delivery_fee": float(delivery_zone.get('delivery_fee', 0.0)),
+        "free_delivery_threshold": float(delivery_zone.get('free_delivery_threshold', 0.0)),
+        "message": f"Lieferung nach {postal_code} möglich! (Mindestbestellwert: {min_order_value}€)"
+    }
         "message": f"Lieferung nach {postal_code} möglich! (Kostenlos)"
     }
 
