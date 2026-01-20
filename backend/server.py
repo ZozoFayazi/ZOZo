@@ -1726,7 +1726,9 @@ async def create_order(order: OrderCreate, request: Request):
     points_earned = 0
     try:
         # CRITICAL: Check if customer has email (required for loyalty)
-        customer_email = getattr(order.customer, 'email', None)
+        # Use dict() to safely access Optional fields from Pydantic model
+        customer_dict = order.customer.dict() if hasattr(order.customer, 'dict') else order.customer
+        customer_email = customer_dict.get('email') if isinstance(customer_dict, dict) else getattr(order.customer, 'email', None)
         
         if customer_email:
             # Ensure loyalty account exists
