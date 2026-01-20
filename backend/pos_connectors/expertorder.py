@@ -512,20 +512,42 @@ class ExpertOrderConnector(BasePOSConnector):
                     "items": []
                 })
                 
-                # 2. Beilagen und Getränke als SEPARATE Top-Level Items
+                # 2. NEUE MODIFIER SYSTEM: Beilage + Getränk aus modifiers{}
+                modifiers = item.get('modifiers', {})
+                if modifiers:
+                    # modifiers format: {"menu_beilage": {"id": "...", "name": "Pommes Normal", "price": 0, "pos_item_id": "..."}}
+                    for group_id, modifier_data in modifiers.items():
+                        if isinstance(modifier_data, dict):
+                            modifier_name = modifier_data.get('name', '')
+                            modifier_price = modifier_data.get('price', 0.0)
+                            pos_item_id = modifier_data.get('pos_item_id', '')
+                            
+                            items.append({
+                                "uid": pos_item_id or f"MODIFIER-{group_id}",
+                                "name": modifier_name,
+                                "count": item.get('quantity', 1),
+                                "price": float(modifier_price),
+                                "group": "menu_component",
+                                "type": "addon"
+                            })
+                
+                # 2b. LEGACY: String-basierte customizations (für alte Orders)
                 customizations = item.get('customizations', [])
                 for custom in customizations:
-                    # Entferne "+ " Prefix für sauberen Namen
-                    clean_name = custom.replace('+ ', '').replace('+', '').strip()
-                    
-                    items.append({
-                        "uid": f"MENU-COMPONENT-{clean_name[:20].replace(' ', '-').upper()}",
-                        "name": clean_name,  # z.B. "Pommes Normal" oder "Coca Cola 0,5l"
-                        "count": item.get('quantity', 1),
-                        "price": 0.0,  # Menü-Bestandteile ohne Extra-Preis
-                        "group": "menu_component",
-                        "type": "addon"
-                    })
+                    if isinstance(custom, str):
+                        # Entferne "+ " Prefix für sauberen Namen
+                        clean_name = custom.replace('+ ', '').replace('+', '').strip()
+                        
+                        # Skip if already covered by modifiers
+                        if not any(clean_name in mod_data.get('name', '') for mod_data in modifiers.values() if isinstance(mod_data, dict)):
+                            items.append({
+                                "uid": f"CUSTOM-{clean_name[:20].replace(' ', '-').upper()}",
+                                "name": clean_name,
+                                "count": item.get('quantity', 1),
+                                "price": 0.0,
+                                "group": "menu_component",
+                                "type": "addon"
+                            })
                 
                 # 3. Extras auch als separate Items
                 extras = item.get('extras', [])
