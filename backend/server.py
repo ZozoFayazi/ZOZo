@@ -1730,6 +1730,9 @@ async def create_order(order: OrderCreate, request: Request):
         customer_data = order.customer.model_dump() if hasattr(order.customer, 'model_dump') else order.customer.dict()
         customer_email = customer_data.get('email')
         
+        logging.info(f"DEBUG Loyalty: customer_data keys: {list(customer_data.keys())}")
+        logging.info(f"DEBUG Loyalty: email value: {repr(customer_email)}")
+        
         # Only process loyalty if email is not None and not empty string
         if customer_email and customer_email.strip():
             # Ensure loyalty account exists
