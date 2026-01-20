@@ -815,6 +815,12 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                   <span className="text-muted-foreground">Zwischensumme</span>
                   <span>€{cartTotal.toFixed(2)}</span>
                 </div>
+                {formData.delivery_type === 'pickup' && cartTotal > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>🎉 Abholrabatt (10%)</span>
+                    <span>-€{(cartTotal * 0.10).toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Liefergebühr</span>
                   <span>{deliveryFee === 0 ? 'Kostenlos' : `€${deliveryFee.toFixed(2)}`}</span>
@@ -827,7 +833,7 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                 )}
                 <div className="flex justify-between text-lg font-semibold pt-2 border-t border-border">
                   <span>Gesamt</span>
-                  <span className="text-primary">€{finalTotal.toFixed(2)}</span>
+                  <span className="text-primary">€{(cartTotal - (formData.delivery_type === 'pickup' ? cartTotal * 0.10 : 0) + deliveryFee - pointsDiscount).toFixed(2)}</span>
                 </div>
               </div>
 
