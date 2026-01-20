@@ -491,85 +491,119 @@ class ExpertOrderConnector(BasePOSConnector):
         location = zip_parts[1] if len(zip_parts) > 1 else zip_location
         
         # Build items list with ExpertOrder required format
-        # CRITICAL: Send as FLATTENED line items with proper ExpertOrder structure
-        # Each item needs: uid, name, count, price, group (optional), type (optional)
+        # CRITICAL: Menüs müssen in Bestandteile AUFGESPALTEN werden (flatten)
+        # Nicht Parent-Child, sondern separate Top-Level Items!
         items = []
         
         for item in order_data.get('items', []):
-            # Determine if this is a menu item
+            # Check if this is a menu
             is_menu = 'menü' in item.get('name', '').lower() or 'menu' in item.get('name', '').lower()
             
-            # 1. Main product
-            main_item = {
-                "uid": item.get('menu_item_id', ''),  # Product ID for matching
-                "name": item.get('name', ''),
-                "count": item.get('quantity', 1),
-                "price": float(item.get('price', 0)),
-                "items": []  # Child items for menu components
-            }
-            
-            # 2. Add customizations as child items (for menus) or separate items (for non-menus)
-            customizations = item.get('customizations', [])
-            
-            if customizations:
+            if is_menu:
+                # MENÜ-MODUS: Zerlege in einzelne Artikel
+                # 1. Hauptprodukt (ohne "Menü" im Namen)
+                base_name = item.get('name', '').replace(' Menü', '').replace(' Menu', '')
+                
+                items.append({
+                    "uid": item.get('menu_item_id', ''),
+                    "name": base_name,  # z.B. "Smash Bacon" statt "Smash Bacon Menü"
+                    "count": item.get('quantity', 1),
+                    "price": float(item.get('price', 0)),  # Gesamtpreis bleibt beim Hauptartikel
+                    "items": []
+                })
+                
+                # 2. Beilagen und Getränke als SEPARATE Top-Level Items
+                customizations = item.get('customizations', [])
                 for custom in customizations:
-                    child_item = {
-                        "uid": f"MODIFIER-{custom[:20].replace(' ', '-').upper()}",  # Generate UID for modifier
-                        "name": custom,  # Clean name for POS matching
-                        "count": 1,
-                        "price": 0.0,  # Most modifiers are free
-                        "group": "modifier",  # Mark as modifier
-                        "type": "addon"
-                    }
+                    # Entferne "+ " Prefix für sauberen Namen
+                    clean_name = custom.replace('+ ', '').replace('+', '').strip()
                     
-                    if is_menu:
-                        # For menus: add as child item
-                        main_item["items"].append(child_item)
-                    else:
-                        # For non-menus: add as separate top-level item
-                        items.append(child_item)
-            
-            # 3. Add extras as child/separate items
-            extras = item.get('extras', [])
-            if extras:
+                    items.append({
+                        "uid": f"MENU-COMPONENT-{clean_name[:20].replace(' ', '-').upper()}",
+                        "name": clean_name,  # z.B. "Pommes Normal" oder "Coca Cola 0,5l"
+                        "count": item.get('quantity', 1),
+                        "price": 0.0,  # Menü-Bestandteile ohne Extra-Preis
+                        "group": "menu_component",
+                        "type": "addon"
+                    })
+                
+                # 3. Extras auch als separate Items
+                extras = item.get('extras', [])
                 for extra in extras:
                     extra_name = extra.get('name', extra) if isinstance(extra, dict) else extra
                     extra_price = extra.get('price', 0) if isinstance(extra, dict) else 0
                     
-                    extra_item = {
+                    items.append({
+                        "uid": f"EXTRA-{extra_name[:20].replace(' ', '-').upper()}",
+                        "name": extra_name,
+                        "count": item.get('quantity', 1),
+                        "price": float(extra_price),
+                        "group": "extra",
+                        "type": "addon"
+                    })
+                
+                # 4. Removals
+                removals = item.get('removed_ingredients', [])
+                for removal in removals:
+                    items.append({
+                        "uid": f"REMOVE-{removal[:20].replace(' ', '-').upper()}",
+                        "name": f"- Ohne {removal}",
+                        "count": item.get('quantity', 1),
+                        "price": 0.0,
+                        "group": "removal",
+                        "type": "modifier"
+                    })
+            
+            else:
+                # KEIN MENÜ: Normale Artikel-Struktur
+                # 1. Main product
+                main_item = {
+                    "uid": item.get('menu_item_id', ''),
+                    "name": item.get('name', ''),
+                    "count": item.get('quantity', 1),
+                    "price": float(item.get('price', 0)),
+                    "items": []
+                }
+                items.append(main_item)
+                
+                # 2. Customizations als separate Top-Level Items
+                customizations = item.get('customizations', [])
+                for custom in customizations:
+                    items.append({
+                        "uid": f"MODIFIER-{custom[:20].replace(' ', '-').upper()}",
+                        "name": custom,
+                        "count": 1,
+                        "price": 0.0,
+                        "group": "modifier",
+                        "type": "addon"
+                    })
+                
+                # 3. Extras
+                extras = item.get('extras', [])
+                for extra in extras:
+                    extra_name = extra.get('name', extra) if isinstance(extra, dict) else extra
+                    extra_price = extra.get('price', 0) if isinstance(extra, dict) else 0
+                    
+                    items.append({
                         "uid": f"EXTRA-{extra_name[:20].replace(' ', '-').upper()}",
                         "name": extra_name,
                         "count": 1,
                         "price": float(extra_price),
                         "group": "extra",
                         "type": "addon"
-                    }
-                    
-                    if is_menu:
-                        main_item["items"].append(extra_item)
-                    else:
-                        items.append(extra_item)
-            
-            # 4. Add removals as child/separate items
-            removals = item.get('removed_ingredients', [])
-            if removals:
+                    })
+                
+                # 4. Removals
+                removals = item.get('removed_ingredients', [])
                 for removal in removals:
-                    removal_item = {
+                    items.append({
                         "uid": f"REMOVE-{removal[:20].replace(' ', '-').upper()}",
                         "name": f"- Ohne {removal}",
                         "count": 1,
                         "price": 0.0,
                         "group": "removal",
                         "type": "modifier"
-                    }
-                    
-                    if is_menu:
-                        main_item["items"].append(removal_item)
-                    else:
-                        items.append(removal_item)
-            
-            # Add main item to items array
-            items.append(main_item)
+                    })
         
         # Current time for ordertime & deliverytime
         # ExpertOrder interpretiert Zeiten MIT Z-Suffix als UTC
