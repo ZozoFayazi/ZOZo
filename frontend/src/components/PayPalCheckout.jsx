@@ -45,6 +45,7 @@ function PayPalCheckout({
         subtotal: orderData.subtotal,
         delivery_fee: orderData.deliveryFee,
         discount: orderData.discount || 0,
+        points_to_redeem: orderData.points_to_redeem || 0,  // Include loyalty points
         total: orderData.total,
         is_pickup: orderData.isPickup || false,
         currency: 'EUR',
