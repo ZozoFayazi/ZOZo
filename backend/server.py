@@ -1693,6 +1693,7 @@ async def create_order(order: OrderCreate, request: Request):
             item_dict['customizations'] = raw_item.get('customizations', [])
             item_dict['extras'] = raw_item.get('extras', [])
             item_dict['removed_ingredients'] = raw_item.get('removed_ingredients', [])
+            item_dict['modifiers'] = raw_item.get('modifiers', {})  # CRITICAL: Preserve modifier selections!
         
         items_for_db.append(item_dict)
     
