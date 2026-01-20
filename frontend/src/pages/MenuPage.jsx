@@ -138,7 +138,8 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
       name: item.name,
       price: price,
       size: sizeName,
-      quantity: 1
+      quantity: 1,
+      category: item.category_id  // Für Daily Deal Matching
     };
 
     addToCart(cartItem);
