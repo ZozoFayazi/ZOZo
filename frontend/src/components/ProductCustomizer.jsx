@@ -256,6 +256,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       price: itemPrice + extrasTotal + sideSurcharge + modifierPrice,
       size: size || null,
       quantity: quantity,
+      category: item.category_id,  // Für Daily Deal Matching
       customizations: customizations,  // All selections as separate lines
       extras: allExtras,
       removed_ingredients: selectedRemovals,
