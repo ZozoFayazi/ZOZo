@@ -1726,8 +1726,9 @@ async def create_order(order: OrderCreate, request: Request):
     points_earned = 0
     try:
         # CRITICAL: Check if customer has email (required for loyalty)
-        # Access email directly from Pydantic model - it's Optional[str] so can be None
-        customer_email = order.customer.email
+        # Pydantic v2: Use model_dump() to safely access Optional fields
+        customer_data = order.customer.model_dump() if hasattr(order.customer, 'model_dump') else order.customer.dict()
+        customer_email = customer_data.get('email')
         
         # Only process loyalty if email is not None and not empty string
         if customer_email and customer_email.strip():
