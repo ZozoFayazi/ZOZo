@@ -364,14 +364,39 @@ async def get_location_by_slug(slug: str, include_menu: bool = Query(False)):
 async def check_delivery_zone(postal_code: str = Query(..., description="Customer postal code")):
     """Check if postal code is in any delivery zone and return location + fees"""
     
-    # TEMPORÄR DEAKTIVIERT - Alle PLZ sind belieferbar
-    # Wir liefern überall bis Liefergebiete konfiguriert sind
+    # INTELLIGENTE STANDORT-ZUORDNUNG basierend auf PLZ
+    # Versuche beste Filiale für PLZ zu finden
     
-    # Find ANY active location (Rellingen bevorzugt)
-    location = await db.locations.find_one({"active": True, "slug": "rellingen"})
+    # 1. Prüfe ob PLZ in einer Lieferzone ist
+    location = await db.locations.find_one({
+        "active": True,
+        "delivery_zone.postal_codes": postal_code
+    })
+    
+    # 2. Wenn nicht gefunden: Intelligente Zuordnung nach PLZ-Bereichen
+    if not location:
+        plz_num = int(postal_code[:2]) if postal_code and postal_code[:2].isdigit() else 0
+        
+        # PLZ 245xx, 254xx, 224xx, 225xx → Rellingen (näher zu Hamburg/Pinneberg)
+        # PLZ 246xx, 247xx, 248xx → Henstedt-Ulzburg (näher zu Norderstedt/Kaltenkirchen)
+        
+        if plz_num in [24, 22, 25]:
+            # Norddeutschland - prüfe genauer
+            if postal_code.startswith('245') or postal_code.startswith('254') or postal_code.startswith('22'):
+                # Rellingen-Gebiet
+                location = await db.locations.find_one({"active": True, "slug": "rellingen"})
+            elif postal_code.startswith('246') or postal_code.startswith('247') or postal_code.startswith('248'):
+                # Henstedt-Gebiet
+                location = await db.locations.find_one({"active": True, "slug": {"$regex": "henstedt", "$options": "i"}})
+            else:
+                # Default: Rellingen
+                location = await db.locations.find_one({"active": True, "slug": "rellingen"})
+        else:
+            # Andere PLZ: Rellingen als Default
+            location = await db.locations.find_one({"active": True, "slug": "rellingen"})
     
     if not location:
-        # Fallback: irgendein aktiver Standort
+        # Final fallback
         location = await db.locations.find_one({"active": True})
     
     if not location:
@@ -380,7 +405,7 @@ async def check_delivery_zone(postal_code: str = Query(..., description="Custome
             "message": "Aktuell ist kein Standort verfügbar."
         }
     
-    # ALLE PLZ sind belieferbar
+    # ALLE PLZ sind belieferbar (temporär)
     return {
         "available": True,
         "location": serialize_doc(location),
