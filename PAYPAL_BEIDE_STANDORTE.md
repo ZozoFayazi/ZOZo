@@ -95,7 +95,7 @@ python test_paypal_both_locations.py
 ### Manueller Test
 
 #### Test für Rellingen:
-1. Öffne https://tastycart-3.preview.emergentagent.com
+1. Öffne https://paypal-pos-fix.preview.emergentagent.com
 2. Wähle **ZOZO Burger Rellingen**
 3. Füge Produkt hinzu
 4. Checkout → PayPal wählen
@@ -104,7 +104,7 @@ python test_paypal_both_locations.py
 7. **Verifiziere:** Zahlung auf Rellingen PayPal-Konto
 
 #### Test für Henstedt-Ulzburg:
-1. Öffne https://tastycart-3.preview.emergentagent.com
+1. Öffne https://paypal-pos-fix.preview.emergentagent.com
 2. Wähle **ZOZO Burger Henstedt-Ulzburg**
 3. Füge Produkt hinzu
 4. Checkout → PayPal wählen

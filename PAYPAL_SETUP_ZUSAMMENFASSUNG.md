@@ -114,7 +114,7 @@ python test_paypal_integration.py
 
 ### Manueller Test
 
-1. **Website öffnen:** https://tastycart-3.preview.emergentagent.com
+1. **Website öffnen:** https://paypal-pos-fix.preview.emergentagent.com
 2. **Standort wählen:** Henstedt-Ulzburg
 3. **Produkt hinzufügen** (z.B. Burger)
 4. **Zur Kasse gehen**

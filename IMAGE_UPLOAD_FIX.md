@@ -42,7 +42,7 @@ if not (content_type_valid or extension_valid):
 
 ### 1. Admin-Panel öffnen
 ```
-https://tastycart-3.preview.emergentagent.com/admin/products
+https://paypal-pos-fix.preview.emergentagent.com/admin/products
 ```
 
 ### 2. Produkt bearbeiten

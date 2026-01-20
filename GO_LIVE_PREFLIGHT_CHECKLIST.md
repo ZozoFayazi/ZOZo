@@ -198,9 +198,9 @@ Bitte liefern:
 ## 🎯 QUICK REFERENCE
 
 **Wichtige Links:**
-- Admin Panel: https://tastycart-3.preview.emergentagent.com/admin
+- Admin Panel: https://paypal-pos-fix.preview.emergentagent.com/admin
 - Resend Dashboard: https://resend.com/domains
-- Failed POS Orders: https://tastycart-3.preview.emergentagent.com/admin/pos/failed-orders
+- Failed POS Orders: https://paypal-pos-fix.preview.emergentagent.com/admin/pos/failed-orders
 
 **Wichtige Credentials:**
 - Super Admin: `admin@zonik-solutions.de`
