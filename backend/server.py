@@ -1551,6 +1551,7 @@ async def create_order(order: OrderCreate, request: Request):
         "items": items_for_db,
         "subtotal": round(subtotal, 2),
         "delivery_fee": round(delivery_fee, 2),
+        "pickup_discount": round(pickup_discount, 2),  # 10% Abholrabatt
         "discount": round(points_discount, 2),
         "points_redeemed": points_redeemed,
         "total": round(total, 2),
