@@ -411,8 +411,6 @@ async def check_delivery_zone(postal_code: str = Query(..., description="Custome
         "free_delivery_threshold": float(delivery_zone.get('free_delivery_threshold', 0.0)),
         "message": f"Lieferung nach {postal_code} möglich! (Mindestbestellwert: {min_order_value}€)"
     }
-        "message": f"Lieferung nach {postal_code} möglich! (Kostenlos)"
-    }
 
 # Categories
 @api_router.get("/categories")
