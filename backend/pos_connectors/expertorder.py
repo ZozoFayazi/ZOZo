@@ -588,17 +588,38 @@ class ExpertOrderConnector(BasePOSConnector):
                 }
                 items.append(main_item)
                 
-                # 2. Customizations als separate Top-Level Items
+                # 2a. NEUE MODIFIER SYSTEM: Strukturierte modifiers{}
+                modifiers = item.get('modifiers', {})
+                if modifiers:
+                    for group_id, modifier_data in modifiers.items():
+                        if isinstance(modifier_data, dict):
+                            modifier_name = modifier_data.get('name', '')
+                            modifier_price = modifier_data.get('price', 0.0)
+                            pos_item_id = modifier_data.get('pos_item_id', '')
+                            
+                            items.append({
+                                "uid": pos_item_id or f"MOD-{group_id}",
+                                "name": modifier_name,
+                                "count": item.get('quantity', 1),
+                                "price": float(modifier_price),
+                                "group": "modifier",
+                                "type": "addon"
+                            })
+                
+                # 2b. LEGACY: String-basierte customizations
                 customizations = item.get('customizations', [])
                 for custom in customizations:
-                    items.append({
-                        "uid": f"MODIFIER-{custom[:20].replace(' ', '-').upper()}",
-                        "name": custom,
-                        "count": 1,
-                        "price": 0.0,
-                        "group": "modifier",
-                        "type": "addon"
-                    })
+                    if isinstance(custom, str):
+                        # Skip if already covered by modifiers
+                        if not any(custom in mod_data.get('name', '') for mod_data in modifiers.values() if isinstance(mod_data, dict)):
+                            items.append({
+                                "uid": f"CUSTOM-{custom[:20].replace(' ', '-').upper()}",
+                                "name": custom,
+                                "count": item.get('quantity', 1),
+                                "price": 0.0,
+                                "group": "modifier",
+                                "type": "addon"
+                            })
                 
                 # 3. Extras
                 extras = item.get('extras', [])
