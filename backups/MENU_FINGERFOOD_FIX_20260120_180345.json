@@ -1,0 +1,704 @@
+{
+  "modifier_groups": [
+    {
+      "_id": "695d1fd4bfb43194e620ba3e",
+      "id": "pizzabroetchen_addon",
+      "max": 1,
+      "min": 1,
+      "options": [
+        {
+          "name": "Mit 3 Pizzabr\u00f6tchen (gratis)",
+          "price": 0,
+          "default": false,
+          "pos_item_id": "PIZZABROETCHEN-ADDON-MIT-3-PIZZABROETCHEN-1"
+        },
+        {
+          "name": "Ohne Pizzabr\u00f6tchen",
+          "price": 0,
+          "default": true,
+          "pos_item_id": "PIZZABROETCHEN-ADDON-OHNE-PIZZABROETCHEN-2"
+        }
+      ],
+      "required": true,
+      "title": "3 Pizzabr\u00f6tchen gratis dazu?",
+      "type": "single_choice"
+    },
+    {
+      "_id": "695d1fd4bfb43194e620ba40",
+      "id": "salad_dressing",
+      "max": 1,
+      "min": 1,
+      "options": [
+        {
+          "name": "American Dressing",
+          "price": 0,
+          "default": true,
+          "pos_item_id": "SALAD-DRESSING-AMERICAN-DRESSING-1"
+        },
+        {
+          "name": "Joghurt-Dressing",
+          "price": 0,
+          "pos_item_id": "SALAD-DRESSING-JOGHURT-DRESSING-2"
+        },
+        {
+          "name": "French-Dressing",
+          "price": 0,
+          "pos_item_id": "SALAD-DRESSING-FRENCH-DRESSING-3"
+        }
+      ],
+      "required": true,
+      "title": "Dressing w\u00e4hlen",
+      "type": "single_choice"
+    },
+    {
+      "_id": "695d1fd4bfb43194e620ba42",
+      "id": "pasta_type",
+      "max": 1,
+      "min": 1,
+      "options": [
+        {
+          "name": "Penne",
+          "price": 0,
+          "default": true,
+          "pos_item_id": "PASTA-TYPE-PENNE-1"
+        },
+        {
+          "name": "Spaghetti",
+          "price": 0,
+          "pos_item_id": "PASTA-TYPE-SPAGHETTI-2"
+        },
+        {
+          "name": "Tagliatelle",
+          "price": 0,
+          "pos_item_id": "PASTA-TYPE-TAGLIATELLE-3"
+        }
+      ],
+      "required": true,
+      "title": "Pasta-Typ w\u00e4hlen",
+      "type": "single_choice"
+    },
+    {
+      "_id": "695faff9bb21267134a560b4",
+      "id": "salad_dressing_required",
+      "name": "Welches Dressing m\u00f6chtest du?",
+      "title": "Dressing w\u00e4hlen",
+      "type": "radio",
+      "required": true,
+      "min_select": 1,
+      "max_select": 1,
+      "options": [
+        {
+          "name": "Hausdressing",
+          "price": 0,
+          "default": true,
+          "pos_item_id": "SALAD-DRESSING-REQUIRED-HAUSDRESSING-1"
+        },
+        {
+          "name": "Joghurtdressing",
+          "price": 0,
+          "pos_item_id": "SALAD-DRESSING-REQUIRED-JOGHURTDRESSING-2"
+        },
+        {
+          "name": "Frenchdressing",
+          "price": 0,
+          "pos_item_id": "SALAD-DRESSING-REQUIRED-FRENCHDRESSING-3"
+        }
+      ],
+      "created_at": "2026-01-13 15:23:50.988000",
+      "updated_at": "2026-01-13 15:23:50.988000"
+    },
+    {
+      "_id": "695faff9bb21267134a560b6",
+      "id": "pizzabroetchen_upsell",
+      "name": "3 Pizzabr\u00f6tchen dazu?",
+      "title": "3 Pizzabr\u00f6tchen dazu?",
+      "type": "radio",
+      "required": true,
+      "options": [
+        {
+          "id": "ohne",
+          "name": "Ohne Pizzabr\u00f6tchen",
+          "price": 0.0,
+          "is_default": true,
+          "pos_item_id": "PIZZABROETCHEN-UPSELL-OHNE-PIZZABROETCHEN-1"
+        },
+        {
+          "id": "mit",
+          "name": "Mit 3 Pizzabr\u00f6tchen (gratis)",
+          "price": 0.0,
+          "pos_item_id": "PIZZABROETCHEN-UPSELL-MIT-3-PIZZABROETCHEN-2"
+        }
+      ]
+    },
+    {
+      "_id": "69666386a78e06c8a9de08ad",
+      "id": "salad_pizzabroetchen_free_choice",
+      "name": "3 Pizzabr\u00f6tchen gratis dazu?",
+      "title": "3 Pizzabr\u00f6tchen gratis dazu?",
+      "type": "radio",
+      "required": true,
+      "min_select": 1,
+      "max_select": 1,
+      "options": [
+        {
+          "name": "Mit 3 Pizzabr\u00f6tchen (gratis)",
+          "price": 0,
+          "default": false,
+          "pos_item_id": "SALAD-PIZZABROETCHEN-FREE-CHOICE-MIT-3-PIZZABROETCHEN-1"
+        },
+        {
+          "name": "Ohne Pizzabr\u00f6tchen",
+          "price": 0,
+          "default": true,
+          "pos_item_id": "SALAD-PIZZABROETCHEN-FREE-CHOICE-OHNE-PIZZABROETCHEN-2"
+        }
+      ],
+      "created_at": "2026-01-13 15:23:50.990000",
+      "updated_at": "2026-01-13 15:23:50.990000"
+    },
+    {
+      "_id": "696e788bf59c6eb7a491ad89",
+      "id": "fingerfood_box_selection_1",
+      "name": "Auswahl 1 (5 St\u00fcck)",
+      "title": "W\u00e4hle deine 1. Portion (5 St\u00fcck)",
+      "required": true,
+      "min_select": 1,
+      "max_select": 1,
+      "options": [
+        {
+          "name": "Mozzarella Sticks (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-MOZZARELLA-5"
+        },
+        {
+          "name": "Chili Cheese Nuggets (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-CHILI-CHEESE-5"
+        },
+        {
+          "name": "Chicken Nuggets (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-CHICKEN-NUGGETS-5"
+        },
+        {
+          "name": "Spicy Chicken Stripes (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-SPICY-STRIPES-5"
+        },
+        {
+          "name": "Onion Rings (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-ONION-RINGS-5"
+        }
+      ]
+    },
+    {
+      "_id": "696e788bf59c6eb7a491ad8a",
+      "id": "fingerfood_box_selection_2",
+      "name": "Auswahl 2 (5 St\u00fcck)",
+      "title": "W\u00e4hle deine 2. Portion (5 St\u00fcck)",
+      "required": true,
+      "min_select": 1,
+      "max_select": 1,
+      "options": [
+        {
+          "name": "Mozzarella Sticks (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-MOZZARELLA-5"
+        },
+        {
+          "name": "Chili Cheese Nuggets (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-CHILI-CHEESE-5"
+        },
+        {
+          "name": "Chicken Nuggets (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-CHICKEN-NUGGETS-5"
+        },
+        {
+          "name": "Spicy Chicken Stripes (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-SPICY-STRIPES-5"
+        },
+        {
+          "name": "Onion Rings (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-ONION-RINGS-5"
+        }
+      ]
+    },
+    {
+      "_id": "696e788bf59c6eb7a491ad8b",
+      "id": "fingerfood_box_selection_3",
+      "name": "Auswahl 3 (5 St\u00fcck)",
+      "title": "W\u00e4hle deine 3. Portion (5 St\u00fcck)",
+      "required": true,
+      "min_select": 1,
+      "max_select": 1,
+      "options": [
+        {
+          "name": "Mozzarella Sticks (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-MOZZARELLA-5"
+        },
+        {
+          "name": "Chili Cheese Nuggets (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-CHILI-CHEESE-5"
+        },
+        {
+          "name": "Chicken Nuggets (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-CHICKEN-NUGGETS-5"
+        },
+        {
+          "name": "Spicy Chicken Stripes (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-SPICY-STRIPES-5"
+        },
+        {
+          "name": "Onion Rings (5 St\u00fcck)",
+          "price": 0,
+          "pos_item_id": "FINGERFOOD-ONION-RINGS-5"
+        }
+      ]
+    },
+    {
+      "_id": "696e788bf59c6eb7a491ad8c",
+      "id": "fingerfood_box_dip_1",
+      "name": "Dip 1",
+      "title": "W\u00e4hle deinen 1. Dip (gratis)",
+      "required": true,
+      "min_select": 1,
+      "max_select": 1,
+      "options": [
+        {
+          "name": "BBQ Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-BBQ"
+        },
+        {
+          "name": "Sweet Chili Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-SWEET-CHILI"
+        },
+        {
+          "name": "Knoblauch Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-KNOBLAUCH"
+        },
+        {
+          "name": "Chili Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-CHILI"
+        },
+        {
+          "name": "Curry Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-CURRY"
+        },
+        {
+          "name": "Sweet & Sour Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-SWEET-SOUR"
+        }
+      ]
+    },
+    {
+      "_id": "696e788bf59c6eb7a491ad8d",
+      "id": "fingerfood_box_dip_2",
+      "name": "Dip 2",
+      "title": "W\u00e4hle deinen 2. Dip (gratis)",
+      "required": true,
+      "min_select": 1,
+      "max_select": 1,
+      "options": [
+        {
+          "name": "BBQ Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-BBQ"
+        },
+        {
+          "name": "Sweet Chili Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-SWEET-CHILI"
+        },
+        {
+          "name": "Knoblauch Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-KNOBLAUCH"
+        },
+        {
+          "name": "Chili Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-CHILI"
+        },
+        {
+          "name": "Curry Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-CURRY"
+        },
+        {
+          "name": "Sweet & Sour Sauce",
+          "price": 0,
+          "pos_item_id": "DIP-SWEET-SOUR"
+        }
+      ]
+    },
+    {
+      "_id": "696fc1b351e63815fb28b88d",
+      "id": "menu_beilage",
+      "name": "Beilage",
+      "title": "Beilage w\u00e4hlen",
+      "type": "radio",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "options": [
+        {
+          "name": "Pommes Normal",
+          "price": 0.0,
+          "default": true,
+          "pos_item_id": "SIDES_FRIES_NORMAL"
+        },
+        {
+          "name": "Pommes Gro\u00df",
+          "price": 1.0,
+          "pos_item_id": "SIDES_FRIES_LARGE"
+        },
+        {
+          "name": "S\u00fc\u00dfkartoffel Pommes",
+          "price": 1.5,
+          "pos_item_id": "SIDES_SWEET_POTATO"
+        },
+        {
+          "name": "Curly Fries",
+          "price": 1.5,
+          "pos_item_id": "SIDES_CURLY_FRIES"
+        }
+      ]
+    },
+    {
+      "_id": "696fc1b351e63815fb28b88e",
+      "id": "menu_getraenk",
+      "name": "Getr\u00e4nk",
+      "title": "Getr\u00e4nk w\u00e4hlen",
+      "type": "radio",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "options": [
+        {
+          "name": "Coca Cola 0,5l",
+          "price": 0.0,
+          "default": true,
+          "pos_item_id": "DRINK_COLA_05"
+        },
+        {
+          "name": "Coca Cola Zero 0,5l",
+          "price": 0.0,
+          "pos_item_id": "DRINK_COLA_ZERO_05"
+        },
+        {
+          "name": "Fanta 0,5l",
+          "price": 0.0,
+          "pos_item_id": "DRINK_FANTA_05"
+        },
+        {
+          "name": "Sprite 0,5l",
+          "price": 0.0,
+          "pos_item_id": "DRINK_SPRITE_05"
+        },
+        {
+          "name": "Wasser 0,5l",
+          "price": 0.0,
+          "pos_item_id": "DRINK_WATER_05"
+        },
+        {
+          "name": "Upgrade auf 1,0l",
+          "price": 1.5,
+          "pos_item_id": "DRINK_UPGRADE_1L"
+        }
+      ]
+    },
+    {
+      "_id": "696fc1b351e63815fb28b88f",
+      "id": "fingerfood_dip",
+      "name": "Dip inklusive",
+      "title": "Dip w\u00e4hlen",
+      "type": "radio",
+      "required": true,
+      "min": 1,
+      "max": 1,
+      "options": [
+        {
+          "name": "Ketchup",
+          "price": 0.0,
+          "default": true,
+          "pos_item_id": "DIP_KETCHUP"
+        },
+        {
+          "name": "Mayonnaise",
+          "price": 0.0,
+          "pos_item_id": "DIP_MAYO"
+        },
+        {
+          "name": "BBQ Sauce",
+          "price": 0.0,
+          "pos_item_id": "DIP_BBQ"
+        },
+        {
+          "name": "Sweet Chili",
+          "price": 0.0,
+          "pos_item_id": "DIP_SWEET_CHILI"
+        },
+        {
+          "name": "Knoblauch Sauce",
+          "price": 0.0,
+          "pos_item_id": "DIP_GARLIC"
+        },
+        {
+          "name": "Curry Sauce",
+          "price": 0.0,
+          "pos_item_id": "DIP_CURRY"
+        }
+      ]
+    }
+  ],
+  "menu_items_menus": [
+    {
+      "_id": "696fc156572fcba0e467019f",
+      "category_id": "693c5e30e51d9e97f092cca6",
+      "name": "Cheeseburger Men\u00fc",
+      "description": "Cheeseburger + Beilage + Getr\u00e4nk deiner Wahl",
+      "price_normal": 11.9,
+      "image": null,
+      "active": true,
+      "modifier_group_ids": [
+        "menu_beilage",
+        "menu_getraenk"
+      ],
+      "tags": [
+        "menu",
+        "combo"
+      ],
+      "allergens": [],
+      "is_vegetarian": false,
+      "is_vegan": false
+    },
+    {
+      "_id": "696fc156572fcba0e46701a0",
+      "category_id": "693c5e30e51d9e97f092cca6",
+      "name": "Bacon Burger Men\u00fc",
+      "description": "Bacon Burger + Beilage + Getr\u00e4nk deiner Wahl",
+      "price_normal": 12.9,
+      "image": null,
+      "active": true,
+      "modifier_group_ids": [
+        "menu_beilage",
+        "menu_getraenk"
+      ],
+      "tags": [
+        "menu",
+        "combo"
+      ],
+      "allergens": [],
+      "is_vegetarian": false,
+      "is_vegan": false
+    },
+    {
+      "_id": "696fc156572fcba0e46701a1",
+      "category_id": "693c5e30e51d9e97f092cca6",
+      "name": "Hamburger Men\u00fc",
+      "description": "Hamburger + Beilage + Getr\u00e4nk deiner Wahl",
+      "price_normal": 10.9,
+      "image": null,
+      "active": true,
+      "modifier_group_ids": [
+        "menu_beilage",
+        "menu_getraenk"
+      ],
+      "tags": [
+        "menu",
+        "combo"
+      ],
+      "allergens": [],
+      "is_vegetarian": false,
+      "is_vegan": false
+    }
+  ],
+  "menu_items_fingerfoods": [
+    {
+      "_id": "693c5e30e51d9e97f092cd72",
+      "name": "Mozzarella Sticks",
+      "description": "Mozzarella Sticks, 6 St\u00fcck + Dip",
+      "category_id": "693c5e30e51d9e97f092ccac",
+      "location_id": null,
+      "price_normal": 5.69,
+      "image_url": "/uploads/products/ed6bca95-b67c-4bb2-8a95-34e672d24a1a.png",
+      "available": true,
+      "is_menu": false,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-14 14:31:23.216000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    },
+    {
+      "_id": "693c5e30e51d9e97f092cd73",
+      "name": "Spicy Chicken Stripes",
+      "description": "Spicy Chicken Stripes, 8 St\u00fcck + Dip",
+      "category_id": "693c5e30e51d9e97f092ccac",
+      "location_id": null,
+      "price_normal": 7.29,
+      "image_url": "/uploads/products/5e16d642-6669-4caf-bef9-ea3c8fa43d67.png",
+      "available": true,
+      "is_menu": false,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-06 09:41:38.561000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    },
+    {
+      "_id": "693c5e30e51d9e97f092cd74",
+      "name": "Chicken Nuggets",
+      "description": "Chicken Nuggets, 6 St\u00fcck + Dip",
+      "category_id": "693c5e30e51d9e97f092ccac",
+      "location_id": null,
+      "price_normal": 6.99,
+      "image_url": "/uploads/products/6febc5a7-79f7-4b1c-8531-3da38262302a.png",
+      "available": true,
+      "is_menu": false,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-06 09:41:38.562000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    },
+    {
+      "_id": "693c5e30e51d9e97f092cd75",
+      "name": "Chicken Wings",
+      "description": "Chicken Wings + Dip",
+      "category_id": "693c5e30e51d9e97f092ccac",
+      "location_id": null,
+      "price_normal": 7.99,
+      "image_url": "/uploads/products/112869a4-e87a-4dde-8582-28a075a20123.png",
+      "available": true,
+      "is_menu": false,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-06 09:41:38.563000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    },
+    {
+      "_id": "693c5e30e51d9e97f092cd76",
+      "name": "Crunchy Wings",
+      "description": "Chicken Wings mit Dip nach Wahl",
+      "category_id": "693c5e30e51d9e97f092ccac",
+      "location_id": null,
+      "price_normal": 8.49,
+      "image_url": "/uploads/products/887babb5-94bd-45d6-b6e1-3437de0cbbf8.png",
+      "available": true,
+      "is_menu": false,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-06 09:41:38.563000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    },
+    {
+      "_id": "693c5e30e51d9e97f092cd78",
+      "name": "Chili-Cheese Nuggets",
+      "description": "Chili-Cheese Nuggets, ca. 8 St\u00fcck + 1 Dip gratis",
+      "category_id": "693c5e30e51d9e97f092ccac",
+      "location_id": null,
+      "price_normal": 6.89,
+      "image_url": "/uploads/products/3e37bccf-a9e1-44c0-825d-21c87043d142.png",
+      "available": true,
+      "is_menu": false,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-06 09:41:38.565000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    },
+    {
+      "_id": "693c5e30e51d9e97f092cd79",
+      "name": "Onion Rings",
+      "description": "Onion Rings, 8 St\u00fcck + Dip",
+      "category_id": "693c5e30e51d9e97f092ccac",
+      "location_id": null,
+      "price_normal": 5.99,
+      "image_url": "/uploads/products/485e22d3-9663-464d-8ff6-cfd6e6777e93.png",
+      "available": true,
+      "is_menu": false,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-06 09:41:38.566000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    },
+    {
+      "_id": "693c5e30e51d9e97f092cd84",
+      "name": "Kiddy Nuggets Burger",
+      "description": "Kiddy Nuggets Burger mit einer Kiddy Pommes. Inkl. Getr\u00e4nk, Lolly, Luftballon und Spielzeug",
+      "category_id": "693c5e30e51d9e97f092ccae",
+      "location_id": null,
+      "price_normal": 9.49,
+      "image_url": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
+      "available": true,
+      "is_menu": true,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-06 09:41:38.574000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    },
+    {
+      "_id": "693c5e30e51d9e97f092cd85",
+      "name": "Kiddy Chicken Nuggets (4 St\u00fcck)",
+      "description": "4 Chicken Nuggets mit Kiddy Pommes. Inkl. Getr\u00e4nk, Lolly, Luftballon und Spielzeug",
+      "category_id": "693c5e30e51d9e97f092ccae",
+      "location_id": null,
+      "price_normal": 9.49,
+      "image_url": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
+      "available": true,
+      "is_menu": true,
+      "created_at": "2025-12-12 18:25:52.345000",
+      "featured_order": 999,
+      "is_featured": false,
+      "active": true,
+      "updated_at": "2026-01-06 09:41:38.575000",
+      "modifier_group_ids": [
+        "fingerfood_dip"
+      ]
+    }
+  ]
+}
