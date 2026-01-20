@@ -1493,6 +1493,36 @@ async def create_order(order: OrderCreate, request: Request):
     if is_pickup:
         pickup_discount = subtotal * 0.10  # 10% vom Subtotal
     
+    # ===== DAILY DEAL RABATT: Automatisch berechnen =====
+    daily_deal_discount = 0.0
+    daily_deal_info = None
+    
+    try:
+        # Prepare items for daily deal calculation
+        cart_items_for_deal = []
+        for item in order.items:
+            cart_items_for_deal.append({
+                "menu_item_id": item.menu_item_id,
+                "name": item.name,
+                "category": getattr(item, 'category', None),
+                "price": item.price,
+                "quantity": item.quantity,
+                "size": item.size
+            })
+        
+        # Calculate daily deal discount
+        deal_result = await daily_deals_service.calculate_cart_discounts(
+            cart_items_for_deal,
+            order.location_id
+        )
+        
+        if deal_result and deal_result.get('discount_amount', 0) > 0:
+            daily_deal_discount = deal_result.get('discount_amount', 0)
+            daily_deal_info = deal_result.get('deal')
+            logging.info(f"Daily deal applied: {daily_deal_info.get('title')} - {daily_deal_discount}€")
+    except Exception as e:
+        logging.warning(f"Daily deal calculation failed: {str(e)}")
+    
     # ===== LOYALTY: Apply points redemption =====
     points_discount = 0.0
     points_redeemed = 0
@@ -1507,13 +1537,13 @@ async def create_order(order: OrderCreate, request: Request):
             points_redeemed = order.points_to_redeem
             
             # Don't allow discount to exceed total
-            if points_discount > (subtotal + delivery_fee - pickup_discount):
-                points_discount = subtotal + delivery_fee - pickup_discount
+            if points_discount > (subtotal + delivery_fee - pickup_discount - daily_deal_discount):
+                points_discount = subtotal + delivery_fee - pickup_discount - daily_deal_discount
                 points_redeemed = int(points_discount / 0.50)
         else:
             raise HTTPException(status_code=400, detail="Nicht genügend Punkte verfügbar")
     
-    total = subtotal + delivery_fee - pickup_discount - points_discount
+    total = subtotal + delivery_fee - pickup_discount - daily_deal_discount - points_discount
     
     # Generate order number
     count = await db.orders.count_documents({})
