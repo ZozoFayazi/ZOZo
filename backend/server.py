@@ -1530,7 +1530,6 @@ async def create_order(order: OrderCreate, request: Request):
     try:
         raw_data = json.loads(raw_body)
         raw_items = raw_data.get('items', [])
-        logging.info(f"DEBUG: Raw customer data from request: {raw_data.get('customer', {})}")
     except:
         raw_items = []
     
