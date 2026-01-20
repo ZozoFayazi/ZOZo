@@ -588,7 +588,8 @@ class ExpertOrderConnector(BasePOSConnector):
                 }
                 items.append(main_item)
                 
-                # 2a. NEUE MODIFIER SYSTEM: Strukturierte modifiers{}
+                # 2a. NEUE MODIFIER SYSTEM: Strukturierte modifiers{} (Salate, Fingerfoods, etc.)
+                # CRITICAL: Jeder modifier wird als SEPARATE Top-Level Item gesendet!
                 modifiers = item.get('modifiers', {})
                 if modifiers:
                     for group_id, modifier_data in modifiers.items():
@@ -597,12 +598,22 @@ class ExpertOrderConnector(BasePOSConnector):
                             modifier_price = modifier_data.get('price', 0.0)
                             pos_item_id = modifier_data.get('pos_item_id', '')
                             
+                            # Determine group type based on group_id
+                            if 'dressing' in group_id.lower():
+                                group_type = "DRESSING"
+                            elif 'pizzabroetchen' in group_id.lower() or 'bread' in group_id.lower():
+                                group_type = "BREAD"
+                            elif 'dip' in group_id.lower():
+                                group_type = "DIP"
+                            else:
+                                group_type = "MODIFIER"
+                            
                             items.append({
                                 "uid": pos_item_id or f"MOD-{group_id}",
                                 "name": modifier_name,
                                 "count": item.get('quantity', 1),
                                 "price": float(modifier_price),
-                                "group": "modifier",
+                                "group": group_type,
                                 "type": "addon"
                             })
                 
