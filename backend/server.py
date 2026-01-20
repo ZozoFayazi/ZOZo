@@ -1488,16 +1488,24 @@ async def create_order(order: OrderCreate, request: Request):
     # Liefergebiet-Validierung
     delivery_zone = location.get('delivery_zone', {})
     customer_postal_code = order.customer.postal_code
+    customer_city = order.customer.city.lower() if order.customer.city else ""
     is_pickup = getattr(order, 'is_pickup', False)
     
     # PLZ-Validierung (nur für Lieferung)
     if not is_pickup:
         allowed_plzs = delivery_zone.get('postal_codes', [])
+        city_rules = delivery_zone.get('city_mbw_rules', {})
         
-        if allowed_plzs and customer_postal_code not in allowed_plzs:
+        # Check PLZ first
+        plz_allowed = not allowed_plzs or customer_postal_code in allowed_plzs
+        
+        # Check city name (für Wakendorf etc.)
+        city_allowed = any(city_name.lower() in customer_city for city_name in city_rules.keys())
+        
+        if not plz_allowed and not city_allowed:
             raise HTTPException(
                 status_code=400,
-                detail=f"Wir liefern leider nicht nach {customer_postal_code}. Bitte wähle Abholung oder einen anderen Standort."
+                detail=f"Wir liefern leider nicht nach {customer_postal_code} ({order.customer.city}). Bitte wähle Abholung oder einen anderen Standort."
             )
     
     # Calculate totals
@@ -1505,14 +1513,27 @@ async def create_order(order: OrderCreate, request: Request):
     
     # Mindestbestellwert-Prüfung (nur für Lieferung, nicht für Abholung)
     if not is_pickup:
-        # Get MBW for this specific PLZ
+        # Get MBW: 1. Try PLZ, 2. Try City, 3. Use default
         postal_code_mbw = delivery_zone.get('postal_code_mbw', {})
-        min_order_value = postal_code_mbw.get(customer_postal_code, delivery_zone.get('default_min_order_value', 0.0))
+        city_mbw_rules = delivery_zone.get('city_mbw_rules', {})
+        
+        min_order_value = postal_code_mbw.get(customer_postal_code)
+        
+        # If not found by PLZ, try city name
+        if min_order_value is None:
+            for city_name, mbw in city_mbw_rules.items():
+                if city_name.lower() in customer_city:
+                    min_order_value = mbw
+                    break
+        
+        # Fallback to default
+        if min_order_value is None:
+            min_order_value = delivery_zone.get('default_min_order_value', 0.0)
         
         if subtotal < min_order_value:
             raise HTTPException(
                 status_code=400,
-                detail=f"Mindestbestellwert für PLZ {customer_postal_code}: {min_order_value}€. Deine Bestellung: {subtotal:.2f}€"
+                detail=f"Mindestbestellwert für {order.customer.city} (PLZ {customer_postal_code}): {min_order_value}€. Deine Bestellung: {subtotal:.2f}€"
             )
     
     # No delivery fee, no minimum for pickup
