@@ -1162,7 +1162,8 @@ async def capture_paypal_order(capture_request: PayPalOrderCapture):
             "order_number": order_number,
             "payment_status": "captured",
             "pos_pushed": pos_pushed,
-            "transaction_id": capture_result.get('transaction_id')
+            "transaction_id": capture_result.get('transaction_id'),
+            "points_earned": points_earned  # Include loyalty points in response
         }
         
     except HTTPException:
