@@ -1660,51 +1660,64 @@ async def create_order(order: OrderCreate, request: Request):
     # ===== LOYALTY SYSTEM: Award points and check achievements =====
     points_earned = 0
     try:
-        customer_email = order.customer.email
+        # CRITICAL: Check if customer has email (required for loyalty)
+        customer_email = getattr(order.customer, 'email', None)
         
-        # Ensure loyalty account exists
-        await get_or_create_loyalty_account(customer_email)
-        
-        # Deduct redeemed points first
-        if points_redeemed > 0:
-            await add_points_to_account(
+        if customer_email:
+            # Ensure loyalty account exists
+            await get_or_create_loyalty_account(customer_email)
+            
+            # Deduct redeemed points first
+            if points_redeemed > 0:
+                await add_points_to_account(
+                    customer_email,
+                    -points_redeemed,
+                    f"Eingelöst bei Bestellung {order_number}",
+                    order_id=str(result.inserted_id)
+                )
+                logging.info(f"Loyalty: Deducted {points_redeemed} points from {customer_email}")
+            
+            # Calculate points earned: 10€ = 1 point (so total/10)
+            # Note: Points are earned on the FINAL total (after discount)
+            points_earned = int(total / 10)
+            
+            if points_earned > 0:
+                # Add earned points
+                await add_points_to_account(
+                    customer_email,
+                    points_earned,
+                    f"Verdient bei Bestellung {order_number}",
+                    order_id=str(result.inserted_id)
+                )
+                logging.info(f"Loyalty: Awarded {points_earned} points to {customer_email}")
+            
+            # Check and unlock achievements
+            unlocked_achievements = await check_achievements(
                 customer_email,
-                -points_redeemed,
-                f"Eingelöst bei Bestellung {order_number}",
-                order_id=str(result.inserted_id)
+                total,
+                [item.dict() for item in order.items],
+                datetime.utcnow()
             )
-        
-        # Calculate points earned: 10€ = 1 point (so total/10)
-        # Note: Points are earned on the FINAL total (after discount)
-        points_earned = int(total / 10)
-        
-        if points_earned > 0:
-            # Add earned points
-            await add_points_to_account(
-                customer_email,
-                points_earned,
-                f"Verdient bei Bestellung {order_number}",
-                order_id=str(result.inserted_id)
-            )
-        
-        # Check and unlock achievements
-        unlocked_achievements = await check_achievements(
-            customer_email,
-            total,
-            [item.dict() for item in order.items],
-            datetime.utcnow()
-        )
-        
-        # Store achievement info in order for notification purposes
-        if unlocked_achievements:
-            await db.orders.update_one(
-                {"_id": result.inserted_id},
-                {"$set": {"unlocked_achievements": unlocked_achievements}}
-            )
+            
+            # Store achievement info in order for notification purposes
+            if unlocked_achievements:
+                await db.orders.update_one(
+                    {"_id": result.inserted_id},
+                    {"$set": {"unlocked_achievements": unlocked_achievements}}
+                )
+                logging.info(f"Loyalty: Unlocked achievements for {customer_email}: {unlocked_achievements}")
+        else:
+            # No email provided - skip loyalty processing
+            logging.info(f"Loyalty: Skipped for order {order_number} (no email provided)")
+            if points_redeemed > 0:
+                # This should not happen (frontend should prevent this)
+                logging.error(f"Loyalty: Order {order_number} attempted to redeem {points_redeemed} points without email!")
         
     except Exception as e:
         # Log error but don't fail order creation
-        print(f"Loyalty points award failed: {str(e)}")
+        logging.error(f"Loyalty points processing failed for order {order_number}: {str(e)}")
+        import traceback
+        logging.error(traceback.format_exc())
     
     # ===== POS INTEGRATION: Auto-push to configured POS system =====
     # ONLY for non-PayPal orders - PayPal orders will be pushed after payment capture
