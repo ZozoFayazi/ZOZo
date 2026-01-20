@@ -1725,11 +1725,8 @@ async def create_order(order: OrderCreate, request: Request):
     # ===== LOYALTY SYSTEM: Award points and check achievements =====
     points_earned = 0
     try:
-        # CRITICAL FIX: Pydantic filtering out email for unknown reasons
-        # Use raw_data instead of parsed Pydantic model
+        # CRITICAL FIX: Extract email from raw request (Pydantic filters Optional fields)
         customer_email = raw_data.get('customer', {}).get('email')
-        
-        logging.info(f"DEBUG Loyalty: email from raw_data: {repr(customer_email)}")
         
         # Only process loyalty if email is not None and not empty string
         if customer_email and customer_email.strip():
