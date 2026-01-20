@@ -1726,13 +1726,11 @@ async def create_order(order: OrderCreate, request: Request):
     # ===== LOYALTY SYSTEM: Award points and check achievements =====
     points_earned = 0
     try:
-        # CRITICAL: Check if customer has email (required for loyalty)
-        # Pydantic v2: Use model_dump() to safely access Optional fields
-        customer_data = order.customer.model_dump() if hasattr(order.customer, 'model_dump') else order.customer.dict()
-        customer_email = customer_data.get('email')
+        # CRITICAL FIX: Pydantic filtering out email for unknown reasons
+        # Use raw_data instead of parsed Pydantic model
+        customer_email = raw_data.get('customer', {}).get('email')
         
-        logging.info(f"DEBUG Loyalty: customer_data keys: {list(customer_data.keys())}")
-        logging.info(f"DEBUG Loyalty: email value: {repr(customer_email)}")
+        logging.info(f"DEBUG Loyalty: email from raw_data: {repr(customer_email)}")
         
         # Only process loyalty if email is not None and not empty string
         if customer_email and customer_email.strip():
