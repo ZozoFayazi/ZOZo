@@ -866,6 +866,7 @@ class PayPalOrderCreate(BaseModel):
     subtotal: float
     delivery_fee: float
     discount: float = 0
+    points_to_redeem: int = 0  # Loyalty points being redeemed
     total: float
     is_pickup: bool = False
     currency: str = "EUR"
