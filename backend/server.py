@@ -1487,29 +1487,39 @@ async def create_order(order: OrderCreate, request: Request):
     if not location:
         raise HTTPException(status_code=404, detail="Location not found")
     
-    # DELIVERY ZONE VALIDATION DEAKTIVIERT - Jeder kann bestellen
-    # delivery_zone = location.get('delivery_zone', {})
-    # customer_postal_code = order.customer.postal_code
-    
-    # Skip delivery zone validation for pickup orders
+    # Liefergebiet-Validierung
+    delivery_zone = location.get('delivery_zone', {})
+    customer_postal_code = order.customer.postal_code
     is_pickup = getattr(order, 'is_pickup', False)
     
-    # KEINE PLZ-Validierung mehr (temporär deaktiviert)
-    # if not is_pickup:
-    #     if delivery_zone and customer_postal_code not in delivery_zone.get('postal_codes', []):
-    #         raise HTTPException(...)
+    # PLZ-Validierung (nur für Lieferung)
+    if not is_pickup:
+        allowed_plzs = delivery_zone.get('postal_codes', [])
+        
+        if allowed_plzs and customer_postal_code not in allowed_plzs:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Wir liefern leider nicht nach {customer_postal_code}. Bitte wähle Abholung oder einen anderen Standort."
+            )
     
-    # Calculate totals using location-specific settings
+    # Calculate totals
     subtotal = sum(item.price * item.quantity for item in order.items)
     
-    # KEINE Mindestbestellwert-Prüfung mehr (temporär deaktiviert)
-    min_order_value = 0.0
-    delivery_fee = 0.0  # Kostenlos überall
+    # Mindestbestellwert-Prüfung (nur für Lieferung, nicht für Abholung)
+    if not is_pickup:
+        # Get MBW for this specific PLZ
+        postal_code_mbw = delivery_zone.get('postal_code_mbw', {})
+        min_order_value = postal_code_mbw.get(customer_postal_code, delivery_zone.get('default_min_order_value', 0.0))
+        
+        if subtotal < min_order_value:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Mindestbestellwert für PLZ {customer_postal_code}: {min_order_value}€. Deine Bestellung: {subtotal:.2f}€"
+            )
     
-    # MINDESTBESTELLWERT DEAKTIVIERT - Jeder kann bestellen
-    # (wird später wieder aktiviert wenn Liefergebiete konfiguriert sind)
-    # if not is_pickup and subtotal < min_order_value:
-    #     raise HTTPException(...)
+    # No delivery fee, no minimum for pickup
+    min_order_value = 0.0 if is_pickup else min_order_value
+    delivery_fee = 0.0  # Kostenlos überall
     
     # ===== ABHOLRABATT: 10% dauerhaft für alle Abholer =====
     pickup_discount = 0.0
