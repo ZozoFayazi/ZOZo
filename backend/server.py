@@ -1488,6 +1488,11 @@ async def create_order(order: OrderCreate, request: Request):
     # if not is_pickup and subtotal < min_order_value:
     #     raise HTTPException(...)
     
+    # ===== ABHOLRABATT: 10% dauerhaft für alle Abholer =====
+    pickup_discount = 0.0
+    if is_pickup:
+        pickup_discount = subtotal * 0.10  # 10% vom Subtotal
+    
     # ===== LOYALTY: Apply points redemption =====
     points_discount = 0.0
     points_redeemed = 0
@@ -1502,13 +1507,13 @@ async def create_order(order: OrderCreate, request: Request):
             points_redeemed = order.points_to_redeem
             
             # Don't allow discount to exceed total
-            if points_discount > (subtotal + delivery_fee):
-                points_discount = subtotal + delivery_fee
+            if points_discount > (subtotal + delivery_fee - pickup_discount):
+                points_discount = subtotal + delivery_fee - pickup_discount
                 points_redeemed = int(points_discount / 0.50)
         else:
             raise HTTPException(status_code=400, detail="Nicht genügend Punkte verfügbar")
     
-    total = subtotal + delivery_fee - points_discount
+    total = subtotal + delivery_fee - pickup_discount - points_discount
     
     # Generate order number
     count = await db.orders.count_documents({})
