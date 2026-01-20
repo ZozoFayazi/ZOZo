@@ -390,6 +390,7 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                     subtotal: cartTotal,
                     deliveryFee: deliveryFee,
                     discount: pointsDiscount,
+                    points_to_redeem: pointsToRedeem,  // Include points for loyalty tracking
                     total: finalTotal,
                     isPickup: formData.delivery_type === 'pickup'
                   }}
