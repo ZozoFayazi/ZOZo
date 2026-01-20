@@ -178,7 +178,27 @@ Das PayPal-Capture-Endpoint (`/api/paypal/capture-order`, Zeile 942-1109) erstel
 
 ## 8. KRITISCHE BUGS
 
-### 🚨 BUG #1: PayPal-Bestellungen vergeben KEINE Punkte
+### 🚨 BUG #1: Cash/Karte - Email-Check crasht Loyalty-System
+**Datei:** `/app/backend/server.py` Zeile 1663  
+**Fehler:** `'CustomerInfo' object has no attribute 'email'`
+
+**Problem:**  
+```python
+customer_email = order.customer.email  # Zeile 1663
+# Aber: email ist Optional[str] in CustomerInfo!
+# Wenn email = None → AttributeError → try-catch schluckt es → keine Punkte
+```
+
+**Impact:**  
+- **ALLE Bestellungen ohne Email:** Keine Punkte gutgeschrieben
+- **ALLE Bestellungen mit eingelösten Punkten aber ohne Email:** Punkte werden NICHT abgezogen (Betrug möglich!)
+- Error wird "silent" geloggt, User bekommt keine Fehlermeldung
+
+**Fix notwendig:** JA (KRITISCH - P0)
+
+---
+
+### 🚨 BUG #2: PayPal-Bestellungen vergeben KEINE Punkte
 **Datei:** `/app/backend/server.py`  
 **Endpoint:** `/api/paypal/capture-order` (Zeile 942-1109)  
 
