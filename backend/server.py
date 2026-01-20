@@ -1645,20 +1645,25 @@ async def create_order(order: OrderCreate, request: Request):
     points_redeemed = 0
     
     if hasattr(order, 'points_to_redeem') and order.points_to_redeem > 0:
-        # Check customer's loyalty account
-        loyalty_account = await db.loyalty_accounts.find_one({"customer_email": order.customer.email})
+        # Check customer's loyalty account (use raw_data to avoid Pydantic issues)
+        customer_email_for_redemption = raw_data.get('customer', {}).get('email')
         
-        if loyalty_account and loyalty_account.get("points", 0) >= order.points_to_redeem:
-            # Calculate discount: 1 point = 0.50€
-            points_discount = order.points_to_redeem * 0.50
-            points_redeemed = order.points_to_redeem
+        if customer_email_for_redemption:
+            loyalty_account = await db.loyalty_accounts.find_one({"customer_email": customer_email_for_redemption})
             
-            # Don't allow discount to exceed total
-            if points_discount > (subtotal + delivery_fee - pickup_discount - daily_deal_discount):
-                points_discount = subtotal + delivery_fee - pickup_discount - daily_deal_discount
-                points_redeemed = int(points_discount / 0.50)
+            if loyalty_account and loyalty_account.get("points", 0) >= order.points_to_redeem:
+                # Calculate discount: 1 point = 0.50€
+                points_discount = order.points_to_redeem * 0.50
+                points_redeemed = order.points_to_redeem
+                
+                # Don't allow discount to exceed total
+                if points_discount > (subtotal + delivery_fee - pickup_discount - daily_deal_discount):
+                    points_discount = subtotal + delivery_fee - pickup_discount - daily_deal_discount
+                    points_redeemed = int(points_discount / 0.50)
+            else:
+                raise HTTPException(status_code=400, detail="Nicht genügend Punkte verfügbar")
         else:
-            raise HTTPException(status_code=400, detail="Nicht genügend Punkte verfügbar")
+            raise HTTPException(status_code=400, detail="Email erforderlich um Punkte einzulösen")
     
     total = subtotal + delivery_fee - pickup_discount - daily_deal_discount - points_discount
     
