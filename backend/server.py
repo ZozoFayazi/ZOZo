@@ -1047,6 +1047,69 @@ async def capture_paypal_order(capture_request: PayPalOrderCapture):
             }
         )
         
+        # ===== LOYALTY SYSTEM: Award points for PayPal orders =====
+        points_earned = 0
+        points_redeemed_value = order_data.get('points_redeemed', 0)
+        try:
+            # Check if customer has email (required for loyalty)
+            customer_email = order_doc['customer'].get('email')
+            
+            if customer_email:
+                # Ensure loyalty account exists
+                await get_or_create_loyalty_account(customer_email)
+                
+                # Deduct redeemed points first (if any were used in checkout)
+                if points_redeemed_value > 0:
+                    await add_points_to_account(
+                        customer_email,
+                        -points_redeemed_value,
+                        f"Eingelöst bei Bestellung {order_number} (PayPal)",
+                        order_id=str(result.inserted_id)
+                    )
+                    logging.info(f"PayPal Loyalty: Deducted {points_redeemed_value} points from {customer_email}")
+                
+                # Calculate points earned: 10€ = 1 point
+                # Based on FINAL total (after all discounts)
+                final_total = order_doc['total']
+                points_earned = int(final_total / 10)
+                
+                if points_earned > 0:
+                    # Add earned points
+                    await add_points_to_account(
+                        customer_email,
+                        points_earned,
+                        f"Verdient bei Bestellung {order_number} (PayPal)",
+                        order_id=str(result.inserted_id)
+                    )
+                    logging.info(f"PayPal Loyalty: Awarded {points_earned} points to {customer_email}")
+                
+                # Check and unlock achievements
+                unlocked_achievements = await check_achievements(
+                    customer_email,
+                    final_total,
+                    order_doc['items'],
+                    datetime.utcnow()
+                )
+                
+                # Store achievement info in order
+                if unlocked_achievements:
+                    await db.orders.update_one(
+                        {"_id": result.inserted_id},
+                        {"$set": {"unlocked_achievements": unlocked_achievements}}
+                    )
+                    logging.info(f"PayPal Loyalty: Unlocked achievements for {customer_email}: {unlocked_achievements}")
+            else:
+                # No email - skip loyalty
+                logging.info(f"PayPal Loyalty: Skipped for order {order_number} (no email)")
+                if points_redeemed_value > 0:
+                    logging.error(f"PayPal Loyalty: Order {order_number} attempted to redeem {points_redeemed_value} points without email!")
+        
+        except Exception as e:
+            # Log error but don't fail PayPal order finalization
+            logging.error(f"PayPal Loyalty processing failed for order {order_number}: {str(e)}")
+            import traceback
+            logging.error(traceback.format_exc())
+        
         # NOW push to POS (after payment confirmed)
         pos_pushed = False
         try:
