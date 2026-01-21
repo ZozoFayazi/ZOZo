@@ -4867,6 +4867,9 @@ async def health_check():
             "service": "zozo-burger-api",
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
+    except Exception as e:
+        logging.error(f"Health check failed: {str(e)}")
+        raise HTTPException(status_code=503, detail="Service unhealthy")
 
 
 # Also add health check under /api prefix for consistency
