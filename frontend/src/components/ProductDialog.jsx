@@ -63,7 +63,10 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         menu_requires_side: product.menu_requires_side !== false, // default true
         menu_requires_drink: product.menu_requires_drink !== false, // default true
         menu_upgrade_price_medium: product.menu_upgrade_price_medium || '',
-        menu_upgrade_price_large: product.menu_upgrade_price_large || ''
+        menu_upgrade_price_large: product.menu_upgrade_price_large || '',
+        show_as_checkout_upsell: product.show_as_checkout_upsell || false,
+        upsell_priority: product.upsell_priority || 5,
+        upsell_text: product.upsell_text || ''
       });
       setImagePreview(product.image_url || '');
     } else {
@@ -82,7 +85,10 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         menu_requires_side: true,
         menu_requires_drink: true,
         menu_upgrade_price_medium: '',
-        menu_upgrade_price_large: ''
+        menu_upgrade_price_large: '',
+        show_as_checkout_upsell: false,
+        upsell_priority: 5,
+        upsell_text: ''
       });
       setImagePreview('');
     }
