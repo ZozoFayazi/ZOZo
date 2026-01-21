@@ -641,11 +641,32 @@ class ExpertOrderConnector(BasePOSConnector):
                         })
             
             else:
-                # KEIN MENÜ: Normale Artikel-Struktur
-                # 1. Main product
+                # KEIN MENÜ: Normale Artikel-Struktur (einzelne Burger, Salate, etc.)
+                # 1. Main product - MIT Grammzahl bei Burgern
+                item_name = item.get('name', '')
+                item_size = item.get('size', '')
+                
+                # Add gram weight for burgers
+                is_burger = any(word in item_name.lower() for word in ['burger', 'smash'])
+                
+                if is_burger and item_size and item_size.lower() != 'normal':
+                    size_upper = item_size.upper()
+                    
+                    # Add gram weight
+                    if size_upper == 'MEDIUM':
+                        size_with_weight = 'Medium 125g'
+                    elif size_upper == 'LARGE':
+                        size_with_weight = 'Large 180g'
+                    else:
+                        size_with_weight = item_size.capitalize()
+                    
+                    # Add to name if not already there
+                    if size_with_weight.lower() not in item_name.lower():
+                        item_name = f"{item_name} {size_with_weight}"
+                
                 main_item = {
                     "uid": item.get('menu_item_id', ''),
-                    "name": item.get('name', ''),
+                    "name": item_name,
                     "count": item.get('quantity', 1),
                     "price": float(item.get('price', 0)),
                     "items": []
