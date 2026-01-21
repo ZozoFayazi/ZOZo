@@ -253,63 +253,33 @@ def send_verification_email(email: str, verification_code: str) -> bool:
     return send_email(email, "🔐 ZOZO Burger - Verifiziere deine E-Mail", html)
 
 def send_order_confirmation_email(order: dict, location: dict) -> bool:
-    """Send order confirmation email"""
-    customer = order.get('customer', {})
-    items_html = ""
-    
-    for item in order.get('items', []):
-        size_text = f" ({item.get('size')})" if item.get('size') else ""
-        items_html += f"""
-        <tr>
-            <td style="padding: 10px; border-bottom: 1px solid #333;">
-                {item.get('quantity')}x {item.get('name')}{size_text}
-            </td>
-            <td style="padding: 10px; border-bottom: 1px solid #333; text-align: right;">
-                €{(item.get('price', 0) * item.get('quantity', 1)):.2f}
-            </td>
-        </tr>
-        """
-    
-    points_earned = int(order.get('total', 0) / 10)
-    
-    content = f"""
-        <h1>✅ Bestellung bestätigt!</h1>
-        <p>Vielen Dank für deine Bestellung bei ZOZO Burger!</p>
-        
-        <div class="info-box">
-            <p><strong>📋 Bestellnummer:</strong> {order.get('order_number')}</p>
-            <p><strong>🏪 Filiale:</strong> {location.get('name')}</p>
-            <p><strong>⏱️ Geschätzte Lieferzeit:</strong> {order.get('estimated_time', 30)} Minuten</p>
-        </div>
-        
-        <h2 style="color: #dc2626; margin-top: 30px;">Deine Bestellung:</h2>
-        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-            {items_html}
-            <tr style="font-weight: bold; font-size: 18px;">
-                <td style="padding: 15px 10px; border-top: 2px solid #dc2626;">Gesamt</td>
-                <td style="padding: 15px 10px; border-top: 2px solid #dc2626; text-align: right; color: #dc2626;">
-                    €{order.get('total', 0):.2f}
-                </td>
-            </tr>
-        </table>
-        
-        <div class="info-box">
-            <p><strong>🎁 Treuepunkte verdient: {points_earned} Punkte!</strong></p>
-            <p>Du hast {points_earned} Treuepunkte für diese Bestellung gesammelt.</p>
-        </div>
-        
-        <p><strong>📍 Lieferadresse:</strong><br>
-        {customer.get('name')}<br>
-        {customer.get('address')}<br>
-        {customer.get('postal_code')} {customer.get('city')}</p>
-        
-        <p><strong>💳 Zahlungsmethode:</strong> {order.get('payment_method', 'Nicht angegeben')}</p>
-        
-        <p style="margin-top: 30px;">Wir bereiten deine Bestellung bereits zu! 🔥</p>
     """
+    Send complete order confirmation email with all details
+    Uses new template with modifiers, payment info, etc.
+    """
+    from email_templates import get_order_confirmation_html
     
-    html = get_base_email_template(content, "Bestellung bestätigt")
-    return send_email(customer.get('email'), f"✅ Bestellung {order.get('order_number')} bestätigt", html)
+    customer = order.get('customer', {})
+    customer_email = customer.get('email')
+    
+    # Skip if no email
+    if not customer_email:
+        logger.info(f"Skipping order confirmation email for {order.get('order_number')} - no email provided")
+        return True  # Not a failure, just skip
+    
+    try:
+        # Generate HTML using complete template
+        html = get_order_confirmation_html(order, location)
+        
+        # Send email
+        order_number = order.get('order_number', 'N/A')
+        subject = f"✅ Bestellung {order_number} bestätigt - ZOZO Burger"
+        
+        return send_email(customer_email, subject, html)
+        
+    except Exception as e:
+        logger.error(f"Failed to send order confirmation email: {str(e)}")
+        return False
 
 def send_status_update_email(order: dict, new_status: str, location: dict) -> bool:
     """Send order status update email"""
