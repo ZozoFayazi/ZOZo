@@ -118,6 +118,7 @@ class MenuItemCreate(BaseModel):
     price_medium: Optional[float] = None
     price_large: Optional[float] = None
     price_normal: Optional[float] = None
+    size_labels: Optional[dict] = None  # e.g. {"medium": "Medium (125g)", "large": "Large (180g)"}
     image_url: Optional[str] = None
     tags: List[str] = []
     allergens: List[str] = []
