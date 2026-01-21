@@ -54,7 +54,12 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         price_large: product.price_large || '',
         image_url: product.image_url || '',
         size_label_medium: product.size_labels?.medium || 'Medium (125g)',
-        size_label_large: product.size_labels?.large || 'Large (180g)'
+        size_label_large: product.size_labels?.large || 'Large (180g)',
+        can_upgrade_to_menu: product.can_upgrade_to_menu || false,
+        menu_requires_side: product.menu_requires_side !== false, // default true
+        menu_requires_drink: product.menu_requires_drink !== false, // default true
+        menu_upgrade_price_medium: product.menu_upgrade_price_medium || '',
+        menu_upgrade_price_large: product.menu_upgrade_price_large || ''
       });
       setImagePreview(product.image_url || '');
     } else {
@@ -68,7 +73,12 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         price_large: '',
         image_url: '',
         size_label_medium: 'Medium (125g)',
-        size_label_large: 'Large (180g)'
+        size_label_large: 'Large (180g)',
+        can_upgrade_to_menu: false,
+        menu_requires_side: true,
+        menu_requires_drink: true,
+        menu_upgrade_price_medium: '',
+        menu_upgrade_price_large: ''
       });
       setImagePreview('');
     }
