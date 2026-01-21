@@ -662,6 +662,72 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
           })()}
         </div>
         
+        {/* Checkout Upselling Configuration */}
+        <div className="border-t pt-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="show_as_checkout_upsell" className="text-sm font-medium">
+                🛒 Als Checkout-Upsell anzeigen
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Wird im Warenkorb als Empfehlung angezeigt ("Vergiss nicht...")
+              </p>
+            </div>
+            <Switch
+              id="show_as_checkout_upsell"
+              checked={formData.show_as_checkout_upsell}
+              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, show_as_checkout_upsell: checked }))}
+              data-testid="upsell-toggle"
+            />
+          </div>
+          
+          {formData.show_as_checkout_upsell && (
+            <div className="space-y-4 pl-4 border-l-2 border-primary/20">
+              {/* Upsell Priority */}
+              <div className="space-y-2">
+                <Label htmlFor="upsell_priority" className="text-sm">
+                  Priorität: {formData.upsell_priority}/10
+                </Label>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Höhere Priorität = weiter oben angezeigt
+                </p>
+                <input
+                  type="range"
+                  id="upsell_priority"
+                  min="1"
+                  max="10"
+                  value={formData.upsell_priority}
+                  onChange={(e) => setFormData(prev => ({ ...prev, upsell_priority: parseInt(e.target.value) }))}
+                  className="w-full"
+                  data-testid="upsell-priority"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Niedrig</span>
+                  <span>Hoch</span>
+                </div>
+              </div>
+              
+              {/* Upsell Text */}
+              <div className="space-y-2">
+                <Label htmlFor="upsell_text" className="text-sm">
+                  Upsell-Text (optional)
+                </Label>
+                <Input
+                  id="upsell_text"
+                  value={formData.upsell_text}
+                  onChange={(e) => setFormData(prev => ({ ...prev, upsell_text: e.target.value }))}
+                  placeholder="z.B. 'Noch durstig? 🥤' oder 'Perfekt dazu!'"
+                  className="text-sm"
+                  data-testid="upsell-text"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Wird über dem Produkt im Warenkorb angezeigt
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+        
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={loading || uploading}>
             Abbrechen
