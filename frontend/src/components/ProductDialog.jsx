@@ -47,7 +47,9 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         price_normal: product.price_normal || '',
         price_medium: product.price_medium || '',
         price_large: product.price_large || '',
-        image_url: product.image_url || ''
+        image_url: product.image_url || '',
+        size_label_medium: product.size_labels?.medium || 'Medium (125g)',
+        size_label_large: product.size_labels?.large || 'Large (180g)'
       });
       setImagePreview(product.image_url || '');
     } else {
@@ -59,7 +61,9 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         price_normal: '',
         price_medium: '',
         price_large: '',
-        image_url: ''
+        image_url: '',
+        size_label_medium: 'Medium (125g)',
+        size_label_large: 'Large (180g)'
       });
       setImagePreview('');
     }
