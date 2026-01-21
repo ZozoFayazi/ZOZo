@@ -212,32 +212,138 @@ function OrderManagement() {
               {/* Items */}
               <div className="mb-4">
                 <h3 className="font-semibold mb-2">Bestellte Artikel</h3>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {selectedOrder.items.map((item, index) => (
-                    <div key={index} className="flex justify-between text-sm">
-                      <span>
-                        {item.quantity}x {item.name}
-                        {item.size && ` (${item.size})`}
-                      </span>
-                      <span>€{(item.price * item.quantity).toFixed(2)}</span>
+                    <div key={index} className="border-l-2 border-primary/50 pl-3 py-2">
+                      {/* Main Item */}
+                      <div className="flex justify-between text-sm font-medium">
+                        <span>
+                          {item.quantity}x {item.name}
+                          {item.size && ` (${item.size})`}
+                        </span>
+                        <span>€{(item.price * item.quantity).toFixed(2)}</span>
+                      </div>
+                      
+                      {/* Modifiers */}
+                      {item.modifiers && Object.keys(item.modifiers).length > 0 && (
+                        <div className="ml-4 mt-1 space-y-0.5">
+                          {Object.values(item.modifiers).map((mod, idx) => (
+                            <div key={idx} className="text-xs text-muted-foreground">
+                              → {mod.name} {mod.price > 0 && `(+€${mod.price.toFixed(2)})`}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Customizations */}
+                      {item.customizations && item.customizations.length > 0 && (
+                        <div className="ml-4 mt-1 space-y-0.5">
+                          {item.customizations.map((custom, idx) => (
+                            <div key={idx} className="text-xs text-muted-foreground">
+                              → {custom}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Extras */}
+                      {item.extras && item.extras.length > 0 && (
+                        <div className="ml-4 mt-1 space-y-0.5">
+                          {item.extras.map((extra, idx) => (
+                            <div key={idx} className="text-xs text-muted-foreground">
+                              + {extra.name || extra} {extra.price > 0 && `(€${extra.price.toFixed(2)})`}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Removed Ingredients */}
+                      {item.removed_ingredients && item.removed_ingredients.length > 0 && (
+                        <div className="ml-4 mt-1 space-y-0.5">
+                          {item.removed_ingredients.map((removal, idx) => (
+                            <div key={idx} className="text-xs text-muted-foreground italic">
+                              - Ohne {removal}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-border mt-3 pt-3">
-                  <div className="flex justify-between text-sm mb-1">
+                
+                {/* Pricing Breakdown */}
+                <div className="border-t border-border mt-4 pt-3 space-y-2">
+                  <div className="flex justify-between text-sm">
                     <span>Zwischensumme</span>
                     <span>€{selectedOrder.subtotal.toFixed(2)}</span>
                   </div>
                   {selectedOrder.delivery_fee > 0 && (
-                    <div className="flex justify-between text-sm mb-1">
+                    <div className="flex justify-between text-sm">
                       <span>Liefergebühr</span>
                       <span>€{selectedOrder.delivery_fee.toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between font-bold">
+                  {selectedOrder.pickup_discount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Abholrabatt (10%)</span>
+                      <span>-€{selectedOrder.pickup_discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {selectedOrder.daily_deal_discount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Tagesangebot</span>
+                      <span>-€{selectedOrder.daily_deal_discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {selectedOrder.discount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Treuepunkte ({selectedOrder.points_redeemed || 0} Pkt)</span>
+                      <span>-€{selectedOrder.discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-bold text-lg border-t border-border pt-2">
                     <span>Gesamt</span>
                     <span className="text-primary">€{selectedOrder.total.toFixed(2)}</span>
                   </div>
+                </div>
+              </div>
+              
+              {/* Payment & POS Status */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                {/* Payment Info */}
+                <div className="bg-accent rounded-lg p-4">
+                  <h3 className="font-semibold mb-2 text-sm">💳 Zahlung</h3>
+                  <p className="text-sm capitalize">{selectedOrder.payment_method || 'cash'}</p>
+                  {selectedOrder.paypal_transaction_id && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      ID: {selectedOrder.paypal_transaction_id.substring(0, 20)}...
+                    </p>
+                  )}
+                  {selectedOrder.payment_status && (
+                    <span className={`inline-block mt-2 px-2 py-1 rounded text-xs ${
+                      selectedOrder.payment_status === 'paid' ? 'bg-green-500/10 text-green-600' : 'bg-yellow-500/10 text-yellow-600'
+                    }`}>
+                      {selectedOrder.payment_status === 'paid' ? 'Bezahlt' : 'Offen'}
+                    </span>
+                  )}
+                </div>
+                
+                {/* POS Status */}
+                <div className="bg-accent rounded-lg p-4">
+                  <h3 className="font-semibold mb-2 text-sm">🖥️ POS Status</h3>
+                  <p className="text-sm capitalize">
+                    {selectedOrder.pos_status || 'pending'}
+                  </p>
+                  {selectedOrder.pos_error && (
+                    <p className="text-xs text-red-600 mt-1">
+                      Error: {selectedOrder.pos_error.substring(0, 50)}...
+                    </p>
+                  )}
+                  {selectedOrder.pos_pushed_at && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Gesendet: {new Date(selectedOrder.pos_pushed_at).toLocaleTimeString('de-DE')}
+                    </p>
+                  )}
                 </div>
               </div>
 
