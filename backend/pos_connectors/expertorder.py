@@ -574,43 +574,39 @@ class ExpertOrderConnector(BasePOSConnector):
                         "type": "addon"
                     })
                 
-                # 5. BEILAGE (Pommes, Twister, etc.)
+                # 5. BEILAGE + 6. GETRÄNK (aus modifiers, in korrekter Reihenfolge)
                 if modifiers:
+                    # First: Beilage/Side
                     for group_id, modifier_data in modifiers.items():
-                        if isinstance(modifier_data, dict):
+                        if isinstance(modifier_data, dict) and ('beilage' in group_id.lower() or 'side' in group_id.lower()):
                             modifier_name = modifier_data.get('name', '')
                             modifier_price = modifier_data.get('price', 0.0)
                             pos_item_id = modifier_data.get('pos_item_id', '')
                             
-                            # Determine if it's side or drink
-                            if 'beilage' in group_id.lower() or 'side' in group_id.lower():
-                                items.append({
-                                    "uid": pos_item_id or f"SIDE-{group_id}",
-                                    "name": modifier_name,
-                                    "count": item.get('quantity', 1),
-                                    "price": float(modifier_price),
-                                    "group": "SIDE",
-                                    "type": "addon"
-                                })
-                
-                # 6. GETRÄNK (last)
-                if modifiers:
+                            items.append({
+                                "uid": pos_item_id or f"SIDE-{group_id}",
+                                "name": modifier_name,
+                                "count": item.get('quantity', 1),
+                                "price": float(modifier_price),
+                                "group": "SIDE",
+                                "type": "addon"
+                            })
+                    
+                    # Then: Getränk/Drink
                     for group_id, modifier_data in modifiers.items():
-                        if isinstance(modifier_data, dict):
+                        if isinstance(modifier_data, dict) and ('getränk' in group_id.lower() or 'drink' in group_id.lower()):
                             modifier_name = modifier_data.get('name', '')
                             modifier_price = modifier_data.get('price', 0.0)
                             pos_item_id = modifier_data.get('pos_item_id', '')
                             
-                            # Drink groups
-                            if 'getränk' in group_id.lower() or 'drink' in group_id.lower():
-                                items.append({
-                                    "uid": pos_item_id or f"DRINK-{group_id}",
-                                    "name": modifier_name,
-                                    "count": item.get('quantity', 1),
-                                    "price": float(modifier_price),
-                                    "group": "DRINK",
-                                    "type": "addon"
-                                })
+                            items.append({
+                                "uid": pos_item_id or f"DRINK-{group_id}",
+                                "name": modifier_name,
+                                "count": item.get('quantity', 1),
+                                "price": float(modifier_price),
+                                "group": "DRINK",
+                                "type": "addon"
+                            })
                 
                 # 7. LEGACY: Other customizations not covered above
                 for custom in customizations:
