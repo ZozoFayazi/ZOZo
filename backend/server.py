@@ -4799,6 +4799,57 @@ async def change_admin_password(
         raise HTTPException(status_code=500, detail="Fehler beim Ändern des Passworts")
 
 
+
+# ====================================
+# CHECKOUT UPSELL ENDPOINT
+# ====================================
+@api_router.get("/checkout-upsells")
+async def get_checkout_upsells(location_id: Optional[str] = None):
+    """
+    Get products configured as checkout upsells
+    Returns products sorted by priority (highest first)
+    """
+    try:
+        query = {
+            "show_as_checkout_upsell": True,
+            "active": True,
+            "in_stock": True
+        }
+        
+        # Filter by location if provided
+        if location_id:
+            query["$or"] = [
+                {"location_id": location_id},
+                {"location_id": None}  # Global products
+            ]
+        
+        # Fetch upsell products sorted by priority (descending)
+        cursor = db.menu_items.find(query).sort("upsell_priority", -1).limit(6)
+        products = await cursor.to_list(length=6)
+        
+        # Serialize products
+        upsells = []
+        for product in products:
+            upsells.append({
+                "id": str(product["_id"]),
+                "name": product.get("name"),
+                "description": product.get("description"),
+                "price_normal": product.get("price_normal"),
+                "price_medium": product.get("price_medium"),
+                "price_large": product.get("price_large"),
+                "image_url": product.get("image_url"),
+                "category_id": product.get("category_id"),
+                "upsell_text": product.get("upsell_text"),
+                "upsell_priority": product.get("upsell_priority", 5)
+            })
+        
+        return {"upsells": upsells}
+    
+    except Exception as e:
+        logging.error(f"Get checkout upsells error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch upsells")
+
+
 # Include the routers in the main app
 app.include_router(api_router)
 app.include_router(product_router, prefix="/api")
