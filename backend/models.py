@@ -124,6 +124,10 @@ class MenuItemCreate(BaseModel):
     menu_requires_drink: bool = True
     menu_upgrade_price_medium: Optional[float] = None
     menu_upgrade_price_large: Optional[float] = None
+    # Checkout Upselling
+    show_as_checkout_upsell: bool = False
+    upsell_priority: int = 5  # 1-10, higher = shown first
+    upsell_text: Optional[str] = None  # e.g. "Noch durstig? 🥤"
     image_url: Optional[str] = None
     tags: List[str] = []
     allergens: List[str] = []
