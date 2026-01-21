@@ -4867,6 +4867,23 @@ async def health_check():
             "service": "zozo-burger-api",
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
+
+
+# Also add health check under /api prefix for consistency
+@api_router.get("/health")
+async def api_health_check():
+    """Health check under /api prefix"""
+    try:
+        await db.command("ping")
+        return {
+            "status": "healthy",
+            "service": "zozo-burger-api",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logging.error(f"API health check failed: {str(e)}")
+        raise HTTPException(status_code=503, detail="Service unhealthy")
+
     except Exception as e:
         logging.error(f"Health check failed: {str(e)}")
         raise HTTPException(status_code=503, detail="Service unhealthy")
