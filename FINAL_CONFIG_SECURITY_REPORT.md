@@ -211,11 +211,11 @@ Each location document contains:
 ### Health Check
 ```bash
 # Backend API
-curl https://paypal-pos-fix.preview.emergentagent.com/api/
+curl https://foodorder-fix.preview.emergentagent.com/api/
 ✅ Response: {"message":"ZOZO Burger API - POC"}
 
 # Frontend
-curl https://paypal-pos-fix.preview.emergentagent.com/
+curl https://foodorder-fix.preview.emergentagent.com/
 ✅ Response: 200 OK (React app loads)
 ```
 

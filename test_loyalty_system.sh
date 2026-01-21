@@ -1,6 +1,6 @@
 #!/bin/bash
 
-API_URL="https://paypal-pos-fix.preview.emergentagent.com/api"
+API_URL="https://foodorder-fix.preview.emergentagent.com/api"
 LOC_ID="49aff347-a6c3-407c-ad4a-59d5d0852314"
 
 echo "========================================="

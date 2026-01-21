@@ -89,7 +89,7 @@ async def test_paypal_integration():
         print("   2. Select 'Henstedt-Ulzburg' as location")
         print("   3. Choose 'PayPal' as payment method")
         print("   4. Complete the order and verify PayPal payment")
-        print("\n🔗 Test URL: https://paypal-pos-fix.preview.emergentagent.com")
+        print("\n🔗 Test URL: https://foodorder-fix.preview.emergentagent.com")
     
     client.close()
 

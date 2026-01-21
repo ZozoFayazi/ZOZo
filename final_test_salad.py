@@ -4,7 +4,7 @@ FINAL SALAD TEST - Real DB item with modifiers
 """
 import requests
 
-API_URL = "https://paypal-pos-fix.preview.emergentagent.com/api"
+API_URL = "https://foodorder-fix.preview.emergentagent.com/api"
 LOCATION_ID = "49aff347-a6c3-407c-ad4a-59d5d0852314"
 
 print("="*80)

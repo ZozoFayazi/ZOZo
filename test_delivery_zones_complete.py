@@ -5,7 +5,7 @@ Tests all postal codes for both locations
 """
 import requests
 
-API_URL = "https://paypal-pos-fix.preview.emergentagent.com/api"
+API_URL = "https://foodorder-fix.preview.emergentagent.com/api"
 
 # Postal codes per location (from DB)
 rellingen_plz = [

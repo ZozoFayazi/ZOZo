@@ -5,7 +5,7 @@ Disallow: /admin
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://paypal-pos-fix.preview.emergentagent.com/sitemap.xml
+Sitemap: https://foodorder-fix.preview.emergentagent.com/sitemap.xml
 
 # Crawl-delay for bots
 Crawl-delay: 1
