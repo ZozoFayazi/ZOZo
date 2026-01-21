@@ -153,7 +153,11 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         description: formData.description || null,
         price_normal: formData.price_normal ? parseFloat(formData.price_normal) : null,
         price_medium: formData.price_medium ? parseFloat(formData.price_medium) : null,
-        price_large: formData.price_large ? parseFloat(formData.price_large) : null
+        price_large: formData.price_large ? parseFloat(formData.price_large) : null,
+        size_labels: {
+          medium: formData.size_label_medium || 'Medium (125g)',
+          large: formData.size_label_large || 'Large (180g)'
+        }
       };
       
       const url = isEdit 
