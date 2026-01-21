@@ -143,6 +143,11 @@ class MenuItemUpdate(BaseModel):
     price_large: Optional[float] = None
     price_normal: Optional[float] = None
     size_labels: Optional[dict] = None  # e.g. {"medium": "Medium (125g)", "large": "Large (180g)"}
+    can_upgrade_to_menu: Optional[bool] = None
+    menu_requires_side: Optional[bool] = None
+    menu_requires_drink: Optional[bool] = None
+    menu_upgrade_price_medium: Optional[float] = None
+    menu_upgrade_price_large: Optional[float] = None
     image_url: Optional[str] = None
     tags: Optional[List[str]] = None
     allergens: Optional[List[str]] = None
