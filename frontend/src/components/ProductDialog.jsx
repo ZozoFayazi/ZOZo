@@ -33,7 +33,10 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
     menu_requires_side: true,
     menu_requires_drink: true,
     menu_upgrade_price_medium: '',
-    menu_upgrade_price_large: ''
+    menu_upgrade_price_large: '',
+    show_as_checkout_upsell: false,
+    upsell_priority: 5,
+    upsell_text: ''
   });
   
   const [imageFile, setImageFile] = useState(null);
