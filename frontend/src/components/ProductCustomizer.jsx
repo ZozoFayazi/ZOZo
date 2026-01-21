@@ -456,7 +456,15 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
                       return (
                         <button
                           key={option.id || option.name}
-                          onClick={() => setSelectedModifiers({...selectedModifiers, [group.id]: option.name})}
+                          onClick={() => setSelectedModifiers({
+                            ...selectedModifiers, 
+                            [group.id]: {
+                              id: option.id || `opt-${group.id}`,
+                              name: option.name,
+                              price: option.price || 0,
+                              pos_item_id: option.pos_item_id || `${group.id.toUpperCase()}-${option.name.toUpperCase().replace(/\s+/g, '-')}`
+                            }
+                          })}
                           className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
                             isSelected
                               ? 'border-primary bg-primary/10'
