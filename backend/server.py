@@ -1710,7 +1710,15 @@ async def create_order(order: OrderCreate, request: Request):
         "discount": round(points_discount, 2),
         "points_redeemed": points_redeemed,
         "total": round(total, 2),
-        "customer": order.customer.dict(),
+        "customer": {
+            "name": order.customer.name,
+            "phone": order.customer.phone,
+            "email": raw_data.get('customer', {}).get('email'),  # CRITICAL: Get email from raw_data
+            "address": order.customer.address,
+            "postal_code": order.customer.postal_code,
+            "city": order.customer.city,
+            "notes": getattr(order.customer, 'notes', None)
+        },
         "is_pickup": getattr(order, 'is_pickup', False),
         "status": "confirmed",
         "payment_method": order.payment_method,
