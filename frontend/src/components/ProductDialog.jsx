@@ -27,7 +27,12 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
     price_large: '',
     image_url: '',
     size_label_medium: 'Medium (125g)',
-    size_label_large: 'Large (180g)'
+    size_label_large: 'Large (180g)',
+    can_upgrade_to_menu: false,
+    menu_requires_side: true,
+    menu_requires_drink: true,
+    menu_upgrade_price_medium: '',
+    menu_upgrade_price_large: ''
   });
   
   const [imageFile, setImageFile] = useState(null);
