@@ -172,7 +172,12 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         size_labels: {
           medium: formData.size_label_medium || 'Medium (125g)',
           large: formData.size_label_large || 'Large (180g)'
-        }
+        },
+        can_upgrade_to_menu: formData.can_upgrade_to_menu || false,
+        menu_requires_side: formData.menu_requires_side,
+        menu_requires_drink: formData.menu_requires_drink,
+        menu_upgrade_price_medium: formData.menu_upgrade_price_medium ? parseFloat(formData.menu_upgrade_price_medium) : null,
+        menu_upgrade_price_large: formData.menu_upgrade_price_large ? parseFloat(formData.menu_upgrade_price_large) : null
       };
       
       const url = isEdit 
