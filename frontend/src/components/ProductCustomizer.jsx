@@ -450,7 +450,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
                   </h3>
                   <div className="space-y-2">
                     {group.options.map((option) => {
-                      const isSelected = selectedModifiers[group.id] === option.name;
+                      const isSelected = selectedModifiers[group.id]?.name === option.name;
                       const priceText = option.price > 0 ? ` (+€${option.price.toFixed(2)})` : '';
                       
                       return (
