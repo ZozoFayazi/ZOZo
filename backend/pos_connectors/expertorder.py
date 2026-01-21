@@ -501,26 +501,30 @@ class ExpertOrderConnector(BasePOSConnector):
             
             if is_menu:
                 # MENÜ-MODUS: Strukturierte Reihenfolge für POS
-                # 1. Hauptprodukt MIT Größe (z.B. "Hamburger Medium 125g Menü")
+                # 1. Hauptprodukt MIT Größe UND Grammzahl (z.B. "Hamburger Medium 125g Menü")
                 item_name = item.get('name', '')
                 item_size = item.get('size', '')
                 
-                # Build complete name with size
+                # Build complete name with size and weight
+                full_name = item_name
                 if item_size and item_size.lower() != 'normal':
-                    # Add size to name if not already there
-                    if item_size.lower() not in item_name.lower():
-                        # Capitalize size
-                        size_display = item_size.capitalize()
-                        # Insert size before "Menü"
-                        if 'menü' in item_name.lower():
-                            base_name = item_name.replace(' Menü', '').replace(' Menu', '')
-                            full_name = f"{base_name} {size_display} Menü"
-                        else:
-                            full_name = f"{item_name} {size_display}"
+                    size_upper = item_size.upper()
+                    
+                    # Add gram weight based on size
+                    if size_upper == 'MEDIUM':
+                        size_with_weight = 'Medium 125g'
+                    elif size_upper == 'LARGE':
+                        size_with_weight = 'Large 180g'
                     else:
-                        full_name = item_name
-                else:
-                    full_name = item_name
+                        size_with_weight = item_size.capitalize()
+                    
+                    # Insert before "Menü" if not already there
+                    if size_with_weight.lower() not in item_name.lower():
+                        if 'menü' in item_name.lower() or 'menu' in item_name.lower():
+                            base_name = item_name.replace(' Menü', '').replace(' Menu', '').strip()
+                            full_name = f"{base_name} {size_with_weight} Menü"
+                        else:
+                            full_name = f"{item_name} {size_with_weight}"
                 
                 items.append({
                     "uid": item.get('menu_item_id', ''),
