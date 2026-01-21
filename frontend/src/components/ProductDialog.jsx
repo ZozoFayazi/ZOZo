@@ -466,6 +466,102 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Menu Configuration */}
+                  <div className="border-t pt-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="can_upgrade_to_menu" className="text-sm font-medium">
+                          Als Menü verfügbar
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Kunde kann Beilage + Getränk hinzufügen
+                        </p>
+                      </div>
+                      <Switch
+                        id="can_upgrade_to_menu"
+                        checked={formData.can_upgrade_to_menu}
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, can_upgrade_to_menu: checked }))}
+                        data-testid="menu-toggle"
+                      />
+                    </div>
+                    
+                    {formData.can_upgrade_to_menu && (
+                      <div className="space-y-4 pl-4 border-l-2 border-primary/20">
+                        {/* Menu Requirements */}
+                        <div className="space-y-3">
+                          <p className="text-sm font-medium">Menü-Komponenten</p>
+                          
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="menu_requires_side" className="text-sm font-normal cursor-pointer">
+                              Beilage erforderlich
+                            </Label>
+                            <Switch
+                              id="menu_requires_side"
+                              checked={formData.menu_requires_side}
+                              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, menu_requires_side: checked }))}
+                              data-testid="menu-requires-side"
+                            />
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="menu_requires_drink" className="text-sm font-normal cursor-pointer">
+                              Getränk erforderlich
+                            </Label>
+                            <Switch
+                              id="menu_requires_drink"
+                              checked={formData.menu_requires_drink}
+                              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, menu_requires_drink: checked }))}
+                              data-testid="menu-requires-drink"
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Menu Prices */}
+                        <div className="space-y-3">
+                          <p className="text-sm font-medium">Menü-Preise</p>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="menu_upgrade_price_medium" className="text-xs">
+                                Medium Menü (€)
+                              </Label>
+                              <Input
+                                id="menu_upgrade_price_medium"
+                                type="number"
+                                step="0.01"
+                                value={formData.menu_upgrade_price_medium}
+                                onChange={(e) => setFormData(prev => ({ ...prev, menu_upgrade_price_medium: e.target.value }))}
+                                placeholder="13.89"
+                                className="text-sm"
+                                data-testid="menu-price-medium"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Basis: €{formData.price_medium || '0.00'}
+                              </p>
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="menu_upgrade_price_large" className="text-xs">
+                                Large Menü (€)
+                              </Label>
+                              <Input
+                                id="menu_upgrade_price_large"
+                                type="number"
+                                step="0.01"
+                                value={formData.menu_upgrade_price_large}
+                                onChange={(e) => setFormData(prev => ({ ...prev, menu_upgrade_price_large: e.target.value }))}
+                                placeholder="17.09"
+                                className="text-sm"
+                                data-testid="menu-price-large"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Basis: €{formData.price_large || '0.00'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             }
