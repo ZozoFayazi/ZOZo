@@ -187,7 +187,10 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
         menu_requires_side: formData.menu_requires_side,
         menu_requires_drink: formData.menu_requires_drink,
         menu_upgrade_price_medium: formData.menu_upgrade_price_medium ? parseFloat(formData.menu_upgrade_price_medium) : null,
-        menu_upgrade_price_large: formData.menu_upgrade_price_large ? parseFloat(formData.menu_upgrade_price_large) : null
+        menu_upgrade_price_large: formData.menu_upgrade_price_large ? parseFloat(formData.menu_upgrade_price_large) : null,
+        show_as_checkout_upsell: formData.show_as_checkout_upsell || false,
+        upsell_priority: formData.upsell_priority || 5,
+        upsell_text: formData.upsell_text || null
       };
       
       const url = isEdit 
