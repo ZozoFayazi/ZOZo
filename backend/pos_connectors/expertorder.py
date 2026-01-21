@@ -500,56 +500,66 @@ class ExpertOrderConnector(BasePOSConnector):
             is_menu = 'menü' in item.get('name', '').lower() or 'menu' in item.get('name', '').lower()
             
             if is_menu:
-                # MENÜ-MODUS: Zerlege in einzelne Artikel
-                # 1. Hauptprodukt (ohne "Menü" im Namen)
-                base_name = item.get('name', '').replace(' Menü', '').replace(' Menu', '')
+                # MENÜ-MODUS: Strukturierte Reihenfolge für POS
+                # 1. Hauptprodukt MIT Größe (z.B. "Hamburger Medium 125g Menü")
+                item_name = item.get('name', '')
+                item_size = item.get('size', '')
+                
+                # Build complete name with size
+                if item_size and item_size.lower() != 'normal':
+                    # Add size to name if not already there
+                    if item_size.lower() not in item_name.lower():
+                        # Capitalize size
+                        size_display = item_size.capitalize()
+                        # Insert size before "Menü"
+                        if 'menü' in item_name.lower():
+                            base_name = item_name.replace(' Menü', '').replace(' Menu', '')
+                            full_name = f"{base_name} {size_display} Menü"
+                        else:
+                            full_name = f"{item_name} {size_display}"
+                    else:
+                        full_name = item_name
+                else:
+                    full_name = item_name
                 
                 items.append({
                     "uid": item.get('menu_item_id', ''),
-                    "name": base_name,  # z.B. "Smash Bacon" statt "Smash Bacon Menü"
+                    "name": full_name,
                     "count": item.get('quantity', 1),
-                    "price": float(item.get('price', 0)),  # Gesamtpreis bleibt beim Hauptartikel
+                    "price": float(item.get('price', 0)),
                     "items": []
                 })
                 
-                # 2. NEUE MODIFIER SYSTEM: Beilage + Getränk aus modifiers{}
-                modifiers = item.get('modifiers', {})
-                if modifiers:
-                    # modifiers format: {"menu_beilage": {"id": "...", "name": "Pommes Normal", "price": 0, "pos_item_id": "..."}}
-                    for group_id, modifier_data in modifiers.items():
-                        if isinstance(modifier_data, dict):
-                            modifier_name = modifier_data.get('name', '')
-                            modifier_price = modifier_data.get('price', 0.0)
-                            pos_item_id = modifier_data.get('pos_item_id', '')
-                            
-                            items.append({
-                                "uid": pos_item_id or f"MODIFIER-{group_id}",
-                                "name": modifier_name,
-                                "count": item.get('quantity', 1),
-                                "price": float(modifier_price),
-                                "group": "menu_component",
-                                "type": "addon"
-                            })
-                
-                # 2b. LEGACY: String-basierte customizations (für alte Orders)
+                # 2. BRÖTCHEN (aus customizations oder modifiers)
+                # Search for bun/brötchen selections
                 customizations = item.get('customizations', [])
-                for custom in customizations:
-                    if isinstance(custom, str):
-                        # Entferne "+ " Prefix für sauberen Namen
-                        clean_name = custom.replace('+ ', '').replace('+', '').strip()
-                        
-                        # Skip if already covered by modifiers
-                        if not any(clean_name in mod_data.get('name', '') for mod_data in modifiers.values() if isinstance(mod_data, dict)):
-                            items.append({
-                                "uid": f"CUSTOM-{clean_name[:20].replace(' ', '-').upper()}",
-                                "name": clean_name,
-                                "count": item.get('quantity', 1),
-                                "price": 0.0,
-                                "group": "menu_component",
-                                "type": "addon"
-                            })
+                modifiers = item.get('modifiers', {})
                 
-                # 3. Extras auch als separate Items
+                for custom in customizations:
+                    if isinstance(custom, str) and ('brötchen' in custom.lower() or 'bun' in custom.lower()):
+                        clean_name = custom.replace('+ ', '').replace('+', '').strip()
+                        items.append({
+                            "uid": f"BUN-{clean_name[:20].replace(' ', '-').upper()}",
+                            "name": clean_name,
+                            "count": item.get('quantity', 1),
+                            "price": 0.0,
+                            "group": "BUN",
+                            "type": "addon"
+                        })
+                
+                # 3. ABWAHLEN (Ohne...)
+                removals = item.get('removed_ingredients', [])
+                for removal in removals:
+                    items.append({
+                        "uid": f"REMOVE-{removal[:20].replace(' ', '-').upper()}",
+                        "name": f"Ohne {removal}",
+                        "count": item.get('quantity', 1),
+                        "price": 0.0,
+                        "group": "REMOVAL",
+                        "type": "modifier"
+                    })
+                
+                # 4. EXTRAS/ZUWAHLEN (Extra Käse, etc.)
                 extras = item.get('extras', [])
                 for extra in extras:
                     extra_name = extra.get('name', extra) if isinstance(extra, dict) else extra
@@ -560,21 +570,67 @@ class ExpertOrderConnector(BasePOSConnector):
                         "name": extra_name,
                         "count": item.get('quantity', 1),
                         "price": float(extra_price),
-                        "group": "extra",
+                        "group": "EXTRA",
                         "type": "addon"
                     })
                 
-                # 4. Removals
-                removals = item.get('removed_ingredients', [])
-                for removal in removals:
-                    items.append({
-                        "uid": f"REMOVE-{removal[:20].replace(' ', '-').upper()}",
-                        "name": f"- Ohne {removal}",
-                        "count": item.get('quantity', 1),
-                        "price": 0.0,
-                        "group": "removal",
-                        "type": "modifier"
-                    })
+                # 5. BEILAGE (Pommes, Twister, etc.)
+                if modifiers:
+                    for group_id, modifier_data in modifiers.items():
+                        if isinstance(modifier_data, dict):
+                            modifier_name = modifier_data.get('name', '')
+                            modifier_price = modifier_data.get('price', 0.0)
+                            pos_item_id = modifier_data.get('pos_item_id', '')
+                            
+                            # Determine if it's side or drink
+                            if 'beilage' in group_id.lower() or 'side' in group_id.lower():
+                                items.append({
+                                    "uid": pos_item_id or f"SIDE-{group_id}",
+                                    "name": modifier_name,
+                                    "count": item.get('quantity', 1),
+                                    "price": float(modifier_price),
+                                    "group": "SIDE",
+                                    "type": "addon"
+                                })
+                
+                # 6. GETRÄNK (last)
+                if modifiers:
+                    for group_id, modifier_data in modifiers.items():
+                        if isinstance(modifier_data, dict):
+                            modifier_name = modifier_data.get('name', '')
+                            modifier_price = modifier_data.get('price', 0.0)
+                            pos_item_id = modifier_data.get('pos_item_id', '')
+                            
+                            # Drink groups
+                            if 'getränk' in group_id.lower() or 'drink' in group_id.lower():
+                                items.append({
+                                    "uid": pos_item_id or f"DRINK-{group_id}",
+                                    "name": modifier_name,
+                                    "count": item.get('quantity', 1),
+                                    "price": float(modifier_price),
+                                    "group": "DRINK",
+                                    "type": "addon"
+                                })
+                
+                # 7. LEGACY: Other customizations not covered above
+                for custom in customizations:
+                    if isinstance(custom, str):
+                        clean_name = custom.replace('+ ', '').replace('+', '').strip()
+                        
+                        # Skip if already added (bun, or covered by modifiers)
+                        if 'brötchen' in clean_name.lower() or 'bun' in clean_name.lower():
+                            continue
+                        if any(clean_name in mod_data.get('name', '') for mod_data in modifiers.values() if isinstance(mod_data, dict)):
+                            continue
+                        
+                        items.append({
+                            "uid": f"CUSTOM-{clean_name[:20].replace(' ', '-').upper()}",
+                            "name": clean_name,
+                            "count": item.get('quantity', 1),
+                            "price": 0.0,
+                            "group": "CUSTOM",
+                            "type": "addon"
+                        })
             
             else:
                 # KEIN MENÜ: Normale Artikel-Struktur
