@@ -383,30 +383,67 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
             // Regular Burger: Medium (125g) und Large (180g)
             if (categorySlug.includes('burger') || categoryName.includes('burger')) {
               return (
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="price_medium">Medium (125g) €</Label>
-                    <Input
-                      id="price_medium"
-                      type="number"
-                      step="0.01"
-                      value={formData.price_medium}
-                      onChange={(e) => setFormData(prev => ({ ...prev, price_medium: e.target.value }))}
-                      placeholder="7.99"
-                      data-testid="product-price-medium"
-                    />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="price_medium">Medium Preis (€)</Label>
+                      <Input
+                        id="price_medium"
+                        type="number"
+                        step="0.01"
+                        value={formData.price_medium}
+                        onChange={(e) => setFormData(prev => ({ ...prev, price_medium: e.target.value }))}
+                        placeholder="7.99"
+                        data-testid="product-price-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="price_large">Large Preis (€)</Label>
+                      <Input
+                        id="price_large"
+                        type="number"
+                        step="0.01"
+                        value={formData.price_large}
+                        onChange={(e) => setFormData(prev => ({ ...prev, price_large: e.target.value }))}
+                        placeholder="9.99"
+                        data-testid="product-price-large"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="price_large">Large (180g) €</Label>
-                    <Input
-                      id="price_large"
-                      type="number"
-                      step="0.01"
-                      value={formData.price_large}
-                      onChange={(e) => setFormData(prev => ({ ...prev, price_large: e.target.value }))}
-                      placeholder="9.99"
-                      data-testid="product-price-large"
-                    />
+                  
+                  {/* Size Label Customization */}
+                  <div className="border-t pt-4">
+                    <p className="text-sm font-medium mb-3">Größennamen anpassen (optional)</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="size_label_medium" className="text-xs text-muted-foreground">
+                          Medium Label
+                        </Label>
+                        <Input
+                          id="size_label_medium"
+                          value={formData.size_label_medium}
+                          onChange={(e) => setFormData(prev => ({ ...prev, size_label_medium: e.target.value }))}
+                          placeholder="Medium (125g)"
+                          className="text-sm"
+                          data-testid="size-label-medium"
+                        />
+                        <p className="text-xs text-muted-foreground">z.B. "Medium (125g)" oder "Klein"</p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="size_label_large" className="text-xs text-muted-foreground">
+                          Large Label
+                        </Label>
+                        <Input
+                          id="size_label_large"
+                          value={formData.size_label_large}
+                          onChange={(e) => setFormData(prev => ({ ...prev, size_label_large: e.target.value }))}
+                          placeholder="Large (180g)"
+                          className="text-sm"
+                          data-testid="size-label-large"
+                        />
+                        <p className="text-xs text-muted-foreground">z.B. "Large (180g)" oder "Groß"</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
