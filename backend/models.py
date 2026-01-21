@@ -152,6 +152,10 @@ class MenuItemUpdate(BaseModel):
     menu_requires_drink: Optional[bool] = None
     menu_upgrade_price_medium: Optional[float] = None
     menu_upgrade_price_large: Optional[float] = None
+    # Checkout Upselling
+    show_as_checkout_upsell: Optional[bool] = None
+    upsell_priority: Optional[int] = None
+    upsell_text: Optional[str] = None
     image_url: Optional[str] = None
     tags: Optional[List[str]] = None
     allergens: Optional[List[str]] = None
