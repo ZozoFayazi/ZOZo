@@ -25,7 +25,9 @@ export default function ProductDialog({ open, onClose, product, categories, onSu
     price_normal: '',
     price_medium: '',
     price_large: '',
-    image_url: ''
+    image_url: '',
+    size_label_medium: 'Medium (125g)',
+    size_label_large: 'Large (180g)'
   });
   
   const [imageFile, setImageFile] = useState(null);
