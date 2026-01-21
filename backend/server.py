@@ -4850,6 +4850,29 @@ async def get_checkout_upsells(location_id: Optional[str] = None):
         raise HTTPException(status_code=500, detail="Failed to fetch upsells")
 
 
+# ====================================
+# HEALTH CHECK ENDPOINT FOR KUBERNETES
+# ====================================
+@app.get("/health")
+async def health_check():
+    """
+    Kubernetes health check endpoint
+    Returns 200 OK if service is healthy
+    """
+    try:
+        # Test database connection
+        await db.command("ping")
+        return {
+            "status": "healthy",
+            "service": "zozo-burger-api",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logging.error(f"Health check failed: {str(e)}")
+        raise HTTPException(status_code=503, detail="Service unhealthy")
+
+
+
 # Include the routers in the main app
 app.include_router(api_router)
 app.include_router(product_router, prefix="/api")
