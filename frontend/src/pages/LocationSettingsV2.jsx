@@ -29,7 +29,7 @@ function LocationSettingsV2() {
   const loadLocationSettings = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('zozoAuthToken');
+      const token = sessionStorage.getItem('adminToken');
       const response = await axios.get(`${API_URL}/api/admin/location-settings`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -49,7 +49,7 @@ function LocationSettingsV2() {
     setSaving(true);
     try {
       const location = locations.find(l => l.id === locationId);
-      const token = localStorage.getItem('zozoAuthToken');
+      const token = sessionStorage.getItem('adminToken');
       
       // Prepare postal_code_settings as object: {"24558": {mbw: 15, fee: 3}, ...}
       const postalCodeSettings = {};
