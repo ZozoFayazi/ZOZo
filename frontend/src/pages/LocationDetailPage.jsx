@@ -76,6 +76,12 @@ export default function LocationDetailPage({ setSelectedLocation }) {
 
   const handleOrderHere = () => {
     if (location) {
+      // Temporäre Weiterleitung für Henstedt-Ulzburg zu Foodbooking
+      if (location.slug === 'henstedt-ulzburg' || location.slug === 'henstedt') {
+        window.location.href = 'https://www.foodbooking.com/api/fb/0ybj4';
+        return;
+      }
+      
       setSelectedLocation(location);
       navigate('/menu');
     }
