@@ -36,6 +36,7 @@ from csv_import_service import CSVImportService
 from super_admin_endpoints import create_super_admin_router
 from onboarding_audit_service import OnboardingAuditService
 from geocoding_service import GeocodingService
+from order_management_endpoints import create_order_management_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
