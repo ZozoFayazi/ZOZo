@@ -88,6 +88,9 @@ newsletter_router = create_newsletter_router(db, newsletter_service)
 # Create review router (Rating & Feedback)
 review_router = create_review_router(db, review_service)
 
+# Create menu config router (Menu Configuration)
+menu_config_router = create_menu_config_router(db)
+
 # Create the main app without a prefix
 app = FastAPI(
     title="ZOZO Burger API",
