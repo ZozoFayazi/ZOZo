@@ -19,7 +19,8 @@ import {
   Shield,
   AlertTriangle,
   Tag,
-  Mail
+  Mail,
+  Link2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
