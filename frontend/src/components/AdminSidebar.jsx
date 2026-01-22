@@ -20,7 +20,6 @@ import {
   AlertTriangle,
   Tag,
   Mail,
-  Link2,
   BarChart3,
   Users,
   Euro
