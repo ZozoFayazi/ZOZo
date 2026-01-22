@@ -525,13 +525,116 @@ def send_review_request_email(order: dict, location: dict) -> bool:
         return False
 
 def send_order_confirmation_email(order: dict, location: dict) -> bool:
-    """Legacy stub - sends order confirmation email"""
+    """Send order confirmation email"""
     try:
-        # This is a stub - implement if needed
-        logger.warning(f"send_order_confirmation_email called (stub) for order {order.get('order_id')}")
+        customer_email = order.get('customer_email')
+        if not customer_email:
+            logger.warning(f"No customer email for order {order.get('order_id')}")
+            return False
+        
+        customer_name = order.get('customer_name', 'Kunde')
+        order_number = order.get('order_number', order.get('order_id', 'N/A'))
+        order_total = order.get('total', 0)
+        delivery_address = order.get('delivery_address', 'Nicht angegeben')
+        delivery_time = order.get('delivery_time', 'Schnellstmöglich')
+        
+        # Build items list
+        items_html = ""
+        for item in order.get('items', []):
+            item_name = item.get('name', 'Unbekannt')
+            item_price = item.get('price', 0)
+            item_qty = item.get('quantity', 1)
+            
+            items_html += f"""
+                <div style="padding: 12px 0; border-bottom: 1px solid #333;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span style="color: #fff; font-weight: 600;">{item_qty}x {item_name}</span>
+                        <span style="color: #dc2626; font-weight: 600;">€{item_price:.2f}</span>
+                    </div>
+            """
+            
+            # Add customizations
+            customizations = item.get('customizations', [])
+            if customizations:
+                for custom in customizations:
+                    items_html += f'<div style="font-size: 13px; color: #999; margin-left: 20px;">• {custom}</div>'
+            
+            # Add removed ingredients
+            removed = item.get('removed_ingredients', [])
+            if removed:
+                for removal in removed:
+                    items_html += f'<div style="font-size: 13px; color: #f87171; margin-left: 20px;">- Ohne {removal}</div>'
+            
+            items_html += "</div>"
+        
+        # Build email content
+        content = f"""
+            <h2 style="color: #dc2626; margin-top: 0;">Bestellung bestätigt! 🎉</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Hallo {customer_name},
+            </p>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                vielen Dank für deine Bestellung! Wir haben sie erhalten und bereiten sie jetzt zu.
+            </p>
+            
+            <div style="background-color: #2a2a2a; padding: 20px; border-radius: 12px; margin: 25px 0; border: 2px solid #dc2626;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span style="color: #999;">Bestellnummer:</span>
+                    <span style="color: #fff; font-weight: bold;">{order_number}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <span style="color: #999;">Lieferadresse:</span>
+                    <span style="color: #fff;">{delivery_address}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #999;">Lieferzeit:</span>
+                    <span style="color: #fff;">{delivery_time}</span>
+                </div>
+            </div>
+            
+            <h3 style="color: #dc2626; margin: 30px 0 15px 0;">Deine Bestellung:</h3>
+            <div style="background-color: #1a1a1a; padding: 20px; border-radius: 12px;">
+                {items_html}
+                <div style="padding-top: 20px; border-top: 2px solid #dc2626; margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #fff; font-size: 18px; font-weight: bold;">Gesamtbetrag:</span>
+                        <span style="color: #dc2626; font-size: 24px; font-weight: bold;">€{order_total:.2f}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5; margin-top: 30px;">
+                Wir melden uns, sobald deine Bestellung auf dem Weg ist! 🚗
+            </p>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="{APP_URL}/orders" class="button">
+                    Bestellstatus verfolgen
+                </a>
+            </div>
+            
+            <p style="font-size: 14px; color: #999; margin-top: 30px;">
+                Guten Appetit!<br>
+                Dein ZOZO Burger Team
+            </p>
+        """
+        
+        html_content = EmailTemplates.get_base_template(content, f"Bestellung {order_number} bestätigt")
+        
+        # Send email via Resend
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [customer_email],
+            "subject": f"ZOZO Burger - Bestellung {order_number} bestätigt",
+            "html": html_content
+        }
+        
+        response = resend.Emails.send(params)
+        logger.info(f"Order confirmation email sent to {customer_email}: {response.get('id')}")
         return True
+        
     except Exception as e:
-        logger.error(f"send_order_confirmation_email error: {str(e)}")
+        logger.error(f"send_order_confirmation_email error for order {order.get('order_id')}: {str(e)}")
         return False
 
 def send_group_order_invite_email(group_order: dict, invitee_email: str) -> bool:
