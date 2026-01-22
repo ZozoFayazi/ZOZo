@@ -20,7 +20,8 @@ import {
   AlertTriangle,
   Tag,
   Mail,
-  Link2
+  Link2,
+  BarChart3
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
