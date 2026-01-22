@@ -74,7 +74,7 @@ DRINGEND: Die Datenbank auf zozo-burger.de wurde mit einer falschen Version übe
 Bitte führen Sie folgende Schritte aus:
 
 1. Backup herunterladen von:
-   https://foodorder-fix.preview.emergentagent.com/backups/ABSOLUTE_FINAL_COMPLETE_FREEZE_20260121_105946.json
+   https://zozo-fix.preview.emergentagent.com/backups/ABSOLUTE_FINAL_COMPLETE_FREEZE_20260121_105946.json
 
 2. Auf dem Production-Server:
    - Backup in /app/backups/ ablegen

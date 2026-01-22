@@ -104,7 +104,7 @@ async def test_paypal_integration():
         print("\n📝 Beide Standorte sind bereit:")
         print("   ✓ ZOZO Burger Rellingen")
         print("   ✓ ZOZO Burger Henstedt-Ulzburg")
-        print("\n🔗 Test URL: https://foodorder-fix.preview.emergentagent.com")
+        print("\n🔗 Test URL: https://zozo-fix.preview.emergentagent.com")
         print("\n💡 Hinweis: Zahlungen werden standort-spezifisch auf die jeweiligen")
         print("   PayPal-Konten gebucht.")
     else:

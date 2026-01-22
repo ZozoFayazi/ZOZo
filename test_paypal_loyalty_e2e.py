@@ -7,7 +7,7 @@ import requests
 import json
 import time
 
-API_URL = "https://foodorder-fix.preview.emergentagent.com/api"
+API_URL = "https://zozo-fix.preview.emergentagent.com/api"
 TEST_EMAIL = "paypal-test@zozo.de"
 LOCATION_ID = "49aff347-a6c3-407c-ad4a-59d5d0852314"
 

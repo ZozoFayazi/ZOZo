@@ -118,7 +118,7 @@ python test_paypal_integration.py
 ```
 
 ### Manueller Test
-1. Öffne: https://foodorder-fix.preview.emergentagent.com
+1. Öffne: https://zozo-fix.preview.emergentagent.com
 2. Wähle Standort: **Henstedt-Ulzburg**
 3. Füge Produkte zum Warenkorb hinzu
 4. Gehe zu Checkout

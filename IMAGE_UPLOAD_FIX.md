@@ -42,7 +42,7 @@ if not (content_type_valid or extension_valid):
 
 ### 1. Admin-Panel öffnen
 ```
-https://foodorder-fix.preview.emergentagent.com/admin/products
+https://zozo-fix.preview.emergentagent.com/admin/products
 ```
 
 ### 2. Produkt bearbeiten
