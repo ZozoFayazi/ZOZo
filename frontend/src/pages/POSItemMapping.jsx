@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Download, Upload, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { Input } from '../components/ui/input';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
