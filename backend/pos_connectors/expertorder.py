@@ -606,6 +606,23 @@ class ExpertOrderConnector(BasePOSConnector):
                                     "count": item.get('quantity', 1),
                                     "price": float(modifier_price)
                                 })
+                    
+                    # 7. SAUCE/DIP (aus modifiers) → als Kind hinzufügen
+                    for group_id, modifier_data in modifiers.items():
+                        if isinstance(modifier_data, dict):
+                            is_sauce = any(keyword in group_id.lower() for keyword in ['sauce', 'dip', 'soße', 'dressing'])
+                            
+                            if is_sauce:
+                                modifier_name = modifier_data.get('name', '')
+                                modifier_price = modifier_data.get('price', 0.0)
+                                pos_item_id = modifier_data.get('pos_item_id', '')
+                                
+                                menu_main_item["items"].append({
+                                    "uid": pos_item_id or f"SAUCE-{group_id}",
+                                    "name": f"+ {modifier_name}",
+                                    "count": item.get('quantity', 1),
+                                    "price": float(modifier_price)
+                                })
                 
                 # Add main menu item with all its children to items list
                 items.append(menu_main_item)
