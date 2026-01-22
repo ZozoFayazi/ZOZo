@@ -214,7 +214,7 @@ def create_product_router_v2(db, audit_service: AuditService):
             # Check if product exists - try ObjectId parse
             try:
                 product = await db.menu_items.find_one({"_id": ObjectId(product_id)})
-            except:
+            except Exception:
                 product = None
             
             if not product:
@@ -303,7 +303,7 @@ def create_product_router_v2(db, audit_service: AuditService):
             # Check if product exists - try ObjectId parse
             try:
                 product = await db.menu_items.find_one({"_id": ObjectId(product_id)})
-            except:
+            except Exception:
                 product = None
             
             if not product:
@@ -362,7 +362,7 @@ def create_product_router_v2(db, audit_service: AuditService):
             # Check if product exists - try ObjectId parse
             try:
                 product = await db.menu_items.find_one({"_id": ObjectId(product_id)})
-            except:
+            except Exception:
                 product = None
             
             if not product:
