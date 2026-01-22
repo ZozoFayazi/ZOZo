@@ -42,7 +42,7 @@ function CampaignManagement() {
     if (!confirm('Möchtest du diese Kampagne wirklich senden?')) return;
 
     try {
-      const token = localStorage.getItem('zozoAuthToken');
+      const token = sessionStorage.getItem('adminToken');
       const response = await axios.post(
         `${API_URL}/api/admin/newsletter/campaigns/${campaignId}/send`,
         {},
