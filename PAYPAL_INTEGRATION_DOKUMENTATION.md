@@ -118,7 +118,7 @@ python test_paypal_integration.py
 ```
 
 ### Manueller Test
-1. Öffne: https://menu-management-1.preview.emergentagent.com
+1. Öffne: https://menu-config.preview.emergentagent.com
 2. Wähle Standort: **Henstedt-Ulzburg**
 3. Füge Produkte zum Warenkorb hinzu
 4. Gehe zu Checkout

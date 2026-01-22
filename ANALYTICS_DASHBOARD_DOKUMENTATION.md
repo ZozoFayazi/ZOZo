@@ -252,7 +252,7 @@ const Analytics = lazy(() => import('./pages/Analytics'));
 
 ### Zugriff
 
-1. Admin-Login: `https://menu-management-1.preview.emergentagent.com/admin/login`
+1. Admin-Login: `https://menu-config.preview.emergentagent.com/admin/login`
 2. Nach Login: Klick auf **"Analytics"** in der Sidebar
 3. Oder direkt: `/admin/analytics`
 

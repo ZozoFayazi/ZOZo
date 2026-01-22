@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 # WebAuthn Configuration
 RP_ID = os.getenv('WEBAUTHN_RP_ID', 'zozo-cashx-pos.preview.emergentagent.com')
 RP_NAME = "ZOZO Burger Admin"
-ORIGIN = os.getenv('WEBAUTHN_ORIGIN', 'https://menu-management-1.preview.emergentagent.com')
+ORIGIN = os.getenv('WEBAUTHN_ORIGIN', 'https://menu-config.preview.emergentagent.com')
 
 
 class WebAuthnService:

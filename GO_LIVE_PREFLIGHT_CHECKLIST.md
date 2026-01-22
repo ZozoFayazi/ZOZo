@@ -198,9 +198,9 @@ Bitte liefern:
 ## 🎯 QUICK REFERENCE
 
 **Wichtige Links:**
-- Admin Panel: https://menu-management-1.preview.emergentagent.com/admin
+- Admin Panel: https://menu-config.preview.emergentagent.com/admin
 - Resend Dashboard: https://resend.com/domains
-- Failed POS Orders: https://menu-management-1.preview.emergentagent.com/admin/pos/failed-orders
+- Failed POS Orders: https://menu-config.preview.emergentagent.com/admin/pos/failed-orders
 
 **Wichtige Credentials:**
 - Super Admin: `admin@zonik-solutions.de`

@@ -16,7 +16,7 @@ DB_NAME="test_database"
 ### API Configuration
 ```bash
 CORS_ORIGINS="*"
-APP_URL="https://menu-management-1.preview.emergentagent.com"
+APP_URL="https://menu-config.preview.emergentagent.com"
 ```
 - `CORS_ORIGINS`: CORS policy ("*" allows all origins)
 - `APP_URL`: Application base URL for callbacks and emails
@@ -60,7 +60,7 @@ EMERGENT_LLM_KEY=sk-emergent-5882954D84fC35cB4D
 **File:** `/app/frontend/.env`
 
 ```bash
-REACT_APP_BACKEND_URL=https://menu-management-1.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://menu-config.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 REACT_APP_ENABLE_VISUAL_EDITS=false
 ENABLE_HEALTH_CHECK=false
@@ -237,7 +237,7 @@ supervisorctl status
 1. Check `REACT_APP_BACKEND_URL` matches preview URL
 2. Check CORS is configured: `CORS_ORIGINS="*"` in backend `.env`
 3. Verify backend is running: `supervisorctl status backend`
-4. Test backend: `curl https://menu-management-1.preview.emergentagent.com/api/`
+4. Test backend: `curl https://menu-config.preview.emergentagent.com/api/`
 
 ---
 

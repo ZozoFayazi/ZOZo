@@ -34,7 +34,7 @@
 ✅ MONGO_URL=mongodb://localhost:27017
 ✅ DB_NAME=test_database
 ✅ CORS_ORIGINS=*
-✅ APP_URL=https://menu-management-1.preview.emergentagent.com
+✅ APP_URL=https://menu-config.preview.emergentagent.com
 ✅ JWT_SECRET=*** (rotated 06.01.2026)
 ✅ ADMIN_JWT_SECRET=*** (rotated 06.01.2026)
 ✅ RESEND_API_KEY=*** (Email service)
@@ -44,7 +44,7 @@
 
 **Frontend (`/app/frontend/.env`):**
 ```
-✅ REACT_APP_BACKEND_URL=https://menu-management-1.preview.emergentagent.com
+✅ REACT_APP_BACKEND_URL=https://menu-config.preview.emergentagent.com
 ✅ WDS_SOCKET_PORT=443
 ```
 

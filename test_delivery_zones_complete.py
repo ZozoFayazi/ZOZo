@@ -5,7 +5,7 @@ Tests all postal codes for both locations
 """
 import requests
 
-API_URL = "https://menu-management-1.preview.emergentagent.com/api"
+API_URL = "https://menu-config.preview.emergentagent.com/api"
 
 # Postal codes per location (from DB)
 rellingen_plz = [

@@ -174,7 +174,7 @@ FALSCH (alte Version):   main.[anderer-hash].js
    ```
 3. Prüfen Sie die URL:
    ```
-   RICHTIG: https://menu-management-1.preview.emergentagent.com
+   RICHTIG: https://menu-config.preview.emergentagent.com
    ODER: Ihre Production Backend-URL
    ```
 

@@ -67,7 +67,7 @@
 MONGO_URL="mongodb://localhost:27017"           # Auto-updated by Emergent
 DB_NAME="test_database"                          # Auto-updated by Emergent
 CORS_ORIGINS="*"                                 # Allows all origins
-APP_URL="https://menu-management-1.preview.emergentagent.com"  # Auto-updated
+APP_URL="https://menu-config.preview.emergentagent.com"  # Auto-updated
 JWT_SECRET=[secure]                              # Properly configured
 ADMIN_JWT_SECRET=[secure]                        # Properly configured
 RESEND_API_KEY=[configured]                      # Email service

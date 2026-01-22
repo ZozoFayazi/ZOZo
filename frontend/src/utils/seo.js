@@ -83,7 +83,7 @@ export const generateOrganizationSchema = () => {
     "@type": "Organization",
     "name": "ZOZO Burger",
     "alternateName": "ZOZO Burger - Burger, Pizza, Pasta & More",
-    "url": "https://menu-management-1.preview.emergentagent.com",
+    "url": "https://menu-config.preview.emergentagent.com",
     "logo": "https://customer-assets.emergentagent.com/job_premium-zozo/artifacts/jd98ser0_IMG_8154.jpeg",
     "description": "Premium Burger-Lieferservice mit zwei Standorten in Rellingen und Henstedt-Ulzburg. Schnell, heiß & zuverlässig geliefert.",
     "address": [

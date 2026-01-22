@@ -8,7 +8,7 @@ from datetime import datetime
 import json
 
 # Use public endpoint
-BASE_URL = "https://menu-management-1.preview.emergentagent.com/api"
+BASE_URL = "https://menu-config.preview.emergentagent.com/api"
 
 class ZOZOBackendTester:
     def __init__(self):

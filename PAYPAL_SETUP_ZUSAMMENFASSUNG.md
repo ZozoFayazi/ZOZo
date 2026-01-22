@@ -114,7 +114,7 @@ python test_paypal_integration.py
 
 ### Manueller Test
 
-1. **Website öffnen:** https://menu-management-1.preview.emergentagent.com
+1. **Website öffnen:** https://menu-config.preview.emergentagent.com
 2. **Standort wählen:** Henstedt-Ulzburg
 3. **Produkt hinzufügen** (z.B. Burger)
 4. **Zur Kasse gehen**

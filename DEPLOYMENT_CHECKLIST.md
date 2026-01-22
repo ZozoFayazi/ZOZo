@@ -121,7 +121,7 @@
 - ✅ ExpertOrder POS-Integration
 
 **URLs:**
-- Preview: https://menu-management-1.preview.emergentagent.com
+- Preview: https://menu-config.preview.emergentagent.com
 - Production: https://zozo-burger.de
 
 **Admin-Zugang:**

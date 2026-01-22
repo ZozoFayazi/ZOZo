@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 # Resend API Key
 resend.api_key = os.environ.get('RESEND_API_KEY')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@zozo-burger.de')
-APP_URL = os.environ.get('APP_URL', 'https://menu-management-1.preview.emergentagent.com')
+APP_URL = os.environ.get('APP_URL', 'https://menu-config.preview.emergentagent.com')
 
 
 class EmailTemplates:

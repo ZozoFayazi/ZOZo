@@ -97,7 +97,7 @@
 
 ### Login
 ```
-URL: https://menu-management-1.preview.emergentagent.com/admin/login
+URL: https://menu-config.preview.emergentagent.com/admin/login
 Email: admin@zonik-solutions.de
 ```
 
