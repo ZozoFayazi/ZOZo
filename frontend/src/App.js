@@ -252,10 +252,6 @@ function App() {
             } 
           />
 
-              </ProtectedAdminRoute>
-            } 
-          />
-
           <Route 
             path="/admin/locations" 
             element={
