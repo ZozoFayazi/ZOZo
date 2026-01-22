@@ -82,39 +82,27 @@ class AdminDashboardTester:
         print("🔐 ADMIN AUTHENTICATION")
         print("="*60)
         
-        # Try multiple password variations
-        passwords_to_try = [
-            "admin123",
-            "Admin123",
-            "admin",
-            "password",
-            "zozo123",
-            "Zozo123!"
-        ]
+        credentials = {
+            "email": self.admin_email,
+            "password": self.admin_password
+        }
         
-        for password in passwords_to_try:
-            credentials = {
-                "email": self.admin_email,
-                "password": password
-            }
-            
-            print(f"\n🔑 Trying password: {password}")
-            success, response = self.run_test(
-                f"Admin Login ({self.admin_email})",
-                "POST",
-                "auth/login",
-                200,
-                data=credentials
-            )
-            
-            if success and response:
-                self.token = response.get('access_token')
-                user = response.get('user', {})
-                print(f"   ✅ Logged in as: {user.get('email')} ({user.get('role')})")
-                print(f"   🎫 Token: {self.token[:20]}...")
-                return True
+        success, response = self.run_test(
+            f"Admin Login ({self.admin_email})",
+            "POST",
+            "auth/login",
+            200,
+            data=credentials
+        )
         
-        print(f"\n❌ Failed to login with any password variation")
+        if success and response:
+            self.token = response.get('access_token')
+            user = response.get('user', {})
+            print(f"   ✅ Logged in as: {user.get('email')} ({user.get('role')})")
+            print(f"   🎫 Token: {self.token[:20]}...")
+            return True
+        
+        print(f"\n❌ Failed to login")
         return False
 
     def test_admin_dashboard(self):
