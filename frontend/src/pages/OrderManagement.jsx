@@ -402,6 +402,19 @@ function OrderManagement() {
           </div>
         </div>
       )}
+      
+      {/* Order Actions Dialog */}
+      <OrderActionsDialog
+        order={actionsOrder}
+        isOpen={showActionsDialog}
+        onClose={() => {
+          setShowActionsDialog(false);
+          setActionsOrder(null);
+        }}
+        onSuccess={() => {
+          loadOrders();
+        }}
+      />
     </div>
   );
 }
