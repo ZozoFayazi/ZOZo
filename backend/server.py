@@ -1859,6 +1859,14 @@ async def create_order(order: OrderCreate, request: Request):
     except Exception as e:
         print(f"Email sending failed: {str(e)}")
     
+    # ===== NEWSLETTER: Update subscriber metadata if subscribed =====
+    try:
+        customer_email = order.customer.email if hasattr(order.customer, 'email') else None
+        if customer_email:
+            await newsletter_service.update_subscriber_metadata(customer_email, order_doc)
+    except Exception as e:
+        logging.error(f"Newsletter metadata update failed: {str(e)}")
+    
     # Add loyalty info to response
     response = serialize_doc(order_doc)
     if points_earned > 0:
