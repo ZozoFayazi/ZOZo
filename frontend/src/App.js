@@ -51,6 +51,9 @@ const Impressum = lazy(() => import('./pages/Impressum'));
 const Datenschutz = lazy(() => import('./pages/Datenschutz'));
 const Kontakt = lazy(() => import('./pages/Kontakt'));
 const Rechtliches = lazy(() => import('./pages/Rechtliches'));
+const NewsletterManagement = lazy(() => import('./pages/NewsletterManagement'));
+const CampaignManagement = lazy(() => import('./pages/CampaignManagement'));
+const CampaignEditor = lazy(() => import('./pages/CampaignEditor'));
 
 // Loading component
 const PageLoader = () => (
