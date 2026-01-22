@@ -324,14 +324,30 @@ class POSService:
         
         # Update order status if we have the OID
         if order_oid:
+            # Save failed push history entry
+            push_history_entry = {
+                "timestamp": datetime.now(timezone.utc),
+                "status": "failed",
+                "provider": provider,
+                "message": last_error,
+                "error_type": last_error_type,
+                "attempts": total_attempts,
+                "payload": order_data  # Save what was attempted
+            }
+            
             await self.db.orders.update_one(
                 {"_id": order_oid},
-                {"$set": {
-                    "pos_status": "error",
-                    "pos_error": last_error,
-                    "pos_error_at": datetime.now(timezone.utc),
-                    "pos_retry_count": total_attempts
-                }}
+                {
+                    "$set": {
+                        "pos_status": "error",
+                        "pos_error": last_error,
+                        "pos_error_at": datetime.now(timezone.utc),
+                        "pos_retry_count": total_attempts
+                    },
+                    "$push": {
+                        "pos_push_history": push_history_entry
+                    }
+                }
             )
         
         return {
