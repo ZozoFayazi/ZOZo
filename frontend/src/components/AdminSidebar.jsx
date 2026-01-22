@@ -22,7 +22,8 @@ import {
   Mail,
   Link2,
   BarChart3,
-  Users
+  Users,
+  Euro
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
