@@ -46,6 +46,12 @@ const AdminSidebar = () => {
       permission: null // All admins
     },
     {
+      title: 'Kunden-CRM',
+      icon: Users,
+      path: '/admin/customers',
+      permission: null // All admins
+    },
+    {
       title: 'Filialen',
       icon: MapPin,
       path: '/admin/locations',
