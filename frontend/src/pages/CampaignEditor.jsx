@@ -307,7 +307,7 @@ function CampaignEditor() {
                 className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono text-sm"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Tipp: {{'{{'}}unsubscribe_link{{'}}'}} wird automatisch ersetzt
+                Tipp: unsubscribe_link wird automatisch ersetzt
               </p>
             </div>
 
