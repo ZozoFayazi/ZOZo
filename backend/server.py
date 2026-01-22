@@ -2463,7 +2463,7 @@ async def update_discount_code(
 @api_router.delete("/admin/discount-codes/{code_id}")
 async def delete_discount_code(
     code_id: str,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Delete a discount code"""
     result = await db.discount_codes.delete_one({"id": code_id})
