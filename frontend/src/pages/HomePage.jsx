@@ -55,11 +55,23 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
   };
 
   const handleOrder = (location) => {
+    // Temporäre Weiterleitung für Henstedt-Ulzburg zu Foodbooking
+    if (location.slug === 'henstedt-ulzburg' || location.slug === 'henstedt') {
+      window.location.href = 'https://www.foodbooking.com/api/fb/0ybj4';
+      return;
+    }
+    
     setSelectedLocation(location);
     navigate('/menu');
   };
 
   const handleOrderTypeComplete = (data) => {
+    // Temporäre Weiterleitung für Henstedt-Ulzburg zu Foodbooking
+    if (data.location.slug === 'henstedt-ulzburg' || data.location.slug === 'henstedt') {
+      window.location.href = 'https://www.foodbooking.com/api/fb/0ybj4';
+      return;
+    }
+    
     setSelectedLocation(data.location);
     setShowOrderTypeDialog(false);
     navigate('/menu');
