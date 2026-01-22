@@ -382,14 +382,14 @@ class EmailService:
     
     @staticmethod
     async def send_order_followup(customer_email: str, customer_name: str, order_id: str, order_total: float, unsubscribe_token: str) -> Dict:
-        """Send order follow-up email"""
-        html = EmailTemplates.order_followup_email(customer_name or "Liebe*r Kunde*in", order_id, order_total)
+        """Send order follow-up email with review link"""
+        html = EmailTemplates.order_followup_email(customer_name or "Liebe*r Kunde*in", order_id, order_total, customer_email)
         html = html.replace('{{APP_URL}}', APP_URL)
         html = html.replace('{{UNSUBSCRIBE_TOKEN}}', unsubscribe_token)
         
         return await EmailService.send_email(
             to_email=customer_email,
-            subject=f"Wie war deine Bestellung #{order_id}? 🍔",
+            subject=f"Bewerte deine Bestellung & erhalte 5% Gutschein! ⭐",
             html_content=html
         )
     
