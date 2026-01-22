@@ -193,6 +193,9 @@ class CustomerService:
                     pass
             
             # Calculate recency
+            # Ensure last_order has timezone info
+            if hasattr(last_order, 'tzinfo') and not last_order.tzinfo:
+                last_order = last_order.replace(tzinfo=timezone.utc)
             days_since_last_order = (now - last_order).days
             
             # Calculate RFM
