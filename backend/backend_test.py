@@ -661,7 +661,7 @@ class AdminAPITester:
 def main():
     print("\n" + "="*60)
     print("ZOZO BURGER - COMPREHENSIVE API TEST")
-    print("Testing Admin Dashboard + Enterprise CRM")
+    print("Testing Admin Dashboard + Enterprise CRM + Finance Management")
     print("="*60)
     print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
