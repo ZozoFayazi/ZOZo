@@ -535,56 +535,47 @@ class ExpertOrderConnector(BasePOSConnector):
                     "items": []  # Will be populated with children
                 }
                 
-                # 2. BRÖTCHEN (aus customizations oder modifiers)
-                # Search for bun/brötchen selections
+                # 2. BRÖTCHEN (aus customizations) → als Kind hinzufügen
                 customizations = item.get('customizations', [])
                 modifiers = item.get('modifiers', {})
                 
                 for custom in customizations:
                     if isinstance(custom, str) and ('brötchen' in custom.lower() or 'bun' in custom.lower()):
                         clean_name = custom.replace('+ ', '').replace('+', '').strip()
-                        items.append({
+                        menu_main_item["items"].append({
                             "uid": f"BUN-{clean_name[:20].replace(' ', '-').upper()}",
-                            "name": clean_name,
+                            "name": f"+ {clean_name}",
                             "count": item.get('quantity', 1),
-                            "price": 0.0,
-                            "group": "BUN",
-                            "type": "addon"
+                            "price": 0.0
                         })
                 
-                # 3. ABWAHLEN (Ohne...)
+                # 3. ABWAHLEN (Ohne...) → als Kind hinzufügen
                 removals = item.get('removed_ingredients', [])
                 for removal in removals:
-                    items.append({
+                    menu_main_item["items"].append({
                         "uid": f"REMOVE-{removal[:20].replace(' ', '-').upper()}",
-                        "name": f"Ohne {removal}",
+                        "name": f"- Ohne {removal}",
                         "count": item.get('quantity', 1),
-                        "price": 0.0,
-                        "group": "REMOVAL",
-                        "type": "modifier"
+                        "price": 0.0
                     })
                 
-                # 4. EXTRAS/ZUWAHLEN (Extra Käse, etc.)
+                # 4. EXTRAS/ZUWAHLEN (Extra Käse, etc.) → als Kind hinzufügen
                 extras = item.get('extras', [])
                 for extra in extras:
                     extra_name = extra.get('name', extra) if isinstance(extra, dict) else extra
                     extra_price = extra.get('price', 0) if isinstance(extra, dict) else 0
                     
-                    items.append({
+                    menu_main_item["items"].append({
                         "uid": f"EXTRA-{extra_name[:20].replace(' ', '-').upper()}",
-                        "name": extra_name,
+                        "name": f"+ {extra_name}",
                         "count": item.get('quantity', 1),
-                        "price": float(extra_price),
-                        "group": "EXTRA",
-                        "type": "addon"
+                        "price": float(extra_price)
                     })
                 
-                # 5. BEILAGE + 6. GETRÄNK (aus modifiers, in korrekter Reihenfolge)
+                # 5. BEILAGE (aus modifiers) → als Kind hinzufügen
                 if modifiers:
-                    # First: Beilage/Side
                     for group_id, modifier_data in modifiers.items():
                         if isinstance(modifier_data, dict):
-                            # Check if this is a side/beilage group
                             is_side = any(keyword in group_id.lower() for keyword in ['beilage', 'side', 'pommes', 'fries'])
                             
                             if is_side:
@@ -592,19 +583,16 @@ class ExpertOrderConnector(BasePOSConnector):
                                 modifier_price = modifier_data.get('price', 0.0)
                                 pos_item_id = modifier_data.get('pos_item_id', '')
                                 
-                                items.append({
+                                menu_main_item["items"].append({
                                     "uid": pos_item_id or f"SIDE-{group_id}",
-                                    "name": modifier_name,
+                                    "name": f"+ {modifier_name}",
                                     "count": item.get('quantity', 1),
-                                    "price": float(modifier_price),
-                                    "group": "SIDE",
-                                    "type": "addon"
+                                    "price": float(modifier_price)
                                 })
                     
-                    # Then: Getränk/Drink
+                    # 6. GETRÄNK (aus modifiers) → als Kind hinzufügen
                     for group_id, modifier_data in modifiers.items():
                         if isinstance(modifier_data, dict):
-                            # Check if this is a drink/getraenk group
                             is_drink = any(keyword in group_id.lower() for keyword in ['getraenk', 'getr', 'drink', 'beverage'])
                             
                             if is_drink:
@@ -612,34 +600,15 @@ class ExpertOrderConnector(BasePOSConnector):
                                 modifier_price = modifier_data.get('price', 0.0)
                                 pos_item_id = modifier_data.get('pos_item_id', '')
                                 
-                                items.append({
+                                menu_main_item["items"].append({
                                     "uid": pos_item_id or f"DRINK-{group_id}",
-                                    "name": modifier_name,
+                                    "name": f"+ {modifier_name}",
                                     "count": item.get('quantity', 1),
-                                    "price": float(modifier_price),
-                                    "group": "DRINK",
-                                    "type": "addon"
+                                    "price": float(modifier_price)
                                 })
                 
-                # 7. LEGACY: Other customizations not covered above
-                for custom in customizations:
-                    if isinstance(custom, str):
-                        clean_name = custom.replace('+ ', '').replace('+', '').strip()
-                        
-                        # Skip if already added (bun, or covered by modifiers)
-                        if 'brötchen' in clean_name.lower() or 'bun' in clean_name.lower():
-                            continue
-                        if any(clean_name in mod_data.get('name', '') for mod_data in modifiers.values() if isinstance(mod_data, dict)):
-                            continue
-                        
-                        items.append({
-                            "uid": f"CUSTOM-{clean_name[:20].replace(' ', '-').upper()}",
-                            "name": clean_name,
-                            "count": item.get('quantity', 1),
-                            "price": 0.0,
-                            "group": "CUSTOM",
-                            "type": "addon"
-                        })
+                # Add main menu item with all its children to items list
+                items.append(menu_main_item)
             
             else:
                 # KEIN MENÜ: Normale Artikel-Struktur (einzelne Burger, Salate, etc.)
