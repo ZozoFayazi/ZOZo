@@ -428,8 +428,8 @@ class AdminAPITester:
 
 def main():
     print("\n" + "="*60)
-    print("ZOZO BURGER ADMIN DASHBOARD - REGRESSION TEST")
-    print("Testing 5 Bug Fixes Applied by Main Agent")
+    print("ZOZO BURGER - COMPREHENSIVE API TEST")
+    print("Testing Admin Dashboard + Enterprise CRM")
     print("="*60)
     print(f"Test started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
@@ -437,7 +437,7 @@ def main():
     
     # Test 1: Admin Login (prerequisite)
     if not tester.test_admin_login():
-        print("\n❌ CRITICAL: Admin login failed. Cannot proceed with regression tests.")
+        print("\n❌ CRITICAL: Admin login failed. Cannot proceed with tests.")
         return 1
     
     # Test 2: Admin Stats Endpoint
@@ -458,9 +458,12 @@ def main():
     # Test 7: Location Settings (401 bug fix)
     tester.test_location_settings_endpoint()
     
+    # Test 8: ENTERPRISE CRM - Customer Management (NEW FEATURE)
+    tester.test_customer_crm_endpoints()
+    
     # Print final results
     print("\n" + "="*60)
-    print("REGRESSION TEST RESULTS")
+    print("COMPREHENSIVE TEST RESULTS")
     print("="*60)
     print(f"Tests Run: {tester.tests_run}")
     print(f"Tests Passed: {tester.tests_passed}")
@@ -469,12 +472,12 @@ def main():
     print("="*60)
     
     if tester.tests_passed == tester.tests_run:
-        print("\n✅ ALL REGRESSION TESTS PASSED!")
-        print("All 5 bug fixes are working correctly.")
+        print("\n✅ ALL TESTS PASSED!")
+        print("Admin Dashboard + Enterprise CRM working correctly.")
         return 0
     else:
         print(f"\n⚠️  {tester.tests_run - tester.tests_passed} test(s) failed.")
-        print("Some bug fixes may need additional work.")
+        print("Some features may need additional work.")
         return 1
 
 if __name__ == "__main__":
