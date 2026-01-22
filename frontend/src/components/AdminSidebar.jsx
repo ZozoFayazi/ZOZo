@@ -79,6 +79,12 @@ const AdminSidebar = () => {
       permission: 'manage_products' // Only Rellingen + Super Admin
     },
     {
+      title: 'Newsletter & Marketing',
+      icon: Mail,
+      path: '/admin/newsletter',
+      permission: 'manage_products' // Only Rellingen + Super Admin
+    },
+    {
       title: 'POS-System',
       icon: Cable,
       path: '/admin/pos',
