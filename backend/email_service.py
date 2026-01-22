@@ -236,7 +236,7 @@ class EmailTemplates:
                 Dein ZOZO Burger Team ❤️
             </p>
         """
-        return EmailTemplates.get_base_template(content, f"Dein persönlicher 20% Rabatt wartet auf dich!")
+        return EmailTemplates.get_base_template(content, "Dein persönlicher 20% Rabatt wartet auf dich!")
     
     @staticmethod
     def vip_upgrade_email(customer_name: str, total_orders: int, total_spent: float) -> str:
