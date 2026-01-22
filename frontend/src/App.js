@@ -21,7 +21,7 @@ const BurgerBuilder = lazy(() => import('./pages/BurgerBuilder'));
 const MyCreations = lazy(() => import('./pages/MyCreations'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const LocationSettings = lazy(() => import('./pages/LocationSettings'));
+const LocationSettings = lazy(() => import('./pages/LocationSettingsV2'));
 const LocationManagement = lazy(() => import('./pages/LocationManagement'));
 const DealsManagement = lazy(() => import('./pages/DealsManagement'));
 const DailyDealsAdmin = lazy(() => import('./pages/DailyDealsAdmin'));
