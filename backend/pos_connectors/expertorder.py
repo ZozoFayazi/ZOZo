@@ -611,13 +611,106 @@ class ExpertOrderConnector(BasePOSConnector):
                 items.append(menu_main_item)
             
             else:
-                # KEIN MENÜ: Normale Artikel-Struktur (einzelne Burger, Salate, etc.)
+                # KEIN MENÜ: Aber TROTZDEM verschachtelte Struktur für alle Komponenten!
                 # 1. Main product - MIT Grammzahl bei Burgern
                 item_name = item.get('name', '')
                 item_size = item.get('size', '')
                 
                 # Add gram weight for burgers
                 is_burger = any(word in item_name.lower() for word in ['burger', 'smash'])
+                
+                full_name = item_name
+                if is_burger and item_size and item_size.lower() != 'normal':
+                    size_upper = item_size.upper()
+                    if size_upper == 'MEDIUM':
+                        full_name = f"{item_name} Medium 125g"
+                    elif size_upper == 'LARGE':
+                        full_name = f"{item_name} Large 180g"
+                    else:
+                        full_name = f"{item_name} {item_size}"
+                elif item_size and item_size.lower() != 'normal':
+                    full_name = f"{item_name} ({item_size})"
+                
+                # Create main item with NESTED children
+                main_item = {
+                    "uid": item.get('menu_item_id', ''),
+                    "name": full_name,
+                    "count": item.get('quantity', 1),
+                    "price": float(item.get('price', 0)),
+                    "items": []  # Will contain all modifiers/extras/removals
+                }
+                
+                # 2. BRÖTCHEN (aus customizations) → als Kind
+                customizations = item.get('customizations', [])
+                for custom in customizations:
+                    if isinstance(custom, str) and ('brötchen' in custom.lower() or 'bun' in custom.lower()):
+                        clean_name = custom.replace('+ ', '').replace('+', '').strip()
+                        main_item["items"].append({
+                            "uid": f"BUN-{clean_name[:20].replace(' ', '-').upper()}",
+                            "name": f"+ {clean_name}",
+                            "count": item.get('quantity', 1),
+                            "price": 0.0
+                        })
+                
+                # 3. MODIFIERS (Dressing, Pizzabrötchen, Dips, etc.) → als Kinder
+                modifiers = item.get('modifiers', {})
+                if modifiers:
+                    for group_id, modifier_data in modifiers.items():
+                        if isinstance(modifier_data, dict):
+                            modifier_name = modifier_data.get('name', '')
+                            modifier_price = modifier_data.get('price', 0.0)
+                            pos_item_id = modifier_data.get('pos_item_id', '')
+                            
+                            main_item["items"].append({
+                                "uid": pos_item_id or f"MOD-{group_id}",
+                                "name": f"+ {modifier_name}",
+                                "count": item.get('quantity', 1),
+                                "price": float(modifier_price)
+                            })
+                
+                # 4. ANDERE CUSTOMIZATIONS (nicht Brötchen) → als Kinder
+                for custom in customizations:
+                    if isinstance(custom, str):
+                        # Skip brötchen (already added above)
+                        if 'brötchen' in custom.lower() or 'bun' in custom.lower():
+                            continue
+                        # Skip if covered by modifiers
+                        if any(custom in mod_data.get('name', '') for mod_data in modifiers.values() if isinstance(mod_data, dict)):
+                            continue
+                        
+                        clean_name = custom.replace('+ ', '').replace('+', '').strip()
+                        main_item["items"].append({
+                            "uid": f"CUSTOM-{clean_name[:20].replace(' ', '-').upper()}",
+                            "name": f"+ {clean_name}",
+                            "count": item.get('quantity', 1),
+                            "price": 0.0
+                        })
+                
+                # 5. EXTRAS → als Kinder
+                extras = item.get('extras', [])
+                for extra in extras:
+                    extra_name = extra.get('name', extra) if isinstance(extra, dict) else extra
+                    extra_price = extra.get('price', 0) if isinstance(extra, dict) else 0
+                    
+                    main_item["items"].append({
+                        "uid": f"EXTRA-{extra_name[:20].replace(' ', '-').upper()}",
+                        "name": f"+ {extra_name}",
+                        "count": 1,
+                        "price": float(extra_price)
+                    })
+                
+                # 6. REMOVALS → als Kinder
+                removals = item.get('removed_ingredients', [])
+                for removal in removals:
+                    main_item["items"].append({
+                        "uid": f"REMOVE-{removal[:20].replace(' ', '-').upper()}",
+                        "name": f"- Ohne {removal}",
+                        "count": 1,
+                        "price": 0.0
+                    })
+                
+                # Add main item with all children
+                items.append(main_item)
                 
                 if is_burger and item_size and item_size.lower() != 'normal':
                     size_upper = item_size.upper()
