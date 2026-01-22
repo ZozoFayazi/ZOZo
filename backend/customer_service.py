@@ -155,14 +155,20 @@ class CustomerService:
         
         for customer in customers_data:
             # Handle datetime conversion - robust for all formats
-            last_order = customer['last_order_date']
+            last_order = customer.get('last_order_date')
+            if not last_order:
+                continue  # Skip if no orders
+            
             if isinstance(last_order, str):
                 last_order = datetime.fromisoformat(last_order.replace('Z', '+00:00'))
             elif isinstance(last_order, datetime):
                 if not last_order.tzinfo:
                     last_order = last_order.replace(tzinfo=timezone.utc)
             
-            first_order = customer['first_order_date']
+            first_order = customer.get('first_order_date')
+            if not first_order:
+                first_order = last_order  # Fallback
+            
             if isinstance(first_order, str):
                 first_order = datetime.fromisoformat(first_order.replace('Z', '+00:00'))
             elif isinstance(first_order, datetime):
