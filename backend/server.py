@@ -4994,6 +4994,7 @@ app.include_router(analytics_router, prefix="/api")
 app.include_router(customer_router, prefix="/api")
 app.include_router(finance_router, prefix="/api")
 app.include_router(review_router)
+app.include_router(menu_config_router)
 
 
 # Mount static files for product images
