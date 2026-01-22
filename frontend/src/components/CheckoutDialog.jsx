@@ -167,12 +167,14 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       // Use detected location if available, otherwise use selected location
       const locationToUse = detectedLocation || selectedLocation;
       
-      // CRITICAL: Validate location exists
+      // ⚠️ CRITICAL FIX - DO NOT REMOVE - 22.01.2026 ⚠️
+      // Validate location exists to prevent "location_id fehlt" error
       if (!locationToUse || !locationToUse.id) {
         toast.error('Bitte wähle zuerst einen Standort aus!');
         setLoading(false);
         return;
       }
+      // ⚠️ END CRITICAL FIX ⚠️
       
       const orderData = {
         location_id: locationToUse.id,
@@ -182,11 +184,14 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
           price: item.price,
           size: item.size,
           quantity: item.quantity,
-          // CRITICAL: Include ALL customization fields
+          // ⚠️ CRITICAL FIX - DO NOT REMOVE - 22.01.2026 ⚠️
+          // These fields MUST be sent to backend for menu components and customizations
+          // Without these: Salat-Dressing, Menü-Beilage, Menü-Getränk, Sauce fehlen!
           customizations: item.customizations || [],
           modifiers: item.modifiers || {},
           removed_ingredients: item.removed_ingredients || [],
           extras: item.extras || []
+          // ⚠️ END CRITICAL FIX ⚠️
         })),
         customer: {
           name: formData.name,
