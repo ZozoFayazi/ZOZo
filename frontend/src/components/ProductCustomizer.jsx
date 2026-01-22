@@ -215,7 +215,9 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
     // Build extras array (WITHOUT menu components - they go to modifiers)
     const allExtras = [...selectedExtras];
     
-    // Build menu modifiers separately (for correct ExpertOrder structure)
+    // ⚠️ CRITICAL FIX - DO NOT REMOVE - 22.01.2026 ⚠️
+    // Menu components MUST be sent as 'modifiers', NOT as 'extras'
+    // Without this: Menü-Beilage und Getränk fehlen auf Kassenbon!
     const menuModifiers = {};
     
     if (upgradeToMenu) {
@@ -244,6 +246,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
         };
       }
     }
+    // ⚠️ END CRITICAL FIX ⚠️
     
     // Add extras and removals to customizations (NOT to name in parentheses)
     // Each will appear as separate line in cart AND on POS receipt
