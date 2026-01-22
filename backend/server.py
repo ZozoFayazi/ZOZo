@@ -2426,7 +2426,7 @@ async def create_discount_code(
         "valid_until": code_data.valid_until,
         "location_ids": code_data.location_ids,
         "active": code_data.active,
-        "created_by": current_user.get('email'),
+        "created_by": admin.get('email'),
         "created_at": datetime.now(timezone.utc)
     }
     
