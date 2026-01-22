@@ -273,7 +273,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       customizations: customizations,  // All selections as separate lines
       extras: allExtras,
       removed_ingredients: selectedRemovals,
-      modifiers: selectedModifiers
+      modifiers: { ...selectedModifiers, ...menuModifiers }  // Merge regular modifiers + menu modifiers
     });
 
     toast.success(`${customizedName} zum Warenkorb hinzugefügt`);
