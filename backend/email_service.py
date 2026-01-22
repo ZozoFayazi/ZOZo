@@ -1,725 +1,433 @@
 """
-Email Service for ZOZO Burger
-Handles all email communications using Resend
+Enterprise Email Service for ZOZO Burger
+Real email sending via Resend + beautiful templates + automation
+Created: 22 January 2026
 """
-import os
-import resend
-from datetime import datetime
-from typing import Optional
-import logging
-from pathlib import Path
-from dotenv import load_dotenv
 
-# Load environment variables
-env_path = Path(__file__).parent / '.env'
-load_dotenv(env_path)
+import resend
+import os
+from typing import Dict, List, Optional
+from datetime import datetime, timezone
+import logging
 
 logger = logging.getLogger(__name__)
 
-# Initialize Resend with API key
-resend.api_key = os.getenv('RESEND_API_KEY')
+# Resend API Key
+resend.api_key = os.environ.get('RESEND_API_KEY')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@zozo-burger.de')
+APP_URL = os.environ.get('APP_URL', 'https://menu-management-1.preview.emergentagent.com')
 
-# Default sender email
-SENDER_EMAIL = os.getenv('SENDER_EMAIL', 'noreply@zozo-burger.de')
 
-# Google Review Links for each location
-LOCATION_REVIEW_LINKS = {
-    "rellingen": "https://search.google.com/local/writereview?placeid=ChIJn9Dn6hSUuEcRZdj8BGyKqGk",
-    "henstedt-ulzburg": None  # Will be added later
-}
-
-def get_email_logo_url():
-    """Get ZOZO Burger logo URL - publicly accessible"""
-    return "https://customer-assets.emergentagent.com/job_zozofinal/artifacts/ucrdxkwy_IMG_8154.jpeg"
-
-def get_base_email_template(content: str, title: str = "ZOZO Burger") -> str:
-    """Base HTML template for all emails - optimized for email clients (Gmail, iPhone Mail, Outlook)"""
-    logo_url = get_email_logo_url()
+class EmailTemplates:
+    """Professional email templates for ZOZO Burger"""
     
-    return f"""
-    <!DOCTYPE html>
-    <html lang="de">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{title}</title>
-        <!--[if mso]>
-        <noscript>
-            <xml>
-                <o:OfficeDocumentSettings>
-                    <o:PixelsPerInch>96</o:PixelsPerInch>
-                </o:OfficeDocumentSettings>
-            </xml>
-        </noscript>
-        <![endif]-->
-        <style type="text/css">
-            /* Reset styles for email clients */
-            body, table, td, a {{ -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }}
-            table, td {{ mso-table-lspace: 0pt; mso-table-rspace: 0pt; }}
-            img {{ -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }}
-            body {{
-                margin: 0 !important;
-                padding: 0 !important;
-                font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-                background-color: #0a0a0a;
-                color: #ffffff;
-                width: 100% !important;
-                height: 100% !important;
-            }}
-            .container {{
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: #1a1a1a;
-            }}
-            .header {{
-                background-color: #1a1a1a;
-                padding: 30px 20px;
-                text-align: center;
-            }}
-            .header img {{
-                max-width: 180px;
-                height: auto;
-                display: block;
-                margin: 0 auto;
-            }}
-            .content {{
-                padding: 40px 30px;
-                line-height: 1.8;
-                background-color: #1a1a1a;
-            }}
-            .content h1 {{
-                color: #dc2626;
-                font-size: 24px;
-                margin: 0 0 20px 0;
-                text-align: center;
-                font-weight: bold;
-            }}
-            .content p {{
-                color: #e5e5e5;
-                font-size: 16px;
-                margin: 0 0 15px 0;
-                line-height: 1.6;
-            }}
-            .button {{
-                display: inline-block;
-                padding: 16px 40px;
-                background-color: #dc2626;
-                color: #ffffff !important;
-                text-decoration: none;
-                border-radius: 8px;
-                font-weight: bold;
-                font-size: 16px;
-                margin: 20px 0;
-                text-align: center;
-            }}
-            .code-box {{
-                background-color: #0a0a0a;
-                border: 2px solid #dc2626;
-                border-radius: 8px;
-                padding: 20px;
-                text-align: center;
-                margin: 20px 0;
-            }}
-            .code {{
-                font-size: 32px;
-                font-weight: bold;
-                color: #dc2626;
-                letter-spacing: 8px;
-                font-family: 'Courier New', monospace;
-            }}
-            .info-box {{
-                background-color: rgba(220, 38, 38, 0.15);
-                border-left: 4px solid #dc2626;
-                padding: 15px 20px;
-                margin: 20px 0;
-                border-radius: 0 4px 4px 0;
-            }}
-            .footer {{
-                background-color: #0a0a0a;
-                padding: 30px 20px;
-                text-align: center;
-                border-top: 1px solid #333333;
-            }}
-            .footer p {{
-                color: #666666;
-                font-size: 14px;
-                margin: 5px 0;
-            }}
-            .footer a {{
-                color: #dc2626;
-                text-decoration: none;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <img src="{logo_url}" alt="ZOZO Burger Logo">
-            </div>
-            <div class="content">
-                {content}
-            </div>
-            <div class="footer">
-                <p>ZOZO Burger - Premium Burger, Pizza & More</p>
-                <p>Rellingen • Henstedt-Ulzburg</p>
-                <p>
-                    <a href="https://www.zozo-burger.de">www.zozo-burger.de</a> • 
-                    <a href="mailto:info@zozo-burger.de">info@zozo-burger.de</a>
-                </p>
-                <p style="margin-top: 20px; font-size: 12px;">
-                    Diese E-Mail wurde automatisch generiert. Bitte nicht antworten.
-                </p>
-            </div>
+    @staticmethod
+    def get_base_template(content: str, preheader: str = "") -> str:
+        """Base template with ZOZO branding"""
+        return f"""
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>ZOZO Burger</title>
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }}
+        .container {{
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            padding: 40px 20px;
+            text-align: center;
+        }}
+        .logo {{
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            background-color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #dc2626;
+        }}
+        .content {{
+            padding: 40px 30px;
+        }}
+        .button {{
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 20px 0;
+        }}
+        .footer {{
+            background-color: #0a0a0a;
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }}
+        .preheader {{
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+        }}
+    </style>
+</head>
+<body>
+    <div class="preheader">{preheader}</div>
+    <div class="container">
+        <div class="header">
+            <div class="logo">ZB</div>
+            <h1 style="margin: 0; color: white; font-size: 24px;">ZOZO Burger</h1>
         </div>
-    </body>
-    </html>
-    """
-
-def send_email(to_email: str, subject: str, html_content: str) -> bool:
-    """Send email via Resend"""
-    try:
-        # Ensure API key is set
-        if not resend.api_key:
-            resend.api_key = os.getenv('RESEND_API_KEY')
-        
-        if not resend.api_key:
-            logger.error("RESEND_API_KEY not configured")
-            return False
-        
-        # Use configured sender email, fallback to Resend test domain if domain not verified
-        sender = SENDER_EMAIL
-        
-        # Check if using custom domain - may need verification
-        # For production, use verified domain: noreply@zozo-burger.de
-        # For testing/development, can use: onboarding@resend.dev
-        use_test_domain = os.getenv('RESEND_USE_TEST_DOMAIN', 'false').lower() == 'true'
-        if use_test_domain:
-            sender = 'onboarding@resend.dev'
-            logger.info("Using Resend test domain for sending")
-        
-        params = {
-            "from": f"ZOZO Burger <{sender}>",
-            "to": [to_email],
-            "subject": subject,
-            "html": html_content
-        }
-        
-        response = resend.Emails.send(params)
-        
-        if response and response.get('id'):
-            logger.info(f"Email sent successfully to {to_email}, ID: {response.get('id')}")
-            return True
-        else:
-            logger.error(f"Email send failed: {response}")
-            return False
-            
-    except Exception as e:
-        error_msg = str(e)
-        logger.error(f"Email send error: {error_msg}")
-        
-        # Check for domain verification error
-        if 'not verified' in error_msg.lower():
-            logger.warning(
-                "Domain not verified at Resend. "
-                "Please verify zozo-burger.de at https://resend.com/domains "
-                "or set RESEND_USE_TEST_DOMAIN=true for testing"
-            )
-        
-        return False
-
-def send_verification_email(email: str, verification_code: str) -> bool:
-    """Send email verification code"""
-    content = f"""
-        <h1>🔐 E-Mail Verifizierung</h1>
-        <p>Willkommen bei ZOZO Burger!</p>
-        <p>Um deine E-Mail-Adresse zu bestätigen, verwende bitte den folgenden Verifizierungscode:</p>
-        
-        <div class="code-box">
-            <div class="code">{verification_code}</div>
+        <div class="content">
+            {content}
         </div>
-        
-        <p>Dieser Code ist <strong>10 Minuten</strong> gültig.</p>
-        
-        <div class="info-box">
-            <p><strong>⚡ Warum verifizieren?</strong></p>
-            <p>Damit wir dir Bestellbestätigungen, Status-Updates und exklusive Angebote zusenden können!</p>
-        </div>
-        
-        <p>Falls du diese E-Mail nicht angefordert hast, kannst du sie ignorieren.</p>
-    """
-    
-    html = get_base_email_template(content, "E-Mail Verifizierung")
-    return send_email(email, "🔐 ZOZO Burger - Verifiziere deine E-Mail", html)
-
-def send_order_confirmation_email(order: dict, location: dict) -> bool:
-    """
-    Send complete order confirmation email with all details
-    Uses new template with modifiers, payment info, etc.
-    """
-    from email_templates import get_order_confirmation_html
-    
-    customer = order.get('customer', {})
-    customer_email = customer.get('email')
-    
-    # Skip if no email
-    if not customer_email:
-        logger.info(f"Skipping order confirmation email for {order.get('order_number')} - no email provided")
-        return True  # Not a failure, just skip
-    
-    try:
-        # Generate HTML using complete template
-        html = get_order_confirmation_html(order, location)
-        
-        # Send email
-        order_number = order.get('order_number', 'N/A')
-        subject = f"✅ Bestellung {order_number} bestätigt - ZOZO Burger"
-        
-        return send_email(customer_email, subject, html)
-        
-    except Exception as e:
-        logger.error(f"Failed to send order confirmation email: {str(e)}")
-        return False
-
-def send_status_update_email(order: dict, new_status: str, location: dict) -> bool:
-    """Send order status update email"""
-    customer = order.get('customer', {})
-    
-    status_messages = {
-        "confirmed": {
-            "emoji": "✅",
-            "title": "Bestellung bestätigt",
-            "message": "Deine Bestellung wurde bestätigt und wird jetzt vorbereitet."
-        },
-        "preparing": {
-            "emoji": "👨‍🍳",
-            "title": "In Zubereitung",
-            "message": "Deine Bestellung wird gerade frisch zubereitet!"
-        },
-        "ready": {
-            "emoji": "📦",
-            "title": "Bereit zur Abholung",
-            "message": "Deine Bestellung ist fertig und wartet auf dich!"
-        },
-        "out_for_delivery": {
-            "emoji": "🚗",
-            "title": "Unterwegs zu dir",
-            "message": "Deine Bestellung ist auf dem Weg zu dir!"
-        },
-        "delivered": {
-            "emoji": "🎉",
-            "title": "Zugestellt",
-            "message": "Guten Appetit! Deine Bestellung wurde zugestellt."
-        }
-    }
-    
-    status_info = status_messages.get(new_status, status_messages["confirmed"])
-    
-    content = f"""
-        <h1>{status_info['emoji']} {status_info['title']}</h1>
-        <p>{status_info['message']}</p>
-        
-        <div class="info-box">
-            <p><strong>📋 Bestellnummer:</strong> {order.get('order_number')}</p>
-            <p><strong>🏪 Filiale:</strong> {location.get('name')}</p>
-        </div>
-        
-        <p>Du kannst den Status deiner Bestellung jederzeit online verfolgen.</p>
-        
-        <div style="text-align: center;">
-            <a href="{os.environ.get('APP_URL', 'http://localhost:3000')}/order-tracking" 
-               class="button">
-                📍 Bestellung verfolgen
-            </a>
-        </div>
-    """
-    
-    html = get_base_email_template(content, f"Status-Update: {status_info['title']}")
-    return send_email(customer.get('email'), f"{status_info['emoji']} Bestellung {order.get('order_number')} - {status_info['title']}", html)
-
-def send_review_request_email(order: dict, location: dict) -> bool:
-    """Send review request email 2 hours after delivery"""
-    customer = order.get('customer', {})
-    location_slug = location.get('slug', 'rellingen')
-    review_link = LOCATION_REVIEW_LINKS.get(location_slug)
-    
-    if not review_link:
-        logger.warning(f"No review link configured for location: {location_slug}")
-        return False
-    
-    content = f"""
-        <h1>⭐ Wie war dein ZOZO Burger?</h1>
-        <p>Hallo {customer.get('name', 'lieber Gast')}!</p>
-        <p>Wir hoffen, deine Bestellung hat dir geschmeckt! 😋</p>
-        
-        <div class="info-box">
-            <p>Deine Meinung ist uns wichtig! Hilf uns, noch besser zu werden.</p>
-        </div>
-        
-        <p>Es würde uns sehr freuen, wenn du uns auf Google bewerten könntest. 
-        Dein Feedback hilft uns, unseren Service zu verbessern und anderen Gästen bei ihrer Entscheidung.</p>
-        
-        <div style="text-align: center;">
-            <a href="{review_link}" class="button">
-                ⭐ Jetzt auf Google bewerten
-            </a>
-        </div>
-        
-        <p style="margin-top: 30px; text-align: center;">Vielen Dank für deine Unterstützung! 🙏</p>
-        
-        <div style="text-align: center; margin-top: 40px;">
-            <p><strong>🎁 Noch mehr Vorteile?</strong></p>
-            <p>Sammle Treuepunkte bei jeder Bestellung und sichere dir leckere Belohnungen!</p>
-            <a href="{os.environ.get('APP_URL', 'http://localhost:3000')}/rewards" 
-               style="color: #dc2626; text-decoration: underline;">
-                Zu den Belohnungen →
-            </a>
-        </div>
-    """
-    
-    html = get_base_email_template(content, "Bewerte uns auf Google")
-    return send_email(customer.get('email'), "⭐ Wie hat dir deine ZOZO Burger Bestellung geschmeckt?", html)
-
-
-def send_group_order_invite_email(to_email: str, group_code: str, host_name: str, share_link: str) -> bool:
-    """Send invitation email to join a group order"""
-    content = f"""
-        <h1>👥 Du wurdest zu einer Gruppenbestellung eingeladen!</h1>
-        <p>Hey!</p>
-        <p><strong>{host_name}</strong> hat dich zu einer gemeinsamen ZOZO Burger Bestellung eingeladen.</p>
-        
-        <div class="info-box">
-            <p><strong>🍔 So funktioniert's:</strong></p>
-            <p>1. Klicke auf den Button unten</p>
-            <p>2. Füge deine Lieblings-Burger & Snacks hinzu</p>
-            <p>3. Alle sehen in Echtzeit, was bestellt wird</p>
-            <p>4. Der Host schließt die Bestellung ab</p>
-        </div>
-        
-        <div class="code-box">
-            <p style="color: #e5e5e5; margin-bottom: 10px;">Gruppencode:</p>
-            <div class="code">{group_code}</div>
-        </div>
-        
-        <div style="text-align: center;">
-            <a href="{share_link}" class="button">
-                🍔 Jetzt mitmachen
-            </a>
-        </div>
-        
-        <p style="margin-top: 30px; font-size: 14px; color: #888;">
-            <strong>⏰ Hinweis:</strong> Gruppenbestellungen sind 1 Stunde gültig. Sei schnell dabei!
-        </p>
-    """
-    
-    html = get_base_email_template(content, "Gruppenbestellung Einladung")
-    return send_email(to_email, f"👥 {host_name} lädt dich zur Gruppenbestellung ein!", html)
-
-
-def send_password_reset_email(email: str, reset_token: str) -> bool:
-    """Send password reset email"""
-    app_url = os.environ.get('APP_URL', 'http://localhost:3000')
-    reset_link = f"{app_url}/admin/reset-password?token={reset_token}"
-    
-    content = f"""
-        <h1>🔑 Passwort zurücksetzen</h1>
-        <p>Du hast eine Anfrage zum Zurücksetzen deines Passworts gestellt.</p>
-        
-        <div class="info-box">
-            <p>Klicke auf den Button unten, um ein neues Passwort zu erstellen.</p>
-            <p>Dieser Link ist <strong>1 Stunde</strong> gültig.</p>
-        </div>
-        
-        <div style="text-align: center;">
-            <a href="{reset_link}" class="button">
-                🔑 Passwort zurücksetzen
-            </a>
-        </div>
-        
-        <p style="margin-top: 30px;">Falls du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren.</p>
-    """
-    
-    html = get_base_email_template(content, "Passwort zurücksetzen")
-    return send_email(email, "🔑 ZOZO Burger - Passwort zurücksetzen", html)
-
-
-def send_password_changed_email(email: str, name: str = None) -> bool:
-    """Send confirmation email when password has been changed"""
-    display_name = name or "Admin"
-    timestamp = datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')
-    
-    content = f"""
-        <h1>✅ Passwort erfolgreich geändert</h1>
-        <p>Hallo {display_name},</p>
-        <p>dein Passwort wurde soeben erfolgreich geändert.</p>
-        
-        <div class="info-box">
-            <p><strong>📅 Datum:</strong> {timestamp}</p>
-            <p><strong>📧 Account:</strong> {email}</p>
-        </div>
-        
-        <div style="background: rgba(220, 38, 38, 0.15); border: 1px solid #dc2626; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <p style="margin: 0; color: #ffffff;"><strong>⚠️ Das warst nicht du?</strong></p>
-            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
-                Falls du diese Änderung nicht vorgenommen hast, kontaktiere uns umgehend unter 
-                <a href="mailto:info@zozo-burger.de" style="color: #dc2626;">info@zozo-burger.de</a>
+        <div class="footer">
+            <p style="margin: 0 0 10px 0;">ZOZO Burger - Premium Burger Delivery</p>
+            <p style="margin: 0 0 10px 0;">Rellingen & Henstedt-Ulzburg</p>
+            <p style="margin: 20px 0 10px 0;">
+                <a href="{{{{APP_URL}}}}/newsletter/unsubscribe?token={{{{UNSUBSCRIBE_TOKEN}}}}" 
+                   style="color: #666; text-decoration: underline;">
+                    Abmelden
+                </a>
+            </p>
+            <p style="margin: 10px 0 0 0; color: #444;">
+                © 2026 ZOZO Burger. Alle Rechte vorbehalten.
             </p>
         </div>
-        
-        <p style="margin-top: 30px;">Dein ZOZO Burger Team 🍔</p>
-    """
-    
-    html = get_base_email_template(content, "Passwort geändert")
-    return send_email(email, "✅ ZOZO Burger - Passwort erfolgreich geändert", html)
-
-
-def send_2fa_enabled_email(email: str, name: str = None) -> bool:
-    """Send confirmation email when 2FA has been enabled"""
-    display_name = name or "Admin"
-    timestamp = datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')
-    
-    content = f"""
-        <h1>🛡️ Zwei-Faktor-Authentifizierung aktiviert</h1>
-        <p>Hallo {display_name},</p>
-        <p>die Zwei-Faktor-Authentifizierung wurde erfolgreich für deinen Account aktiviert.</p>
-        
-        <div class="info-box">
-            <p><strong>📅 Aktiviert am:</strong> {timestamp}</p>
-            <p><strong>📧 Account:</strong> {email}</p>
-        </div>
-        
-        <div style="background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <p style="margin: 0; color: #22c55e;"><strong>✅ Dein Konto ist jetzt sicherer!</strong></p>
-            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
-                Ab sofort wird bei jedem Login ein zusätzlicher Code aus deiner Authenticator-App benötigt.
-            </p>
-        </div>
-        
-        <div class="info-box">
-            <p><strong>💡 Wichtig:</strong></p>
-            <p style="font-size: 14px;">Bewahre deine Backup-Codes sicher auf! Du benötigst sie, falls du den Zugang zu deiner Authenticator-App verlierst.</p>
-        </div>
-        
-        <p style="margin-top: 30px;">Dein ZOZO Burger Team 🍔</p>
-    """
-    
-    html = get_base_email_template(content, "2FA aktiviert")
-    return send_email(email, "🛡️ ZOZO Burger - 2FA erfolgreich aktiviert", html)
-
-
-def send_2fa_disabled_email(email: str, name: str = None) -> bool:
-    """Send notification email when 2FA has been disabled"""
-    display_name = name or "Admin"
-    timestamp = datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')
-    
-    content = f"""
-        <h1>⚠️ Zwei-Faktor-Authentifizierung deaktiviert</h1>
-        <p>Hallo {display_name},</p>
-        <p>die Zwei-Faktor-Authentifizierung wurde für deinen Account deaktiviert.</p>
-        
-        <div class="info-box">
-            <p><strong>📅 Deaktiviert am:</strong> {timestamp}</p>
-            <p><strong>📧 Account:</strong> {email}</p>
-        </div>
-        
-        <div style="background: rgba(234, 179, 8, 0.15); border: 1px solid #eab308; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <p style="margin: 0; color: #eab308;"><strong>⚠️ Dein Konto ist jetzt weniger geschützt</strong></p>
-            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
-                Wir empfehlen, die 2FA schnellstmöglich wieder zu aktivieren, um dein Konto zu schützen.
-            </p>
-        </div>
-        
-        <div style="background: rgba(220, 38, 38, 0.15); border: 1px solid #dc2626; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <p style="margin: 0; color: #ffffff;"><strong>❗ Das warst nicht du?</strong></p>
-            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
-                Falls du diese Änderung nicht vorgenommen hast, wurde möglicherweise unberechtigt auf dein Konto zugegriffen. 
-                Kontaktiere uns sofort unter <a href="mailto:info@zozo-burger.de" style="color: #dc2626;">info@zozo-burger.de</a>
-            </p>
-        </div>
-        
-        <p style="margin-top: 30px;">Dein ZOZO Burger Team 🍔</p>
-    """
-    
-    html = get_base_email_template(content, "2FA deaktiviert")
-    return send_email(email, "⚠️ ZOZO Burger - 2FA wurde deaktiviert", html)
-
-
-def send_security_alert_email(email: str, name: str = None, alert_type: str = "new_login", details: dict = None) -> bool:
-    """Send security alert email for suspicious activity"""
-    display_name = name or "Admin"
-    timestamp = datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')
-    details = details or {}
-    
-    alert_configs = {
-        "new_login": {
-            "title": "Neuer Login erkannt",
-            "emoji": "🔔",
-            "description": "Es wurde ein neuer Login auf deinem Konto registriert.",
-            "color": "#3b82f6"  # Blue
-        },
-        "failed_login": {
-            "title": "Fehlgeschlagene Login-Versuche",
-            "emoji": "🚨",
-            "description": "Wir haben mehrere fehlgeschlagene Login-Versuche auf deinem Konto festgestellt.",
-            "color": "#dc2626"  # Red
-        },
-        "password_reset_request": {
-            "title": "Passwort-Reset angefordert",
-            "emoji": "🔑",
-            "description": "Es wurde eine Anfrage zum Zurücksetzen deines Passworts gestellt.",
-            "color": "#eab308"  # Yellow
-        },
-        "account_locked": {
-            "title": "Konto vorübergehend gesperrt",
-            "emoji": "🔒",
-            "description": "Dein Konto wurde aufgrund von zu vielen fehlgeschlagenen Login-Versuchen vorübergehend gesperrt.",
-            "color": "#dc2626"  # Red
-        }
-    }
-    
-    config = alert_configs.get(alert_type, alert_configs["new_login"])
-    
-    # Build details section
-    details_html = ""
-    if details:
-        details_items = []
-        if details.get("ip_address"):
-            details_items.append(f"<p><strong>🌐 IP-Adresse:</strong> {details['ip_address']}</p>")
-        if details.get("location"):
-            details_items.append(f"<p><strong>📍 Standort:</strong> {details['location']}</p>")
-        if details.get("device"):
-            details_items.append(f"<p><strong>💻 Gerät:</strong> {details['device']}</p>")
-        if details.get("browser"):
-            details_items.append(f"<p><strong>🌐 Browser:</strong> {details['browser']}</p>")
-        if details_items:
-            details_html = f"""
-                <div class="info-box">
-                    <p><strong>📋 Details:</strong></p>
-                    {''.join(details_items)}
-                </div>
-            """
-    
-    content = f"""
-        <h1>{config['emoji']} {config['title']}</h1>
-        <p>Hallo {display_name},</p>
-        <p>{config['description']}</p>
-        
-        <div class="info-box">
-            <p><strong>📅 Zeitpunkt:</strong> {timestamp}</p>
-            <p><strong>📧 Account:</strong> {email}</p>
-        </div>
-        
-        {details_html}
-        
-        <div style="background: rgba({','.join(str(int(config['color'][i:i+2], 16)) for i in (1, 3, 5))}, 0.15); border: 1px solid {config['color']}; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <p style="margin: 0; color: #ffffff;"><strong>Das warst nicht du?</strong></p>
-            <p style="margin: 10px 0 0 0; color: #e5e5e5; font-size: 14px;">
-                Wenn du diese Aktivität nicht erkennst, ändere umgehend dein Passwort und aktiviere die Zwei-Faktor-Authentifizierung.
-            </p>
-        </div>
-        
-        <div style="text-align: center;">
-            <a href="{os.environ.get('APP_URL', 'http://localhost:3000')}/admin/login" class="button">
-                🔐 Zum Admin-Bereich
-            </a>
-        </div>
-        
-        <p style="margin-top: 30px;">Dein ZOZO Burger Sicherheitsteam 🛡️</p>
-    """
-    
-    html = get_base_email_template(content, f"Sicherheitswarnung: {config['title']}")
-    return send_email(email, f"{config['emoji']} ZOZO Burger - Sicherheitswarnung: {config['title']}", html)
-
-
-def send_test_email(to_email: str) -> dict:
-    """Send a test email to verify configuration"""
-    try:
-        content = f"""
-            <h1>✅ Test-Email erfolgreich!</h1>
-            <p>Diese E-Mail bestätigt, dass die E-Mail-Konfiguration korrekt eingerichtet ist.</p>
-            
-            <div class="info-box">
-                <p><strong>📧 Gesendet an:</strong> {to_email}</p>
-                <p><strong>⏰ Zeitstempel:</strong> {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}</p>
-                <p><strong>📤 Provider:</strong> Resend</p>
-            </div>
-            
-            <p>Die E-Mail-Integration funktioniert einwandfrei! 🎉</p>
+    </div>
+</body>
+</html>
         """
+    
+    @staticmethod
+    def welcome_email(customer_name: str, discount_code: str = "WELCOME10") -> str:
+        """Welcome email for new newsletter subscribers"""
+        content = f"""
+            <h2 style="color: #dc2626; margin-top: 0;">Willkommen bei ZOZO Burger! 🎉</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Hallo {customer_name},
+            </p>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Vielen Dank, dass du dich für unseren Newsletter angemeldet hast! 
+                Wir freuen uns, dich in der ZOZO-Familie begrüßen zu dürfen.
+            </p>
+            <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); 
+                        padding: 20px; border-radius: 12px; margin: 30px 0; text-align: center;">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: rgba(255,255,255,0.9);">DEIN WILLKOMMENS-RABATT</p>
+                <p style="margin: 0; font-size: 32px; font-weight: bold; color: white; letter-spacing: 2px;">{discount_code}</p>
+                <p style="margin: 10px 0 0 0; font-size: 14px; color: rgba(255,255,255,0.9);">10% Rabatt auf deine nächste Bestellung</p>
+            </div>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Als Newsletter-Abonnent erhältst du:
+            </p>
+            <ul style="font-size: 16px; line-height: 1.8; color: #e5e5e5;">
+                <li>🎁 Exklusive Rabatte und Deals</li>
+                <li>🍔 Frühzeitiger Zugang zu neuen Produkten</li>
+                <li>📰 News und Updates</li>
+                <li>🎂 Geburtstags-Überraschungen</li>
+            </ul>
+            <div style="text-align: center;">
+                <a href="{APP_URL}/menu" class="button">
+                    Jetzt Bestellen
+                </a>
+            </div>
+            <p style="font-size: 14px; color: #999; margin-top: 30px;">
+                Wir freuen uns auf deine Bestellung!<br>
+                Dein ZOZO Burger Team
+            </p>
+        """
+        return EmailTemplates.get_base_template(content, "Willkommen! Hier ist dein 10% Rabatt")
+    
+    @staticmethod
+    def order_followup_email(customer_name: str, order_id: str, order_total: float) -> str:
+        """Post-order follow-up email"""
+        content = f"""
+            <h2 style="color: #dc2626; margin-top: 0;">Wie war deine Bestellung? 🍔</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Hallo {customer_name},
+            </p>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                vielen Dank für deine Bestellung #{order_id}! Wir hoffen, dass es dir geschmeckt hat.
+            </p>
+            <div style="background-color: #2a2a2a; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #dc2626;">
+                <p style="margin: 0; font-size: 14px; color: #999;">Deine Bestellung</p>
+                <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: white;">€{order_total:.2f}</p>
+            </div>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Deine Meinung ist uns wichtig! Teile uns mit, wie zufrieden du warst:
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+                <p style="margin-bottom: 15px; color: #e5e5e5;">Wie würdest du deine Bestellung bewerten?</p>
+                <div>
+                    <a href="{APP_URL}/feedback?order={order_id}&rating=5" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
+                    <a href="{APP_URL}/feedback?order={order_id}&rating=4" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
+                    <a href="{APP_URL}/feedback?order={order_id}&rating=3" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
+                    <a href="{APP_URL}/feedback?order={order_id}&rating=2" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
+                    <a href="{APP_URL}/feedback?order={order_id}&rating=1" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <a href="{APP_URL}/menu" class="button">
+                    Erneut bestellen
+                </a>
+            </div>
+            <p style="font-size: 14px; color: #999; margin-top: 30px;">
+                Bis bald!<br>
+                Dein ZOZO Burger Team
+            </p>
+        """
+        return EmailTemplates.get_base_template(content, "Wie war deine Bestellung?")
+    
+    @staticmethod
+    def reactivation_email(customer_name: str, favorite_product: str = "Classic Burger", days_inactive: int = 30) -> str:
+        """Reactivation email for at-risk customers"""
+        content = f"""
+            <h2 style="color: #dc2626; margin-top: 0;">Wir vermissen dich! 😢</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Hallo {customer_name},
+            </p>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                es ist schon {days_inactive} Tage her, seit wir dich das letzte Mal verwöhnen durften. 
+                Dein Lieblings-Burger wartet auf dich!
+            </p>
+            <div style="background-color: #2a2a2a; padding: 30px; border-radius: 12px; margin: 30px 0; text-align: center;">
+                <p style="margin: 0 0 15px 0; font-size: 18px; color: #e5e5e5;">🍔 Du liebst:</p>
+                <p style="margin: 0; font-size: 28px; font-weight: bold; color: #dc2626;">{favorite_product}</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); 
+                        padding: 20px; border-radius: 12px; margin: 30px 0; text-align: center;">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: rgba(255,255,255,0.9);">SPEZIELL FÜR DICH</p>
+                <p style="margin: 0; font-size: 32px; font-weight: bold; color: white; letter-spacing: 2px;">COMEBACK15</p>
+                <p style="margin: 10px 0 0 0; font-size: 14px; color: rgba(255,255,255,0.9);">15% Rabatt auf deine Comeback-Bestellung</p>
+            </div>
+            <div style="text-align: center;">
+                <a href="{APP_URL}/menu" class="button" style="font-size: 18px; padding: 16px 40px;">
+                    Jetzt zurückkommen!
+                </a>
+            </div>
+            <p style="font-size: 14px; color: #999; margin-top: 30px; text-align: center;">
+                Wir freuen uns auf dich!<br>
+                Dein ZOZO Burger Team ❤️
+            </p>
+        """
+        return EmailTemplates.get_base_template(content, f"Komm zurück! 15% Rabatt wartet auf dich")
+    
+    @staticmethod
+    def vip_upgrade_email(customer_name: str, total_orders: int, total_spent: float) -> str:
+        """VIP upgrade notification email"""
+        content = f"""
+            <h2 style="color: #fbbf24; margin-top: 0;">🏆 Herzlichen Glückwunsch, VIP!</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Hallo {customer_name},
+            </p>
+            <p style="font-size: 18px; line-height: 1.6; color: #e5e5e5; font-weight: 600;">
+                Du bist jetzt ein ZOZO VIP-Kunde! 🎉
+            </p>
+            <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); 
+                        padding: 30px; border-radius: 12px; margin: 30px 0; text-align: center;">
+                <p style="margin: 0 0 20px 0; font-size: 48px;">👑</p>
+                <p style="margin: 0 0 10px 0; font-size: 24px; font-weight: bold; color: #1a1a1a;">VIP STATUS</p>
+                <p style="margin: 0; font-size: 14px; color: rgba(0,0,0,0.7);">
+                    {total_orders} Bestellungen • €{total_spent:.2f} Gesamtumsatz
+                </p>
+            </div>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Als VIP-Kunde erhältst du ab sofort:
+            </p>
+            <ul style="font-size: 16px; line-height: 1.8; color: #e5e5e5;">
+                <li>🎁 Exklusive VIP-Deals (nur für dich!)</li>
+                <li>🚀 Prioritäts-Lieferung</li>
+                <li>💰 Doppelte Treuepunkte</li>
+                <li>🎂 Geburtstags-Überraschung</li>
+                <li>👨‍🍳 Früher Zugang zu neuen Produkten</li>
+            </ul>
+            <div style="text-align: center;">
+                <a href="{APP_URL}/menu" class="button">
+                    VIP-Vorteile nutzen
+                </a>
+            </div>
+            <p style="font-size: 14px; color: #999; margin-top: 30px; text-align: center;">
+                Danke für deine Treue!<br>
+                Dein ZOZO Burger Team 👑
+            </p>
+        """
+        return EmailTemplates.get_base_template(content, "Du bist jetzt VIP!")
+    
+    @staticmethod
+    def promotional_email(title: str, description: str, cta_text: str = "Jetzt bestellen", cta_url: str = None) -> str:
+        """Generic promotional email template"""
+        if not cta_url:
+            cta_url = f"{APP_URL}/menu"
         
-        html = get_base_email_template(content, "Test-Email")
-        success = send_email(to_email, "✅ ZOZO Burger - Test-Email erfolgreich", html)
-        
-        return {
-            "success": success,
-            "message": "Test-Email wurde gesendet" if success else "Fehler beim Senden der Test-Email",
-            "to": to_email,
-            "provider": "Resend"
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "message": str(e),
-            "to": to_email,
-            "provider": "Resend"
-        }
+        content = f"""
+            <h2 style="color: #dc2626; margin-top: 0;">{title}</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                {description}
+            </p>
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="{cta_url}" class="button" style="font-size: 18px; padding: 16px 40px;">
+                    {cta_text}
+                </a>
+            </div>
+        """
+        return EmailTemplates.get_base_template(content, title)
 
 
-def send_all_template_previews(to_email: str) -> dict:
-    """Send all email templates to preview address for testing"""
-    results = {}
+class EmailService:
+    """Enterprise Email Service with Resend"""
     
-    # Test data
-    test_name = "Max Mustermann"
-    test_order = {
-        "order_number": "ZOZO-TEST-001",
-        "total": 24.99,
-        "estimated_time": 30,
-        "items": [
-            {"name": "Cheeseburger", "size": "Large", "price": 12.29, "quantity": 2}
-        ],
-        "customer": {
-            "name": test_name,
-            "email": to_email,
-            "address": "Musterstraße 1",
-            "postal_code": "25462",
-            "city": "Rellingen"
-        },
-        "payment_method": "Bar bei Lieferung"
-    }
-    test_location = {
-        "name": "ZOZO Burger Rellingen",
-        "slug": "rellingen"
-    }
+    @staticmethod
+    async def send_email(
+        to_email: str,
+        subject: str,
+        html_content: str,
+        from_email: str = SENDER_EMAIL,
+        reply_to: str = None
+    ) -> Dict:
+        """
+        Send email via Resend
+        
+        Args:
+            to_email: Recipient email
+            subject: Email subject
+            html_content: HTML content
+            from_email: Sender email
+            reply_to: Reply-to email
+        
+        Returns:
+            {success: bool, message: str, email_id: str}
+        """
+        try:
+            params = {
+                "from": from_email,
+                "to": [to_email],
+                "subject": subject,
+                "html": html_content
+            }
+            
+            if reply_to:
+                params["reply_to"] = reply_to
+            
+            response = resend.Emails.send(params)
+            
+            logger.info(f"Email sent successfully to {to_email}: {response.get('id')}")
+            
+            return {
+                "success": True,
+                "message": "Email gesendet",
+                "email_id": response.get('id')
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to send email to {to_email}: {str(e)}")
+            return {
+                "success": False,
+                "message": f"Fehler: {str(e)}",
+                "email_id": None
+            }
     
-    # 1. Password Reset
-    results["password_reset"] = send_password_reset_email(to_email, "test-reset-token-xyz")
+    @staticmethod
+    async def send_welcome_email(subscriber_email: str, subscriber_name: str, unsubscribe_token: str) -> Dict:
+        """Send welcome email to new subscriber"""
+        html = EmailTemplates.welcome_email(subscriber_name or "Liebe*r Kunde*in")
+        html = html.replace('{{APP_URL}}', APP_URL)
+        html = html.replace('{{UNSUBSCRIBE_TOKEN}}', unsubscribe_token)
+        
+        return await EmailService.send_email(
+            to_email=subscriber_email,
+            subject="🎉 Willkommen bei ZOZO Burger - 10% Rabatt für dich!",
+            html_content=html
+        )
     
-    # 2. Password Changed
-    results["password_changed"] = send_password_changed_email(to_email, test_name)
+    @staticmethod
+    async def send_order_followup(customer_email: str, customer_name: str, order_id: str, order_total: float, unsubscribe_token: str) -> Dict:
+        """Send order follow-up email"""
+        html = EmailTemplates.order_followup_email(customer_name or "Liebe*r Kunde*in", order_id, order_total)
+        html = html.replace('{{APP_URL}}', APP_URL)
+        html = html.replace('{{UNSUBSCRIBE_TOKEN}}', unsubscribe_token)
+        
+        return await EmailService.send_email(
+            to_email=customer_email,
+            subject=f"Wie war deine Bestellung #{order_id}? 🍔",
+            html_content=html
+        )
     
-    # 3. 2FA Enabled
-    results["2fa_enabled"] = send_2fa_enabled_email(to_email, test_name)
+    @staticmethod
+    async def send_reactivation_email(
+        customer_email: str, 
+        customer_name: str, 
+        favorite_product: str,
+        days_inactive: int,
+        unsubscribe_token: str
+    ) -> Dict:
+        """Send reactivation email to inactive customers"""
+        html = EmailTemplates.reactivation_email(customer_name or "Liebe*r Kunde*in", favorite_product, days_inactive)
+        html = html.replace('{{APP_URL}}', APP_URL)
+        html = html.replace('{{UNSUBSCRIBE_TOKEN}}', unsubscribe_token)
+        
+        return await EmailService.send_email(
+            to_email=customer_email,
+            subject=f"Wir vermissen dich! 15% Comeback-Rabatt 🎁",
+            html_content=html
+        )
     
-    # 4. 2FA Disabled
-    results["2fa_disabled"] = send_2fa_disabled_email(to_email, test_name)
+    @staticmethod
+    async def send_vip_upgrade_email(
+        customer_email: str,
+        customer_name: str,
+        total_orders: int,
+        total_spent: float,
+        unsubscribe_token: str
+    ) -> Dict:
+        """Send VIP upgrade notification"""
+        html = EmailTemplates.vip_upgrade_email(customer_name or "Liebe*r Kunde*in", total_orders, total_spent)
+        html = html.replace('{{APP_URL}}', APP_URL)
+        html = html.replace('{{UNSUBSCRIBE_TOKEN}}', unsubscribe_token)
+        
+        return await EmailService.send_email(
+            to_email=customer_email,
+            subject="🏆 Herzlichen Glückwunsch - Du bist jetzt VIP!",
+            html_content=html
+        )
     
-    # 5. Security Alert (New Login)
-    results["security_alert"] = send_security_alert_email(
-        to_email, 
-        test_name, 
-        "new_login",
-        {
-            "ip_address": "192.168.1.1",
-            "location": "Hamburg, Deutschland",
-            "device": "Chrome auf Windows",
-            "browser": "Chrome 120"
-        }
-    )
-    
-    return {
-        "success": all(results.values()),
-        "results": results,
-        "to": to_email,
-        "templates_sent": len([r for r in results.values() if r])
-    }
+    @staticmethod
+    async def send_campaign_email(
+        to_email: str,
+        subject: str,
+        html_content: str,
+        campaign_id: str,
+        unsubscribe_token: str
+    ) -> Dict:
+        """Send campaign email with tracking"""
+        # Add tracking pixel
+        tracking_pixel = f'<img src="{APP_URL}/api/newsletter/track-open/{campaign_id}/{to_email}" width="1" height="1" style="display:none;" />'
+        
+        # Replace placeholders
+        html_with_tracking = html_content.replace('{{APP_URL}}', APP_URL)
+        html_with_tracking = html_with_tracking.replace('{{UNSUBSCRIBE_TOKEN}}', unsubscribe_token)
+        html_with_tracking += tracking_pixel
+        
+        return await EmailService.send_email(
+            to_email=to_email,
+            subject=subject,
+            html_content=html_with_tracking
+        )
