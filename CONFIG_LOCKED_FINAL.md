@@ -114,7 +114,7 @@ Dieses Dokument dient als Master-Referenz für alle Produktions-Credentials.
 MONGO_URL="mongodb://localhost:27017"
 DB_NAME="test_database"
 CORS_ORIGINS="*"
-APP_URL="https://zozo-fix.preview.emergentagent.com"
+APP_URL="https://site-refresh-58.preview.emergentagent.com"
 EMERGENT_LLM_KEY=sk-emergent-5882954D84fC35cB4D
 RESEND_API_KEY=re_KS2rud3s_GSvEJZHwnpLdJm9TU5WuK18g
 SENDER_EMAIL=noreply@zozo-burger.de
@@ -127,7 +127,7 @@ ADMIN_JWT_SECRET=eGOlbffRwRjsTGcKja83e6Bt5yJdrF0Wg_6jat3Q6TPj5hGWuVKewbamL4RUV2D
 
 ### Frontend (.env)
 ```bash
-REACT_APP_BACKEND_URL=https://zozo-fix.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://site-refresh-58.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 REACT_APP_ENABLE_VISUAL_EDITS=false
 ENABLE_HEALTH_CHECK=false

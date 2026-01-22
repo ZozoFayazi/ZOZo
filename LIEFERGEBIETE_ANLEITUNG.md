@@ -92,7 +92,7 @@
 ### Option A: PLZ-Listen (JETZT sofort möglich)
 
 **Im Admin-Panel:**
-1. Login: https://zozo-fix.preview.emergentagent.com/admin/login
+1. Login: https://site-refresh-58.preview.emergentagent.com/admin/login
 2. Menü → **Filialen**
 3. Filiale auswählen (z.B. Rellingen)
 4. **PLZ hinzufügen:**
@@ -209,7 +209,7 @@ Gratis ab: 25€
 **5 Schritte:**
 
 1. **Admin-Panel öffnen:**
-   - https://zozo-fix.preview.emergentagent.com/admin/login
+   - https://site-refresh-58.preview.emergentagent.com/admin/login
    - Login: admin@zonik-solutions.de / Nila1605!
 
 2. **Filialen-Einstellungen:**

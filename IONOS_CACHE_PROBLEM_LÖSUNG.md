@@ -174,7 +174,7 @@ FALSCH (alte Version):   main.[anderer-hash].js
    ```
 3. Prüfen Sie die URL:
    ```
-   RICHTIG: https://zozo-fix.preview.emergentagent.com
+   RICHTIG: https://site-refresh-58.preview.emergentagent.com
    ODER: Ihre Production Backend-URL
    ```
 
