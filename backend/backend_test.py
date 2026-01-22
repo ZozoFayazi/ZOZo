@@ -252,6 +252,180 @@ class AdminAPITester:
             print(f"\n❌ Location Settings endpoint failed!")
             return False
 
+    def test_customer_crm_endpoints(self):
+        """Test Enterprise Customer CRM endpoints - NEW FEATURE"""
+        print("\n" + "="*60)
+        print("ENTERPRISE CRM TEST: Customer Management")
+        print("Testing RFM Analysis, Segmentation, and Customer Detail")
+        print("="*60)
+        
+        all_passed = True
+        
+        # Test 1: Get all customers with RFM scoring
+        success1, response1 = self.run_test(
+            "Get All Customers (RFM Scoring)",
+            "GET",
+            "/api/admin/customers/?limit=10",
+            200
+        )
+        
+        if success1:
+            # Verify response structure
+            if 'customers' in response1 and 'total' in response1:
+                print(f"   ✅ Response structure valid")
+                print(f"   Total customers: {response1.get('total', 0)}")
+                
+                # Check if customers have RFM data
+                if response1.get('customers'):
+                    first_customer = response1['customers'][0]
+                    if 'rfm' in first_customer:
+                        rfm = first_customer['rfm']
+                        print(f"   ✅ RFM data present: Segment={rfm.get('segment')}, Score={rfm.get('rfm_score')}")
+                        print(f"   RFM breakdown: R={rfm.get('r_score')}, F={rfm.get('f_score')}, M={rfm.get('m_score')}")
+                    else:
+                        print(f"   ❌ RFM data missing in customer object")
+                        all_passed = False
+                else:
+                    print(f"   ⚠️  No customers found (may be expected if no orders exist)")
+            else:
+                print(f"   ❌ Invalid response structure")
+                all_passed = False
+        else:
+            all_passed = False
+        
+        # Test 2: Get segment statistics
+        success2, response2 = self.run_test(
+            "Get Customer Segment Statistics",
+            "GET",
+            "/api/admin/customers/segments/stats",
+            200
+        )
+        
+        if success2:
+            # Verify all segments are present
+            expected_segments = ['VIP', 'Active', 'Regular', 'At-Risk', 'Lost']
+            for segment in expected_segments:
+                if segment in response2:
+                    stats = response2[segment]
+                    print(f"   ✅ {segment}: {stats.get('count')} customers, €{stats.get('total_revenue', 0):.2f} revenue")
+                else:
+                    print(f"   ❌ Missing segment: {segment}")
+                    all_passed = False
+        else:
+            all_passed = False
+        
+        # Test 3: Test segment filtering
+        success3, response3 = self.run_test(
+            "Filter Customers by Segment (VIP)",
+            "GET",
+            "/api/admin/customers/?segment=VIP&limit=5",
+            200
+        )
+        
+        if success3 and response3.get('customers'):
+            # Verify all returned customers are VIP
+            vip_customers = response3['customers']
+            all_vip = all(c.get('rfm', {}).get('segment') == 'VIP' for c in vip_customers)
+            if all_vip:
+                print(f"   ✅ Segment filter working correctly (all {len(vip_customers)} customers are VIP)")
+            else:
+                print(f"   ❌ Segment filter not working (non-VIP customers returned)")
+                all_passed = False
+        
+        # Test 4: Test search functionality
+        success4, response4 = self.run_test(
+            "Search Customers",
+            "GET",
+            "/api/admin/customers/?search=test&limit=5",
+            200
+        )
+        
+        if success4:
+            print(f"   ✅ Search endpoint working (found {response4.get('total', 0)} results)")
+        else:
+            all_passed = False
+        
+        # Test 5: Test sorting
+        success5, response5 = self.run_test(
+            "Sort Customers by RFM Score",
+            "GET",
+            "/api/admin/customers/?sort_by=rfm_score&sort_order=desc&limit=5",
+            200
+        )
+        
+        if success5 and response5.get('customers'):
+            customers = response5['customers']
+            if len(customers) >= 2:
+                # Verify descending order
+                scores = [c.get('rfm', {}).get('rfm_score', 0) for c in customers]
+                is_sorted = all(scores[i] >= scores[i+1] for i in range(len(scores)-1))
+                if is_sorted:
+                    print(f"   ✅ Sorting working correctly (RFM scores: {scores})")
+                else:
+                    print(f"   ❌ Sorting not working correctly (scores: {scores})")
+                    all_passed = False
+        
+        # Test 6: Get customer detail (if we have customers)
+        if success1 and response1.get('customers'):
+            first_customer_id = response1['customers'][0].get('customer_id')
+            if first_customer_id:
+                success6, response6 = self.run_test(
+                    "Get Customer Detail",
+                    "GET",
+                    f"/api/admin/customers/{first_customer_id}",
+                    200
+                )
+                
+                if success6:
+                    # Verify detail response has all required fields
+                    required_fields = ['customer_id', 'name', 'total_orders', 'total_spent', 
+                                     'rfm', 'order_timeline', 'favorite_products']
+                    missing_fields = [f for f in required_fields if f not in response6]
+                    if not missing_fields:
+                        print(f"   ✅ Customer detail has all required fields")
+                        print(f"   Customer: {response6.get('name')}, Orders: {response6.get('total_orders')}")
+                        print(f"   Timeline entries: {len(response6.get('order_timeline', []))}")
+                    else:
+                        print(f"   ❌ Missing fields in customer detail: {missing_fields}")
+                        all_passed = False
+                else:
+                    all_passed = False
+        
+        # Test 7: CSV Export
+        print(f"\n🔍 Test: CSV Export")
+        print(f"   Endpoint: GET /api/admin/customers/export/csv")
+        try:
+            url = f"{self.base_url}/api/admin/customers/export/csv"
+            headers = {
+                'Authorization': f'Bearer {self.token}'
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                # Check if it's CSV content
+                content_type = response.headers.get('Content-Type', '')
+                if 'csv' in content_type.lower() or response.text.startswith('ZOZO Burger'):
+                    print(f"   ✅ PASSED - CSV export working (size: {len(response.content)} bytes)")
+                    # Check CSV has data
+                    lines = response.text.split('\n')
+                    print(f"   CSV has {len(lines)} lines")
+                else:
+                    print(f"   ❌ FAILED - Invalid content type: {content_type}")
+                    all_passed = False
+            else:
+                print(f"   ❌ FAILED - Status: {response.status_code}")
+                all_passed = False
+        except Exception as e:
+            print(f"   ❌ FAILED - Error: {str(e)}")
+            all_passed = False
+        
+        if all_passed:
+            print(f"\n✅ All Customer CRM endpoints working correctly!")
+            return True
+        else:
+            print(f"\n⚠️  Some Customer CRM tests failed!")
+            return False
+
 def main():
     print("\n" + "="*60)
     print("ZOZO BURGER ADMIN DASHBOARD - REGRESSION TEST")
