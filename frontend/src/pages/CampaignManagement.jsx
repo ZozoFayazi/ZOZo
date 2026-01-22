@@ -25,7 +25,7 @@ function CampaignManagement() {
   const loadCampaigns = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('zozoAuthToken');
+      const token = sessionStorage.getItem('adminToken');
       const response = await axios.get(`${API_URL}/api/admin/newsletter/campaigns`, {
         headers: { Authorization: `Bearer ${token}` }
       });
