@@ -462,13 +462,46 @@ class EmailService:
 # TODO: Refactor server.py to use EmailService class methods
 
 def send_verification_email(email: str, code: str) -> bool:
-    """Legacy stub - sends verification email"""
+    """Send verification email with code"""
     try:
-        # This is a stub - implement if needed
-        logger.warning(f"send_verification_email called (stub) for {email}")
+        # Build verification email HTML
+        content = f"""
+            <h2 style="color: #dc2626; margin-top: 0;">E-Mail Verifizierung 🔐</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Vielen Dank für deine Registrierung bei ZOZO Burger!
+            </p>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Dein Verifizierungscode:
+            </p>
+            <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); 
+                        padding: 30px; border-radius: 12px; margin: 30px 0; text-align: center;">
+                <p style="margin: 0; font-size: 48px; font-weight: bold; color: white; letter-spacing: 8px;">{code}</p>
+            </div>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Gib diesen Code auf der Website ein, um deine E-Mail-Adresse zu bestätigen.
+            </p>
+            <p style="font-size: 14px; color: #999; margin-top: 30px;">
+                Der Code ist 15 Minuten gültig.<br>
+                Falls du diese E-Mail nicht angefordert hast, ignoriere sie bitte.
+            </p>
+        """
+        
+        html_content = EmailTemplates.get_base_template(content, f"Dein Verifizierungscode: {code}")
+        
+        # Send email via Resend
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [email],
+            "subject": f"ZOZO Burger - Verifizierungscode: {code}",
+            "html": html_content
+        }
+        
+        response = resend.Emails.send(params)
+        logger.info(f"Verification email sent to {email}: {response.get('id')}")
         return True
+        
     except Exception as e:
-        logger.error(f"send_verification_email error: {str(e)}")
+        logger.error(f"send_verification_email error for {email}: {str(e)}")
         return False
 
 def send_status_update_email(order: dict, status: str, location: dict) -> bool:
