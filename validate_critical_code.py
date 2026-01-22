@@ -34,7 +34,7 @@ class CriticalCodeValidator:
                 ('BEILAGE_AS_MODIFIER', 'menuModifiers.beilage'),
                 ('GETRAENK_AS_MODIFIER', 'menuModifiers.getraenk'),
                 ('MODIFIERS_MERGE', '...selectedModifiers, ...menuModifiers'),
-                ('NO_MODIFIERS_IN_CUSTOMIZATIONS', 'Modifiers werden NICHT mehr zu customizations hinzugefügt'),
+                ('NO_MODIFIERS_IN_CUSTOMIZATIONS', 'CHANGED 22.01.2026: Modifiers werden NICHT'),
                 ('MODIFIER_PRICE_CALC', 'const modifierPrice = Object.values(selectedModifiers).reduce')
             ],
             'description': 'Menü-Komponenten als modifiers + Duplikat-Prävention'
