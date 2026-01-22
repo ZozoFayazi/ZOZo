@@ -39,6 +39,12 @@ const AdminSidebar = () => {
       permission: null // All admins
     },
     {
+      title: 'Analytics',
+      icon: BarChart3,
+      path: '/admin/analytics',
+      permission: null // All admins
+    },
+    {
       title: 'Filialen',
       icon: MapPin,
       path: '/admin/locations',
