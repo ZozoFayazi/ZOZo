@@ -198,8 +198,8 @@ class EmailTemplates:
         return EmailTemplates.get_base_template(content, "Wie war deine Bestellung?")
     
     @staticmethod
-    def reactivation_email(customer_name: str, favorite_product: str = "Classic Burger", days_inactive: int = 30) -> str:
-        """Reactivation email for at-risk customers"""
+    def reactivation_email(customer_name: str, favorite_product: str = "Classic Burger", days_inactive: int = 30, discount_code: str = "COMEBACK15") -> str:
+        """Reactivation email for at-risk customers with PERSONAL discount code"""
         content = f"""
             <h2 style="color: #dc2626; margin-top: 0;">Wir vermissen dich! 😢</h2>
             <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
@@ -213,23 +213,30 @@ class EmailTemplates:
                 <p style="margin: 0 0 15px 0; font-size: 18px; color: #e5e5e5;">🍔 Du liebst:</p>
                 <p style="margin: 0; font-size: 28px; font-weight: bold; color: #dc2626;">{favorite_product}</p>
             </div>
-            <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); 
-                        padding: 20px; border-radius: 12px; margin: 30px 0; text-align: center;">
-                <p style="margin: 0 0 10px 0; font-size: 14px; color: rgba(255,255,255,0.9);">SPEZIELL FÜR DICH</p>
-                <p style="margin: 0; font-size: 32px; font-weight: bold; color: white; letter-spacing: 2px;">COMEBACK15</p>
-                <p style="margin: 10px 0 0 0; font-size: 14px; color: rgba(255,255,255,0.9);">15% Rabatt auf deine Comeback-Bestellung</p>
+            <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+                        padding: 25px; border-radius: 12px; margin: 30px 0; text-align: center;
+                        box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: rgba(0,0,0,0.7); font-weight: 600;">🎁 DEIN PERSÖNLICHER COMEBACK-CODE</p>
+                <p style="margin: 0; font-size: 36px; font-weight: bold; color: #1a1a1a; letter-spacing: 3px; font-family: monospace;">{discount_code}</p>
+                <p style="margin: 15px 0 5px 0; font-size: 18px; font-weight: bold; color: #1a1a1a;">20% RABATT</p>
+                <p style="margin: 0; font-size: 13px; color: rgba(0,0,0,0.6);">Nur für dich • Einmalig verwendbar • 14 Tage gültig</p>
+            </div>
+            <div style="background-color: #1e3a8a; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                <p style="margin: 0; font-size: 14px; color: #93c5fd;">
+                    💡 <strong style="color: white;">Hinweis:</strong> Dieser Code wurde speziell für dich erstellt und kann nur einmal verwendet werden.
+                </p>
             </div>
             <div style="text-align: center;">
                 <a href="{APP_URL}/menu" class="button" style="font-size: 18px; padding: 16px 40px;">
-                    Jetzt zurückkommen!
+                    Jetzt mit Code bestellen!
                 </a>
             </div>
             <p style="font-size: 14px; color: #999; margin-top: 30px; text-align: center;">
-                Wir freuen uns auf dich!<br>
+                Wir freuen uns auf dein Comeback!<br>
                 Dein ZOZO Burger Team ❤️
             </p>
         """
-        return EmailTemplates.get_base_template(content, f"Komm zurück! 15% Rabatt wartet auf dich")
+        return EmailTemplates.get_base_template(content, f"Dein persönlicher 20% Rabatt wartet auf dich!")
     
     @staticmethod
     def vip_upgrade_email(customer_name: str, total_orders: int, total_spent: float) -> str:
