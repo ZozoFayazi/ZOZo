@@ -43,7 +43,7 @@ class ZOZOBackendTester:
             # Try default admin credentials
             response = requests.post(
                 f"{self.base_url}/admin/auth/login",
-                json={"email": "admin@zozo.de", "password": "admin123"}
+                json={"email": "admin@zonik-solutions.de", "password": "ZozoAdmin2024!"}
             )
             
             if response.status_code == 200:
