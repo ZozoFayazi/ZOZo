@@ -42,7 +42,7 @@ class ZOZOBackendTester:
         try:
             # Try default admin credentials
             response = requests.post(
-                f"{self.base_url}/admin/login",
+                f"{self.base_url}/admin/auth/login",
                 json={"email": "admin@zozo.de", "password": "admin123"}
             )
             
