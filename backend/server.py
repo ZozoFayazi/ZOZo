@@ -44,6 +44,7 @@ from customer_endpoints import router as customer_router
 from finance_endpoints import router as finance_router
 from review_service import ReviewService
 from review_endpoints import create_review_router
+from menu_config_endpoints import create_menu_config_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
