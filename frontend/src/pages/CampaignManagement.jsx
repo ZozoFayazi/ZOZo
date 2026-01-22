@@ -61,7 +61,7 @@ function CampaignManagement() {
     if (!confirm('Kampagne wirklich löschen?')) return;
 
     try {
-      const token = localStorage.getItem('zozoAuthToken');
+      const token = sessionStorage.getItem('adminToken');
       await axios.delete(
         `${API_URL}/api/admin/newsletter/campaigns/${campaignId}`,
         { headers: { Authorization: `Bearer ${token}` } }
