@@ -122,6 +122,81 @@ def create_product_router_v2(db, audit_service: AuditService):
             raise HTTPException(status_code=500, detail="Fehler beim Laden der Produkte")
     
     
+    @router.post("")
+    async def create_product(
+        product_data: ProductUpdateRequest,
+        admin: dict = Depends(get_current_admin)
+    ):
+        """
+        Create a new product - Master only
+        
+        - Super Admin: Can create products
+        - Master (Rellingen): Can create products
+        - Slave (Henstedt): Not allowed
+        """
+        try:
+            # Check permissions
+            branch_ids = admin.get("branch_ids", [])
+            is_master = admin["role"] == "super_admin" or MASTER_LOCATION in branch_ids
+            
+            if not is_master:
+                raise HTTPException(
+                    status_code=403, 
+                    detail="Nur Master-Standort kann Produkte erstellen"
+                )
+            
+            # Prepare new product document
+            new_product = {
+                "name": product_data.name,
+                "category_id": product_data.category_id,
+                "description": product_data.description,
+                "price_normal": product_data.price_normal,
+                "price_medium": product_data.price_medium,
+                "price_large": product_data.price_large,
+                "size_labels": product_data.size_labels or {"medium": "Medium (125g)", "large": "Large (180g)"},
+                "can_upgrade_to_menu": product_data.can_upgrade_to_menu or False,
+                "menu_requires_side": product_data.menu_requires_side if product_data.menu_requires_side is not None else True,
+                "menu_requires_drink": product_data.menu_requires_drink if product_data.menu_requires_drink is not None else True,
+                "menu_upgrade_price_medium": product_data.menu_upgrade_price_medium,
+                "menu_upgrade_price_large": product_data.menu_upgrade_price_large,
+                "show_as_checkout_upsell": product_data.show_as_checkout_upsell or False,
+                "upsell_priority": product_data.upsell_priority or 5,
+                "upsell_text": product_data.upsell_text,
+                "active": True,
+                "in_stock": True,
+                "location_id": None,  # Global product
+                "archived": False,
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }
+            
+            # Insert product
+            result = await db.menu_items.insert_one(new_product)
+            new_product["_id"] = result.inserted_id
+            
+            logger.info(f"Product created by {admin['email']}: {product_data.name}")
+            
+            # Audit log
+            await audit_service.log_action(
+                actor_email=admin["email"],
+                action="product_create",
+                result="success",
+                target=str(result.inserted_id),
+                target_type="product",
+                details={"product_name": product_data.name}
+            )
+            
+            # Serialize and return
+            serialized = serialize_doc(new_product)
+            return serialized
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Create product error: {str(e)}")
+            raise HTTPException(status_code=500, detail="Fehler beim Erstellen")
+    
+    
     @router.post("/{product_id}/toggle")
     async def toggle_product_status(
         product_id: str,
