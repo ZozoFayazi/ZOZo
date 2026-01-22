@@ -244,14 +244,30 @@ class POSService:
                     
                     # Update order status if we have the OID
                     if order_oid:
+                        # Save push history entry
+                        push_history_entry = {
+                            "timestamp": datetime.now(timezone.utc),
+                            "status": "success",
+                            "provider": provider,
+                            "pos_order_id": result.get('pos_order_id'),
+                            "message": result.get('message', 'Successfully sent to POS'),
+                            "attempt": attempt,
+                            "payload": order_data  # Save what was sent
+                        }
+                        
                         await self.db.orders.update_one(
                             {"_id": order_oid},
-                            {"$set": {
-                                "pos_status": "sent",
-                                "pos_order_id": result.get('pos_order_id'),
-                                "pos_sent_at": datetime.now(timezone.utc),
-                                "pos_retry_count": attempt - 1
-                            }}
+                            {
+                                "$set": {
+                                    "pos_status": "sent",
+                                    "pos_order_id": result.get('pos_order_id'),
+                                    "pos_sent_at": datetime.now(timezone.utc),
+                                    "pos_retry_count": attempt - 1
+                                },
+                                "$push": {
+                                    "pos_push_history": push_history_entry
+                                }
+                            }
                         )
                     
                     return {
