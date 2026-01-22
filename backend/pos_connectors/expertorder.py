@@ -683,14 +683,25 @@ class ExpertOrderConnector(BasePOSConnector):
                 # 2. BRÖTCHEN (aus customizations) → als Kind
                 customizations = item.get('customizations', [])
                 for custom in customizations:
-                    if isinstance(custom, str) and ('brötchen' in custom.lower() or 'bun' in custom.lower()):
-                        clean_name = custom.replace('+ ', '').replace('+', '').strip()
-                        main_item["items"].append({
-                            "uid": f"BUN-{clean_name[:20].replace(' ', '-').upper()}",
-                            "name": f"+ {clean_name}",
-                            "count": item.get('quantity', 1),
-                            "price": 0.0
-                        })
+                    if isinstance(custom, str):
+                        # Skip "Hinweis:" texts
+                        if custom.lower().startswith('hinweis:') or 'hinweis:' in custom.lower():
+                            note_text = custom.replace('Hinweis:', '').replace('hinweis:', '').strip()
+                            if 'note' not in main_item:
+                                main_item['note'] = note_text
+                            else:
+                                main_item['note'] += f"; {note_text}"
+                            continue
+                        
+                        # Add Brötchen
+                        if 'brötchen' in custom.lower() or 'bun' in custom.lower():
+                            clean_name = custom.replace('+ ', '').replace('+', '').strip()
+                            main_item["items"].append({
+                                "uid": f"BUN-{clean_name[:20].replace(' ', '-').upper()}",
+                                "name": f"+ {clean_name}",
+                                "count": item.get('quantity', 1),
+                                "price": 0.0
+                            })
                 
                 # 3. MODIFIERS (Dressing, Pizzabrötchen, Dips, etc.) → als Kinder
                 modifiers = item.get('modifiers', {})
