@@ -276,7 +276,12 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       customizations: customizations,  // All selections as separate lines
       extras: allExtras,
       removed_ingredients: selectedRemovals,
-      modifiers: { ...selectedModifiers, ...menuModifiers }  // Merge regular modifiers + menu modifiers
+      // ⚠️ CRITICAL FIX - DO NOT REMOVE - 22.01.2026 ⚠️
+      // Merge regular modifiers + menu modifiers
+      // menuModifiers contains: beilage, getraenk (from menu upgrade)
+      // selectedModifiers contains: sauce, dressing, pasta type, etc.
+      modifiers: { ...selectedModifiers, ...menuModifiers }
+      // ⚠️ END CRITICAL FIX ⚠️
     });
 
     toast.success(`${customizedName} zum Warenkorb hinzugefügt`);
