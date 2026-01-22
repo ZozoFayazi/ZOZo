@@ -257,7 +257,7 @@ def create_product_router_v2(db, audit_service: AuditService):
                 location_slug = branch_ids[0]
                 
                 # Create/update override
-                override = await product_service.set_product_override(
+                await product_service.set_product_override(
                     product_id=product_id,
                     location_slug=location_slug,
                     is_active=toggle.is_active,
