@@ -154,18 +154,20 @@ class CustomerService:
         now = datetime.now(timezone.utc)
         
         for customer in customers_data:
-            # Handle datetime conversion
+            # Handle datetime conversion - robust for all formats
             last_order = customer['last_order_date']
             if isinstance(last_order, str):
                 last_order = datetime.fromisoformat(last_order.replace('Z', '+00:00'))
-            elif not last_order.tzinfo:
-                last_order = last_order.replace(tzinfo=timezone.utc)
+            elif isinstance(last_order, datetime):
+                if not last_order.tzinfo:
+                    last_order = last_order.replace(tzinfo=timezone.utc)
             
             first_order = customer['first_order_date']
             if isinstance(first_order, str):
                 first_order = datetime.fromisoformat(first_order.replace('Z', '+00:00'))
-            elif not first_order.tzinfo:
-                first_order = first_order.replace(tzinfo=timezone.utc)
+            elif isinstance(first_order, datetime):
+                if not first_order.tzinfo:
+                    first_order = first_order.replace(tzinfo=timezone.utc)
             
             # Calculate recency
             days_since_last_order = (now - last_order).days
