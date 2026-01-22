@@ -36,8 +36,16 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
         Use case: Customer called wrong store, order needs to be moved
         """
         try:
-            # Get original order
-            order = await db.orders.find_one({"_id": ObjectId(order_id)})
+            # Get original order - try both ObjectId and string ID
+            try:
+                order = await db.orders.find_one({"_id": ObjectId(order_id)})
+            except:
+                order = await db.orders.find_one({"_id": order_id})
+            
+            if not order:
+                # Try by id field
+                order = await db.orders.find_one({"id": order_id})
+            
             if not order:
                 raise HTTPException(status_code=404, detail="Bestellung nicht gefunden")
             
