@@ -166,7 +166,7 @@ def get_order_confirmation_html(order: dict, location: dict) -> str:
                         <!-- Header with Logo -->
                         <tr>
                             <td style="background-color: #1a1a1a; padding: 30px 20px; text-align: center;">
-                                <img src="{logo_url}" alt="ZOZO Burger" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
+                                <img src="{logo_url}" alt="ZOZO Burger" style="max-width: 100px; height: auto; display: block; margin: 0 auto;">
                             </td>
                         </tr>
                         
