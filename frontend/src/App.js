@@ -247,6 +247,15 @@ function App() {
           <Route 
             path="/admin/customers/:customerId" 
             element={
+          <Route 
+            path="/admin/finance" 
+            element={
+              <ProtectedAdminRoute>
+                <Finance />
+              </ProtectedAdminRoute>
+            } 
+          />
+
               <ProtectedAdminRoute>
                 <CustomerDetail />
               </ProtectedAdminRoute>
