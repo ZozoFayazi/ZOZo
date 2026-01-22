@@ -2,9 +2,8 @@
 
 ## ExpertOrder POS-Integration - Verschachtelte Struktur
 
-**Status:** ✅ PRODUKTIV - EINGEFROREN am 22.01.2026
-
-**Letzte funktionierende Bestellung:** ZOZO-1158
+**Status:** ✅ PRODUKTIV - EINGEFROREN am 22.01.2026  
+**Letzte funktionierende Bestellung:** TEST-MONSTERBACON-CFD6694D (22.01.2026)
 
 ---
 
@@ -14,23 +13,67 @@ Die verschachtelte Parent-Child Struktur ist KRITISCH für die korrekte Darstell
 
 **Korrekte Struktur (SO MUSS ES BLEIBEN):**
 ```
-Hamburger Medium 125g Menü
-            + Brioche Brötchen
-            - Ohne Gurken
-            + Extra Käse
-            + Pommes Normal
-            + Coca Cola 0,5l
+Monsterbacon Burger Medium 125g Menü    €14.90
+  └─ + Brioche Brötchen                  €0.00
+  └─ - Ohne Gurken                       €0.00
+  └─ - Ohne Zwiebeln                     €0.00
+  └─ + Extra Bacon                       €0.00
+  └─ + Pommes Frites Normal              €0.00
+  └─ + Coca Cola 0,5l                    €0.00
+  └─ + Ketchup                           €0.00
 ```
 
 **FALSCHE Struktur (NICHT verwenden):**
 ```
-1. Hamburger Menü
-2. Brioche Brötchen (separate)
-3. Ohne Gurken (separate)
-4. Extra Käse (separate)
-5. Pommes Normal (separate)
-6. Coca Cola (separate)
+1. Monsterbacon Burger Menü            €14.90
+2. Brioche Brötchen (separate)         €0.00
+3. Pommes Frites (separate)            €0.00
+4. Cola (separate)                     €0.00
+5. Ketchup (separate)                  €0.00
+6. Extra Bacon (separate)              €1.00
 ```
+
+---
+
+## 📋 KORREKTES DATENFORMAT FÜR BESTELLUNGEN:
+
+### **Für Testbestellungen siehe:** `/app/EXPERTORDER_TESTBESTELLUNGEN_NUR_KORREKTES_FORMAT.md`
+
+**WICHTIG - Felder-Struktur:**
+
+```python
+item = {
+    "name": "Produktname Menü",  # OHNE Größe im Namen!
+    "size": "medium",  # Connector fügt "Medium 125g" automatisch hinzu
+    
+    # BRÖTCHEN (nur Brötchen!)
+    "customizations": [
+        "+ Brioche Brötchen"
+    ],
+    
+    # REMOVALS (OHNE "Ohne" Prefix!)
+    "removed_ingredients": [
+        "Gurken",
+        "Zwiebeln"
+    ],
+    
+    # EXTRAS (als Objekte!)
+    "extras": [
+        {"name": "Extra Bacon", "price": 0.0}
+    ],
+    
+    # BEILAGE/GETRÄNK/SAUCE (als Objekte!)
+    "modifiers": {
+        "beilage": {"name": "Pommes Frites Normal", "price": 0.0},
+        "getraenk": {"name": "Coca Cola 0,5l", "price": 0.0},
+        "sauce": {"name": "Ketchup", "price": 0.0}
+    }
+}
+```
+
+**❌ NIEMALS alles in customizations Array!**  
+**❌ NIEMALS menu_components Objekt!**  
+**❌ NIEMALS Größe im name-Feld!**
 
 ---
 
