@@ -72,12 +72,6 @@ function MenuPage({ selectedLocation, setSelectedLocation, addToCart }) {
 
   useEffect(() => {
     if (selectedLocation) {
-      // Temporäre Weiterleitung für Henstedt-Ulzburg zu Foodbooking
-      if (selectedLocation.slug === 'henstedt-ulzburg' || selectedLocation.slug === 'henstedt') {
-        window.location.href = 'https://www.foodbooking.com/api/fb/0ybj4';
-        return;
-      }
-      
       loadMenu(selectedLocation.id);
     }
   }, [selectedLocation]);
