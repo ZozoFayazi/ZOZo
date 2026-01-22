@@ -374,6 +374,7 @@ class POSService:
     async def push_order(self, order_data: Dict, location_slug: str) -> Dict:
         """
         Push order to location's POS system (legacy method, now uses retry)
+        NOW WITH PRE-SEND VALIDATION AND AUTO-CONVERSION!
         
         Args:
             order_data: Order information
@@ -382,6 +383,41 @@ class POSService:
         Returns:
             Push result dictionary
         """
+        # PRE-SEND VALIDATION & AUTO-CONVERSION
+        try:
+            from order_validator import OrderValidator, OrderAutoConverter
+            
+            # Step 1: Validate original order
+            validation = OrderValidator.get_validation_report(order_data)
+            
+            if not validation['valid']:
+                logger.warning(f"Order validation failed: {validation['errors']}")
+                logger.info("Attempting auto-conversion...")
+                
+                # Step 2: Try to auto-convert
+                converted_order, fixes = OrderAutoConverter.convert_order(order_data)
+                
+                if fixes:
+                    logger.info(f"Auto-conversion applied: {fixes}")
+                    
+                    # Step 3: Validate converted order
+                    revalidation = OrderValidator.get_validation_report(converted_order)
+                    
+                    if revalidation['valid']:
+                        logger.info("✅ Auto-conversion successful! Using converted order.")
+                        order_data = converted_order
+                    else:
+                        logger.error(f"Auto-conversion failed. Remaining errors: {revalidation['errors']}")
+                        # Continue anyway but log the issues
+                else:
+                    logger.warning("No auto-conversion possible. Proceeding with original order...")
+            else:
+                logger.info("✅ Order validation passed!")
+        
+        except Exception as e:
+            logger.error(f"Validation/Conversion error: {str(e)}")
+            # Continue anyway
+        
         return await self.push_order_with_retry(order_data, location_slug)
     
     async def _queue_failed_order(
