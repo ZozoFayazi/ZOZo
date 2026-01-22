@@ -212,6 +212,21 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
         setCreatedOrderData(response);
         setOrderPlaced(true);
         
+        // Newsletter subscription (if opted in)
+        if (formData.newsletter_optin && formData.email) {
+          try {
+            await axios.post(`${API_URL}/api/newsletter/subscribe`, {
+              email: formData.email,
+              name: formData.name,
+              source: 'checkout'
+            });
+            console.log('Newsletter subscription successful');
+          } catch (error) {
+            console.error('Newsletter subscription error:', error);
+            // Don't show error to user - it's optional
+          }
+        }
+        
         // Show points earned notification
         if (response.points_earned) {
           setTimeout(() => {
