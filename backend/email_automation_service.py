@@ -122,12 +122,16 @@ class EmailAutomationService:
         """
         Trigger: Daily cron job
         Action: Find at-risk customers and send reactivation emails
+        NOW WITH PERSONALIZED 20% DISCOUNT CODES!
         """
         try:
-            # Import CustomerService to get at-risk customers
+            # Import services
             from customer_service import CustomerService
+            from personalized_discount_service import PersonalizedDiscountService
             from datetime import datetime, timezone
             import traceback
+            
+            discount_service = PersonalizedDiscountService(self.db)
             
             # Get all customers
             try:
@@ -147,63 +151,93 @@ class EmailAutomationService:
             
             emails_sent = 0
             errors = 0
+            codes_generated = 0
             
             for customer in at_risk_customers:
-                # Check if reactivation email already sent in last 30 days
-                last_email = customer.get('last_reactivation_email_at')
-                
-                if last_email:
-                    if isinstance(last_email, str):
-                        last_email = datetime.fromisoformat(last_email.replace('Z', '+00:00'))
-                    elif not last_email.tzinfo:
-                        # Make offset-naive datetime offset-aware (assume UTC)
-                        last_email = last_email.replace(tzinfo=timezone.utc)
+                try:
+                    # Check if reactivation email already sent in last 30 days
+                    last_email = customer.get('last_reactivation_email_at')
                     
-                    days_since_email = (datetime.now(timezone.utc) - last_email).days
-                    if days_since_email < 30:
-                        continue  # Skip, already sent recently
-                
-                # Get subscriber for unsubscribe token
-                subscriber = await self.db.newsletter_subscribers.find_one({"email": customer.get('email')})
-                if not subscriber or subscriber.get('status') != 'active':
-                    continue  # Skip if not subscribed
-                
-                # Get favorite product
-                favorite_product = "Classic Burger"
-                if customer.get('favorite_products') and len(customer['favorite_products']) > 0:
-                    favorite_product = customer['favorite_products'][0].get('name', 'Classic Burger')
-                
-                # Send reactivation email
-                result = await EmailService.send_reactivation_email(
-                    customer_email=customer.get('email'),
-                    customer_name=customer.get('name', ''),
-                    favorite_product=favorite_product,
-                    days_inactive=customer.get('days_since_last_order', days_threshold),
-                    unsubscribe_token=subscriber.get('unsubscribe_token', '')
-                )
-                
-                if result.get('success'):
-                    emails_sent += 1
+                    if last_email:
+                        if isinstance(last_email, str):
+                            last_email = datetime.fromisoformat(last_email.replace('Z', '+00:00'))
+                        elif not last_email.tzinfo:
+                            # Make offset-naive datetime offset-aware (assume UTC)
+                            last_email = last_email.replace(tzinfo=timezone.utc)
+                        
+                        days_since_email = (datetime.now(timezone.utc) - last_email).days
+                        if days_since_email < 30:
+                            continue  # Skip, already sent recently
                     
-                    # Log to subscriber
-                    await self.db.newsletter_subscribers.update_one(
-                        {"_id": subscriber.get('_id')},
-                        {
-                            "$set": {
-                                "last_reactivation_email_at": datetime.now(timezone.utc)
-                            }
-                        }
+                    # Get subscriber for unsubscribe token
+                    subscriber = await self.db.newsletter_subscribers.find_one({"email": customer.get('email')})
+                    if not subscriber or subscriber.get('status') != 'active':
+                        continue  # Skip if not subscribed
+                    
+                    # Generate personalized 20% discount code
+                    discount_result = await discount_service.create_personal_discount(
+                        customer_email=customer.get('email'),
+                        customer_name=customer.get('name', 'Kunde'),
+                        discount_percent=20,  # 20% Rabatt!
+                        valid_days=14,  # 14 Tage gültig
+                        reason="reactivation"
                     )
-                else:
+                    
+                    if not discount_result.get('success'):
+                        logger.warning(f"Failed to create discount for {customer.get('email')}: {discount_result.get('message')}")
+                        errors += 1
+                        continue
+                    
+                    personal_code = discount_result.get('code')
+                    codes_generated += 1
+                    
+                    # Get favorite product
+                    favorite_product = "Classic Burger"
+                    if customer.get('favorite_products') and len(customer['favorite_products']) > 0:
+                        favorite_product = customer['favorite_products'][0].get('name', 'Classic Burger')
+                    
+                    # Send reactivation email with personal code
+                    result = await EmailService.send_reactivation_email(
+                        customer_email=customer.get('email'),
+                        customer_name=customer.get('name', ''),
+                        favorite_product=favorite_product,
+                        days_inactive=customer.get('days_since_last_order', days_threshold),
+                        unsubscribe_token=subscriber.get('unsubscribe_token', ''),
+                        discount_code=personal_code  # Personal code!
+                    )
+                    
+                    if result.get('success'):
+                        emails_sent += 1
+                        
+                        # Log to subscriber
+                        await self.db.newsletter_subscribers.update_one(
+                            {"_id": subscriber.get('_id')},
+                            {
+                                "$set": {
+                                    "last_reactivation_email_at": datetime.now(timezone.utc),
+                                    "last_personal_code": personal_code
+                                }
+                            }
+                        )
+                        
+                        logger.info(f"Reactivation email sent to {customer.get('email')} with code {personal_code}")
+                    else:
+                        errors += 1
+                        logger.error(f"Failed to send reactivation to {customer.get('email')}: {result.get('message')}")
+                
+                except Exception as e:
                     errors += 1
+                    logger.error(f"Error processing customer {customer.get('email', 'unknown')}: {str(e)}")
+                    continue
             
-            logger.info(f"Reactivation campaign: {emails_sent} sent, {errors} errors")
+            logger.info(f"Reactivation campaign: {emails_sent} sent, {codes_generated} codes generated, {errors} errors")
             
             return {
                 "success": True,
                 "emails_sent": emails_sent,
+                "codes_generated": codes_generated,
                 "errors": errors,
-                "message": f"{emails_sent} Reaktivierungs-Emails versendet"
+                "message": f"{emails_sent} Reaktivierungs-Emails mit persönlichen 20% Codes versendet"
             }
             
         except Exception as e:
