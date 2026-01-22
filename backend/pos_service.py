@@ -593,7 +593,7 @@ class POSService:
             
             return {
                 "success": True,
-                "message": f"Bestellung erfolgreich an POS gesendet",
+                "message": "Bestellung erfolgreich an POS gesendet",
                 "pos_order_id": result.get('pos_order_id')
             }
         else:
