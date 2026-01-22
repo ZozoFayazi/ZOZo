@@ -8,6 +8,8 @@ function OrderManagement() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, confirmed, preparing, ready, on_the_way, completed
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showActionsDialog, setShowActionsDialog] = useState(false);
+  const [actionsOrder, setActionsOrder] = useState(null);
 
   useEffect(() => {
     loadOrders();
