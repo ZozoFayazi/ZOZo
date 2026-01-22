@@ -551,7 +551,11 @@ class AdminAPITester:
             
             if orders_response.status_code == 200:
                 orders_data = orders_response.json()
-                orders = orders_data.get('orders', [])
+                # Handle both list and dict responses
+                if isinstance(orders_data, list):
+                    orders = orders_data
+                else:
+                    orders = orders_data.get('orders', [])
                 
                 if orders:
                     # Find a completed order
