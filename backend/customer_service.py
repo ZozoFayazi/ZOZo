@@ -104,14 +104,19 @@ class CustomerService:
                 '$match': {
                     '$or': [
                         {'customer_email': {'$exists': True, '$ne': None, '$ne': ''}},
-                        {'customer_phone': {'$exists': True, '$ne': None, '$ne': ''}}
+                        {'customer_phone': {'$exists': True, '$ne': None, '$ne': ''}},
+                        {'customer.email': {'$exists': True, '$ne': None, '$ne': ''}},
+                        {'customer.phone': {'$exists': True, '$ne': None, '$ne': ''}}
                     ]
                 }
             },
             {
                 '$group': {
                     '_id': {
-                        '$ifNull': ['$customer_email', '$customer_phone']
+                        '$ifNull': [
+                            '$customer_email',
+                            {'$ifNull': ['$customer.email', {'$ifNull': ['$customer_phone', '$customer.phone']}]}
+                        ]
                     },
                     'total_orders': {'$sum': 1},
                     'total_spent': {
