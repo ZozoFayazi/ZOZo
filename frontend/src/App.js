@@ -226,6 +226,15 @@ function App() {
             } 
           />
           <Route 
+            path="/admin/analytics" 
+            element={
+              <ProtectedAdminRoute>
+                <Analytics />
+              </ProtectedAdminRoute>
+            } 
+          />
+
+          <Route 
             path="/admin/locations" 
             element={
               <ProtectedAdminRoute>
