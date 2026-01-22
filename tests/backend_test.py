@@ -40,10 +40,10 @@ class ZOZOBackendTester:
         """Login as admin to get token"""
         print("\n🔐 Testing Admin Login...")
         try:
-            # Try default admin credentials
+            # Use test admin credentials
             response = requests.post(
                 f"{self.base_url}/admin/auth/login",
-                json={"email": "admin@zonik-solutions.de", "password": "ZozoAdmin2024!"}
+                json={"email": "test@zozo-testing.de", "password": "TestAdmin123!"}
             )
             
             if response.status_code == 200:
