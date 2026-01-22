@@ -426,6 +426,238 @@ class AdminAPITester:
             print(f"\n⚠️  Some Customer CRM tests failed!")
             return False
 
+    def test_finance_management_endpoints(self):
+        """Test Enterprise Finance Management endpoints"""
+        print("\n" + "="*60)
+        print("TEST 9: Enterprise Finance Management")
+        print("="*60)
+        
+        all_passed = True
+        
+        # Test 1: Financial Overview
+        print("\n📊 Test 9.1: GET /api/admin/finance/overview")
+        try:
+            url = f"{self.base_url}/api/admin/finance/overview?range_type=this_month"
+            headers = {'Authorization': f'Bearer {self.token}'}
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Verify structure
+                if 'overview' in data and 'payment_methods' in data and 'period' in data:
+                    overview = data['overview']
+                    
+                    # Verify all required fields
+                    required_fields = ['total_revenue_gross', 'total_revenue_net', 'total_tax', 
+                                     'total_orders', 'avg_order_value', 'revenue_growth_percent']
+                    
+                    if all(field in overview for field in required_fields):
+                        print(f"   ✅ PASSED - Overview structure correct")
+                        print(f"   Brutto: €{overview['total_revenue_gross']}")
+                        print(f"   Netto: €{overview['total_revenue_net']}")
+                        print(f"   MwSt (19%): €{overview['total_tax']}")
+                        print(f"   Orders: {overview['total_orders']}")
+                        print(f"   Avg Order: €{overview['avg_order_value']}")
+                        
+                        # Verify tax calculation (19%)
+                        if overview['total_revenue_gross'] > 0:
+                            expected_net = overview['total_revenue_gross'] / 1.19
+                            expected_tax = overview['total_revenue_gross'] - expected_net
+                            
+                            # Allow 0.01 rounding difference
+                            net_diff = abs(overview['total_revenue_net'] - expected_net)
+                            tax_diff = abs(overview['total_tax'] - expected_tax)
+                            
+                            if net_diff < 0.02 and tax_diff < 0.02:
+                                print(f"   ✅ Tax calculation (19%) correct")
+                            else:
+                                print(f"   ❌ Tax calculation incorrect (diff: net={net_diff}, tax={tax_diff})")
+                                all_passed = False
+                        
+                        # Check payment methods
+                        if data['payment_methods']:
+                            print(f"   ✅ Payment methods: {list(data['payment_methods'].keys())}")
+                        
+                    else:
+                        print(f"   ❌ FAILED - Missing required fields")
+                        all_passed = False
+                else:
+                    print(f"   ❌ FAILED - Invalid response structure")
+                    all_passed = False
+            else:
+                print(f"   ❌ FAILED - Status: {response.status_code}")
+                all_passed = False
+        except Exception as e:
+            print(f"   ❌ FAILED - Error: {str(e)}")
+            all_passed = False
+        
+        # Test 2: Revenue by Location
+        print("\n🏢 Test 9.2: GET /api/admin/finance/revenue-by-location")
+        try:
+            url = f"{self.base_url}/api/admin/finance/revenue-by-location?range_type=this_month"
+            headers = {'Authorization': f'Bearer {self.token}'}
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'data' in data:
+                    locations = data['data']
+                    print(f"   ✅ PASSED - Found {len(locations)} locations")
+                    
+                    for loc in locations[:3]:  # Show first 3
+                        print(f"   - {loc.get('location_name')}: €{loc.get('revenue_gross')} ({loc.get('orders')} orders)")
+                else:
+                    print(f"   ❌ FAILED - Invalid response structure")
+                    all_passed = False
+            else:
+                print(f"   ❌ FAILED - Status: {response.status_code}")
+                all_passed = False
+        except Exception as e:
+            print(f"   ❌ FAILED - Error: {str(e)}")
+            all_passed = False
+        
+        # Test 3: Revenue by Category
+        print("\n📦 Test 9.3: GET /api/admin/finance/revenue-by-category")
+        try:
+            url = f"{self.base_url}/api/admin/finance/revenue-by-category?range_type=this_month"
+            headers = {'Authorization': f'Bearer {self.token}'}
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'data' in data:
+                    categories = data['data']
+                    print(f"   ✅ PASSED - Found {len(categories)} categories")
+                    
+                    for cat in categories[:3]:  # Show first 3
+                        print(f"   - {cat.get('category')}: €{cat.get('revenue')} ({cat.get('items_sold')} items)")
+                else:
+                    print(f"   ❌ FAILED - Invalid response structure")
+                    all_passed = False
+            else:
+                print(f"   ❌ FAILED - Status: {response.status_code}")
+                all_passed = False
+        except Exception as e:
+            print(f"   ❌ FAILED - Error: {str(e)}")
+            all_passed = False
+        
+        # Test 4: Daily Revenue Trend
+        print("\n📈 Test 9.4: GET /api/admin/finance/daily-trend")
+        try:
+            url = f"{self.base_url}/api/admin/finance/daily-trend?range_type=30days"
+            headers = {'Authorization': f'Bearer {self.token}'}
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'data' in data:
+                    trend = data['data']
+                    print(f"   ✅ PASSED - Found {len(trend)} days of data")
+                    
+                    if trend:
+                        # Show first and last day
+                        print(f"   First day: {trend[0].get('date')} - €{trend[0].get('revenue_gross')}")
+                        if len(trend) > 1:
+                            print(f"   Last day: {trend[-1].get('date')} - €{trend[-1].get('revenue_gross')}")
+                else:
+                    print(f"   ❌ FAILED - Invalid response structure")
+                    all_passed = False
+            else:
+                print(f"   ❌ FAILED - Status: {response.status_code}")
+                all_passed = False
+        except Exception as e:
+            print(f"   ❌ FAILED - Error: {str(e)}")
+            all_passed = False
+        
+        # Test 5: Top Products
+        print("\n🏆 Test 9.5: GET /api/admin/finance/top-products")
+        try:
+            url = f"{self.base_url}/api/admin/finance/top-products?range_type=this_month&limit=10"
+            headers = {'Authorization': f'Bearer {self.token}'}
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'data' in data:
+                    products = data['data']
+                    print(f"   ✅ PASSED - Found {len(products)} top products")
+                    
+                    for i, prod in enumerate(products[:5], 1):  # Show top 5
+                        print(f"   {i}. {prod.get('product')}: €{prod.get('revenue')} ({prod.get('quantity')}x)")
+                else:
+                    print(f"   ❌ FAILED - Invalid response structure")
+                    all_passed = False
+            else:
+                print(f"   ❌ FAILED - Status: {response.status_code}")
+                all_passed = False
+        except Exception as e:
+            print(f"   ❌ FAILED - Error: {str(e)}")
+            all_passed = False
+        
+        # Test 6: Monthly Comparison
+        print("\n📅 Test 9.6: GET /api/admin/finance/monthly-comparison")
+        try:
+            url = f"{self.base_url}/api/admin/finance/monthly-comparison?year=2026"
+            headers = {'Authorization': f'Bearer {self.token}'}
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'data' in data:
+                    months = data['data']
+                    print(f"   ✅ PASSED - Found {len(months)} months")
+                    
+                    # Show current month
+                    current_month = datetime.now().month
+                    if len(months) >= current_month:
+                        month_data = months[current_month - 1]
+                        print(f"   {month_data.get('month_name')}: €{month_data.get('revenue_gross')} ({month_data.get('orders')} orders)")
+                else:
+                    print(f"   ❌ FAILED - Invalid response structure")
+                    all_passed = False
+            else:
+                print(f"   ❌ FAILED - Status: {response.status_code}")
+                all_passed = False
+        except Exception as e:
+            print(f"   ❌ FAILED - Error: {str(e)}")
+            all_passed = False
+        
+        # Test 7: CSV Export
+        print("\n💾 Test 9.7: GET /api/admin/finance/export/csv")
+        try:
+            url = f"{self.base_url}/api/admin/finance/export/csv?range_type=this_month"
+            headers = {'Authorization': f'Bearer {self.token}'}
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                content_type = response.headers.get('Content-Type', '')
+                if 'csv' in content_type.lower() or response.text.startswith('ZOZO Burger'):
+                    print(f"   ✅ PASSED - CSV export working (size: {len(response.content)} bytes)")
+                    
+                    # Check CSV has required sections
+                    csv_text = response.text
+                    if 'Financial Overview' in csv_text and 'Payment Methods' in csv_text and 'Daily Revenue Trend' in csv_text:
+                        print(f"   ✅ CSV contains all required sections")
+                    else:
+                        print(f"   ⚠️  CSV may be missing some sections")
+                else:
+                    print(f"   ❌ FAILED - Invalid content type: {content_type}")
+                    all_passed = False
+            else:
+                print(f"   ❌ FAILED - Status: {response.status_code}")
+                all_passed = False
+        except Exception as e:
+            print(f"   ❌ FAILED - Error: {str(e)}")
+            all_passed = False
+        
+        if all_passed:
+            print(f"\n✅ All Finance Management endpoints working correctly!")
+            return True
+        else:
+            print(f"\n⚠️  Some Finance Management tests failed!")
+            return False
+
 def main():
     print("\n" + "="*60)
     print("ZOZO BURGER - COMPREHENSIVE API TEST")
