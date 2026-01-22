@@ -52,6 +52,12 @@ const AdminSidebar = () => {
       permission: null // All admins
     },
     {
+      title: 'Finanz-Management',
+      icon: Euro,
+      path: '/admin/finance',
+      permission: null // All admins
+    },
+    {
       title: 'Filialen',
       icon: MapPin,
       path: '/admin/locations',
