@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Clock, CheckCircle, Truck, MapPin, X, RefreshCw } from 'lucide-react';
+import { Package, Clock, CheckCircle, Truck, MapPin, X, RefreshCw, Settings } from 'lucide-react';
 import { toast } from 'sonner';
+import OrderActionsDialog from '../components/OrderActionsDialog';
 
 function OrderManagement() {
   const [orders, setOrders] = useState([]);
