@@ -21,7 +21,7 @@ function NewsletterManagement() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('zozoAuthToken');
+      const token = sessionStorage.getItem('adminToken');
       const [statsRes, subscribersRes, segmentsRes] = await Promise.all([
         axios.get(`${API_URL}/api/admin/newsletter/stats`, {
           headers: { Authorization: `Bearer ${token}` }
