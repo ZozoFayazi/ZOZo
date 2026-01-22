@@ -431,3 +431,59 @@ class EmailService:
             subject=subject,
             html_content=html_with_tracking
         )
+
+
+
+# ==================== LEGACY EMAIL FUNCTIONS (STUBS) ====================
+# These are stub functions for backward compatibility with server.py
+# TODO: Refactor server.py to use EmailService class methods
+
+def send_verification_email(email: str, code: str) -> bool:
+    """Legacy stub - sends verification email"""
+    try:
+        # This is a stub - implement if needed
+        logger.warning(f"send_verification_email called (stub) for {email}")
+        return True
+    except Exception as e:
+        logger.error(f"send_verification_email error: {str(e)}")
+        return False
+
+def send_status_update_email(order: dict, status: str, location: dict) -> bool:
+    """Legacy stub - sends order status update email"""
+    try:
+        # This is a stub - implement if needed
+        logger.warning(f"send_status_update_email called (stub) for order {order.get('order_id')}")
+        return True
+    except Exception as e:
+        logger.error(f"send_status_update_email error: {str(e)}")
+        return False
+
+def send_review_request_email(order: dict, location: dict) -> bool:
+    """Legacy stub - sends review request email"""
+    try:
+        # This is a stub - implement if needed
+        logger.warning(f"send_review_request_email called (stub) for order {order.get('order_id')}")
+        return True
+    except Exception as e:
+        logger.error(f"send_review_request_email error: {str(e)}")
+        return False
+
+def send_order_confirmation_email(order: dict, location: dict) -> bool:
+    """Legacy stub - sends order confirmation email"""
+    try:
+        # This is a stub - implement if needed
+        logger.warning(f"send_order_confirmation_email called (stub) for order {order.get('order_id')}")
+        return True
+    except Exception as e:
+        logger.error(f"send_order_confirmation_email error: {str(e)}")
+        return False
+
+def send_group_order_invite_email(group_order: dict, invitee_email: str) -> bool:
+    """Legacy stub - sends group order invite email"""
+    try:
+        # This is a stub - implement if needed
+        logger.warning(f"send_group_order_invite_email called (stub) for {invitee_email}")
+        return True
+    except Exception as e:
+        logger.error(f"send_group_order_invite_email error: {str(e)}")
+        return False
