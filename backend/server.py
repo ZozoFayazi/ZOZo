@@ -691,6 +691,39 @@ async def get_modifier_groups():
     groups = await db.modifier_groups.find({}).to_list(100)
     return serialize_doc(groups)
 
+@api_router.patch("/admin/modifier-groups/{group_id}")
+async def update_modifier_group(
+    group_id: str,
+    update_data: dict,
+    admin: dict = Depends(get_current_admin)
+):
+    """Update modifier group (including POS-IDs for options)"""
+    try:
+        # Find group
+        group = await db.modifier_groups.find_one({"id": group_id})
+        if not group:
+            group = await db.modifier_groups.find_one({"_id": ObjectId(group_id)})
+        
+        if not group:
+            raise HTTPException(status_code=404, detail="Modifier Group nicht gefunden")
+        
+        # Update
+        result = await db.modifier_groups.update_one(
+            {"_id": group.get('_id')},
+            {"$set": {**update_data, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Update fehlgeschlagen")
+        
+        return {"success": True, "message": "Modifier Group aktualisiert"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Update modifier group error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # ==================== DAILY DEALS (TAGESANGEBOTE) ====================
 
