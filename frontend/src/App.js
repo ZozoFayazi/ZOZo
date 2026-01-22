@@ -232,6 +232,23 @@ function App() {
             element={
               <ProtectedAdminRoute>
                 <Analytics />
+          <Route 
+            path="/admin/customers" 
+            element={
+              <ProtectedAdminRoute>
+                <Customers />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/customers/:customerId" 
+            element={
+              <ProtectedAdminRoute>
+                <CustomerDetail />
+              </ProtectedAdminRoute>
+            } 
+          />
+
               </ProtectedAdminRoute>
             } 
           />
