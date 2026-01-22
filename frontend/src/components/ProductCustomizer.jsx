@@ -212,24 +212,36 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       }
     }
     
-    // Build extras array including menu components
+    // Build extras array (WITHOUT menu components - they go to modifiers)
     const allExtras = [...selectedExtras];
+    
+    // Build menu modifiers separately (for correct ExpertOrder structure)
+    const menuModifiers = {};
     
     if (upgradeToMenu) {
       const side = sides.find(s => s.id === selectedSide);
       const drink = drinks.find(d => d.id === selectedDrink);
       
       if (side) {
-        allExtras.push({
-          name: `Beilage: ${side.name}`,
-          price: side.price // 0 for Pommes, 0.99 for premium sides
-        });
+        menuModifiers.beilage = {
+          name: side.name,
+          price: side.price, // 0 for Pommes, 0.99 for premium sides
+          pos_item_id: side.pos_item_id || `SIDE-${side.id}`
+        };
+        // Also add surcharge to extras if premium side
+        if (side.price > 0) {
+          allExtras.push({
+            name: `${side.name} Aufpreis`,
+            price: side.price
+          });
+        }
       }
       if (drink) {
-        allExtras.push({
-          name: `Getränk: ${drink.name}`,
-          price: 0
-        });
+        menuModifiers.getraenk = {
+          name: drink.name,
+          price: 0,
+          pos_item_id: drink.pos_item_id || `DRINK-${drink.id}`
+        };
       }
     }
     
