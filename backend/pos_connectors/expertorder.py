@@ -500,7 +500,7 @@ class ExpertOrderConnector(BasePOSConnector):
             is_menu = 'menü' in item.get('name', '').lower() or 'menu' in item.get('name', '').lower()
             
             if is_menu:
-                # MENÜ-MODUS: Strukturierte Reihenfolge für POS
+                # MENÜ-MODUS: HIERARCHISCHE STRUKTUR (Parent-Child)
                 # 1. Hauptprodukt MIT Größe UND Grammzahl (z.B. "Hamburger Medium 125g Menü")
                 item_name = item.get('name', '')
                 item_size = item.get('size', '')
@@ -526,13 +526,14 @@ class ExpertOrderConnector(BasePOSConnector):
                         else:
                             full_name = f"{item_name} {size_with_weight}"
                 
-                items.append({
+                # Create main menu item with NESTED children
+                menu_main_item = {
                     "uid": item.get('menu_item_id', ''),
                     "name": full_name,
                     "count": item.get('quantity', 1),
                     "price": float(item.get('price', 0)),
-                    "items": []
-                })
+                    "items": []  # Will be populated with children
+                }
                 
                 # 2. BRÖTCHEN (aus customizations oder modifiers)
                 # Search for bun/brötchen selections
