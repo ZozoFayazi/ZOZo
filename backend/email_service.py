@@ -394,7 +394,7 @@ class EmailService:
         
         return await EmailService.send_email(
             to_email=customer_email,
-            subject=f"Dein persönlicher 20% Comeback-Rabatt 🎁",
+            subject="Dein persönlicher 20% Comeback-Rabatt 🎁",
             html_content=html
         )
     
