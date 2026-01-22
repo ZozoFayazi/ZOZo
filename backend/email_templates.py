@@ -34,6 +34,16 @@ def get_order_confirmation_html(order: dict, location: dict) -> str:
         """
         
         # Modifiers (from modifiers{} object)
+        # Map group_id to German labels
+        modifier_labels = {
+            'menu_beilage': '🍟 Beilage',
+            'menu_getraenk': '🥤 Getränk',
+            'menu_broetchen': '🍞 Brötchen',
+            'menu_salat_dressing': '🥗 Salat-Dressing',
+            'size': '📏 Größe',
+            'extras': '➕ Extras'
+        }
+        
         modifiers = item.get('modifiers', {})
         if modifiers:
             for group_id, mod_data in modifiers.items():
@@ -41,12 +51,16 @@ def get_order_confirmation_html(order: dict, location: dict) -> str:
                     mod_name = mod_data.get('name', '')
                     mod_price = mod_data.get('price', 0.0)
                     
+                    # Get label for this modifier group
+                    label = modifier_labels.get(group_id, '')
+                    label_text = f"{label}: " if label else "→ "
+                    
                     price_text = f" (+€{mod_price:.2f})" if mod_price > 0 else ""
                     
                     items_html += f"""
                     <tr style="background-color: #1a1a1a;">
                         <td style="padding: 8px 12px 8px 30px; border-bottom: 1px solid #2a2a2a; color: #a0a0a0; font-size: 14px;">
-                            → {mod_name}{price_text}
+                            {label_text}{mod_name}{price_text}
                         </td>
                         <td style="padding: 8px 12px; border-bottom: 1px solid #2a2a2a; text-align: right; color: #a0a0a0; font-size: 14px;">
                         </td>
