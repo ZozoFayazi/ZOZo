@@ -216,6 +216,8 @@ function App() {
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/datenschutz" element={<Datenschutz />} />
           <Route path="/kontakt" element={<Kontakt />} />
+          <Route path="/review" element={<ReviewPage />} />
+
           <Route path="/rechtliches" element={<Rechtliches />} />
           <Route path="/agb" element={<AGB />} />
           
