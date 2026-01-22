@@ -31,6 +31,25 @@ class ProductReorderRequest(BaseModel):
     product_ids: List[str]
 
 
+class ProductUpdateRequest(BaseModel):
+    """Request to update a product"""
+    name: str
+    category_id: str
+    description: Optional[str] = None
+    price_normal: Optional[float] = None
+    price_medium: Optional[float] = None
+    price_large: Optional[float] = None
+    size_labels: Optional[dict] = None
+    can_upgrade_to_menu: Optional[bool] = False
+    menu_requires_side: Optional[bool] = True
+    menu_requires_drink: Optional[bool] = True
+    menu_upgrade_price_medium: Optional[float] = None
+    menu_upgrade_price_large: Optional[float] = None
+    show_as_checkout_upsell: Optional[bool] = False
+    upsell_priority: Optional[int] = 5
+    upsell_text: Optional[str] = None
+
+
 def create_product_router_v2(db, audit_service: AuditService):
     """Create product router with master-slave architecture"""
     router = APIRouter(prefix="/admin/products", tags=["products"])
