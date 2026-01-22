@@ -2433,7 +2433,7 @@ async def create_discount_code(
 
 @api_router.get("/admin/discount-codes")
 async def get_discount_codes(
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Get all discount codes"""
     cursor = db.discount_codes.find().sort("created_at", -1)
@@ -2444,7 +2444,7 @@ async def get_discount_codes(
 async def update_discount_code(
     code_id: str,
     code_data: DiscountCodeUpdate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Update a discount code"""
     update_data = {k: v for k, v in code_data.dict().items() if v is not None}
