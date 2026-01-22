@@ -86,7 +86,7 @@ class NewsletterOrderManagementTester:
         success, response = self.run_test(
             "Admin Login",
             "POST",
-            "admin/login",
+            "admin/auth/login",
             200,
             data={
                 "email": "test@zozo-testing.de",
