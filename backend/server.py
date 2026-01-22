@@ -155,7 +155,9 @@ class OrderStatusUpdate(BaseModel):
 # Location Settings Models
 class DeliveryZoneUpdate(BaseModel):
     postal_codes: Optional[List[str]] = None
-    min_order_value: Optional[float] = None
+    postal_code_settings: Optional[dict] = None  # {"24558": {"mbw": 15.0, "fee": 3.0}}
+    default_min_order_value: Optional[float] = None
+    min_order_value: Optional[float] = None  # Legacy support
     delivery_fee: Optional[float] = None
     free_delivery_threshold: Optional[float] = None
 
