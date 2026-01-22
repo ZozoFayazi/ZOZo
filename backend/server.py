@@ -2610,34 +2610,40 @@ async def check_delivery(request: DeliveryCheckRequest):
 
 # Location Settings Management
 @api_router.get("/admin/location-settings")
-async def get_location_settings(current_user: dict = Depends(get_current_user)):
-    """Get location settings for current user"""
-    location_id = current_user.get('location_id')
-    
-    if current_user.get('role') == 'owner':
-        # Owner can see all locations
+async def get_location_settings(admin: dict = Depends(get_current_admin)):
+    """Get location settings for admin"""
+    # Super admin can see all locations
+    if admin.get('role') == 'super_admin':
         locations = await db.locations.find({"active": True}).to_list(length=100)
         return serialize_doc(locations)
-    elif location_id:
-        # Manager can only see their location
-        location = await db.locations.find_one({"_id": parse_object_id(location_id), "active": True})
-        if not location:
-            raise HTTPException(status_code=404, detail="Location not found")
-        return serialize_doc([location])
-    else:
-        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Branch admin can see their branches
+    branch_ids = admin.get('branch_ids', [])
+    if branch_ids:
+        # Get locations by slug (branch_ids are slugs)
+        locations = await db.locations.find({
+            "slug": {"$in": branch_ids},
+            "active": True
+        }).to_list(length=100)
+        return serialize_doc(locations)
+    
+    raise HTTPException(status_code=403, detail="Access denied")
 
 @api_router.patch("/admin/location-settings/{location_id}")
 async def update_location_settings(
     location_id: str,
     settings: DeliveryZoneUpdate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Update location delivery zone settings"""
     # Check access
-    if current_user.get('role') == 'manager':
-        if location_id != current_user.get('location_id'):
-            raise HTTPException(status_code=403, detail="Access denied")
+    if admin.get('role') != 'super_admin':
+        # Check if admin manages this location
+        location_slug = (await db.locations.find_one({"id": location_id}))
+        if location_slug:
+            location_slug = location_slug.get('slug', '')
+            if location_slug not in admin.get('branch_ids', []):
+                raise HTTPException(status_code=403, detail="Access denied")
     
     # Get current location (try both UUID 'id' field and ObjectId '_id' field)
     location = await db.locations.find_one({"id": location_id})
