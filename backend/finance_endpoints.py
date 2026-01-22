@@ -22,11 +22,11 @@ def parse_date_range(range_type: str) -> tuple:
         start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         end = now
     elif range_type == "yesterday":
-        yesterday = now - datetime.timedelta(days=1)
+        yesterday = now - timedelta(days=1)
         start = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
         end = yesterday.replace(hour=23, minute=59, second=59, microsecond=999999)
     elif range_type == "this_week":
-        start = (now - datetime.timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+        start = (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
         end = now
     elif range_type == "this_month":
         start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -35,14 +35,14 @@ def parse_date_range(range_type: str) -> tuple:
         # First day of current month
         first_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         # Last day of previous month
-        end = first_of_month - datetime.timedelta(seconds=1)
+        end = first_of_month - timedelta(seconds=1)
         # First day of previous month
         start = end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     elif range_type == "this_year":
         start = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
         end = now
     elif range_type == "30days":
-        start = (now - datetime.timedelta(days=30)).replace(hour=0, minute=0, second=0, microsecond=0)
+        start = (now - timedelta(days=30)).replace(hour=0, minute=0, second=0, microsecond=0)
         end = now
     else:  # default to this_month
         start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
