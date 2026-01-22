@@ -874,7 +874,10 @@ def main():
     # Test 8: ENTERPRISE CRM - Customer Management (NEW FEATURE)
     tester.test_customer_crm_endpoints()
     
-    # Test 9: ENTERPRISE FINANCE MANAGEMENT (NEW FEATURE)
+    # Test 9: EMAIL MARKETING AUTOMATION (NEW FEATURE)
+    tester.test_email_automation_endpoints()
+    
+    # Test 10: ENTERPRISE FINANCE MANAGEMENT (NEW FEATURE)
     tester.test_finance_management_endpoints()
     
     # Print final results
