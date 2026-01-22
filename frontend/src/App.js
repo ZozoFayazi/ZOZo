@@ -56,6 +56,8 @@ const CampaignManagement = lazy(() => import('./pages/CampaignManagement'));
 const CampaignEditor = lazy(() => import('./pages/CampaignEditor'));
 const POSItemMapping = lazy(() => import('./pages/POSItemMapping'));
 const Analytics = lazy(() => import('./pages/Analytics'));
+const Customers = lazy(() => import('./pages/Customers'));
+const CustomerDetail = lazy(() => import('./pages/CustomerDetail'));
 
 // Loading component
 const PageLoader = () => (
