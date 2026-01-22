@@ -415,8 +415,33 @@ class NewsletterService:
                         html_content=campaign.get('html_content'),
                         campaign_id=campaign_id,
                         unsubscribe_token=subscriber.get('unsubscribe_token', '')
-                    )\n                    \n                    if result.get('success'):\n                        sent_count += 1\n                        \n                        # Log to subscriber
-                        await self.db.newsletter_subscribers.update_one(\n                            {\"_id\": subscriber.get('_id')},\n                            {\n                                \"$push\": {\n                                    \"campaigns_received\": {\n                                        \"campaign_id\": campaign_id,\n                                        \"sent_at\": datetime.now(timezone.utc),\n                                        \"email_id\": result.get('email_id')\n                                    }\n                                }\n                            }\n                        )\n                    else:\n                        failed_count += 1\n                        logger.error(f\"Failed to send to {subscriber.get('email')}: {result.get('message')}\")\n                    \n                except Exception as e:\n                    failed_count += 1\n                    logger.error(f\"Error sending to {subscriber.get('email')}: {str(e)}\")\n            \n            # Update campaign stats
+                    )
+                    
+                    if result.get('success'):
+                        sent_count += 1
+                        
+                        # Log to subscriber
+                        await self.db.newsletter_subscribers.update_one(
+                            {"_id": subscriber.get('_id')},
+                            {
+                                "$push": {
+                                    "campaigns_received": {
+                                        "campaign_id": campaign_id,
+                                        "sent_at": datetime.now(timezone.utc),
+                                        "email_id": result.get('email_id')
+                                    }
+                                }
+                            }
+                        )
+                    else:
+                        failed_count += 1
+                        logger.error(f"Failed to send to {subscriber.get('email')}: {result.get('message')}")
+                    
+                except Exception as e:
+                    failed_count += 1
+                    logger.error(f"Error sending to {subscriber.get('email')}: {str(e)}")
+            
+            # Update campaign stats
             await self.db.newsletter_campaigns.update_one(
                 {"_id": campaign.get('_id')},
                 {
