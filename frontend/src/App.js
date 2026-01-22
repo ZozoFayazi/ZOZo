@@ -255,17 +255,17 @@ function App() {
           <Route 
             path="/admin/finance" 
             element={
+              <ProtectedAdminRoute>
+                <Finance />
+              </ProtectedAdminRoute>
+            } 
+          />
+
           <Route 
             path="/admin/email-automation" 
             element={
               <ProtectedAdminRoute>
                 <EmailAutomation />
-              </ProtectedAdminRoute>
-            } 
-          />
-
-              <ProtectedAdminRoute>
-                <Finance />
               </ProtectedAdminRoute>
             } 
           />
