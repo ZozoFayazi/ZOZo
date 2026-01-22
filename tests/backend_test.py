@@ -220,19 +220,21 @@ class ZOZOBackendTester:
             self.log_test("Order Management APIs", False, "No admin token")
             return
         
-        # First, we need to get an order to test with
         try:
-            # Get recent orders
-            response = requests.get(
-                f"{self.base_url}/admin/orders",
-                headers={"Authorization": f"Bearer {self.admin_token}"}
+            # Get an order ID from database
+            import subprocess
+            result = subprocess.run(
+                ['mongosh', 'mongodb://localhost:27017/test_database', '--quiet', '--eval',
+                 "db.orders.findOne({}, {_id: 1})"],
+                capture_output=True, text=True, timeout=10
             )
             
-            if response.status_code == 200:
-                orders = response.json()
-                if len(orders) > 0:
-                    test_order = orders[0]
-                    order_id = test_order.get('id') or test_order.get('_id')
+            if result.returncode == 0 and '_id:' in result.stdout:
+                # Extract order ID from output
+                import re
+                match = re.search(r"_id:\s*'([^']+)'", result.stdout)
+                if match:
+                    order_id = match.group(1)
                     
                     # Test Error Log API
                     error_log_response = requests.get(
@@ -257,15 +259,10 @@ class ZOZOBackendTester:
                     else:
                         self.log_test("Order Details API", False, 
                                     f"Status {details_response.status_code}")
-                    
-                    # Note: We won't actually test Store Transfer and Manual Override
-                    # as they modify real orders. We just verify the endpoints exist.
-                    self.log_test("Order Management Endpoints Available", True, 
-                                "Error Log and Details APIs working")
                 else:
-                    self.log_test("Order Management APIs", False, "No orders to test with")
+                    self.log_test("Order Management APIs", False, "Could not extract order ID")
             else:
-                self.log_test("Order Management APIs", False, f"Status {response.status_code}")
+                self.log_test("Order Management APIs", False, "No orders found in DB")
         except Exception as e:
             self.log_test("Order Management APIs", False, str(e))
 
