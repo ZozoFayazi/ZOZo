@@ -213,7 +213,7 @@ class ExpertOrderConnector(BasePOSConnector):
         except httpx.ConnectError as e:
             return {
                 "success": False,
-                "message": f"Verbindungsfehler: Server nicht erreichbar",
+                "message": "Verbindungsfehler: Server nicht erreichbar",
                 "details": {"error": str(e), "api_url": api_url},
                 "is_test_mode": False
             }
