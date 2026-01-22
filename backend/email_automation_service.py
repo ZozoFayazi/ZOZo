@@ -146,6 +146,9 @@ class EmailAutomationService:
                 if last_email:
                     if isinstance(last_email, str):
                         last_email = datetime.fromisoformat(last_email.replace('Z', '+00:00'))
+                    elif not last_email.tzinfo:
+                        # Make offset-naive datetime offset-aware (assume UTC)
+                        last_email = last_email.replace(tzinfo=timezone.utc)
                     
                     days_since_email = (datetime.now(timezone.utc) - last_email).days
                     if days_since_email < 30:
