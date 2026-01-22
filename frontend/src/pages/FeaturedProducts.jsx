@@ -27,7 +27,7 @@ function FeaturedProducts() {
   const loadMenuItems = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = sessionStorage.getItem('adminToken');
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/menu-items`,
         {
@@ -57,7 +57,7 @@ function FeaturedProducts() {
 
   const toggleFeatured = async (item) => {
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = sessionStorage.getItem('adminToken');
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/menu-items/${item.id}/featured?is_featured=${!item.is_featured}`,
         {
@@ -80,7 +80,7 @@ function FeaturedProducts() {
 
   const updateBadge = async (itemId, badge) => {
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = sessionStorage.getItem('adminToken');
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/menu-items/${itemId}/featured?is_featured=true&badge=${badge || ''}`,
         {
