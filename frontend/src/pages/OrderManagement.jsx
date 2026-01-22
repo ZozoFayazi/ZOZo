@@ -42,7 +42,7 @@ function OrderManagement() {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = sessionStorage.getItem('adminToken');
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/admin/orders/${orderId}/status`,
         {
