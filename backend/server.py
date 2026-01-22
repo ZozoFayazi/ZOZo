@@ -84,6 +84,9 @@ order_management_router = create_order_management_router(db, audit_service, pos_
 # Create newsletter router (Email Marketing)
 newsletter_router = create_newsletter_router(db, newsletter_service)
 
+# Create review router (Rating & Feedback)
+review_router = create_review_router(db, review_service)
+
 # Create the main app without a prefix
 app = FastAPI(
     title="ZOZO Burger API",
