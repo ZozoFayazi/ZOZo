@@ -157,15 +157,33 @@ function OrderManagement() {
                         <span className="text-xs text-muted-foreground">
                           {order.is_pickup ? '📦 Abholung' : '🚚 Lieferung'}
                         </span>
+                        {/* POS Status Badge */}
+                        {order.pos_status && (order.pos_status === 'error' || order.pos_status === 'failed') && (
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20">
+                            ⚠️ POS-Fehler
+                          </span>
+                        )}
                       </div>
                       <p className="text-sm text-muted-foreground mb-1">{order.customer.name}</p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(order.created_at).toLocaleString('de-DE')}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex flex-col gap-2">
                       <p className="text-lg font-bold text-primary">€{order.total.toFixed(2)}</p>
                       <p className="text-xs text-muted-foreground">{order.items.length} Artikel</p>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActionsOrder(order);
+                          setShowActionsDialog(true);
+                        }}
+                        className="btn-secondary text-xs py-1 px-3 flex items-center gap-1"
+                        title="Order Management"
+                      >
+                        <Settings className="h-3 w-3" />
+                        Aktionen
+                      </button>
                     </div>
                   </div>
                 </div>
