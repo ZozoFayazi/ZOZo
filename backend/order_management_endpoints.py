@@ -94,7 +94,7 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
             }
             
             await db.orders.update_one(
-                {"_id": ObjectId(order_id)},
+                {"_id": order.get('_id')},
                 {
                     "$set": update_data,
                     "$push": {"status_history": status_entry}
