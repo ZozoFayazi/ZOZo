@@ -223,11 +223,12 @@ function EmailAutomation() {
               <div className="p-4 bg-muted/30 rounded-lg border border-border">
                 <h4 className="font-semibold text-foreground mb-2">🔄 Reaktivierungs-Email</h4>
                 <p className="text-sm text-muted-foreground mb-2">
-                  15% Comeback-Rabatt, Lieblings-Produkt hervorgehoben, emotionale Ansprache
+                  Persönlicher 20% Rabattcode (einmalig), Lieblings-Produkt hervorgehoben, 14 Tage gültig
                 </p>
                 <div className="flex gap-2 text-xs text-muted-foreground">
-                  <span className="px-2 py-1 bg-background rounded">15% Rabatt</span>
-                  <span className="px-2 py-1 bg-background rounded">Favoriten</span>
+                  <span className="px-2 py-1 bg-background rounded">20% Code</span>
+                  <span className="px-2 py-1 bg-background rounded">Einmalig</span>
+                  <span className="px-2 py-1 bg-background rounded">Personalisiert</span>
                 </div>
               </div>
 
