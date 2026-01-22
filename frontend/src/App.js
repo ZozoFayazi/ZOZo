@@ -255,6 +255,15 @@ function App() {
           <Route 
             path="/admin/finance" 
             element={
+          <Route 
+            path="/admin/email-automation" 
+            element={
+              <ProtectedAdminRoute>
+                <EmailAutomation />
+              </ProtectedAdminRoute>
+            } 
+          />
+
               <ProtectedAdminRoute>
                 <Finance />
               </ProtectedAdminRoute>
