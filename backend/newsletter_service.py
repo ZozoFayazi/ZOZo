@@ -21,6 +21,7 @@ class NewsletterService:
     async def subscribe(self, email: str, name: Optional[str] = None, source: str = "checkout") -> Dict:
         """
         Subscribe a customer to newsletter (DSGVO-compliant)
+        NOW WITH AUTOMATIC WELCOME EMAIL!
         
         Args:
             email: Customer email
@@ -81,12 +82,23 @@ class NewsletterService:
                 },
                 "campaigns_received": [],
                 "campaigns_opened": [],
-                "campaigns_clicked": []
+                "campaigns_clicked": [],
+                "welcome_email_sent": False,
+                "vip_email_sent": False
             }
             
             result = await self.db.newsletter_subscribers.insert_one(subscriber_doc)
             
             logger.info(f"New newsletter subscriber: {email} (source: {source})")
+            
+            # Trigger welcome email automatically
+            try:
+                from email_automation_service import EmailAutomationService
+                automation = EmailAutomationService(self.db)
+                await automation.trigger_welcome_email(email)
+                logger.info(f"Welcome email triggered for {email}")
+            except Exception as e:
+                logger.error(f"Failed to trigger welcome email: {str(e)}")
             
             return {
                 "success": True,
