@@ -212,4 +212,52 @@ def create_newsletter_router(db, newsletter_service):
         
         return {"success": True, "message": "Kampagne gelöscht"}
     
+    # ==================== AUTOMATION ENDPOINTS ====================
+    
+    @router.post("/admin/newsletter/automation/welcome/{email}")
+    async def trigger_welcome_email(email: str, admin: dict = Depends(get_current_admin)):
+        """Admin: Manually trigger welcome email"""
+        from email_automation_service import EmailAutomationService
+        automation = EmailAutomationService(db)
+        result = await automation.trigger_welcome_email(email)
+        
+        if not result.get('success'):
+            raise HTTPException(status_code=400, detail=result.get('message'))
+        
+        return result
+    
+    @router.post("/admin/newsletter/automation/reactivation")
+    async def trigger_reactivation_campaign(
+        days_threshold: int = Query(30, ge=7, le=180),
+        admin: dict = Depends(get_current_admin)
+    ):
+        """Admin: Trigger reactivation emails for at-risk customers"""
+        from email_automation_service import EmailAutomationService
+        automation = EmailAutomationService(db)
+        result = await automation.trigger_reactivation_emails(days_threshold)
+        return result
+    
+    @router.post("/admin/newsletter/automation/vip-upgrades")
+    async def trigger_vip_upgrade_campaign(admin: dict = Depends(get_current_admin)):
+        """Admin: Trigger VIP upgrade emails for newly promoted VIPs"""
+        from email_automation_service import EmailAutomationService
+        automation = EmailAutomationService(db)
+        result = await automation.trigger_vip_upgrade_emails()
+        return result
+    
+    @router.post("/admin/newsletter/automation/order-followup/{order_id}")
+    async def trigger_order_followup(
+        order_id: str,
+        admin: dict = Depends(get_current_admin)
+    ):
+        """Admin: Manually trigger order follow-up email"""
+        from email_automation_service import EmailAutomationService
+        automation = EmailAutomationService(db)
+        result = await automation.trigger_order_followup(order_id)
+        
+        if not result.get('success'):
+            raise HTTPException(status_code=400, detail=result.get('message'))
+        
+        return result
+    
     return router
