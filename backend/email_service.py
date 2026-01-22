@@ -158,8 +158,12 @@ class EmailTemplates:
         return EmailTemplates.get_base_template(content, "Willkommen! Hier ist dein 10% Rabatt")
     
     @staticmethod
-    def order_followup_email(customer_name: str, order_id: str, order_total: float) -> str:
-        """Post-order follow-up email"""
+    def order_followup_email(customer_name: str, order_id: str, order_total: float, customer_email: str = "") -> str:
+        """Post-order follow-up email with review link"""
+        # Encode params for URL
+        import urllib.parse
+        review_url = f"{APP_URL}/review?order={order_id}&email={urllib.parse.quote(customer_email)}"
+        
         content = f"""
             <h2 style="color: #dc2626; margin-top: 0;">Wie war deine Bestellung? 🍔</h2>
             <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
@@ -173,21 +177,32 @@ class EmailTemplates:
                 <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: white;">€{order_total:.2f}</p>
             </div>
             <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
-                Deine Meinung ist uns wichtig! Teile uns mit, wie zufrieden du warst:
+                Deine Meinung ist uns wichtig! Bewerte deine Bestellung und erhalte einen Dankeschön-Gutschein! 🎁
             </p>
             <div style="text-align: center; margin: 30px 0;">
-                <p style="margin-bottom: 15px; color: #e5e5e5;">Wie würdest du deine Bestellung bewerten?</p>
-                <div>
-                    <a href="{APP_URL}/feedback?order={order_id}&rating=5" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
-                    <a href="{APP_URL}/feedback?order={order_id}&rating=4" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
-                    <a href="{APP_URL}/feedback?order={order_id}&rating=3" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
-                    <a href="{APP_URL}/feedback?order={order_id}&rating=2" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
-                    <a href="{APP_URL}/feedback?order={order_id}&rating=1" style="text-decoration: none; font-size: 32px; margin: 0 5px;">⭐</a>
+                <p style="margin-bottom: 15px; color: #e5e5e5; font-weight: 600;">Wie würdest du deine Bestellung bewerten?</p>
+                <div style="margin-bottom: 20px;">
+                    <a href="{review_url}&rating=5" style="text-decoration: none; font-size: 36px; margin: 0 4px;">⭐</a>
+                    <a href="{review_url}&rating=4" style="text-decoration: none; font-size: 36px; margin: 0 4px;">⭐</a>
+                    <a href="{review_url}&rating=3" style="text-decoration: none; font-size: 36px; margin: 0 4px;">⭐</a>
+                    <a href="{review_url}&rating=2" style="text-decoration: none; font-size: 36px; margin: 0 4px;">⭐</a>
+                    <a href="{review_url}&rating=1" style="text-decoration: none; font-size: 36px; margin: 0 4px;">⭐</a>
                 </div>
+                <p style="font-size: 13px; color: #999; margin-bottom: 20px;">Klick auf die Sterne für deine Bewertung</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                        padding: 20px; border-radius: 12px; margin: 25px 0; text-align: center;">
+                <p style="margin: 0 0 8px 0; font-size: 14px; color: rgba(255,255,255,0.9);">🎁 BONUS BEI 5 STERNEN</p>
+                <p style="margin: 0; font-size: 20px; font-weight: bold; color: white;">5% Gutschein geschenkt!</p>
             </div>
             <div style="text-align: center;">
-                <a href="{APP_URL}/menu" class="button">
-                    Erneut bestellen
+                <a href="{review_url}" class="button">
+                    Jetzt detailliert bewerten
+                </a>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="{APP_URL}/menu" style="color: #999; text-decoration: underline; font-size: 14px;">
+                    Oder erneut bestellen
                 </a>
             </div>
             <p style="font-size: 14px; color: #999; margin-top: 30px;">
@@ -195,7 +210,7 @@ class EmailTemplates:
                 Dein ZOZO Burger Team
             </p>
         """
-        return EmailTemplates.get_base_template(content, "Wie war deine Bestellung?")
+        return EmailTemplates.get_base_template(content, "Wie war deine Bestellung? Bewerte & erhalte 5% Gutschein!")
     
     @staticmethod
     def reactivation_email(customer_name: str, favorite_product: str = "Classic Burger", days_inactive: int = 30, discount_code: str = "COMEBACK15") -> str:
