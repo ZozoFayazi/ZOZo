@@ -442,14 +442,6 @@ function App() {
               </ProtectedAdminRoute>
             } 
           />
-          <Route 
-            path="/admin/pos-mapping" 
-            element={
-              <ProtectedAdminRoute>
-                <POSItemMapping />
-              </ProtectedAdminRoute>
-            } 
-          />
             </Routes>
           </Suspense>
         </main>
