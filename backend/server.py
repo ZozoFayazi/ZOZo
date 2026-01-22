@@ -2401,7 +2401,7 @@ async def upload_product_image(
 @api_router.post("/admin/discount-codes")
 async def create_discount_code(
     code_data: DiscountCodeCreate,
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(get_current_admin)
 ):
     """Create a new discount code"""
     # Check if code already exists
