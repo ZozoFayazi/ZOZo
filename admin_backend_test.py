@@ -14,7 +14,7 @@ class AdminDashboardTester:
         self.tests_passed = 0
         self.failed_tests = []
         self.admin_email = "admin@zonik-solutions.de"
-        self.admin_password = "admin123"  # Default password to try
+        self.admin_password = "ZozoAdmin2024!"  # Default password from setup_admins.py
 
     def run_test(self, name, method, endpoint, expected_status, data=None):
         """Run a single API test"""
