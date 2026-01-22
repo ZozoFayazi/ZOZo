@@ -90,7 +90,7 @@ class AdminDashboardTester:
         success, response = self.run_test(
             f"Admin Login ({self.admin_email})",
             "POST",
-            "auth/login",
+            "admin/auth/login",  # Use admin-specific login endpoint
             200,
             data=credentials
         )
