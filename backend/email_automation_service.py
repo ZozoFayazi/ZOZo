@@ -127,12 +127,21 @@ class EmailAutomationService:
             # Import CustomerService to get at-risk customers
             from customer_service import CustomerService
             from datetime import datetime, timezone
+            import traceback
             
             # Get all customers
-            result = await CustomerService.get_all_customers(
-                segment='At-Risk',
-                limit=1000
-            )
+            try:
+                result = await CustomerService.get_all_customers(
+                    segment='At-Risk',
+                    limit=1000
+                )
+            except Exception as e:
+                logger.error(f"Error getting At-Risk customers: {str(e)}")
+                logger.error(traceback.format_exc())
+                return {
+                    "success": False,
+                    "message": str(e)
+                }
             
             at_risk_customers = result.get('customers', [])
             
