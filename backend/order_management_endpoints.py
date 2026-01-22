@@ -184,7 +184,15 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
         Use case: Order handled by phone/in-person, doesn't need POS integration
         """
         try:
-            order = await db.orders.find_one({"_id": ObjectId(order_id)})
+            # Get order - flexible ID handling
+            try:
+                order = await db.orders.find_one({"_id": ObjectId(order_id)})
+            except:
+                order = await db.orders.find_one({"_id": order_id})
+            
+            if not order:
+                order = await db.orders.find_one({"id": order_id})
+            
             if not order:
                 raise HTTPException(status_code=404, detail="Bestellung nicht gefunden")
             
@@ -204,7 +212,7 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
             }
             
             await db.orders.update_one(
-                {"_id": ObjectId(order_id)},
+                {"_id": order.get('_id')},
                 {
                     "$set": {
                         "manual_override": True,
