@@ -708,7 +708,7 @@ def main():
     
     if tester.tests_passed == tester.tests_run:
         print("\n✅ ALL TESTS PASSED!")
-        print("Admin Dashboard + Enterprise CRM working correctly.")
+        print("Admin Dashboard + Enterprise CRM + Finance Management working correctly.")
         return 0
     else:
         print(f"\n⚠️  {tester.tests_run - tester.tests_passed} test(s) failed.")
