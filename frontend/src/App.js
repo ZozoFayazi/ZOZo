@@ -54,6 +54,7 @@ const Rechtliches = lazy(() => import('./pages/Rechtliches'));
 const NewsletterManagement = lazy(() => import('./pages/NewsletterManagement'));
 const CampaignManagement = lazy(() => import('./pages/CampaignManagement'));
 const CampaignEditor = lazy(() => import('./pages/CampaignEditor'));
+const POSItemMapping = lazy(() => import('./pages/POSItemMapping'));
 
 // Loading component
 const PageLoader = () => (
