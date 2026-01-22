@@ -697,14 +697,26 @@ class ExpertOrderConnector(BasePOSConnector):
                                 "price": float(modifier_price)
                             })
                 
-                # 4. ANDERE CUSTOMIZATIONS (nicht Brötchen) → als Kinder
+                # 4. ANDERE CUSTOMIZATIONS (nicht Brötchen, nicht Hinweise) → als Kinder
                 for custom in customizations:
                     if isinstance(custom, str):
                         # Skip brötchen (already added above)
                         if 'brötchen' in custom.lower() or 'bun' in custom.lower():
                             continue
-                        # Skip if covered by modifiers
-                        if any(custom in mod_data.get('name', '') for mod_data in modifiers.values() if isinstance(mod_data, dict)):
+                        
+                        # Skip "Hinweis:" texts - these should NOT be sent as items
+                        if custom.lower().startswith('hinweis:') or 'hinweis:' in custom.lower():
+                            # Add as note to main item instead
+                            note_text = custom.replace('Hinweis:', '').replace('hinweis:', '').strip()
+                            if 'note' not in main_item:
+                                main_item['note'] = note_text
+                            else:
+                                main_item['note'] += f"; {note_text}"
+                            continue
+                        
+                        # Skip if covered by modifiers (prevents duplicates)
+                        modifier_names = [mod_data.get('name', '') for mod_data in modifiers.values() if isinstance(mod_data, dict)]
+                        if any(mod_name in custom or custom in mod_name for mod_name in modifier_names):
                             continue
                         
                         clean_name = custom.replace('+ ', '').replace('+', '').strip()
