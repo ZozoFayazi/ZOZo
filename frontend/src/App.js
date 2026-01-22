@@ -270,6 +270,15 @@ function App() {
             element={
               <ProtectedAdminRoute>
                 <EmailAutomation />
+          <Route 
+            path="/admin/reviews" 
+            element={
+              <ProtectedAdminRoute>
+                <ReviewManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+
               </ProtectedAdminRoute>
             } 
           />
