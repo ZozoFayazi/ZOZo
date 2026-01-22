@@ -461,6 +461,9 @@ def main():
     # Test 8: ENTERPRISE CRM - Customer Management (NEW FEATURE)
     tester.test_customer_crm_endpoints()
     
+    # Test 9: ENTERPRISE FINANCE MANAGEMENT (NEW FEATURE)
+    tester.test_finance_management_endpoints()
+    
     # Print final results
     print("\n" + "="*60)
     print("COMPREHENSIVE TEST RESULTS")
