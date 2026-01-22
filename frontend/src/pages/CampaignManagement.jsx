@@ -10,6 +10,13 @@ function CampaignManagement() {
   const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('campaigns');
+  const [segments, setSegments] = useState({
+    all: 0,
+    new_customers: 0,
+    repeat_customers: 0,
+    inactive: 0
+  });
 
   useEffect(() => {
     loadCampaigns();
