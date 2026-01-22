@@ -373,6 +373,38 @@ function App() {
               </ProtectedAdminRoute>
             } 
           />
+          <Route 
+            path="/admin/newsletter" 
+            element={
+              <ProtectedAdminRoute>
+                <NewsletterManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/newsletter/campaigns" 
+            element={
+              <ProtectedAdminRoute>
+                <CampaignManagement />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/newsletter/campaigns/new" 
+            element={
+              <ProtectedAdminRoute>
+                <CampaignEditor />
+              </ProtectedAdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/newsletter/campaigns/:id" 
+            element={
+              <ProtectedAdminRoute>
+                <CampaignEditor />
+              </ProtectedAdminRoute>
+            } 
+          />
             </Routes>
           </Suspense>
         </main>
