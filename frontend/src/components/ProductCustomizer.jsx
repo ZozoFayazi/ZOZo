@@ -121,12 +121,20 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
 
   const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
   
+  // Calculate modifier price (from selectedModifiers)
+  const modifierPrice = Object.values(selectedModifiers).reduce((sum, modifierData) => {
+    if (typeof modifierData === 'object' && modifierData.price) {
+      return sum + modifierData.price;
+    }
+    return sum;
+  }, 0);
+  
   // Calculate side surcharge (if menu and premium side selected)
   const selectedSideObj = sides.find(s => s.id === selectedSide);
   const sideSurcharge = upgradeToMenu && selectedSideObj ? selectedSideObj.price : 0;
   
   const itemPrice = upgradeToMenu ? menuUpgradePrice : basePrice;
-  const totalPrice = (itemPrice + extrasTotal + sideSurcharge) * quantity;
+  const totalPrice = (itemPrice + extrasTotal + sideSurcharge + modifierPrice) * quantity;
 
   // Check if all required modifiers are selected
   const hasRequiredModifiers = productModifiers.every(group => {
