@@ -253,9 +253,9 @@ function AdminDashboard() {
                       </td>
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-medium">{order.customer.name}</p>
-                          <p className="text-xs text-muted-foreground">{order.customer.phone}</p>
-                          <p className="text-xs text-muted-foreground">{order.customer.address}</p>
+                          <p className="font-medium">{order.customer?.name || order.customer_name || 'Unbekannt'}</p>
+                          <p className="text-xs text-muted-foreground">{order.customer?.phone || order.customer_phone || '-'}</p>
+                          <p className="text-xs text-muted-foreground">{order.customer?.address || order.delivery_address || '-'}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
