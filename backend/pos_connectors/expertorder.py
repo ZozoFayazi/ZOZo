@@ -507,14 +507,16 @@ class ExpertOrderConnector(BasePOSConnector):
                 
                 # Build complete name with size and weight
                 full_name = item_name
-                if item_size and item_size.lower() != 'normal':
+                if item_size:
                     size_upper = item_size.upper()
                     
-                    # Add gram weight based on size
+                    # Add gram weight based on size (IMMER, auch bei Normal)
                     if size_upper == 'MEDIUM':
                         size_with_weight = 'Medium 125g'
                     elif size_upper == 'LARGE':
                         size_with_weight = 'Large 180g'
+                    elif size_upper == 'NORMAL':
+                        size_with_weight = 'Normal 100g'
                     else:
                         size_with_weight = item_size.capitalize()
                     
@@ -525,6 +527,9 @@ class ExpertOrderConnector(BasePOSConnector):
                             full_name = f"{base_name} {size_with_weight} Menü"
                         else:
                             full_name = f"{item_name} {size_with_weight}"
+                else:
+                    # Kein size-Feld vorhanden - verwende Original-Namen
+                    full_name = item_name
                 
                 # Create main menu item with NESTED children
                 menu_main_item = {
