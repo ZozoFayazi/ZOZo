@@ -113,12 +113,6 @@ const AdminSidebar = () => {
       permission: null // All admins can see their POS settings
     },
     {
-      title: 'POS Artikel-Mapping',
-      icon: Link2,
-      path: '/admin/pos-mapping',
-      permission: 'manage_products' // Only Rellingen + Super Admin
-    },
-    {
       title: 'POS Fehler-Queue',
       icon: AlertTriangle,
       path: '/admin/pos/failed-orders',
