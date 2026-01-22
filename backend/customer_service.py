@@ -209,6 +209,9 @@ class CustomerService:
             )
             
             # Calculate Customer Lifetime (days)
+            # Ensure first_order has timezone info
+            if hasattr(first_order, 'tzinfo') and not first_order.tzinfo:
+                first_order = first_order.replace(tzinfo=timezone.utc)
             customer_lifetime_days = (now - first_order).days
             
             # Calculate Average Order Value
