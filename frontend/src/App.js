@@ -60,6 +60,7 @@ const CustomerDetail = lazy(() => import('./pages/CustomerDetail'));
 const Finance = lazy(() => import('./pages/Finance'));
 const EmailAutomation = lazy(() => import('./pages/EmailAutomation'));
 const ReviewPage = lazy(() => import('./pages/ReviewPage'));
+const ReviewManagement = lazy(() => import('./pages/ReviewManagement'));
 
 // Loading component
 const PageLoader = () => (
