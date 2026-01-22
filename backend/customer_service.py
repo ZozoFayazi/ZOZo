@@ -8,6 +8,9 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, List
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Database connection
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
