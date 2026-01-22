@@ -66,7 +66,7 @@ function EmailAutomation() {
     {
       id: 'reactivation',
       title: 'Reaktivierungs-Kampagne',
-      description: 'Sendet 15% Comeback-Rabatt an Kunden, die länger als 30 Tage nicht bestellt haben (At-Risk Segment)',
+      description: 'Sendet persönliche 20% Rabattcodes an Kunden, die länger als 30 Tage nicht bestellt haben. Jeder Code ist einmalig und nur 14 Tage gültig.',
       icon: RefreshCw,
       color: 'orange',
       trigger: 'Manuell',
