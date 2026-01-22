@@ -705,6 +705,25 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
                 />
               </div>
 
+              {/* Newsletter Opt-In */}
+              <div className="bg-muted/30 border border-border rounded-lg p-4">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="newsletter_optin"
+                    checked={formData.newsletter_optin || false}
+                    onChange={(e) => setFormData({...formData, newsletter_optin: e.target.checked})}
+                    className="mt-1 w-4 h-4 text-primary rounded focus:ring-2 focus:ring-primary"
+                  />
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">📧 Newsletter abonnieren</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Erhalte exklusive Angebote, Rabatte und News per E-Mail. Abmeldung jederzeit möglich.
+                    </p>
+                  </div>
+                </label>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium mb-2">Zahlungsmethode *</label>
                 <div className="space-y-3">
