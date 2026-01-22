@@ -1,0 +1,260 @@
+======================================================================
+🧪 ZOZO Burger Backend API Test Suite - Iteration 7
+======================================================================
+Base URL: https://menu-config.preview.emergentagent.com/api
+Started at: 2026-01-07 16:08:36
+======================================================================
+
+📌 PUBLIC ENDPOINTS
+----------------------------------------------------------------------
+
+🔍 Test 1: Root Endpoint
+   URL: GET 
+   ✅ PASSED - Status: 200
+
+🔍 Test 2: Get Locations
+   URL: GET locations
+   ✅ PASSED - Status: 200
+   📍 Found 2 locations
+   Using location: ZOZO Burger Rellingen (ID: 49aff347-a6c3-407c-ad4a-59d5d0852314)
+
+🔍 Test 3: Get Menu for Location
+   URL: GET menu?location_id=zozo-prelaunch
+   ✅ PASSED - Status: 200
+   📋 Found 16 categories
+   🍔 Sample item: Mix Salad
+
+🔍 Test 4: Check Delivery (Valid Postal Code)
+   URL: POST check-delivery
+   ✅ PASSED - Status: 200
+   📍 Can deliver: True
+   🏪 Available locations: 1
+   💰 Delivery fee: €3.0
+   📦 Min order: €12.0
+
+🔍 Test 5: Check Delivery (Invalid Postal Code)
+   URL: POST check-delivery
+   ✅ PASSED - Status: 200
+   📍 Can deliver: False
+   💬 Message: Leider liefern wir nicht nach 99999. Bitte prüfe deine Postleitzahl oder wähle einen anderen Standort.
+
+🔍 Test 6: Create Order
+   URL: POST orders
+   ✅ PASSED - Status: 200
+   📦 Order created: ZOZO-1028 (Total: €22.98)
+
+📌 AUTHENTICATION
+----------------------------------------------------------------------
+
+🔍 Test 7: Admin Login
+   URL: POST auth/login
+   ✅ PASSED - Status: 200
+   🔑 Logged in as: owner@zozo.com (owner)
+
+🔍 Test 8: Get Current User
+   URL: GET auth/me
+   ✅ PASSED - Status: 200
+   👤 User: owner@zozo.com
+
+🔍 Test 9: Location Manager Login
+   URL: POST auth/login
+   ✅ PASSED - Status: 200
+   🔑 Manager logged in: rellingen@zozo.com
+   📍 Location: 693c4455b46d8568bd7d7bcf
+
+📌 ADMIN ENDPOINTS
+----------------------------------------------------------------------
+
+🔍 Test 10: Get Admin Orders
+   URL: GET admin/orders
+   ❌ FAILED - Expected 200, got 401
+   Error: {'detail': 'Invalid token'}
+
+🔍 Test 11: Update Order Status
+   URL: PATCH admin/orders/695e85047d11755280c8b651/status
+   ✅ PASSED - Status: 200
+   ✏️  Order status updated to: preparing
+
+🔍 Test 12: Get Dashboard Stats
+   URL: GET admin/stats
+   ❌ FAILED - Expected 200, got 401
+   Error: {'detail': 'Invalid token'}
+
+🔍 Test 13: Get Menu Items (Admin)
+   URL: GET admin/menu-items
+   ❌ FAILED - Expected 200, got 401
+   Error: {'detail': 'Invalid token'}
+
+🔍 Test 14: Get Location Settings
+   URL: GET admin/location-settings
+   ✅ PASSED - Status: 200
+   🏪 Found 2 location(s)
+   📍 ZOZO Burger Rellingen: 3 postal codes
+   📍 ZOZO Burger Henstedt-Ulzburg: 6 postal codes
+
+🔍 Test 15: Update Location Settings
+   URL: PATCH admin/location-settings/49aff347-a6c3-407c-ad4a-59d5d0852314
+   ✅ PASSED - Status: 200
+   ✏️  Settings updated:
+      Min order: €12.0
+      Delivery fee: €3.0
+
+📌 DEALS & PROMOTIONS (Premium Feature)
+----------------------------------------------------------------------
+
+🔍 Test 16: Get Deals (Admin)
+   URL: GET admin/deals
+   ✅ PASSED - Status: 200
+   🎁 Found 8 deals
+
+🔍 Test 17: Create Deal
+   URL: POST admin/deals
+   ✅ PASSED - Status: 200
+   🎁 Deal created: Test Deal - 20% Off (ID: 695e85057d11755280c8b653)
+
+📌 QUICK REORDER (Premium Feature)
+----------------------------------------------------------------------
+
+🔍 Test 18: Get Order History
+   URL: GET orders/history?customer_phone=%2B49%20123%20456789
+   ✅ PASSED - Status: 200
+
+📌 POS INTEGRATION & RETRY MECHANISM
+----------------------------------------------------------------------
+
+🔍 Test 19: Get Failed POS Orders
+   URL: GET admin/pos/failed-orders
+   ❌ FAILED - Expected 200, got 401
+   Error: {'detail': 'Invalid token'}
+
+📌 MASTER-SLAVE MENU ARCHITECTURE
+----------------------------------------------------------------------
+
+🔍 Test 20: Get Product Permissions
+   URL: GET admin/products/permissions
+   ❌ FAILED - Expected 200, got 401
+   Error: {'detail': 'Invalid token'}
+
+🔍 Test 21: Get Products (Admin)
+   URL: GET admin/products
+   ❌ FAILED - Expected 200, got 401
+   Error: {'detail': 'Invalid token'}
+
+📌 MODIFIER GROUPS SYSTEM
+----------------------------------------------------------------------
+
+🔍 Test 22: Get Modifier Groups
+   URL: GET modifier-groups
+   ✅ PASSED - Status: 200
+   🍝 Found 3 modifier groups
+      - Mit 3 Pizzabrötchen?: 2 options
+      - Dressing wählen: 3 options
+
+📌 DAILY DEALS SYSTEM (NEW FEATURE)
+----------------------------------------------------------------------
+
+🔍 Test 23: Get Today's Daily Deal
+   URL: GET daily-deal
+   ✅ PASSED - Status: 200
+   🎁 Today's Deal: Pizza-Mittwoch
+      Type: percentage
+      Target: pizza
+
+🔍 Test 24: Get All Daily Deals
+   URL: GET daily-deals
+   ✅ PASSED - Status: 200
+   📅 Found 4 daily deals
+      - Mon: Pasta-Montag
+      - Tue: Crunchy Chicken Wrap Dienstag
+
+🔍 Test 25: Get Daily Deals (Admin)
+   URL: GET admin/daily-deals
+   ❌ FAILED - Expected 200, got 401
+   Error: {'detail': 'Invalid token'}
+
+📌 FEATURE TOGGLES SYSTEM (NEW FEATURE)
+----------------------------------------------------------------------
+
+🔍 Test 26: Get Public Features
+   URL: GET features
+   ✅ PASSED - Status: 200
+   🎛️  Found 6 features
+      Enabled: 0
+
+🔍 Test 27: Get Features (Admin)
+   URL: GET admin/features
+   ❌ FAILED - Expected 200, got 401
+   Error: {'detail': 'Invalid token'}
+
+📌 P0 BUG FIX VERIFICATION (MenuPage UUID Fix)
+----------------------------------------------------------------------
+
+🔍 Test 28: Get Menu with UUID Location ID (P0 Fix)
+   URL: GET menu?location_id=zozo-prelaunch
+   ✅ PASSED - Status: 200
+   ✅ P0 FIX VERIFIED: Menu loads with UUID location ID
+   📋 Found 16 categories
+
+📌 GROUP ORDERS SYSTEM (CRITICAL)
+----------------------------------------------------------------------
+
+🔍 Test 29: Create Group Order
+   URL: POST group-orders/create?host_name=Test%20Host&location_id=zozo-prelaunch&host_email=test@example.com
+   ✅ PASSED - Status: 200
+   👥 Group order created: NZ7N0T
+
+🔍 Test 30: Get Group Order
+   URL: GET group-orders/NZ7N0T
+   ✅ PASSED - Status: 200
+   👥 Group order status: active
+   📦 Items: 0
+   👤 Participants: 0
+
+🔍 Test 31: Add Items to Group Order
+   URL: POST group-orders/NZ7N0T/add-items
+   ❌ FAILED - Expected 200, got 422
+   Error: {'detail': [{'type': 'missing', 'loc': ['body', 'expires_at'], 'msg': 'Field required', 'input': {'participant_name': 'Test Participant', 'items': [{'menu_item_id': '693c5e30e51d9e97f092ccb3', 'name': 'Test Burger', 'price': 9.99, 'size': 'medium', 'quantity': 1}]}, 'url': 'https://errors.pydantic.dev/2.12/v/missing'}]}
+
+🔍 Test 32: Finalize Group Order
+   URL: POST group-orders/NZ7N0T/finalize
+   ✅ PASSED - Status: 200
+   ✅ Group order finalized
+   📦 Total items: 0
+
+======================================================================
+📊 TEST SUMMARY
+======================================================================
+Total Tests: 32
+Passed: 23 ✅
+Failed: 9 ❌
+Success Rate: 71.9%
+
+❌ FAILED TESTS:
+   1. Get Admin Orders
+      Endpoint: admin/orders
+      Expected: 200, Got: 401
+   2. Get Dashboard Stats
+      Endpoint: admin/stats
+      Expected: 200, Got: 401
+   3. Get Menu Items (Admin)
+      Endpoint: admin/menu-items
+      Expected: 200, Got: 401
+   4. Get Failed POS Orders
+      Endpoint: admin/pos/failed-orders
+      Expected: 200, Got: 401
+   5. Get Product Permissions
+      Endpoint: admin/products/permissions
+      Expected: 200, Got: 401
+   6. Get Products (Admin)
+      Endpoint: admin/products
+      Expected: 200, Got: 401
+   7. Get Daily Deals (Admin)
+      Endpoint: admin/daily-deals
+      Expected: 200, Got: 401
+   8. Get Features (Admin)
+      Endpoint: admin/features
+      Expected: 200, Got: 401
+   9. Add Items to Group Order
+      Endpoint: group-orders/NZ7N0T/add-items
+      Expected: 200, Got: 422
+======================================================================
