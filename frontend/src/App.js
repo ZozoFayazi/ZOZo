@@ -58,6 +58,7 @@ const POSItemMapping = lazy(() => import('./pages/POSItemMapping'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const Customers = lazy(() => import('./pages/Customers'));
 const CustomerDetail = lazy(() => import('./pages/CustomerDetail'));
+const Finance = lazy(() => import('./pages/Finance'));
 
 // Loading component
 const PageLoader = () => (
