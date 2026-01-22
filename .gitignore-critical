@@ -1,0 +1,24 @@
+# Diese Dateien MÜSSEN immer im Git sein - NIEMALS zu .gitignore hinzufügen!
+
+# Kritische Backups
+!/app/backups/FINAL_LOCKED_VERSION_*/
+!/app/backups/critical_fixes_2026_01_22/
+
+# Validierungs-Scripts
+!/app/validate_critical_code.py
+!/app/check_deployment_status.py
+!/app/pre_deployment_check.sh
+!/app/post_deployment_check.sh
+!/app/emergency_restore.sh
+
+# Test-Scripts
+!/app/test_email_functions.py
+!/app/test_menu_fix.py
+
+# Dokumentation
+!/app/README_CRITICAL_FIXES.md
+!/app/CRITICAL_FILES_DO_NOT_TOUCH.md
+!/app/QUICK_START.md
+!/app/CHECKOUT_BUG_ROOT_CAUSE.md
+!/app/DUPLICATE_FIX_DOKUMENTATION.md
+!/app/SIZE_DISPLAY_FIX.md
