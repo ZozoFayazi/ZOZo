@@ -270,6 +270,91 @@ def create_product_router_v2(db, audit_service: AuditService):
             raise HTTPException(status_code=500, detail="Fehler beim Löschen")
 
     
+    @router.put("/{product_id}")
+    async def update_product(
+        product_id: str,
+        update_data: ProductUpdateRequest,
+        admin: dict = Depends(get_current_admin)
+    ):
+        """
+        Update a product - Master only
+        
+        - Super Admin: Can update any product
+        - Master (Rellingen): Can update products
+        - Slave (Henstedt): Not allowed
+        """
+        try:
+            # Check if product exists - try ObjectId parse
+            try:
+                product = await db.menu_items.find_one({"_id": ObjectId(product_id)})
+            except:
+                product = None
+            
+            if not product:
+                raise HTTPException(status_code=404, detail="Produkt nicht gefunden")
+            
+            # Check permissions
+            branch_ids = admin.get("branch_ids", [])
+            is_master = admin["role"] == "super_admin" or MASTER_LOCATION in branch_ids
+            
+            if not is_master:
+                raise HTTPException(
+                    status_code=403, 
+                    detail="Nur Master-Standort kann Produkte bearbeiten"
+                )
+            
+            # Prepare update data
+            update_dict = {
+                "name": update_data.name,
+                "category_id": update_data.category_id,
+                "description": update_data.description,
+                "price_normal": update_data.price_normal,
+                "price_medium": update_data.price_medium,
+                "price_large": update_data.price_large,
+                "size_labels": update_data.size_labels or {"medium": "Medium (125g)", "large": "Large (180g)"},
+                "can_upgrade_to_menu": update_data.can_upgrade_to_menu,
+                "menu_requires_side": update_data.menu_requires_side,
+                "menu_requires_drink": update_data.menu_requires_drink,
+                "menu_upgrade_price_medium": update_data.menu_upgrade_price_medium,
+                "menu_upgrade_price_large": update_data.menu_upgrade_price_large,
+                "show_as_checkout_upsell": update_data.show_as_checkout_upsell,
+                "upsell_priority": update_data.upsell_priority,
+                "upsell_text": update_data.upsell_text,
+                "updated_at": datetime.now(timezone.utc)
+            }
+            
+            # Update product
+            await db.menu_items.update_one(
+                {"_id": product["_id"]},
+                {"$set": update_dict}
+            )
+            
+            # Get updated product
+            updated_product = await db.menu_items.find_one({"_id": product["_id"]})
+            
+            logger.info(f"Product {product_id} updated by {admin['email']}")
+            
+            # Audit log
+            await audit_service.log_action(
+                actor_email=admin["email"],
+                action="product_update",
+                result="success",
+                target=product_id,
+                target_type="product",
+                details={"product_name": update_data.name}
+            )
+            
+            # Serialize and return
+            result = serialize_doc(updated_product)
+            return result
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Update product error: {str(e)}")
+            raise HTTPException(status_code=500, detail="Fehler beim Aktualisieren")
+    
+    
     @router.get("/permissions")
     async def get_product_permissions(admin: dict = Depends(get_current_admin)):
         """
