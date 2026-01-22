@@ -253,12 +253,11 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
       });
     }
     
-    if (selectedRemovals.length > 0) {
-      selectedRemovals.forEach(removal => {
-        customizations.push(`- Ohne ${removal}`);
-      });
-    }
-
+    // ⚠️ CHANGED 22.01.2026: removed_ingredients NICHT zu customizations hinzufügen!
+    // Sie werden separat als 'removed_ingredients' Array übergeben
+    // Backend verarbeitet sie direkt aus removed_ingredients
+    
+    // Nur Spezialanweisungen als Hinweis hinzufügen
     if (specialInstructions) {
       customizations.push(`Hinweis: ${specialInstructions}`);
     }
