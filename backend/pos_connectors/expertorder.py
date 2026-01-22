@@ -634,7 +634,7 @@ class ExpertOrderConnector(BasePOSConnector):
             
             else:
                 # KEIN MENÜ: Aber TROTZDEM verschachtelte Struktur für alle Komponenten!
-                # 1. Main product - MIT Grammzahl bei Burgern
+                # 1. Main product - MIT Grammzahl bei Burgern (IMMER Größe anzeigen)
                 item_name = item.get('name', '')
                 item_size = item.get('size', '')
                 
@@ -642,16 +642,23 @@ class ExpertOrderConnector(BasePOSConnector):
                 is_burger = any(word in item_name.lower() for word in ['burger', 'smash'])
                 
                 full_name = item_name
-                if is_burger and item_size and item_size.lower() != 'normal':
+                if is_burger and item_size:
+                    # IMMER Größe hinzufügen (auch bei Normal)
                     size_upper = item_size.upper()
                     if size_upper == 'MEDIUM':
                         full_name = f"{item_name} Medium 125g"
                     elif size_upper == 'LARGE':
                         full_name = f"{item_name} Large 180g"
+                    elif size_upper == 'NORMAL':
+                        full_name = f"{item_name} Normal 100g"
                     else:
                         full_name = f"{item_name} {item_size}"
                 elif item_size and item_size.lower() != 'normal':
+                    # Für nicht-Burger: Nur non-normal Größen
                     full_name = f"{item_name} ({item_size})"
+                elif item_size and item_size.lower() == 'normal':
+                    # Auch Normal-Größe bei nicht-Burgern anzeigen
+                    full_name = f"{item_name} (Normal)"
                 
                 # Create main item with NESTED children
                 main_item = {
