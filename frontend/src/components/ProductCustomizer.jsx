@@ -189,20 +189,9 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
     // Build customizations array for display AND POS
     const customizations = [];
     
-    // Add modifier selections (WITHOUT adding to name in parentheses)
-    let modifierPrice = 0;
-    
-    Object.entries(selectedModifiers).forEach(([groupId, modifierData]) => {
-      const group = productModifiers.find(g => g.id === groupId);
-      if (group && modifierData) {
-        // modifierData is now an object: {id, name, price, pos_item_id}
-        const modifierName = typeof modifierData === 'string' ? modifierData : modifierData.name;
-        const modifierPriceValue = typeof modifierData === 'string' ? 0 : (modifierData.price || 0);
-        
-        customizations.push(modifierName);  // Add as separate line
-        modifierPrice += modifierPriceValue;
-      }
-    });
+    // ⚠️ CHANGED 22.01.2026: Modifiers werden NICHT zu customizations hinzugefügt!
+    // Modifiers werden separat als 'modifiers' Objekt übergeben
+    // Nur Brötchen, Extras und Hinweise gehen in customizations
     
     // Add bun type (WITHOUT adding to name)
     if (selectedBun) {
