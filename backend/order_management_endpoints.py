@@ -189,9 +189,13 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
         """
         try:
             # Get order - flexible ID handling
+            order = None
             try:
                 order = await db.orders.find_one({"_id": ObjectId(order_id)})
             except:
+                pass
+            
+            if not order:
                 order = await db.orders.find_one({"_id": order_id})
             
             if not order:
@@ -267,9 +271,13 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
         """
         try:
             # Get order - flexible ID handling
+            order = None
             try:
                 order = await db.orders.find_one({"_id": ObjectId(order_id)})
             except:
+                pass
+            
+            if not order:
                 order = await db.orders.find_one({"_id": order_id})
             
             if not order:
@@ -348,9 +356,13 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
         """
         try:
             # Get order - flexible ID handling
+            order = None
             try:
                 order = await db.orders.find_one({"_id": ObjectId(order_id)})
             except:
+                pass
+            
+            if not order:
                 order = await db.orders.find_one({"_id": order_id})
             
             if not order:
