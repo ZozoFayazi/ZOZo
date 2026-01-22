@@ -274,5 +274,50 @@ def create_product_router_v2(db, audit_service: AuditService):
             "master_location": MASTER_LOCATION
         }
     
+    @router.patch("/{product_id}")
+    async def update_product_field(
+        product_id: str,
+        update_data: dict,
+        admin: dict = Depends(get_current_admin)
+    ):
+        """
+        Update product fields (including pos_item_id for POS mapping)
+        Only master location (Rellingen) + Super Admin can update
+        """
+        # Check permissions
+        branch_ids = admin.get("branch_ids", [])
+        is_master = admin["role"] == "super_admin" or MASTER_LOCATION in branch_ids
+        
+        if not is_master:
+            raise HTTPException(
+                status_code=403,
+                detail="Nur Rellingen und Super Admin können Produkte bearbeiten"
+            )
+        
+        # Find product
+        product = await db.menu_items.find_one({"_id": ObjectId(product_id)})
+        if not product:
+            raise HTTPException(status_code=404, detail="Produkt nicht gefunden")
+        
+        # Update product
+        result = await db.menu_items.update_one(
+            {"_id": ObjectId(product_id)},
+            {"$set": {**update_data, "updated_at": datetime.now(timezone.utc)}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Produkt nicht gefunden")
+        
+        # Audit log
+        await audit_service.log_action(
+            actor_email=admin["email"],
+            action="product_update",
+            result="success",
+            target=product_id,
+            target_type="product",
+            details={"updated_fields": list(update_data.keys())}
+        )
+        
+        return {"success": True, "message": "Produkt aktualisiert"}
     
     return router
