@@ -4901,6 +4901,7 @@ async def api_health_check():
 app.include_router(api_router)
 app.include_router(product_router, prefix="/api")
 app.include_router(super_admin_router, prefix="/api")
+app.include_router(order_management_router)
 
 
 # Mount static files for product images
