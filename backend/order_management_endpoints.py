@@ -105,10 +105,10 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
             pos_result = {"success": False, "message": "Nicht an POS gesendet"}
             if transfer.push_to_pos:
                 try:
-                    updated_order = await db.orders.find_one({"_id": ObjectId(order_id)})
+                    updated_order = await db.orders.find_one({"_id": order.get('_id')})
                     
                     pos_order_data = {
-                        "order_id": order_id,
+                        "order_id": str(order.get('_id')),
                         "order_number": updated_order.get('order_number'),
                         "customer_name": updated_order['customer'].get('name'),
                         "customer_email": updated_order['customer'].get('email'),
@@ -125,7 +125,7 @@ def create_order_management_router(db, audit_service: AuditService, pos_service)
                     
                     # Update POS status
                     await db.orders.update_one(
-                        {"_id": ObjectId(order_id)},
+                        {"_id": order.get('_id')},
                         {
                             "$set": {
                                 "pos_status": pos_result.get('pos_status', 'pending'),
