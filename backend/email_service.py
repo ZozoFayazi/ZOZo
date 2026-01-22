@@ -505,13 +505,88 @@ def send_verification_email(email: str, code: str) -> bool:
         return False
 
 def send_status_update_email(order: dict, status: str, location: dict) -> bool:
-    """Legacy stub - sends order status update email"""
+    """Send order status update email"""
     try:
-        # This is a stub - implement if needed
-        logger.warning(f"send_status_update_email called (stub) for order {order.get('order_id')}")
+        customer_email = order.get('customer_email')
+        if not customer_email:
+            logger.warning(f"No customer email for order {order.get('order_id')}")
+            return False
+        
+        customer_name = order.get('customer_name', 'Kunde')
+        order_number = order.get('order_number', order.get('order_id', 'N/A'))
+        
+        # Status messages
+        status_messages = {
+            'preparing': {
+                'title': 'Bestellung wird zubereitet 👨‍🍳',
+                'message': 'Deine Bestellung wird gerade frisch zubereitet!',
+                'emoji': '🍔'
+            },
+            'ready': {
+                'title': 'Bestellung ist fertig ✅',
+                'message': 'Deine Bestellung ist fertig und wartet auf die Abholung!',
+                'emoji': '📦'
+            },
+            'out_for_delivery': {
+                'title': 'Bestellung unterwegs 🚗',
+                'message': 'Deine Bestellung ist auf dem Weg zu dir!',
+                'emoji': '🚚'
+            },
+            'delivered': {
+                'title': 'Bestellung zugestellt 🎉',
+                'message': 'Deine Bestellung wurde zugestellt. Guten Appetit!',
+                'emoji': '✨'
+            }
+        }
+        
+        status_info = status_messages.get(status, {
+            'title': 'Bestellstatus aktualisiert',
+            'message': f'Status: {status}',
+            'emoji': '📱'
+        })
+        
+        # Build email content
+        content = f"""
+            <h2 style="color: #dc2626; margin-top: 0;">{status_info['title']}</h2>
+            <p style="font-size: 16px; line-height: 1.6; color: #e5e5e5;">
+                Hallo {customer_name},
+            </p>
+            <p style="font-size: 18px; line-height: 1.6; color: #fff; font-weight: 600;">
+                {status_info['message']}
+            </p>
+            
+            <div style="background-color: #2a2a2a; padding: 20px; border-radius: 12px; margin: 25px 0; border-left: 4px solid #dc2626;">
+                <p style="margin: 0; font-size: 14px; color: #999;">Bestellnummer</p>
+                <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: white;">{order_number}</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="{APP_URL}/orders" class="button">
+                    Bestellstatus verfolgen
+                </a>
+            </div>
+            
+            <p style="font-size: 14px; color: #999; margin-top: 30px;">
+                Dein ZOZO Burger Team
+            </p>
+        """
+        
+        html_content = EmailTemplates.get_base_template(content, f"Status Update: {status_info['title']}")
+        
+        # Send email via Resend
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [customer_email],
+            "subject": f"ZOZO Burger - {status_info['title']} (Bestellung {order_number})",
+            "html": html_content
+        }
+        
+        response = resend.Emails.send(params)
+        logger.info(f"Status update email sent to {customer_email}: {response.get('id')}")
         return True
+        
     except Exception as e:
-        logger.error(f"send_status_update_email error: {str(e)}")
+        logger.error(f"send_status_update_email error for order {order.get('order_id')}: {str(e)}")
         return False
 
 def send_review_request_email(order: dict, location: dict) -> bool:
