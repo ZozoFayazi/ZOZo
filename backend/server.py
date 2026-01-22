@@ -2667,10 +2667,29 @@ async def update_location_settings(
     
     if settings.postal_codes is not None:
         current_zone['postal_codes'] = settings.postal_codes
+    
+    # Handle postal_code_settings (PLZ V2 feature)
+    if settings.postal_code_settings is not None:
+        postal_code_mbw = {}
+        for plz, plz_settings in settings.postal_code_settings.items():
+            postal_code_mbw[plz] = {
+                "mbw": plz_settings.get('mbw', 0),
+                "fee": plz_settings.get('fee', 0)
+            }
+        current_zone['postal_code_mbw'] = postal_code_mbw
+    
+    if settings.default_min_order_value is not None:
+        current_zone['default_min_order_value'] = settings.default_min_order_value
+    
     if settings.min_order_value is not None:
         current_zone['min_order_value'] = settings.min_order_value
+        # Also set as default if not explicitly set
+        if settings.default_min_order_value is None:
+            current_zone['default_min_order_value'] = settings.min_order_value
+    
     if settings.delivery_fee is not None:
         current_zone['delivery_fee'] = settings.delivery_fee
+    
     if settings.free_delivery_threshold is not None:
         current_zone['free_delivery_threshold'] = settings.free_delivery_threshold
     
