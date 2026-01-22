@@ -4,7 +4,7 @@ REGRESSION TEST: Pasta mit Modifier (sollte weiterhin funktionieren)
 """
 import requests
 
-API_URL = "https://site-refresh-58.preview.emergentagent.com/api"
+API_URL = "https://menu-management-1.preview.emergentagent.com/api"
 LOCATION_ID = "49aff347-a6c3-407c-ad4a-59d5d0852314"
 
 print("="*70)

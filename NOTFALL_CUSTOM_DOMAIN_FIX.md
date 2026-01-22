@@ -74,7 +74,7 @@ DRINGEND: Die Datenbank auf zozo-burger.de wurde mit einer falschen Version übe
 Bitte führen Sie folgende Schritte aus:
 
 1. Backup herunterladen von:
-   https://site-refresh-58.preview.emergentagent.com/backups/ABSOLUTE_FINAL_COMPLETE_FREEZE_20260121_105946.json
+   https://menu-management-1.preview.emergentagent.com/backups/ABSOLUTE_FINAL_COMPLETE_FREEZE_20260121_105946.json
 
 2. Auf dem Production-Server:
    - Backup in /app/backups/ ablegen

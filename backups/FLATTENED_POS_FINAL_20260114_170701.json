@@ -615,7 +615,7 @@
         "status": "ok",
         "terminal": "KASSE-1",
         "version": "1.0.0",
-        "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+        "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
       },
       "order_id": null,
       "pos_order_id": null,
@@ -665,7 +665,7 @@
         "status": "ok",
         "terminal": "KASSE-1",
         "version": "1.0.0",
-        "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+        "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
       },
       "order_id": null,
       "pos_order_id": null,
@@ -685,7 +685,7 @@
         "status": "ok",
         "terminal": "KASSE-1",
         "version": "1.0.0",
-        "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+        "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
       },
       "order_id": null,
       "pos_order_id": null,
@@ -705,7 +705,7 @@
         "status": "ok",
         "terminal": "KASSE-1",
         "version": "1.0.0",
-        "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+        "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
       },
       "order_id": null,
       "pos_order_id": null,
@@ -725,7 +725,7 @@
         "status": "ok",
         "terminal": "KASSE-1",
         "version": "1.0.0",
-        "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+        "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
       },
       "order_id": null,
       "pos_order_id": null,
@@ -775,7 +775,7 @@
         "status": "ok",
         "terminal": null,
         "version": "2.0.0",
-        "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+        "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
       },
       "order_id": null,
       "pos_order_id": null,
@@ -795,7 +795,7 @@
         "status": "ok",
         "terminal": null,
         "version": "2.0.0",
-        "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+        "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
       },
       "order_id": null,
       "pos_order_id": null,
@@ -13074,7 +13074,7 @@
             "status": "ok",
             "terminal": "KASSE-1",
             "version": "1.0.0",
-            "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+            "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
           },
           "is_test_mode": false
         },
@@ -13183,7 +13183,7 @@
             "status": "ok",
             "terminal": "KASSE-1",
             "version": "1.0.0",
-            "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+            "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
           },
           "is_test_mode": false
         },
@@ -13210,7 +13210,7 @@
             "status": "ok",
             "terminal": "KASSE-1",
             "version": "1.0.0",
-            "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+            "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
           },
           "is_test_mode": false
         },
@@ -13253,7 +13253,7 @@
             "status": "ok",
             "terminal": "KASSE-1",
             "version": "1.0.0",
-            "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+            "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
           },
           "is_test_mode": false
         },
@@ -13280,7 +13280,7 @@
             "status": "ok",
             "terminal": "KASSE-1",
             "version": "1.0.0",
-            "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+            "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
           },
           "is_test_mode": false
         },
@@ -13373,7 +13373,7 @@
             "status": "ok",
             "terminal": null,
             "version": "2.0.0",
-            "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+            "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
           },
           "is_test_mode": false
         },
@@ -13400,7 +13400,7 @@
             "status": "ok",
             "terminal": null,
             "version": "2.0.0",
-            "api_url": "https://site-refresh-58.preview.emergentagent.com/api/cashx/health"
+            "api_url": "https://menu-management-1.preview.emergentagent.com/api/cashx/health"
           },
           "is_test_mode": false
         },
