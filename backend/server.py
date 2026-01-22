@@ -41,6 +41,7 @@ from newsletter_service import NewsletterService
 from newsletter_endpoints import create_newsletter_router
 from analytics_endpoints import router as analytics_router
 from customer_endpoints import router as customer_router
+from finance_endpoints import router as finance_router
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
