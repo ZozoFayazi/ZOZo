@@ -21,7 +21,8 @@ class CriticalCodeValidator:
                 ('MODIFIERS_INCLUDED', 'modifiers: item.modifiers || {}'),
                 ('CUSTOMIZATIONS_INCLUDED', 'customizations: item.customizations || []'),
                 ('REMOVED_INGREDIENTS', 'removed_ingredients: item.removed_ingredients || []'),
-                ('EXTRAS_INCLUDED', 'extras: item.extras || []')
+                ('EXTRAS_INCLUDED', 'extras: item.extras || []'),
+                ('CRITICAL_WARNING', 'CRITICAL FIX - DO NOT REMOVE - 22.01.2026')
             ],
             'description': 'Checkout-Dialog sendet ALLE Cart-Felder zum Backend'
         },
@@ -32,9 +33,11 @@ class CriticalCodeValidator:
                 ('MENU_MODIFIERS_SEPARATE', 'const menuModifiers = {}'),
                 ('BEILAGE_AS_MODIFIER', 'menuModifiers.beilage'),
                 ('GETRAENK_AS_MODIFIER', 'menuModifiers.getraenk'),
-                ('MODIFIERS_MERGE', '...selectedModifiers, ...menuModifiers')
+                ('MODIFIERS_MERGE', '...selectedModifiers, ...menuModifiers'),
+                ('NO_MODIFIERS_IN_CUSTOMIZATIONS', 'Modifiers werden NICHT mehr zu customizations hinzugefügt'),
+                ('MODIFIER_PRICE_CALC', 'const modifierPrice = Object.values(selectedModifiers).reduce')
             ],
-            'description': 'Menü-Komponenten werden als modifiers gesendet'
+            'description': 'Menü-Komponenten als modifiers + Duplikat-Prävention'
         },
         
         'expertorder.py': {
@@ -43,9 +46,11 @@ class CriticalCodeValidator:
                 ('SAUCE_LOGIC', '# 7. SAUCE/DIP'),
                 ('SAUCE_DETECTION', 'is_sauce = any(keyword in group_id.lower()'),
                 ('NORMAL_SIZE_MENU', "size_upper == 'NORMAL'"),
-                ('NORMAL_SIZE_BURGER', 'Normal 100g')
+                ('NORMAL_SIZE_100G', 'Normal 100g'),
+                ('HINWEIS_AS_NOTE', "if 'note' not in menu_main_item"),
+                ('DUPLICATE_PREVENTION', 'if any(mod_name in custom or custom in mod_name')
             ],
-            'description': 'ExpertOrder sendet Sauce + zeigt ALLE Größen'
+            'description': 'ExpertOrder: Sauce + Größen + Hinweise + Duplikat-Prävention'
         },
         
         'pos_service.py': {
