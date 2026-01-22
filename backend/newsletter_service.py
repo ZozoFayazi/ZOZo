@@ -459,7 +459,7 @@ class NewsletterService:
             
             return {
                 "success": True,
-                "message": f"Kampagne an {sent_count} Abonnenten gesendet ({failed_count} fehlgeschlagen)\",
+                "message": f"Kampagne an {sent_count} Abonnenten gesendet ({failed_count} fehlgeschlagen)",
                 "recipients": sent_count,
                 "failed": failed_count
             }
