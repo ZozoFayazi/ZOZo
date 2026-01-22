@@ -4,7 +4,7 @@ Created: 22 January 2026
 """
 
 from fastapi import APIRouter, Query
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 from finance_service import FinanceService
 import io
