@@ -69,6 +69,9 @@ product_router = create_product_router_v2(db, audit_service)
 # Create super admin router
 super_admin_router = create_super_admin_router(db)
 
+# Create order management router (Enterprise features)
+order_management_router = create_order_management_router(db, audit_service, pos_service)
+
 # Create the main app without a prefix
 app = FastAPI(
     title="ZOZO Burger API",
