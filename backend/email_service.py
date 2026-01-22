@@ -384,16 +384,17 @@ class EmailService:
         customer_name: str, 
         favorite_product: str,
         days_inactive: int,
-        unsubscribe_token: str
+        unsubscribe_token: str,
+        discount_code: str = "COMEBACK15"
     ) -> Dict:
-        """Send reactivation email to inactive customers"""
-        html = EmailTemplates.reactivation_email(customer_name or "Liebe*r Kunde*in", favorite_product, days_inactive)
+        """Send reactivation email to inactive customers with personal discount code"""
+        html = EmailTemplates.reactivation_email(customer_name or "Liebe*r Kunde*in", favorite_product, days_inactive, discount_code)
         html = html.replace('{{APP_URL}}', APP_URL)
         html = html.replace('{{UNSUBSCRIBE_TOKEN}}', unsubscribe_token)
         
         return await EmailService.send_email(
             to_email=customer_email,
-            subject=f"Wir vermissen dich! 15% Comeback-Rabatt 🎁",
+            subject=f"Dein persönlicher 20% Comeback-Rabatt 🎁",
             html_content=html
         )
     
