@@ -84,6 +84,12 @@ const AdminSidebar = () => {
       permission: null
     },
     {
+      title: 'Bewertungen',
+      icon: Star,
+      path: '/admin/reviews',
+      permission: null
+    },
+    {
       title: 'Angebote',
       icon: Package,
       path: '/admin/featured',
