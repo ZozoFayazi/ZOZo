@@ -63,6 +63,7 @@ tenant_service = TenantService(db)
 csv_import_service = CSVImportService(db)
 onboarding_audit_service = OnboardingAuditService(db)
 geocoding_service = GeocodingService()
+newsletter_service = NewsletterService(db)
 
 # Create product router with admin authentication
 # V2: Master-Slave architecture (Rellingen = Master, Henstedt = Override only)
