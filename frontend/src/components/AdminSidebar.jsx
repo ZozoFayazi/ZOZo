@@ -23,7 +23,8 @@ import {
   BarChart3,
   Users,
   Euro,
-  Zap
+  Zap,
+  Star
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
