@@ -159,11 +159,21 @@ class CustomerService:
             if not last_order:
                 continue  # Skip if no orders
             
+            # Debug: log the type and value
+            logger.debug(f"last_order type: {type(last_order)}, value: {last_order}, tzinfo: {getattr(last_order, 'tzinfo', None)}")
+            
             if isinstance(last_order, str):
                 last_order = datetime.fromisoformat(last_order.replace('Z', '+00:00'))
             elif isinstance(last_order, datetime):
                 if not last_order.tzinfo:
                     last_order = last_order.replace(tzinfo=timezone.utc)
+            else:
+                # Force timezone if it's a datetime-like object
+                try:
+                    if not hasattr(last_order, 'tzinfo') or not last_order.tzinfo:
+                        last_order = last_order.replace(tzinfo=timezone.utc)
+                except:
+                    pass
             
             first_order = customer.get('first_order_date')
             if not first_order:
@@ -174,6 +184,13 @@ class CustomerService:
             elif isinstance(first_order, datetime):
                 if not first_order.tzinfo:
                     first_order = first_order.replace(tzinfo=timezone.utc)
+            else:
+                # Force timezone if it's a datetime-like object
+                try:
+                    if not hasattr(first_order, 'tzinfo') or not first_order.tzinfo:
+                        first_order = first_order.replace(tzinfo=timezone.utc)
+                except:
+                    pass
             
             # Calculate recency
             days_since_last_order = (now - last_order).days
