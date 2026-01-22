@@ -22,7 +22,8 @@ import {
   Mail,
   BarChart3,
   Users,
-  Euro
+  Euro,
+  Zap
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
