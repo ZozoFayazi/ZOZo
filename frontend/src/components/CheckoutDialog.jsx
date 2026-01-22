@@ -181,7 +181,12 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
           name: item.name,
           price: item.price,
           size: item.size,
-          quantity: item.quantity
+          quantity: item.quantity,
+          // CRITICAL: Include ALL customization fields
+          customizations: item.customizations || [],
+          modifiers: item.modifiers || {},
+          removed_ingredients: item.removed_ingredients || [],
+          extras: item.extras || []
         })),
         customer: {
           name: formData.name,
