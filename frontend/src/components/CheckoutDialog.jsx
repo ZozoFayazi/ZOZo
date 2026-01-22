@@ -167,6 +167,13 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       // Use detected location if available, otherwise use selected location
       const locationToUse = detectedLocation || selectedLocation;
       
+      // CRITICAL: Validate location exists
+      if (!locationToUse || !locationToUse.id) {
+        toast.error('Bitte wähle zuerst einen Standort aus!');
+        setLoading(false);
+        return;
+      }
+      
       const orderData = {
         location_id: locationToUse.id,
         items: cart.map(item => ({
