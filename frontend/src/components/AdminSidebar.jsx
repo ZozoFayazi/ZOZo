@@ -21,7 +21,8 @@ import {
   Tag,
   Mail,
   Link2,
-  BarChart3
+  BarChart3,
+  Users
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
