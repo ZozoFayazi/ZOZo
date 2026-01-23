@@ -102,6 +102,12 @@ const AdminSidebar = () => {
       permission: 'manage_products' // Only Rellingen + Super Admin
     },
     {
+      title: 'Burger Builder',
+      icon: ChefHat,
+      path: '/admin/burger-builder',
+      permission: 'manage_products'
+    },
+    {
       title: 'Rabattcodes',
       icon: Percent,
       path: '/admin/discount-codes',
