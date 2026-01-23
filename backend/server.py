@@ -2531,10 +2531,22 @@ async def validate_discount_code(validation: DiscountCodeValidate):
     
     # Check valid dates
     now = datetime.now(timezone.utc)
-    if code.get("valid_from") and now < code["valid_from"]:
-        return {"valid": False, "message": "Code ist noch nicht gültig"}
-    if code.get("valid_until") and now > code["valid_until"]:
-        return {"valid": False, "message": "Code ist abgelaufen"}
+    
+    valid_from = code.get("valid_from")
+    if valid_from:
+        # Make timezone-aware if naive
+        if valid_from.tzinfo is None:
+            valid_from = valid_from.replace(tzinfo=timezone.utc)
+        if now < valid_from:
+            return {"valid": False, "message": "Code ist noch nicht gültig"}
+    
+    valid_until = code.get("valid_until")
+    if valid_until:
+        # Make timezone-aware if naive
+        if valid_until.tzinfo is None:
+            valid_until = valid_until.replace(tzinfo=timezone.utc)
+        if now > valid_until:
+            return {"valid": False, "message": "Code ist abgelaufen"}
     
     # Check usage limit
     if code.get("max_uses") and code.get("current_uses", 0) >= code["max_uses"]:
