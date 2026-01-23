@@ -207,7 +207,7 @@ function App() {
               element={<LocationDetailPage setSelectedLocation={setSelectedLocation} />}
             />
             <Route path="/order-tracking" element={<OrderTracking />} />
-            <Route path="/burger-builder" element={<BurgerBuilder addToCart={addToCart} />} />
+            <Route path="/burger-builder" element={<BurgerBuilder addToCart={addToCart} setCartOpen={setCartOpen} />} />
           <Route path="/my-creations" element={<MyCreations addToCart={addToCart} />} />
           <Route path="/rewards" element={<RewardsPage />} />
           <Route path="/start-group-order" element={<StartGroupOrder selectedLocation={selectedLocation} setSelectedLocation={setSelectedLocation} />} />
