@@ -390,7 +390,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
                       {sides.map((side) => (
                         <button
                           key={side.id}
-                          onClick={() => setSelectedSide(side.id)}
+                          onClick={() => handleSideSelection(side.id)}
                           className={`p-3 rounded-lg border-2 transition-all text-left ${
                             selectedSide === side.id
                               ? 'border-primary bg-primary/20'
