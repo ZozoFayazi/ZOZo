@@ -1,451 +1,624 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import { ChefHat, Share2, Save, ShoppingCart, Heart, Star } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
+import { Input } from '../components/ui/input';
 import { toast } from 'sonner';
-import BurgerPreview from '../components/BurgerPreview';
+import { ChefHat, Check, ShoppingCart, Edit2 } from 'lucide-react';
 
-function BurgerBuilder({ addToCart }) {
+// Burger Builder Daten
+const BURGER_DATA = {
+  buns: [
+    { id: 'brioche', name: 'Brioche Bun', price: 1.50 },
+    { id: 'semolina', name: 'Semolina Bun', price: 1.50 },
+    { id: 'potato', name: 'Potato Bun (Smash-Style)', price: 1.90 }
+  ],
+  
+  proteins: [
+    { id: 'beef-125', name: 'Beef Patty 125g', price: 5.90 },
+    { id: 'beef-180', name: 'Beef Patty 180g', price: 7.90 },
+    { id: 'chicken', name: 'Crunchy Chicken Patty', price: 4.90 },
+    { id: 'fish', name: 'Fisch Patty', price: 4.90 },
+    { id: 'veggie', name: 'Veggie Patty', price: 4.90 },
+    { id: 'nuggets', name: 'Nuggets (4 Stück)', price: 3.90 }
+  ],
+  
+  cheese: [
+    { id: 'chester-2', name: 'Chester Käse (2 Scheiben)', price: 1.50 },
+    { id: 'chester-3', name: 'Chester Käse (3 Scheiben)', price: 2.00 },
+    { id: 'hirten', name: 'Hirtenkäse', price: 2.00 },
+    { id: 'grana', name: 'Grana Padano', price: 2.00 }
+  ],
+  
+  veggiesStandard: [
+    { id: 'lettuce', name: 'Eisbergsalat', price: 0.50 },
+    { id: 'tomato', name: 'Tomate', price: 0.50 },
+    { id: 'onions', name: 'Zwiebeln', price: 0.50 },
+    { id: 'red-onions', name: 'Rote Zwiebeln', price: 0.50 },
+    { id: 'pickles', name: 'Gewürzgurken', price: 0.50 }
+  ],
+  
+  veggiesPremium: [
+    { id: 'jalapenos', name: 'Jalapeños', price: 1.00 },
+    { id: 'mushrooms', name: 'Champignons', price: 1.50 },
+    { id: 'olives', name: 'Oliven', price: 1.50 },
+    { id: 'pepperoni', name: 'Peperoni', price: 1.00 },
+    { id: 'rucola', name: 'Rucola', price: 1.00 }
+  ],
+  
+  extras: [
+    { id: 'fried-onions', name: 'Röstzwiebeln', price: 1.00 },
+    { id: 'bacon', name: 'Bacon', price: 2.00 },
+    { id: 'egg', name: 'Spiegelei', price: 2.00 },
+    { id: 'serrano', name: 'Serrano Schinken', price: 2.50 }
+  ],
+  
+  avocado: [
+    { id: 'avocado-slices', name: 'Avocado Slices', price: 2.50 },
+    { id: 'guacamole', name: 'Guacamole', price: 2.50 }
+  ],
+  
+  sauces: {
+    klassiker: [
+      { id: 'ketchup', name: 'Ketchup', price: 0.50 },
+      { id: 'mayo', name: 'Mayonnaise', price: 0.50 },
+      { id: 'bbq', name: 'BBQ Sauce', price: 0.80 },
+      { id: 'sweet-chili', name: 'Sweet Chili Sauce', price: 0.80 }
+    ],
+    cremig: [
+      { id: 'sour-cream', name: 'Sour Creme', price: 0.80 },
+      { id: 'garlic', name: 'Knoblauchsauce', price: 0.80 },
+      { id: 'remoulade', name: 'Remoulade', price: 0.80 },
+      { id: 'hollandaise', name: 'Sauce Hollandaise', price: 0.90 }
+    ],
+    scharf: [
+      { id: 'chili', name: 'Chilisauce', price: 0.80 },
+      { id: 'sweet-sour', name: 'Sweet & Sour Sauce', price: 0.80 }
+    ]
+  }
+};
+
+export default function BurgerBuilder({ addToCart, setCartOpen }) {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
-  const [burger, setBurger] = useState({
-    name: '',
-    bun: '',
-    patty: '',
-    patty_count: 1,
-    cheese: null,
-    toppings: [],
-    sauces: [],
-    is_public: false
-  });
-
-  const bunOptions = [
-    { value: 'brioche', label: 'Brioche Bun', price: 0, emoji: '🍔' },
-    { value: 'sesame', label: 'Sesam Bun', price: 0.5, emoji: '🍔' },
-    { value: 'whole_wheat', label: 'Vollkorn Bun', price: 0.5, emoji: '🥖' }
-  ];
-
-  const pattyOptions = [
-    { value: 'beef', label: 'Beef Patty', price: 4.50, emoji: '🥩' },
-    { value: 'chicken', label: 'Chicken Patty', price: 4.00, emoji: '🍗' },
-    { value: 'veggie', label: 'Veggie Patty', price: 4.00, emoji: '🥬' },
-    { value: 'vegan', label: 'Vegan Patty', price: 4.50, emoji: '🌱' }
-  ];
-
-  const cheeseOptions = [
-    { value: null, label: 'Kein Käse', price: 0, emoji: '❌' },
-    { value: 'cheddar', label: 'Cheddar', price: 1.00, emoji: '🧀' },
-    { value: 'swiss', label: 'Swiss', price: 1.00, emoji: '🧀' },
-    { value: 'blue', label: 'Blauschimmel', price: 1.50, emoji: '🧀' },
-    { value: 'vegan', label: 'Veganer Käse', price: 1.50, emoji: '🌱' }
-  ];
-
-  const toppingOptions = [
-    { value: 'lettuce', label: 'Salat', price: 0.50, emoji: '🥬' },
-    { value: 'tomato', label: 'Tomate', price: 0.50, emoji: '🍅' },
-    { value: 'onions', label: 'Zwiebeln', price: 0.50, emoji: '🧅' },
-    { value: 'pickles', label: 'Gurken', price: 0.50, emoji: '🥒' },
-    { value: 'bacon', label: 'Bacon', price: 2.00, emoji: '🥓' },
-    { value: 'egg', label: 'Spiegelei', price: 1.50, emoji: '🍳' },
-    { value: 'jalapenos', label: 'Jalapeños', price: 0.75, emoji: '🌶️' },
-    { value: 'avocado', label: 'Avocado', price: 2.00, emoji: '🥑' }
-  ];
-
-  const sauceOptions = [
-    { value: 'ketchup', label: 'Ketchup', price: 0, emoji: '🍅' },
-    { value: 'mayo', label: 'Mayo', price: 0, emoji: '🥚' },
-    { value: 'bbq', label: 'BBQ Sauce', price: 0.50, emoji: '🍖' },
-    { value: 'ranch', label: 'Ranch', price: 0.50, emoji: '🥗' },
-    { value: 'special', label: 'ZOZO Special', price: 1.00, emoji: '✨' }
-  ];
-
-  const calculatePrice = () => {
+  
+  // Selections
+  const [selectedBun, setSelectedBun] = useState(null);
+  const [selectedProtein, setSelectedProtein] = useState(null);
+  const [selectedCheese, setSelectedCheese] = useState([]);
+  const [selectedVeggiesStd, setSelectedVeggiesStd] = useState([]);
+  const [selectedVeggiesPremium, setSelectedVeggiesPremium] = useState([]);
+  const [selectedExtras, setSelectedExtras] = useState([]);
+  const [selectedAvocado, setSelectedAvocado] = useState([]);
+  const [selectedSauces, setSelectedSauces] = useState([]);
+  
+  // Custom name
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [customName, setCustomName] = useState('');
+  
+  // Price calculation
+  const totalPrice = useMemo(() => {
     let price = 0;
     
-    // Bun
-    const bunOption = bunOptions.find(b => b.value === burger.bun);
-    if (bunOption) price += bunOption.price;
+    if (selectedBun) price += selectedBun.price;
+    if (selectedProtein) price += selectedProtein.price;
     
-    // Patty
-    const pattyOption = pattyOptions.find(p => p.value === burger.patty);
-    if (pattyOption) price += pattyOption.price * burger.patty_count;
+    selectedCheese.forEach(cheese => price += cheese.price);
+    selectedVeggiesStd.forEach(v => price += v.price);
+    selectedVeggiesPremium.forEach(v => price += v.price);
+    selectedExtras.forEach(e => price += e.price);
+    selectedAvocado.forEach(a => price += a.price);
     
-    // Cheese
-    if (burger.cheese) {
-      const cheeseOption = cheeseOptions.find(c => c.value === burger.cheese);
-      if (cheeseOption) price += cheeseOption.price;
-    }
-    
-    // Toppings
-    burger.toppings.forEach(topping => {
-      const toppingOption = toppingOptions.find(t => t.value === topping);
-      if (toppingOption) price += toppingOption.price;
-    });
-    
-    // Sauces
-    burger.sauces.forEach(sauce => {
-      const sauceOption = sauceOptions.find(s => s.value === sauce);
-      if (sauceOption) price += sauceOption.price;
+    // Sauces: erste 2 kostenlos, ab 3. berechnet
+    selectedSauces.forEach((sauce, index) => {
+      if (index >= 2) {
+        price += sauce.price;
+      }
     });
     
     return price;
-  };
-
-  const toggleTopping = (topping) => {
-    if (burger.toppings.includes(topping)) {
-      setBurger({ ...burger, toppings: burger.toppings.filter(t => t !== topping) });
-    } else {
-      setBurger({ ...burger, toppings: [...burger.toppings, topping] });
+  }, [selectedBun, selectedProtein, selectedCheese, selectedVeggiesStd, selectedVeggiesPremium, selectedExtras, selectedAvocado, selectedSauces]);
+  
+  // Generate burger name
+  const generatedName = useMemo(() => {
+    if (!selectedProtein) return 'Custom Burger';
+    return `Custom Burger mit ${selectedProtein.name}`;
+  }, [selectedProtein]);
+  
+  const displayName = customName || generatedName;
+  
+  // Validation
+  const canAddToCart = selectedBun && selectedProtein;
+  
+  // Handle add to cart
+  const handleAddToCart = () => {
+    if (!canAddToCart) {
+      toast.error('Bitte wähle ein Brötchen und ein Protein!');
+      return;
     }
-  };
-
-  const toggleSauce = (sauce) => {
-    if (burger.sauces.includes(sauce)) {
-      setBurger({ ...burger, sauces: burger.sauces.filter(s => s !== sauce) });
-    } else {
-      setBurger({ ...burger, sauces: [...burger.sauces, sauce] });
-    }
-  };
-
-  const canProceed = () => {
-    if (step === 1) return burger.bun;
-    if (step === 2) return burger.patty;
-    if (step === 5) return burger.name.trim();
-    return true;
-  };
-
-  const saveBurger = async () => {
-    try {
-      const email = localStorage.getItem('lastCustomerEmail');
-      const burgerData = {
-        ...burger,
-        price: calculatePrice(),
-        created_by: email || 'anonymous'
-      };
-
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/custom-burgers`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(burgerData)
-        }
-      );
-
-      if (response.ok) {
-        const saved = await response.json();
-        toast.success(`"${burger.name}" wurde gespeichert!`);
-        return saved.id;
-      }
-    } catch (error) {
-      console.error('Error saving burger:', error);
-      toast.error('Fehler beim Speichern');
-    }
-  };
-
-  const addToCartAndContinue = async () => {
-    const burgerId = await saveBurger();
     
-    addToCart({
-      id: burgerId || 'custom-' + Date.now(),
-      name: burger.name || 'Mein Custom Burger',
-      price: calculatePrice(),
-      size: null,
-      customizations: {
-        custom_burger: true,
-        ...burger
+    // Build customizations
+    const customizations = [];
+    
+    if (selectedBun) customizations.push(`+ ${selectedBun.name}`);
+    if (selectedProtein) customizations.push(`+ ${selectedProtein.name}`);
+    
+    selectedCheese.forEach(cheese => customizations.push(`+ ${cheese.name}`));
+    selectedVeggiesStd.forEach(v => customizations.push(`+ ${v.name}`));
+    selectedVeggiesPremium.forEach(v => customizations.push(`+ ${v.name}`));
+    selectedExtras.forEach(e => customizations.push(`+ ${e.name}`));
+    selectedAvocado.forEach(a => customizations.push(`+ ${a.name}`));
+    
+    selectedSauces.forEach((sauce, index) => {
+      if (index < 2) {
+        customizations.push(`+ ${sauce.name} (kostenlos)`);
+      } else {
+        customizations.push(`+ ${sauce.name}`);
       }
     });
-
-    toast.success('Burger zum Warenkorb hinzugefügt!');
-    navigate('/menu');
-  };
-
-  const shareBurger = async () => {
-    const burgerId = await saveBurger();
-    if (burgerId) {
-      const shareUrl = `${window.location.origin}/burger/${burgerId}`;
-      
-      if (navigator.share) {
-        await navigator.share({
-          title: burger.name,
-          text: `Schau dir meinen Custom Burger "${burger.name}" an!`,
-          url: shareUrl
-        });
-      } else {
-        navigator.clipboard.writeText(shareUrl);
-        toast.success('Link wurde kopiert!');
-      }
+    
+    // Build extras array for backend
+    const extras = [];
+    
+    if (selectedBun) extras.push({ name: selectedBun.name, price: selectedBun.price });
+    if (selectedProtein) extras.push({ name: selectedProtein.name, price: selectedProtein.price });
+    
+    selectedCheese.forEach(item => extras.push({ name: item.name, price: item.price }));
+    selectedVeggiesStd.forEach(item => extras.push({ name: item.name, price: item.price }));
+    selectedVeggiesPremium.forEach(item => extras.push({ name: item.name, price: item.price }));
+    selectedExtras.forEach(item => extras.push({ name: item.name, price: item.price }));
+    selectedAvocado.forEach(item => extras.push({ name: item.name, price: item.price }));
+    
+    selectedSauces.forEach((item, index) => {
+      extras.push({ 
+        name: item.name, 
+        price: index >= 2 ? item.price : 0 
+      });
+    });
+    
+    const burgerItem = {
+      menu_item_id: 'custom-burger-builder',
+      name: displayName,
+      price: totalPrice,
+      quantity: 1,
+      category: 'burger-builder',
+      customizations: customizations,
+      extras: extras,
+      removed_ingredients: [],
+      modifiers: {}
+    };
+    
+    addToCart(burgerItem);
+    toast.success(`${displayName} zum Warenkorb hinzugefügt! 🍔`);
+    
+    // Open cart drawer
+    if (setCartOpen) {
+      setCartOpen(true);
     }
   };
-
+  
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container-custom max-w-7xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
-            <ChefHat className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium text-primary">Burger Builder</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-serif font-bold mb-2">
-            Kreiere deinen Signature Burger
-          </h1>
-          <p className="text-muted-foreground">
-            Step {step} von 5 - {['Brötchen', 'Patty', 'Extras', 'Saucen', 'Finalisieren'][step - 1]}
-          </p>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="h-2 bg-secondary rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary transition-all duration-300"
-              style={{ width: `${(step / 5) * 100}%` }}
-            />
-          </div>
-        </div>
-
-        {/* 2-Column Layout: Builder + Preview */}
-        <div className="grid lg:grid-cols-[1fr,350px] gap-8 mb-6">
-          {/* Left: Step Content */}
-          <div className="bg-card border border-border rounded-xl p-6">
-          {/* Step 1: Bun Selection */}
-          {step === 1 && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Wähle dein Brötchen</h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                {bunOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setBurger({ ...burger, bun: option.value })}
-                    className={`p-4 rounded-lg border-2 transition-all ${
-                      burger.bun === option.value
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary/40'
-                    }`}
-                  >
-                    <div className="text-4xl mb-2">{option.emoji}</div>
-                    <p className="font-semibold">{option.label}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {option.price === 0 ? 'Inklusive' : `+€${option.price.toFixed(2)}`}
-                    </p>
-                  </button>
-                ))}
-              </div>
+    <>
+      <Helmet>
+        <title>Burger Builder | ZOZO Burger - Baue deinen Traumburger</title>
+        <meta name="description" content="Erstelle deinen perfekten Burger! Wähle aus Premium-Zutaten: Beef, Chicken, Veggie-Patties, frisches Gemüse, Käse und mehr." />
+      </Helmet>
+      
+      <div className="min-h-screen bg-background py-12" data-testid="burger-builder-page">
+        <div className="container-custom max-w-6xl">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
+              <ChefHat className="w-10 h-10 text-primary" />
             </div>
-          )}
-
-          {/* Step 2: Patty Selection */}
-          {step === 2 && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Wähle dein Patty</h2>
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                {pattyOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setBurger({ ...burger, patty: option.value })}
-                    className={`p-4 rounded-lg border-2 transition-all ${
-                      burger.patty === option.value
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary/40'
-                    }`}
-                  >
-                    <div className="text-4xl mb-2">{option.emoji}</div>
-                    <p className="font-semibold">{option.label}</p>
-                    <p className="text-sm text-muted-foreground">€{option.price.toFixed(2)}</p>
-                  </button>
-                ))}
-              </div>
-
-              {/* Patty Count */}
-              <div className="bg-accent rounded-lg p-4">
-                <p className="font-semibold mb-3">Anzahl Patties</p>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setBurger({ ...burger, patty_count: Math.max(1, burger.patty_count - 1) })}
-                    className="btn-secondary px-4 py-2"
-                  >
-                    −
-                  </button>
-                  <span className="text-2xl font-bold">{burger.patty_count}</span>
-                  <button
-                    onClick={() => setBurger({ ...burger, patty_count: Math.min(3, burger.patty_count + 1) })}
-                    className="btn-secondary px-4 py-2"
-                  >
-                    +
-                  </button>
-                </div>
-
-                {/* Cheese Selection */}
-                <div className="mt-6">
-                  <p className="font-semibold mb-3">Käse</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {cheeseOptions.map((option) => (
-                      <button
-                        key={option.value || 'none'}
-                        onClick={() => setBurger({ ...burger, cheese: option.value })}
-                        className={`p-2 rounded-lg border text-sm transition-all ${
-                          burger.cheese === option.value
-                            ? 'border-primary bg-primary/10'
-                            : 'border-border hover:border-primary/40'
-                        }`}
-                      >
-                        <div className="text-2xl mb-1">{option.emoji}</div>
-                        <p className="text-xs">{option.label}</p>
-                      </button>
-                    ))}
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Burger Builder</h1>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Baue deinen perfekten Burger! Wähle deine Lieblingszutaten und kreiere ein einzigartiges Meisterwerk.
+            </p>
+          </div>
+          
+          {/* Live Preview & Price */}
+          <Card className="mb-8 sticky top-4 z-10 border-primary/20 shadow-lg" data-testid="burger-summary">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex-1 w-full">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-xl font-semibold">
+                      {displayName}
+                    </h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsEditingName(!isEditingName)}
+                      data-testid="edit-name-btn"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  
+                  {isEditingName && (
+                    <Input
+                      value={customName}
+                      onChange={(e) => setCustomName(e.target.value)}
+                      placeholder={generatedName}
+                      className="max-w-md mb-3"
+                      data-testid="custom-name-input"
+                    />
+                  )}
+                  
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {!selectedBun && <Badge variant="outline" className="border-destructive/50 text-destructive">Brötchen fehlt</Badge>}
+                    {!selectedProtein && <Badge variant="outline" className="border-destructive/50 text-destructive">Protein fehlt</Badge>}
+                    {selectedBun && <Badge variant="secondary">✓ Brötchen</Badge>}
+                    {selectedProtein && <Badge variant="secondary">✓ Protein</Badge>}
+                    {selectedSauces.length > 0 && (
+                      <Badge variant="secondary">
+                        {selectedSauces.length} Sauce{selectedSauces.length > 1 ? 'n' : ''}
+                        {selectedSauces.length > 2 && ` (+${selectedSauces.length - 2} berechnet)`}
+                      </Badge>
+                    )}
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Toppings */}
-          {step === 3 && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Wähle deine Toppings</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {toppingOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => toggleTopping(option.value)}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                      burger.toppings.includes(option.value)
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary/40'
-                    }`}
+                
+                <div className="text-right w-full md:w-auto">
+                  <div className="text-sm text-muted-foreground mb-1">Gesamtpreis</div>
+                  <div className="text-4xl font-bold text-primary" data-testid="total-price">
+                    €{totalPrice.toFixed(2)}
+                  </div>
+                  <Button
+                    onClick={handleAddToCart}
+                    disabled={!canAddToCart}
+                    size="lg"
+                    className="mt-3 w-full md:w-auto"
+                    data-testid="add-to-cart-btn"
                   >
-                    <div className="text-3xl mb-1">{option.emoji}</div>
-                    <p className="text-sm font-semibold">{option.label}</p>
-                    <p className="text-xs text-muted-foreground">+€{option.price.toFixed(2)}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Step 4: Sauces */}
-          {step === 4 && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Wähle deine Saucen</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {sauceOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => toggleSauce(option.value)}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                      burger.sauces.includes(option.value)
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary/40'
-                    }`}
-                  >
-                    <div className="text-3xl mb-1">{option.emoji}</div>
-                    <p className="text-sm font-semibold">{option.label}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {option.price === 0 ? 'Gratis' : `+€${option.price.toFixed(2)}`}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Step 5: Finalize */}
-          {step === 5 && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Gib deinem Burger einen Namen</h2>
-              <input
-                type="text"
-                value={burger.name}
-                onChange={(e) => setBurger({ ...burger, name: e.target.value })}
-                placeholder="z.B. Der Ultimative ZOZO"
-                className="w-full px-4 py-3 bg-background border-2 border-border rounded-lg focus:border-primary focus:outline-none mb-6"
-                maxLength={50}
-              />
-
-              {/* Preview */}
-              <div className="bg-accent rounded-lg p-6 mb-4">
-                <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <Star className="h-5 w-5 text-primary" />
-                  Deine Kreation
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <p><span className="text-muted-foreground">Brötchen:</span> {bunOptions.find(b => b.value === burger.bun)?.label}</p>
-                  <p><span className="text-muted-foreground">Patty:</span> {burger.patty_count}x {pattyOptions.find(p => p.value === burger.patty)?.label}</p>
-                  {burger.cheese && <p><span className="text-muted-foreground">Käse:</span> {cheeseOptions.find(c => c.value === burger.cheese)?.label}</p>}
-                  {burger.toppings.length > 0 && (
-                    <p><span className="text-muted-foreground">Toppings:</span> {burger.toppings.map(t => toppingOptions.find(o => o.value === t)?.label).join(', ')}</p>
-                  )}
-                  {burger.sauces.length > 0 && (
-                    <p><span className="text-muted-foreground">Saucen:</span> {burger.sauces.map(s => sauceOptions.find(o => o.value === s)?.label).join(', ')}</p>
-                  )}
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    In den Warenkorb
+                  </Button>
                 </div>
               </div>
-
-              {/* Make Public */}
-              <label className="flex items-center gap-2 mb-4 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={burger.is_public}
-                  onChange={(e) => setBurger({ ...burger, is_public: e.target.checked })}
-                  className="w-4 h-4"
-                />
-                <span className="text-sm">Öffentlich machen (andere können deine Kreation sehen & voten)</span>
-              </label>
-            </div>
-          )}
+            </CardContent>
+          </Card>
+          
+          {/* Categories */}
+          <div className="space-y-8">
+            
+            {/* Brötchen (Pflicht) */}
+            <CategorySection
+              title="Brötchen"
+              subtitle="Pflicht - Wähle genau 1"
+              required
+              items={BURGER_DATA.buns}
+              selected={selectedBun}
+              onSelect={setSelectedBun}
+              singleSelect
+              testId="buns"
+            />
+            
+            {/* Protein (Pflicht) */}
+            <CategorySection
+              title="Protein / Patty"
+              subtitle="Pflicht - Wähle genau 1"
+              required
+              items={BURGER_DATA.proteins}
+              selected={selectedProtein}
+              onSelect={setSelectedProtein}
+              singleSelect
+              testId="proteins"
+            />
+            
+            {/* Käse */}
+            <CategorySection
+              title="Käse"
+              subtitle="Optional - Mehrfachauswahl möglich"
+              items={BURGER_DATA.cheese}
+              selected={selectedCheese}
+              onSelect={setSelectedCheese}
+              testId="cheese"
+            />
+            
+            {/* Gemüse Standard */}
+            <CategorySection
+              title="Gemüse Standard"
+              subtitle="Optional - Mehrfachauswahl möglich"
+              items={BURGER_DATA.veggiesStandard}
+              selected={selectedVeggiesStd}
+              onSelect={setSelectedVeggiesStd}
+              testId="veggies-standard"
+            />
+            
+            {/* Gemüse Premium */}
+            <CategorySection
+              title="Gemüse Premium"
+              subtitle="Optional - Mehrfachauswahl möglich"
+              items={BURGER_DATA.veggiesPremium}
+              selected={selectedVeggiesPremium}
+              onSelect={setSelectedVeggiesPremium}
+              testId="veggies-premium"
+            />
+            
+            {/* Crunch / Extras */}
+            <CategorySection
+              title="Crunch / Extras"
+              subtitle="Optional - Mehrfachauswahl möglich"
+              items={BURGER_DATA.extras}
+              selected={selectedExtras}
+              onSelect={setSelectedExtras}
+              testId="extras"
+            />
+            
+            {/* Avocado */}
+            <CategorySection
+              title="Avocado"
+              subtitle="Optional - Mehrfachauswahl möglich"
+              items={BURGER_DATA.avocado}
+              selected={selectedAvocado}
+              onSelect={setSelectedAvocado}
+              testId="avocado"
+            />
+            
+            {/* Sauces */}
+            <SaucesSection
+              sauces={BURGER_DATA.sauces}
+              selected={selectedSauces}
+              onSelect={setSelectedSauces}
+            />
+            
           </div>
-
-          {/* Right: Live Preview */}
-          <div className="hidden lg:block">
-            <BurgerPreview burger={burger} />
-          </div>
-        </div>
-
-        {/* Price & Navigation */}
-        <div className="flex items-center justify-between">
-          <div>
-            {step > 1 && (
-              <button
-                onClick={() => setStep(step - 1)}
-                className="btn-secondary"
-              >
-                Zurück
-              </button>
+          
+          {/* Bottom Add to Cart (mobile) */}
+          <div className="mt-12 text-center">
+            <Button
+              onClick={handleAddToCart}
+              disabled={!canAddToCart}
+              size="lg"
+              className="w-full sm:w-auto px-12"
+              data-testid="add-to-cart-bottom-btn"
+            >
+              <ShoppingCart className="w-5 h-5 mr-2" />
+              In den Warenkorb für €{totalPrice.toFixed(2)}
+            </Button>
+            
+            {!canAddToCart && (
+              <p className="text-sm text-muted-foreground mt-3">
+                Bitte wähle ein Brötchen und ein Protein
+              </p>
             )}
           </div>
-
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Gesamtpreis</p>
-              <p className="text-2xl font-bold text-primary">€{calculatePrice().toFixed(2)}</p>
-            </div>
-
-            {step < 5 ? (
-              <button
-                onClick={() => setStep(step + 1)}
-                disabled={!canProceed()}
-                className="btn-primary disabled:opacity-50"
-              >
-                Weiter
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button onClick={shareBurger} className="btn-secondary flex items-center gap-2">
-                  <Share2 className="h-4 w-4" />
-                  Teilen
-                </button>
-                <button onClick={addToCartAndContinue} className="btn-primary flex items-center gap-2">
-                  <ShoppingCart className="h-4 w-4" />
-                  Bestellen
-                </button>
-              </div>
-            )}
-          </div>
+          
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default BurgerBuilder;
+// Category Section Component
+function CategorySection({ title, subtitle, required, items, selected, onSelect, singleSelect, testId }) {
+  const toggleItem = (item) => {
+    if (singleSelect) {
+      onSelect(selected?.id === item.id ? null : item);
+    } else {
+      if (selected.find(i => i.id === item.id)) {
+        onSelect(selected.filter(i => i.id !== item.id));
+      } else {
+        onSelect([...selected, item]);
+      }
+    }
+  };
+  
+  const isSelected = (item) => {
+    if (singleSelect) {
+      return selected?.id === item.id;
+    }
+    return selected.find(i => i.id === item.id);
+  };
+  
+  return (
+    <Card data-testid={`category-${testId}`}>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              {title}
+              {required && <Badge variant="destructive" className="text-xs">Pflicht</Badge>}
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {items.map(item => {
+            const itemSelected = isSelected(item);
+            
+            return (
+              <button
+                key={item.id}
+                onClick={() => toggleItem(item)}
+                className={`
+                  relative p-4 rounded-lg border-2 text-left transition-all
+                  ${itemSelected 
+                    ? 'border-primary bg-primary/5 shadow-md' 
+                    : 'border-border hover:border-primary/50 hover:bg-accent'
+                  }
+                `}
+                data-testid={`item-${item.id}`}
+              >
+                {itemSelected && (
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                    <Check className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                )}
+                
+                <div className="font-semibold mb-1">{item.name}</div>
+                <div className="text-lg font-bold text-primary">
+                  €{item.price.toFixed(2)}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Sauces Section with subcategories
+function SaucesSection({ sauces, selected, onSelect }) {
+  const toggleSauce = (sauce) => {
+    if (selected.find(s => s.id === sauce.id)) {
+      onSelect(selected.filter(s => s.id !== sauce.id));
+    } else {
+      onSelect([...selected, sauce]);
+    }
+  };
+  
+  const isSauceSelected = (sauce) => selected.find(s => s.id === sauce.id);
+  
+  const freeSaucesCount = Math.min(selected.length, 2);
+  const paidSaucesCount = Math.max(0, selected.length - 2);
+  
+  return (
+    <Card data-testid="category-sauces">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              Saucen
+              <Badge variant="secondary" className="text-xs">
+                {freeSaucesCount}/2 kostenlos
+                {paidSaucesCount > 0 && ` · +${paidSaucesCount} berechnet`}
+              </Badge>
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Optional - Erste 2 Saucen kostenlos, ab der 3. wird berechnet
+            </p>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        
+        {/* Klassiker */}
+        <div>
+          <h4 className="font-semibold mb-3 text-sm text-muted-foreground">Klassiker</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {sauces.klassiker.map((sauce) => {
+              const isSelected = isSauceSelected(sauce);
+              const sauceIndex = selected.findIndex(s => s.id === sauce.id);
+              const isFree = isSelected && sauceIndex < 2;
+              
+              return (
+                <button
+                  key={sauce.id}
+                  onClick={() => toggleSauce(sauce)}
+                  className={`
+                    relative p-4 rounded-lg border-2 text-left transition-all
+                    ${isSelected 
+                      ? 'border-primary bg-primary/5 shadow-md' 
+                      : 'border-border hover:border-primary/50 hover:bg-accent'
+                    }
+                  `}
+                  data-testid={`sauce-${sauce.id}`}
+                >
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                      <Check className="w-4 h-4 text-primary-foreground" />
+                    </div>
+                  )}
+                  
+                  <div className="font-semibold mb-1">{sauce.name}</div>
+                  <div className={`text-lg font-bold ${isFree ? 'text-green-500' : 'text-primary'}`}>
+                    {isFree ? 'Kostenlos' : `€${sauce.price.toFixed(2)}`}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Cremig */}
+        <div>
+          <h4 className="font-semibold mb-3 text-sm text-muted-foreground">Cremig</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {sauces.cremig.map((sauce) => {
+              const isSelected = isSauceSelected(sauce);
+              const sauceIndex = selected.findIndex(s => s.id === sauce.id);
+              const isFree = isSelected && sauceIndex < 2;
+              
+              return (
+                <button
+                  key={sauce.id}
+                  onClick={() => toggleSauce(sauce)}
+                  className={`
+                    relative p-4 rounded-lg border-2 text-left transition-all
+                    ${isSelected 
+                      ? 'border-primary bg-primary/5 shadow-md' 
+                      : 'border-border hover:border-primary/50 hover:bg-accent'
+                    }
+                  `}
+                  data-testid={`sauce-${sauce.id}`}
+                >
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                      <Check className="w-4 h-4 text-primary-foreground" />
+                    </div>
+                  )}
+                  
+                  <div className="font-semibold mb-1">{sauce.name}</div>
+                  <div className={`text-lg font-bold ${isFree ? 'text-green-500' : 'text-primary'}`}>
+                    {isFree ? 'Kostenlos' : `€${sauce.price.toFixed(2)}`}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Scharf / Würzig */}
+        <div>
+          <h4 className="font-semibold mb-3 text-sm text-muted-foreground">Scharf / Würzig</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {sauces.scharf.map((sauce) => {
+              const isSelected = isSauceSelected(sauce);
+              const sauceIndex = selected.findIndex(s => s.id === sauce.id);
+              const isFree = isSelected && sauceIndex < 2;
+              
+              return (
+                <button
+                  key={sauce.id}
+                  onClick={() => toggleSauce(sauce)}
+                  className={`
+                    relative p-4 rounded-lg border-2 text-left transition-all
+                    ${isSelected 
+                      ? 'border-primary bg-primary/5 shadow-md' 
+                      : 'border-border hover:border-primary/50 hover:bg-accent'
+                    }
+                  `}
+                  data-testid={`sauce-${sauce.id}`}
+                >
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                      <Check className="w-4 h-4 text-primary-foreground" />
+                    </div>
+                  )}
+                  
+                  <div className="font-semibold mb-1">{sauce.name}</div>
+                  <div className={`text-lg font-bold ${isFree ? 'text-green-500' : 'text-primary'}`}>
+                    {isFree ? 'Kostenlos' : `€${sauce.price.toFixed(2)}`}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        
+      </CardContent>
+    </Card>
+    
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
