@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -81,8 +80,6 @@ const BURGER_DATA = {
 };
 
 export default function BurgerBuilder({ addToCart, setCartOpen }) {
-  const navigate = useNavigate();
-  
   // Selections
   const [selectedBun, setSelectedBun] = useState(null);
   const [selectedProtein, setSelectedProtein] = useState(null);
@@ -367,7 +364,7 @@ export default function BurgerBuilder({ addToCart, setCartOpen }) {
             
           </div>
           
-          {/* Bottom Add to Cart (mobile) */}
+          {/* Bottom Add to Cart */}
           <div className="mt-12 text-center">
             <Button
               onClick={handleAddToCart}
@@ -417,15 +414,11 @@ function CategorySection({ title, subtitle, required, items, selected, onSelect,
   return (
     <Card data-testid={`category-${testId}`}>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              {title}
-              {required && <Badge variant="destructive" className="text-xs">Pflicht</Badge>}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
-          </div>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          {title}
+          {required && <Badge variant="destructive" className="text-xs">Pflicht</Badge>}
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">{subtitle}</p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -482,20 +475,16 @@ function SaucesSection({ sauces, selected, onSelect }) {
   return (
     <Card data-testid="category-sauces">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              Saucen
-              <Badge variant="secondary" className="text-xs">
-                {freeSaucesCount}/2 kostenlos
-                {paidSaucesCount > 0 && ` · +${paidSaucesCount} berechnet`}
-              </Badge>
-            </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              Optional - Erste 2 Saucen kostenlos, ab der 3. wird berechnet
-            </p>
-          </div>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          Saucen
+          <Badge variant="secondary" className="text-xs">
+            {freeSaucesCount}/2 kostenlos
+            {paidSaucesCount > 0 && ` · +${paidSaucesCount} berechnet`}
+          </Badge>
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Optional - Erste 2 Saucen kostenlos, ab der 3. wird berechnet
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         
@@ -509,29 +498,13 @@ function SaucesSection({ sauces, selected, onSelect }) {
               const isFree = isSelected && sauceIndex < 2;
               
               return (
-                <button
+                <SauceButton
                   key={sauce.id}
+                  sauce={sauce}
+                  isSelected={isSelected}
+                  isFree={isFree}
                   onClick={() => toggleSauce(sauce)}
-                  className={`
-                    relative p-4 rounded-lg border-2 text-left transition-all
-                    ${isSelected 
-                      ? 'border-primary bg-primary/5 shadow-md' 
-                      : 'border-border hover:border-primary/50 hover:bg-accent'
-                    }
-                  `}
-                  data-testid={`sauce-${sauce.id}`}
-                >
-                  {isSelected && (
-                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="w-4 h-4 text-primary-foreground" />
-                    </div>
-                  )}
-                  
-                  <div className="font-semibold mb-1">{sauce.name}</div>
-                  <div className={`text-lg font-bold ${isFree ? 'text-green-500' : 'text-primary'}`}>
-                    {isFree ? 'Kostenlos' : `€${sauce.price.toFixed(2)}`}
-                  </div>
-                </button>
+                />
               );
             })}
           </div>
@@ -547,29 +520,13 @@ function SaucesSection({ sauces, selected, onSelect }) {
               const isFree = isSelected && sauceIndex < 2;
               
               return (
-                <button
+                <SauceButton
                   key={sauce.id}
+                  sauce={sauce}
+                  isSelected={isSelected}
+                  isFree={isFree}
                   onClick={() => toggleSauce(sauce)}
-                  className={`
-                    relative p-4 rounded-lg border-2 text-left transition-all
-                    ${isSelected 
-                      ? 'border-primary bg-primary/5 shadow-md' 
-                      : 'border-border hover:border-primary/50 hover:bg-accent'
-                    }
-                  `}
-                  data-testid={`sauce-${sauce.id}`}
-                >
-                  {isSelected && (
-                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="w-4 h-4 text-primary-foreground" />
-                    </div>
-                  )}
-                  
-                  <div className="font-semibold mb-1">{sauce.name}</div>
-                  <div className={`text-lg font-bold ${isFree ? 'text-green-500' : 'text-primary'}`}>
-                    {isFree ? 'Kostenlos' : `€${sauce.price.toFixed(2)}`}
-                  </div>
-                </button>
+                />
               );
             })}
           </div>
@@ -585,29 +542,13 @@ function SaucesSection({ sauces, selected, onSelect }) {
               const isFree = isSelected && sauceIndex < 2;
               
               return (
-                <button
+                <SauceButton
                   key={sauce.id}
+                  sauce={sauce}
+                  isSelected={isSelected}
+                  isFree={isFree}
                   onClick={() => toggleSauce(sauce)}
-                  className={`
-                    relative p-4 rounded-lg border-2 text-left transition-all
-                    ${isSelected 
-                      ? 'border-primary bg-primary/5 shadow-md' 
-                      : 'border-border hover:border-primary/50 hover:bg-accent'
-                    }
-                  `}
-                  data-testid={`sauce-${sauce.id}`}
-                >
-                  {isSelected && (
-                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="w-4 h-4 text-primary-foreground" />
-                    </div>
-                  )}
-                  
-                  <div className="font-semibold mb-1">{sauce.name}</div>
-                  <div className={`text-lg font-bold ${isFree ? 'text-green-500' : 'text-primary'}`}>
-                    {isFree ? 'Kostenlos' : `€${sauce.price.toFixed(2)}`}
-                  </div>
-                </button>
+                />
               );
             })}
           </div>
@@ -615,10 +556,33 @@ function SaucesSection({ sauces, selected, onSelect }) {
         
       </CardContent>
     </Card>
-    
-          </div>
+  );
+}
+
+// Sauce Button Component
+function SauceButton({ sauce, isSelected, isFree, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        relative p-4 rounded-lg border-2 text-left transition-all
+        ${isSelected 
+          ? 'border-primary bg-primary/5 shadow-md' 
+          : 'border-border hover:border-primary/50 hover:bg-accent'
+        }
+      `}
+      data-testid={`sauce-${sauce.id}`}
+    >
+      {isSelected && (
+        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+          <Check className="w-4 h-4 text-primary-foreground" />
         </div>
+      )}
+      
+      <div className="font-semibold mb-1">{sauce.name}</div>
+      <div className={`text-lg font-bold ${isFree ? 'text-green-500' : 'text-primary'}`}>
+        {isFree ? 'Kostenlos' : `€${sauce.price.toFixed(2)}`}
       </div>
-    </>
+    </button>
   );
 }
