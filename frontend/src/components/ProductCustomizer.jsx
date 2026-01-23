@@ -239,13 +239,9 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
           price: side.price, // 0 for Pommes, 0.99 for premium sides
           pos_item_id: side.pos_item_id || `SIDE-${side.id}`
         };
-        // Also add surcharge to extras if premium side
-        if (side.price > 0) {
-          allExtras.push({
-            name: `${side.name} Aufpreis`,
-            price: side.price
-          });
-        }
+        // ⚠️ REMOVED 23.01.2026: NO "Aufpreis" in extras!
+        // Beilage is already in menuModifiers with correct price
+        // Adding to extras caused duplicates on receipt
       }
       if (drink) {
         menuModifiers.getraenk = {
