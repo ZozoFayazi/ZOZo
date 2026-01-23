@@ -4996,6 +4996,8 @@ app.include_router(customer_router, prefix="/api")
 app.include_router(finance_router, prefix="/api")
 app.include_router(review_router)
 app.include_router(menu_config_router)
+burger_builder_router = create_burger_builder_router(db)
+app.include_router(burger_builder_router, prefix="/api")
 
 
 # Mount static files for product images
