@@ -2560,16 +2560,15 @@ async def validate_discount_code(validation: DiscountCodeValidate):
     # Check time restrictions (NEW)
     time_restrictions = code.get("time_restrictions")
     if time_restrictions and time_restrictions.get("enabled"):
-        from datetime import datetime
         import pytz
         
         # Get current time in timezone
         tz = pytz.timezone(time_restrictions.get("timezone", "Europe/Berlin"))
-        current_time = datetime.now(tz)
+        current_time_tz = datetime.now(tz)
         
         # Check day of week (0=Monday, 6=Sunday)
         allowed_days = time_restrictions.get("days_of_week", [])
-        if allowed_days and current_time.weekday() not in allowed_days:
+        if allowed_days and current_time_tz.weekday() not in allowed_days:
             return {"valid": False, "message": "Code nur Mo-Fr gültig"}
         
         # Check time range
@@ -2580,8 +2579,8 @@ async def validate_discount_code(validation: DiscountCodeValidate):
             from_hour, from_min = map(int, time_from.split(":"))
             until_hour, until_min = map(int, time_until.split(":"))
             
-            current_hour = current_time.hour
-            current_min = current_time.minute
+            current_hour = current_time_tz.hour
+            current_min = current_time_tz.minute
             
             # Convert to minutes for easier comparison
             current_minutes = current_hour * 60 + current_min
