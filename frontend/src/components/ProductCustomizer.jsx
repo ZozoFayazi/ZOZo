@@ -419,7 +419,7 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
                       {drinks.map((drink) => (
                         <button
                           key={drink.id}
-                          onClick={() => setSelectedDrink(drink.id)}
+                          onClick={() => handleDrinkSelection(drink.id)}
                           className={`p-3 rounded-lg border-2 transition-all text-left ${
                             selectedDrink === drink.id
                               ? 'border-primary bg-primary/20'
