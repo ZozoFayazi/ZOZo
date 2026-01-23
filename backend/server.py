@@ -2557,6 +2557,40 @@ async def validate_discount_code(validation: DiscountCodeValidate):
         if validation.location_id not in code["location_ids"]:
             return {"valid": False, "message": "Code nicht für diesen Standort gültig"}
     
+    # Check time restrictions (NEW)
+    time_restrictions = code.get("time_restrictions")
+    if time_restrictions and time_restrictions.get("enabled"):
+        from datetime import datetime
+        import pytz
+        
+        # Get current time in timezone
+        tz = pytz.timezone(time_restrictions.get("timezone", "Europe/Berlin"))
+        current_time = datetime.now(tz)
+        
+        # Check day of week (0=Monday, 6=Sunday)
+        allowed_days = time_restrictions.get("days_of_week", [])
+        if allowed_days and current_time.weekday() not in allowed_days:
+            return {"valid": False, "message": "Code nur Mo-Fr gültig"}
+        
+        # Check time range
+        time_from = time_restrictions.get("time_from")  # "11:00"
+        time_until = time_restrictions.get("time_until")  # "15:00"
+        
+        if time_from and time_until:
+            from_hour, from_min = map(int, time_from.split(":"))
+            until_hour, until_min = map(int, time_until.split(":"))
+            
+            current_hour = current_time.hour
+            current_min = current_time.minute
+            
+            # Convert to minutes for easier comparison
+            current_minutes = current_hour * 60 + current_min
+            from_minutes = from_hour * 60 + from_min
+            until_minutes = until_hour * 60 + until_min
+            
+            if not (from_minutes <= current_minutes <= until_minutes):
+                return {"valid": False, "message": f"Code nur Mo-Fr {time_from}-{time_until} Uhr gültig"}
+    
     # Calculate discount
     if code["discount_type"] == "percentage":
         discount_amount = (validation.order_total * code["discount_value"]) / 100
