@@ -466,6 +466,14 @@ function App() {
               </ProtectedAdminRoute>
             } 
           />
+          <Route 
+            path="/admin/burger-builder" 
+            element={
+              <ProtectedAdminRoute>
+                <BurgerBuilderAdmin />
+              </ProtectedAdminRoute>
+            } 
+          />
             </Routes>
           </Suspense>
         </main>
