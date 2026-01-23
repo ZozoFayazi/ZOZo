@@ -476,6 +476,14 @@ function App() {
           cartItemCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
           onCartClick={() => setCartOpen(true)}
         />
+          <Route 
+            path="/admin/burger-builder" 
+            element={
+              <ProtectedAdminRoute>
+                <BurgerBuilderAdmin />
+              </ProtectedAdminRoute>
+            } 
+          />
         <CookieBanner />
         <Toaster
           position="bottom-right"
