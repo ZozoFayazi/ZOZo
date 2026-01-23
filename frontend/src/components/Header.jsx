@@ -208,6 +208,17 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                     📋 Speisekarte
                   </Link>
                   <Link
+                    to="/burger-builder"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/burger-builder') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    🍔 Burger Builder
+                  </Link>
+                  <Link
                     to="/locations"
                     onClick={() => setMobileMenuOpen(false)}
                     className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
