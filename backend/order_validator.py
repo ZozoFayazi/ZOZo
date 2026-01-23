@@ -130,6 +130,25 @@ class OrderValidator:
             warnings.append(
                 f"Item {idx}: ⚠️ Menü ohne 'modifiers' - Beilage/Getränk fehlen möglicherweise!"
             )
+        else:
+            # NEW VALIDATION: Check for duplicate sides/drinks
+            modifiers = item.get('modifiers', {})
+            
+            # Count beilage entries
+            beilage_count = sum(1 for key in modifiers.keys() if 'beilage' in key.lower())
+            if beilage_count > 1:
+                errors.append(
+                    f"Item {idx}: ❌ MEHRERE BEILAGEN erkannt ({beilage_count})! "
+                    f"Pro Menü ist nur EINE Beilage erlaubt!"
+                )
+            
+            # Count getränk entries  
+            getraenk_count = sum(1 for key in modifiers.keys() if 'getr' in key.lower() or 'drink' in key.lower())
+            if getraenk_count > 1:
+                errors.append(
+                    f"Item {idx}: ❌ MEHRERE GETRÄNKE erkannt ({getraenk_count})! "
+                    f"Pro Menü ist nur EIN Getränk erlaubt!"
+                )
         
         # Log warnings
         for warn in warnings:
