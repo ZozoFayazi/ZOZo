@@ -41,6 +41,18 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
   const [selectedSide, setSelectedSide] = useState('');
   const [selectedDrink, setSelectedDrink] = useState('');
   
+  // ⚠️ CRITICAL: Ensure only ONE side and ONE drink can be selected
+  // This prevents multiple sides/drinks in a single menu
+  const handleSideSelection = (sideId) => {
+    // Toggle: if same side clicked again, deselect
+    setSelectedSide(selectedSide === sideId ? '' : sideId);
+  };
+  
+  const handleDrinkSelection = (drinkId) => {
+    // Toggle: if same drink clicked again, deselect
+    setSelectedDrink(selectedDrink === drinkId ? '' : drinkId);
+  };
+  
   // Bun selection state (for burgers)
   const [selectedBun, setSelectedBun] = useState('');
   
