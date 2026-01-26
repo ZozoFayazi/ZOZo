@@ -5010,6 +5010,11 @@ async def health_check():
         raise HTTPException(status_code=503, detail="Service unhealthy")
 
 
+# Upsell Router
+upsell_router = create_upsell_router()
+app.include_router(upsell_router, prefix="/api")
+
+
 # Also add health check under /api prefix for consistency
 @api_router.get("/health")
 async def api_health_check():
