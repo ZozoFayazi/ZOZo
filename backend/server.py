@@ -5000,6 +5000,8 @@ async def health_check():
     try:
         # Test database connection
         await db.command("ping")
+upsell_router = create_upsell_router()
+app.include_router(upsell_router, prefix="/api")
         return {
             "status": "healthy",
             "service": "zozo-burger-api",
