@@ -42,6 +42,11 @@ function ProductCustomizer({ item, size, onAddToCart, onClose, modifierGroups = 
   const [selectedSide, setSelectedSide] = useState('');
   const [selectedDrink, setSelectedDrink] = useState('');
   
+  // Upselling state
+  const [showUpsellDialog, setShowUpsellDialog] = useState(false);
+  const [upsellData, setUpsellData] = useState(null);
+  const [pendingCartItem, setPendingCartItem] = useState(null);
+  
   // ⚠️ CRITICAL: Ensure only ONE side and ONE drink can be selected
   // This prevents multiple sides/drinks in a single menu
   const handleSideSelection = (sideId) => {
