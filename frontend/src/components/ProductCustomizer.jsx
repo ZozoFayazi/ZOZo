@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Plus, Minus, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import UpsellDialog from './UpsellDialog';
 
 // Helper function to build full image URL
 const getImageUrl = (imageUrl) => {
