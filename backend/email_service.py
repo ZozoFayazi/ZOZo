@@ -461,32 +461,104 @@ class EmailService:
 # These are stub functions for backward compatibility with server.py
 # TODO: Refactor server.py to use EmailService class methods
 
-def send_verification_email(email: str, code: str) -> bool:
-    """Legacy stub - sends verification email"""
+async def send_verification_email(email: str, code: str) -> bool:
+    """Send verification email via Resend - NOW ACTIVE!"""
     try:
-        # This is a stub - implement if needed
-        logger.warning(f"send_verification_email called (stub) for {email}")
+        import resend
+        
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #0a0a0a; color: #ffffff; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #1a1a1a; padding: 40px; border-radius: 12px;">
+                <h2 style="color: #dc2626;">Dein Verifizierungscode 🔐</h2>
+                <p>Verwende diesen Code, um deine Email-Adresse zu bestätigen:</p>
+                <div style="background-color: #2a2a2a; padding: 20px; border-radius: 8px; text-align: center; margin: 30px 0;">
+                    <p style="font-size: 32px; font-weight: bold; letter-spacing: 8px; margin: 0;">{code}</p>
+                </div>
+                <p style="color: #999; font-size: 14px;">Dieser Code ist 10 Minuten gültig.</p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [email],
+            "subject": f"Dein Verifizierungscode: {code}",
+            "html": html
+        }
+        
+        response = resend.Emails.send(params)
+        logger.info(f"Verification email sent to {email}: {response.get('id')}")
         return True
+        
     except Exception as e:
         logger.error(f"send_verification_email error: {str(e)}")
         return False
 
-def send_status_update_email(order: dict, status: str, location: dict) -> bool:
-    """Legacy stub - sends order status update email"""
+async def send_status_update_email(order: dict, status: str, location: dict) -> bool:
+    """Send order status update email via Resend - NOW ACTIVE!"""
     try:
-        # This is a stub - implement if needed
-        logger.warning(f"send_status_update_email called (stub) for order {order.get('order_id')}")
+        import resend
+        
+        customer_email = order.get('customer_email') or order.get('customer', {}).get('email')
+        if not customer_email:
+            return False
+        
+        status_labels = {
+            'confirmed': '✅ Bestätigt',
+            'preparing': '👨‍🍳 In Zubereitung',
+            'ready': '📦 Bereit zur Abholung',
+            'on_the_way': '🚚 Unterwegs',
+            'completed': '✅ Zugestellt'
+        }
+        
+        status_text = status_labels.get(status, status)
+        
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #0a0a0a; color: #ffffff; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #1a1a1a; padding: 40px; border-radius: 12px;">
+                <h2 style="color: #dc2626;">Status-Update: Bestellung #{order.get('order_id')} 📦</h2>
+                <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); padding: 25px; border-radius: 12px; text-align: center; margin: 30px 0;">
+                    <p style="margin: 0; font-size: 28px; font-weight: bold; color: white;">{status_text}</p>
+                </div>
+                <p>Deine Bestellung ist jetzt: <strong>{status_text}</strong></p>
+                <p style="color: #999; font-size: 14px; margin-top: 30px;">ZOZO Burger - {location.get('name', 'Rellingen')}</p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [customer_email],
+            "subject": f"Bestellung #{order.get('order_id')}: {status_text}",
+            "html": html
+        }
+        
+        response = resend.Emails.send(params)
+        logger.info(f"Status update email sent to {customer_email}: {response.get('id')}")
         return True
+        
     except Exception as e:
         logger.error(f"send_status_update_email error: {str(e)}")
         return False
 
-def send_review_request_email(order: dict, location: dict) -> bool:
-    """Legacy stub - sends review request email"""
+async def send_review_request_email(order: dict, location: dict) -> bool:
+    """Send review request email via Resend - NOW ACTIVE!"""
     try:
-        # This is a stub - implement if needed
-        logger.warning(f"send_review_request_email called (stub) for order {order.get('order_id')}")
-        return True
+        # This is now handled by email_automation_service.trigger_order_followup
+        # But we keep this for backward compatibility
+        from email_automation_service import EmailAutomationService
+        
+        automation = EmailAutomationService(db)
+        result = await automation.trigger_order_followup(order.get('order_id'))
+        
+        return result.get('success', False)
+        
     except Exception as e:
         logger.error(f"send_review_request_email error: {str(e)}")
         return False
