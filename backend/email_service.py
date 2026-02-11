@@ -596,12 +596,48 @@ async def send_order_confirmation_email(order: dict, location: dict) -> bool:
         logger.error(f"send_order_confirmation_email error: {str(e)}")
         return False
 
-def send_group_order_invite_email(group_order: dict, invitee_email: str) -> bool:
-    """Legacy stub - sends group order invite email"""
+async def send_group_order_invite_email(group_order: dict, invitee_email: str) -> bool:
+    """Send group order invite email via Resend - NOW ACTIVE!"""
     try:
-        # This is a stub - implement if needed
-        logger.warning(f"send_group_order_invite_email called (stub) for {invitee_email}")
+        import resend
+        
+        organizer_name = group_order.get('organizer_name', 'Jemand')
+        group_order_id = group_order.get('group_order_id', '')
+        join_url = f"{APP_URL}/group-order/{group_order_id}"
+        
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #0a0a0a; color: #ffffff; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #1a1a1a; padding: 40px; border-radius: 12px;">
+                <h2 style="color: #dc2626;">Du wurdest zu einer Gruppenbestellung eingeladen! 🍔</h2>
+                <p style="font-size: 16px;">{organizer_name} hat dich zu einer ZOZO Burger Gruppenbestellung eingeladen.</p>
+                <div style="background-color: #2a2a2a; padding: 20px; border-radius: 8px; margin: 30px 0;">
+                    <p style="margin: 0; color: #999;">Gruppenbestellung:</p>
+                    <p style="margin: 5px 0 0 0; font-size: 20px; font-weight: bold;">#{group_order_id}</p>
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{join_url}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Jetzt mitbestellen
+                    </a>
+                </div>
+                <p style="color: #999; font-size: 14px;">Bestelle gemeinsam und spart Lieferkosten!</p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [invitee_email],
+            "subject": f"{organizer_name} lädt dich zu einer Gruppenbestellung ein!",
+            "html": html
+        }
+        
+        response = resend.Emails.send(params)
+        logger.info(f"Group order invite sent to {invitee_email}: {response.get('id')}")
         return True
+        
     except Exception as e:
         logger.error(f"send_group_order_invite_email error: {str(e)}")
         return False
