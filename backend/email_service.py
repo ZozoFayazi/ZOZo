@@ -491,12 +491,35 @@ def send_review_request_email(order: dict, location: dict) -> bool:
         logger.error(f"send_review_request_email error: {str(e)}")
         return False
 
-def send_order_confirmation_email(order: dict, location: dict) -> bool:
-    """Legacy stub - sends order confirmation email"""
+async def send_order_confirmation_email(order: dict, location: dict) -> bool:
+    """Send order confirmation email via Resend - NOW ACTIVE!"""
     try:
-        # This is a stub - implement if needed
-        logger.warning(f"send_order_confirmation_email called (stub) for order {order.get('order_id')}")
+        from email_templates import get_order_confirmation_html
+        import resend
+        
+        customer_email = order.get('customer_email') or order.get('customer', {}).get('email')
+        
+        if not customer_email:
+            logger.warning(f"No customer email for order {order.get('order_id')} - skipping confirmation")
+            return False
+        
+        # Generate HTML from template
+        html_content = get_order_confirmation_html(order, location)
+        
+        # Send via Resend
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [customer_email],
+            "subject": f"Bestellbestätigung #{order.get('order_id')} - ZOZO Burger",
+            "html": html_content
+        }
+        
+        response = resend.Emails.send(params)
+        
+        logger.info(f"Order confirmation email sent to {customer_email}: {response.get('id')}")
+        
         return True
+        
     except Exception as e:
         logger.error(f"send_order_confirmation_email error: {str(e)}")
         return False
