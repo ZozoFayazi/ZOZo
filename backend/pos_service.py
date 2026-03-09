@@ -228,13 +228,23 @@ class POSService:
         
         # Attempt with retries
         total_attempts = len(self.RETRY_DELAYS) + 1
+        original_order_number = order_number
         
         for attempt in range(1, total_attempts + 1):
             try:
-                logger.info(f"POS push attempt {attempt}/{total_attempts} for {order_number}")
+                # IMPORTANT: Use unique order ID for each attempt to avoid "Duplicate entry" errors
+                # ExpertOrder may store the order ID even if the request fails, causing all retries to fail
+                if attempt > 1:
+                    retry_order_number = f"{original_order_number}-R{attempt}"
+                    order_data_copy = order_data.copy()
+                    order_data_copy['order_number'] = retry_order_number
+                    logger.info(f"POS push attempt {attempt}/{total_attempts} for {original_order_number} (using ID: {retry_order_number})")
+                else:
+                    order_data_copy = order_data
+                    logger.info(f"POS push attempt {attempt}/{total_attempts} for {order_number}")
                 
                 # Attempt push
-                result = await self._push_order_single(order_data, location, pos_config, provider)
+                result = await self._push_order_single(order_data_copy, location, pos_config, provider)
                 
                 if result.get("success"):
                     # SUCCESS!

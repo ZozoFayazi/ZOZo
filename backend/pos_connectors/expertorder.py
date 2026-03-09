@@ -364,11 +364,22 @@ class ExpertOrderConnector(BasePOSConnector):
                         "is_test_mode": False
                     }
                 elif response.status_code == 400:
+                    # Check if it's a "Duplicate entry" error - this means order was already sent successfully!
+                    response_text = response.text[:500] if response.text else "Bad Request"
+                    if "Duplicate entry" in response_text or "UNIQUE" in response_text:
+                        logger.info(f"Order {order_number} already exists in EOCloud (Duplicate) - treating as success")
+                        return {
+                            "success": True,
+                            "pos_order_id": f"DUPLICATE-{order_number}",
+                            "pos_status": "sent",
+                            "message": f"Bestellung {order_number} bereits in EOCloud vorhanden",
+                            "is_test_mode": False
+                        }
                     return {
                         "success": False,
                         "pos_order_id": None,
                         "message": "Ungültige Anfrage (400) - Payload prüfen",
-                        "error": response.text[:500] if response.text else "Bad Request",
+                        "error": response_text,
                         "is_test_mode": False
                     }
                 else:
