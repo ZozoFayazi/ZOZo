@@ -1,0 +1,130 @@
+{
+  "backup_date": "2026-01-07",
+  "backup_type": "Complete PayPal Integration Configuration - Both Locations",
+  "status": "PRODUCTION READY",
+  "locations": [
+    {
+      "name": "ZOZO Burger Rellingen",
+      "location_id": "49aff347-a6c3-407c-ad4a-59d5d0852314",
+      "address": "Hauptstraße 30, 25462 Rellingen",
+      "paypal_configuration": {
+        "client_id": "AQIFU1U2x5bjA1c4IRrC2PsMUh12DKC-ef8VHIakDAaG4WFz9PgFgm0eno-YcIVZtV9A_A4V7b7cQqUe",
+        "client_secret": "EIFuFZh95NOJ-DaQczZTTAK_Tk4WSMkc7-fXhEK7lfV-uQxb-g40JKbdXQ7YccExKh6p84BWgUJwuwqV",
+        "enabled": true,
+        "sandbox_mode": false,
+        "mode": "LIVE"
+      }
+    },
+    {
+      "name": "ZOZO Burger Henstedt-Ulzburg",
+      "location_id": "422cac42-cfdf-4869-b2cb-0b09aa24d02c",
+      "address": "Hamburger Straße 115, 24558 Henstedt-Ulzburg",
+      "paypal_configuration": {
+        "client_id": "AWac3d_1EW-cqqAKNYOkOQM6_THWw3jLKGREqFS4heb5jn2TIFHcWcK6E6hNBRirXD3XP5cBhT8w6R8Q",
+        "client_secret": "ECLyn3S30HV4QNiN8gOCFLv--0tp0Zi3FwOBxeRliIcTWzSi-EA0HP03B22_VYFEHC4CdRxRnUBTK1qh",
+        "enabled": true,
+        "sandbox_mode": false,
+        "mode": "LIVE"
+      }
+    }
+  ],
+  "database_structure": {
+    "collection": "location_settings",
+    "fields": [
+      "location_id",
+      "paypal_client_id",
+      "paypal_client_secret",
+      "paypal_enabled",
+      "paypal_sandbox_mode",
+      "created_at",
+      "updated_at"
+    ]
+  },
+  "payment_routing": {
+    "description": "Payments are automatically routed to the correct PayPal account based on the selected location",
+    "rellingen_orders": "Flow to Rellingen PayPal account",
+    "henstedt_orders": "Flow to Henstedt-Ulzburg PayPal account"
+  },
+  "api_endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/paypal/create-order",
+      "description": "Create PayPal order for payment"
+    },
+    {
+      "method": "POST",
+      "path": "/api/paypal/capture-order",
+      "description": "Capture PayPal payment after approval"
+    },
+    {
+      "method": "GET",
+      "path": "/api/paypal/client-id/{location_id}",
+      "description": "Get PayPal Client ID for frontend (public)"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/paypal-settings/{location_id}",
+      "description": "Get PayPal settings (admin only)"
+    },
+    {
+      "method": "PATCH",
+      "path": "/admin/paypal-settings/{location_id}",
+      "description": "Update PayPal settings (owner only)"
+    }
+  ],
+  "files_created": [
+    "/app/backend/paypal_service.py",
+    "/app/frontend/src/components/PayPalCheckout.jsx",
+    "/app/setup_paypal_henstedt.py",
+    "/app/setup_paypal_rellingen.py",
+    "/app/test_paypal_integration.py",
+    "/app/test_paypal_both_locations.py",
+    "/app/PAYPAL_INTEGRATION_DOKUMENTATION.md",
+    "/app/PAYPAL_SETUP_ZUSAMMENFASSUNG.md",
+    "/app/PAYPAL_CONFIG_BACKUP.json",
+    "/app/PAYPAL_COMPLETE_BACKUP.json"
+  ],
+  "files_modified": [
+    "/app/backend/server.py",
+    "/app/backend/requirements.txt",
+    "/app/frontend/src/components/CheckoutDialog.jsx",
+    "/app/frontend/package.json"
+  ],
+  "restore_instructions": {
+    "rellingen": "python /app/setup_paypal_rellingen.py",
+    "henstedt": "python /app/setup_paypal_henstedt.py",
+    "both": "Run both scripts above"
+  },
+  "verification_commands": {
+    "single_location": "python /app/test_paypal_integration.py",
+    "both_locations": "python /app/test_paypal_both_locations.py"
+  },
+  "testing": {
+    "automated_test": "python /app/test_paypal_both_locations.py",
+    "manual_test_steps": [
+      "1. Open https://menu-config.preview.emergentagent.com",
+      "2. Select location (Rellingen or Henstedt-Ulzburg)",
+      "3. Add products to cart",
+      "4. Go to checkout",
+      "5. Select 'PayPal' as payment method",
+      "6. Fill delivery address",
+      "7. Click 'Jetzt bestellen'",
+      "8. Complete PayPal payment",
+      "9. Verify order confirmation"
+    ]
+  },
+  "security_notes": [
+    "All credentials are stored securely in MongoDB",
+    "Client secrets are never sent to frontend",
+    "All PayPal API communication goes through backend only",
+    "HTTPS is enforced for all transactions",
+    "Transaction IDs are stored for audit trail"
+  ],
+  "important_notes": [
+    "Both locations are configured in LIVE mode (Production)",
+    "All transactions are REAL and will be processed",
+    "Payments are automatically routed to the correct PayPal account per location",
+    "Each location has its own unique PayPal credentials",
+    "No cross-location payment mixing occurs"
+  ]
+}

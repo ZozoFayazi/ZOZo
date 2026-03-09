@@ -1,0 +1,38 @@
+[
+  {
+    "content": "Phase 4: Video-Hero - Replace static image with looping video",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 4: Deals/Promotions - Backend API for deals management",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 4: Deals/Promotions - Frontend display on homepage and menu",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 4: Deals/Promotions - Admin UI for creating/editing deals",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 4: Quick Reorder - Backend order history API",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 4: Quick Reorder - Frontend reorder button and flow",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 4: Product Customizer - Backend support for extras/removals",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 4: Product Customizer - Frontend customizer dialog",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 4: Testing - Comprehensive testing of all new features",
+    "status": "in_progress"
+  }
+]
