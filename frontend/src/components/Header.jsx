@@ -43,14 +43,6 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                 SPEISEKARTE
               </Link>
               <Link
-                to="/burger-builder"
-                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
-                  isActive('/burger-builder') ? 'text-primary' : 'text-foreground/70'
-                }`}
-              >
-                BURGER BUILDER
-              </Link>
-              <Link
                 to="/locations"
                 className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
                   isActive('/locations') ? 'text-primary' : 'text-foreground/70'
@@ -95,13 +87,6 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                   MEHR <ChevronDown className="h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  {isFeatureEnabled('burger_builder') && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/burger-builder" className="flex items-center gap-2 cursor-pointer">
-                        🍔 Burger Builder
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
                   {isFeatureEnabled('rewards') && (
                     <DropdownMenuItem asChild>
                       <Link to="/rewards" className="flex items-center gap-2 cursor-pointer">
@@ -208,17 +193,6 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                     📋 Speisekarte
                   </Link>
                   <Link
-                    to="/burger-builder"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                      isActive('/burger-builder') 
-                        ? 'text-primary bg-primary/10' 
-                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
-                    }`}
-                  >
-                    🍔 Burger Builder
-                  </Link>
-                  <Link
                     to="/locations"
                     onClick={() => setMobileMenuOpen(false)}
                     className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
@@ -252,19 +226,6 @@ function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clear
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 pb-2">
                     Weitere Features
                   </p>
-                  {isFeatureEnabled('burger_builder') && (
-                    <Link
-                      to="/burger-builder"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
-                        isActive('/burger-builder') 
-                          ? 'text-primary bg-primary/10' 
-                          : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
-                      }`}
-                    >
-                      🍔 Burger Builder
-                    </Link>
-                  )}
                   {isFeatureEnabled('rewards') && (
                     <Link
                       to="/rewards"

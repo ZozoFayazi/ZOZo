@@ -76,6 +76,21 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
         />
       )}
     <div className="min-h-screen">
+      {/* NEW: Announcement Banner */}
+      <div className="bg-gradient-to-r from-primary via-red-600 to-primary text-white py-3 px-4 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiLz48cGF0aCBkPSJNMjAgMjBtLTIgMGEyIDIgMCAxIDAgNCAwYTIgMiAwIDEgMCAtNCAwIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-30"></div>
+        <div className="relative flex items-center justify-center gap-3 flex-wrap">
+          <span className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm font-bold animate-pulse">
+            <span className="w-2 h-2 bg-white rounded-full"></span>
+            NEU
+          </span>
+          <span className="font-medium text-sm md:text-base">
+            Frisch überarbeitet! Schnellere Bestellung, besseres Erlebnis. Jetzt testen!
+          </span>
+          <span className="text-2xl">🍔</span>
+        </div>
+      </div>
+
       {/* Hero Section - Redesigned */}
       <section className="relative noise-overlay bg-gradient-to-br from-background via-accent/30 to-background py-24 md:py-36 overflow-hidden">
         {/* Subtle Glow Effects */}
@@ -275,43 +290,6 @@ function HomePage({ selectedLocation, setSelectedLocation }) {
 
       {/* Daily Deal Banner */}
       <DailyDealBanner />
-
-      {/* Social Ordering CTA */}
-      <section className="py-12 bg-gradient-to-br from-primary/10 to-accent">
-        <div className="container-custom">
-          <div className="bg-card rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <Users className="h-8 w-8 text-primary" />
-                <h2 className="text-3xl font-serif font-bold">Gemeinsam bestellen?</h2>
-              </div>
-              <p className="text-lg text-muted-foreground mb-4">
-                Perfekt für Büro, Partys oder Familien-Events! Erstellt eine Gruppenbestellung und teilt den Link.
-              </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" /> Jeder kann Items hinzufügen
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" /> Alle sehen die Gesamtbestellung
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" /> Einfach per Link teilen
-                </li>
-              </ul>
-            </div>
-            <div>
-              <button
-                onClick={() => navigate('/start-group-order')}
-                className="bg-primary text-primary-foreground px-8 py-4 rounded-xl hover:bg-primary/90 transition-all font-semibold text-lg flex items-center gap-2 hover:scale-105 shadow-lg"
-              >
-                Gruppenbestellung starten
-                <ArrowRight className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Featured Categories */}
       <section className="py-16 md:py-24 bg-background">
