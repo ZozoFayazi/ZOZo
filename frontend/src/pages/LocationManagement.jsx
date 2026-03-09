@@ -151,11 +151,11 @@ export default function LocationManagement() {
                     <CardDescription className="mt-1">{location.slug}</CardDescription>
                   </div>
                   <Badge 
-                    variant={location.is_active ? "default" : "secondary"}
+                    variant={location.is_active ?? location.active ? "default" : "secondary"}
                     data-testid={`location-status-${location.slug}`}
-                    className={location.is_active ? "bg-[hsl(var(--success))] text-white" : ""}
+                    className={(location.is_active ?? location.active) ? "bg-[hsl(var(--success))] text-white" : ""}
                   >
-                    {location.is_active ? 'Aktiv' : 'Inaktiv'}
+                    {(location.is_active ?? location.active) ? 'Aktiv' : 'Inaktiv'}
                   </Badge>
                 </div>
               </CardHeader>

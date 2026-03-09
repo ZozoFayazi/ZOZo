@@ -103,12 +103,6 @@ const AdminSidebar = () => {
       permission: 'manage_products' // Only Rellingen + Super Admin
     },
     {
-      title: 'Burger Builder',
-      icon: ChefHat,
-      path: '/admin/burger-builder',
-      permission: 'manage_products'
-    },
-    {
       title: 'Rabattcodes',
       icon: Percent,
       path: '/admin/discount-codes',
@@ -166,10 +160,10 @@ const AdminSidebar = () => {
   });
 
   const SidebarContent = ({ mobile = false }) => (
-    <div className="flex flex-col h-full bg-card border-r border-border">
+    <div className="flex flex-col h-full bg-card border-r border-border overflow-hidden">
       {/* Logo/Header */}
       <div className={cn(
-        "flex items-center justify-between p-4 border-b border-border",
+        "flex items-center justify-between p-4 border-b border-border flex-shrink-0",
         collapsed && !mobile && "justify-center"
       )}>
         {(!collapsed || mobile) && (
@@ -198,14 +192,14 @@ const AdminSidebar = () => {
 
       {/* Admin Info */}
       {(!collapsed || mobile) && (
-        <div className="p-4 border-b border-border bg-muted/30">
+        <div className="p-4 border-b border-border bg-muted/30 flex-shrink-0">
           <p className="text-sm font-medium text-foreground">{admin?.name}</p>
           <p className="text-xs text-muted-foreground truncate">{admin?.email}</p>
         </div>
       )}
 
-      {/* Navigation Menu */}
-      <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+      {/* Navigation Menu - SCROLLABLE */}
+      <nav className="flex-1 p-2 space-y-1 overflow-y-auto min-h-0">
         {visibleMenuItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -237,7 +231,7 @@ const AdminSidebar = () => {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-2 border-t border-border">
+      <div className="p-2 border-t border-border flex-shrink-0">
         <Button
           variant="ghost"
           onClick={logout}
