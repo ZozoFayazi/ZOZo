@@ -857,7 +857,9 @@ class ExpertOrderConnector(BasePOSConnector):
             "broker": self.broker_name,  # Required - MUST match registered name EXACTLY
             "fromMobile": False,  # Optional
             "clientIp": "127.0.0.1",  # Optional
-            "id": order_data.get('order_number', str(uuid.uuid4())),  # Required - Order ID
+            # IMPORTANT: Add millisecond timestamp to make every request unique
+            # This prevents "Duplicate entry" errors from load balancer retries
+            "id": f"{order_data.get('order_number', str(uuid.uuid4()))}-{int(datetime.now().timestamp() * 1000) % 100000}",  # Required - Order ID with unique suffix
             "ordertime": ordertime_str,  # Required - ISO 8601
             "deliverytime": deliverytime_str,  # Required - GLEICH wie ordertime = SOFORT (keine Zeitbestellung!)
             "customerinfo": order_data.get('notes') or '',  # Must be string, not None
