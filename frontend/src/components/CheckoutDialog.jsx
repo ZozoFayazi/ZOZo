@@ -288,9 +288,11 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       
       if (detail) {
         if (typeof detail === 'string') {
+          // Simple string error message
           errorMessage = detail;
         } else if (Array.isArray(detail)) {
-          // Pydantic v2 validation errors
+          // Pydantic v2 validation errors come as array of objects
+          // Example: [{type: "missing", loc: ["body", "customer", "name"], msg: "Field required", ...}]
           const messages = detail.map(err => {
             const field = err.loc ? err.loc.slice(-1)[0] : 'unbekannt';
             const fieldTranslations = {
@@ -308,12 +310,16 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
           });
           errorMessage = messages.join(', ');
         } else if (typeof detail === 'object') {
+          // Single object error
           errorMessage = detail.msg || detail.message || JSON.stringify(detail);
         }
       }
       
       toast.error(errorMessage);
     } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePayPalSuccess = async (paymentData) => {
     // Payment successful - final order NOW created by backend
