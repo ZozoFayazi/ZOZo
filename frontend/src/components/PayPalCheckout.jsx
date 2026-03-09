@@ -60,14 +60,26 @@ function PayPalCheckout({
       // Store payment_draft_id for capture
       window.paypalDraftId = response.data.payment_draft_id;
 
-      return response.data.paypal_order_id;
-    } catch (error) {
+     } catch (error) {
       console.error('Create order error:', error);
-      toast.error('Fehler beim Erstellen der PayPal-Zahlung');
+      
+      let errorMessage = 'Fehler beim Erstellen der PayPal-Zahlung';
+      const detail = error.response?.data?.detail;
+      
+      if (detail) {
+        if (typeof detail === 'string') {
+          errorMessage = detail;
+        } else if (Array.isArray(detail)) {
+          const messages = detail.map(err => err.msg || 'Validierungsfehler').join(', ');
+          errorMessage = messages;
+        } else if (typeof detail === 'object' && detail.msg) {
+          errorMessage = detail.msg;
+        }
+      }
+      
+      toast.error(errorMessage);
       throw error;
     }
-  };
-
   const onApprove = async (data) => {
     try {
       // Capture payment and finalize order

@@ -280,12 +280,40 @@ function CheckoutDialog({ open, onClose, cart, cartTotal, deliveryFee, total, se
       
     } catch (error) {
       console.error('Order error:', error);
-      const errorMessage = error.response?.data?.detail || 'Fehler bei der Bestellung. Bitte versuche es erneut.';
+      
+      // Handle Pydantic validation errors (which come as objects/arrays)
+      let errorMessage = 'Fehler bei der Bestellung. Bitte versuche es erneut.';
+      
+      const detail = error.response?.data?.detail;
+      
+      if (detail) {
+        if (typeof detail === 'string') {
+          errorMessage = detail;
+        } else if (Array.isArray(detail)) {
+          // Pydantic v2 validation errors
+          const messages = detail.map(err => {
+            const field = err.loc ? err.loc.slice(-1)[0] : 'unbekannt';
+            const fieldTranslations = {
+              'name': 'Name',
+              'phone': 'Telefon',
+              'email': 'E-Mail',
+              'address': 'Adresse',
+              'postal_code': 'PLZ',
+              'city': 'Stadt',
+              'location_id': 'Standort',
+              'items': 'Artikel'
+            };
+            const translatedField = fieldTranslations[field] || field;
+            return `${translatedField}: ${err.msg || 'ungültig'}`;
+          });
+          errorMessage = messages.join(', ');
+        } else if (typeof detail === 'object') {
+          errorMessage = detail.msg || detail.message || JSON.stringify(detail);
+        }
+      }
+      
       toast.error(errorMessage);
     } finally {
-      setLoading(false);
-    }
-  };
 
   const handlePayPalSuccess = async (paymentData) => {
     // Payment successful - final order NOW created by backend
