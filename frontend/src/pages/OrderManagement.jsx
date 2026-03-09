@@ -164,14 +164,14 @@ function OrderManagement() {
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground mb-1">{order.customer.name}</p>
+                      <p className="text-sm text-muted-foreground mb-1">{order.customer?.name || 'Unbekannt'}</p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(order.created_at).toLocaleString('de-DE')}
                       </p>
                     </div>
                     <div className="text-right flex flex-col gap-2">
-                      <p className="text-lg font-bold text-primary">€{order.total.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground">{order.items.length} Artikel</p>
+                      <p className="text-lg font-bold text-primary">€{(order.total || 0).toFixed(2)}</p>
+                      <p className="text-xs text-muted-foreground">{(order.items || []).length} Artikel</p>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -217,15 +217,15 @@ function OrderManagement() {
               {/* Customer Info */}
               <div className="bg-accent rounded-lg p-4 mb-4">
                 <h3 className="font-semibold mb-2">Kunde</h3>
-                <p className="text-sm">{selectedOrder.customer.name}</p>
-                <p className="text-sm text-muted-foreground">{selectedOrder.customer.phone}</p>
-                {selectedOrder.customer.email && (
+                <p className="text-sm">{selectedOrder.customer?.name || 'Unbekannt'}</p>
+                <p className="text-sm text-muted-foreground">{selectedOrder.customer?.phone || '-'}</p>
+                {selectedOrder.customer?.email && (
                   <p className="text-sm text-muted-foreground">{selectedOrder.customer.email}</p>
                 )}
-                {!selectedOrder.is_pickup && (
+                {!selectedOrder.is_pickup && selectedOrder.customer && (
                   <p className="text-sm text-muted-foreground mt-2">
-                    {selectedOrder.customer.address}, {selectedOrder.customer.postal_code}{' '}
-                    {selectedOrder.customer.city}
+                    {selectedOrder.customer.address || ''}, {selectedOrder.customer.postal_code || ''}{' '}
+                    {selectedOrder.customer.city || ''}
                   </p>
                 )}
               </div>
@@ -234,7 +234,7 @@ function OrderManagement() {
               <div className="mb-4">
                 <h3 className="font-semibold mb-2">Bestellte Artikel</h3>
                 <div className="space-y-1">
-                  {selectedOrder.items.map((item, index) => (
+                  {(selectedOrder.items || []).map((item, index) => (
                     <div key={index} className="border-l-2 border-primary/50 pl-3 py-2">
                       {/* Main Item */}
                       <div className="flex justify-between text-sm font-medium">
@@ -324,7 +324,7 @@ function OrderManagement() {
                   )}
                   <div className="flex justify-between font-bold text-lg border-t border-border pt-2">
                     <span>Gesamt</span>
-                    <span className="text-primary">€{selectedOrder.total.toFixed(2)}</span>
+                    <span className="text-primary">€{(selectedOrder.total || 0).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
