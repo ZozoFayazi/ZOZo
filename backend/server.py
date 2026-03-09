@@ -48,11 +48,17 @@ from menu_config_endpoints import create_menu_config_router
 from burger_builder_endpoints import create_burger_builder_router
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-db_name = os.environ.get('DB_NAME', 'test_database')
+# Save environment variables BEFORE load_dotenv (Render sets these)
+_render_db_name = os.environ.get('DB_NAME')
+_render_mongo_url = os.environ.get('MONGO_URL')
+
+load_dotenv(ROOT_DIR / '.env', override=False)  # Don't override existing env vars
+
+# MongoDB connection - use Render env vars if available, otherwise .env
+mongo_url = _render_mongo_url or os.environ.get('MONGO_URL')
+db_name = _render_db_name or os.environ.get('DB_NAME', 'test_database')
+print(f"Connecting to database: {db_name}")  # Log for debugging
 client = AsyncIOMotorClient(mongo_url)
 db = client[db_name]
 
