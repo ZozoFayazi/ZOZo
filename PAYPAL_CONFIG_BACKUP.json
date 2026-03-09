@@ -1,0 +1,59 @@
+{
+  "backup_date": "2026-01-07",
+  "backup_type": "PayPal Integration Configuration",
+  "location": {
+    "name": "ZOZO Burger Henstedt-Ulzburg",
+    "location_id": "422cac42-cfdf-4869-b2cb-0b09aa24d02c",
+    "address": "Hamburger Straße 115, 24558 Henstedt-Ulzburg"
+  },
+  "paypal_configuration": {
+    "client_id": "AWac3d_1EW-cqqAKNYOkOQM6_THWw3jLKGREqFS4heb5jn2TIFHcWcK6E6hNBRirXD3XP5cBhT8w6R8Q",
+    "client_secret": "ECLyn3S30HV4QNiN8gOCFLv--0tp0Zi3FwOBxeRliIcTWzSi-EA0HP03B22_VYFEHC4CdRxRnUBTK1qh",
+    "enabled": true,
+    "sandbox_mode": false,
+    "mode": "LIVE"
+  },
+  "database_structure": {
+    "collection": "location_settings",
+    "document": {
+      "location_id": "422cac42-cfdf-4869-b2cb-0b09aa24d02c",
+      "paypal_client_id": "AWac3d_1EW-cqqAKNYOkOQM6_THWw3jLKGREqFS4heb5jn2TIFHcWcK6E6hNBRirXD3XP5cBhT8w6R8Q",
+      "paypal_client_secret": "ECLyn3S30HV4QNiN8gOCFLv--0tp0Zi3FwOBxeRliIcTWzSi-EA0HP03B22_VYFEHC4CdRxRnUBTK1qh",
+      "paypal_enabled": true,
+      "paypal_sandbox_mode": false,
+      "created_at": "2025-01-01T00:00:00",
+      "updated_at": "2025-01-01T00:00:00"
+    }
+  },
+  "api_endpoints": [
+    "POST /api/paypal/create-order",
+    "POST /api/paypal/capture-order",
+    "GET /api/paypal/client-id/{location_id}",
+    "GET /admin/paypal-settings/{location_id}",
+    "PATCH /admin/paypal-settings/{location_id}"
+  ],
+  "files_created": [
+    "/app/backend/paypal_service.py",
+    "/app/frontend/src/components/PayPalCheckout.jsx",
+    "/app/setup_paypal_henstedt.py",
+    "/app/test_paypal_integration.py",
+    "/app/PAYPAL_INTEGRATION_DOKUMENTATION.md",
+    "/app/PAYPAL_SETUP_ZUSAMMENFASSUNG.md",
+    "/app/PAYPAL_CONFIG_BACKUP.json"
+  ],
+  "files_modified": [
+    "/app/backend/server.py",
+    "/app/backend/requirements.txt",
+    "/app/frontend/src/components/CheckoutDialog.jsx",
+    "/app/frontend/package.json"
+  ],
+  "restore_instructions": "To restore this configuration, run: python /app/setup_paypal_henstedt.py",
+  "verification_command": "python /app/test_paypal_integration.py",
+  "notes": [
+    "PayPal is configured in LIVE mode (Production)",
+    "All transactions are real and will be processed",
+    "Payment goes directly to the PayPal account associated with these credentials",
+    "Configuration is location-specific for Henstedt-Ulzburg only",
+    "To configure PayPal for Rellingen, repeat the process with Rellingen credentials"
+  ]
+}

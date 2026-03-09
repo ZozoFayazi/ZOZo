@@ -1,0 +1,53 @@
+{
+  "order_id": "TEST-MONSTERBACON-CFD6694D",
+  "customer_name": "Monsterbacon Test",
+  "customer_email": "monsterbacon@test.de",
+  "customer_phone": "+49 40 88888888",
+  "location_id": "rellingen",
+  "delivery_address": "Teststraße 42, 25462 Rellingen",
+  "payment_method": "Karte",
+  "status": "new",
+  "created_at": "2026-01-22 14:55:59.694000",
+  "items": [
+    {
+      "menu_item_id": "MONSTERBACON-6b9fbdcf",
+      "name": "Monsterbacon Burger Menü",
+      "size": "medium",
+      "quantity": 1,
+      "price": 14.9,
+      "customizations": [
+        "+ Brioche Brötchen"
+      ],
+      "removed_ingredients": [
+        "Gurken",
+        "Zwiebeln"
+      ],
+      "extras": [
+        {
+          "name": "Extra Bacon",
+          "price": 0.0
+        }
+      ],
+      "modifiers": {
+        "beilage": {
+          "name": "Pommes Frites Normal",
+          "price": 0.0,
+          "pos_item_id": "POMMES-NORMAL"
+        },
+        "getraenk": {
+          "name": "Coca Cola 0,5l",
+          "price": 0.0,
+          "pos_item_id": "COLA-05"
+        },
+        "sauce": {
+          "name": "Ketchup",
+          "price": 0.0,
+          "pos_item_id": "SAUCE-KETCHUP"
+        }
+      }
+    }
+  ],
+  "subtotal": 14.9,
+  "delivery_fee": 2.5,
+  "total": 17.4
+}

@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-01-08T16:37:38.925999",
+  "locations": [
+    {
+      "_id": "695d4f661f4b6f59ea7bb680",
+      "slug": "henstedt-ulzburg",
+      "address": "Hamburger Stra\u00dfe 115, 24558 Henstedt-Ulzburg",
+      "created_at": "2026-01-06T18:07:34.150000",
+      "id": "e5d3dda4-fd50-4388-b08a-9ddfc4098b6f",
+      "is_master": false,
+      "name": "ZOZO Burger Henstedt-Ulzburg",
+      "pos_config": {
+        "provider": "expertorder",
+        "type": "expertorder",
+        "merchant_id": "c102285",
+        "base_url": "https://s1.eocloud.de/c102285",
+        "api_key": "0bef5768f7397056ecf1ddb0ee9d96a017ebb15d",
+        "broker_name": "ZOZO-Burger",
+        "test_mode": false,
+        "status": "connected",
+        "last_sync_at": "2026-01-06T18:12:36.415000"
+      }
+    },
+    {
+      "_id": "695d4f661f4b6f59ea7bb682",
+      "slug": "rellingen",
+      "address": "Hauptstra\u00dfe 30, 25462 Rellingen",
+      "created_at": "2026-01-06T18:07:34.150000",
+      "id": "87de5af8-e424-4fd0-9094-b77b0bf2be77",
+      "is_master": true,
+      "name": "ZOZO Burger Rellingen",
+      "pos_config": {
+        "provider": "cashx",
+        "type": "cashx",
+        "test_mode": true,
+        "status": "disconnected"
+      }
+    }
+  ],
+  "location_settings": []
+}

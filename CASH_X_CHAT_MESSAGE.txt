@@ -1,0 +1,275 @@
+Bitte erstelle folgende Artikel-Struktur in unserem Kassensystem mit Dialogen und Modifier-Groups:
+
+═══════════════════════════════════════════════════
+KATEGORIE: BURGER
+═══════════════════════════════════════════════════
+
+Für ALLE Burger-Artikel (Champion Burger, Farmers Burger, Bacon Burger, Cheeseburger, etc.):
+
+DIALOG 1 - Einzeln oder Menü:
+Hilfstext für Mitarbeiter: "Möchten Sie Ihren Burger einzeln oder als Menü bestellen?"
+[ Einzeln ] [ Als Menü ]
+
+DIALOG 2 - Größe auswählen:
+Hilfstext: "Welche Größe möchten Sie?"
+( ) Normal 100g
+( ) Medium 125g
+( ) Large 180g
+
+DIALOG 3 - Menü-Komponenten (NUR wenn "Als Menü" gewählt):
+
+1. BEILAGE (Pflicht, Single-Select):
+   Hilfstext: "Welche Beilage möchten Sie?"
+   ( ) Pommes Frites Normal (€0.00 inklusive)
+   ( ) Sweet Potato Fries (+€0.99)
+   ( ) Twister Fries (+€0.99)
+   ( ) Country Potatoes (+€0.99)
+
+2. GETRÄNK (Pflicht, Single-Select):
+   Hilfstext: "Welches Getränk dazu?"
+   ( ) Coca Cola 0,5l
+   ( ) Coca Cola Zero 0,5l
+   ( ) Fanta 0,5l
+   ( ) Mezzo Mix 0,5l
+   ( ) Sprite 0,5l
+   ( ) ViO Still 0,5l
+
+3. SAUCE (Optional, Multi-Select):
+   Hilfstext: "Welche Sauce möchten Sie?"
+   [ ] Ketchup
+   [ ] Mayonnaise
+   [ ] BBQ Sauce
+   [ ] Knoblauchsauce
+   [ ] Keine Sauce
+
+DIALOG 4 - Brötchen (Pflicht, Single-Select):
+Hilfstext: "Welches Brötchen möchten Sie?"
+( ) Briochebrötchen
+( ) Semolinabrötchen
+
+DIALOG 5 - Extras & Anpassungen (Optional):
+
+EXTRAS (Multi-Select):
+Hilfstext: "Möchten Sie Extras hinzufügen?"
+[ ] Extra Bacon (+€2.00)
+[ ] Extra Käse 2 Scheiben (+€1.50)
+[ ] Extra Käse 3 Scheiben (+€2.00)
+[ ] Spiegelei (+€2.00)
+[ ] Jalapeños (+€1.00)
+[ ] Champignons (+€1.50)
+[ ] Avocado Slices (+€2.50)
+
+ZUTATEN ENTFERNEN (Multi-Select):
+Hilfstext: "Soll etwas weggelassen werden?"
+[ ] Ohne Zwiebeln
+[ ] Ohne Gurken
+[ ] Ohne Tomate
+[ ] Ohne Salat
+
+SPEZIELLE ANWEISUNGEN:
+Textfeld für Notizen
+
+
+═══════════════════════════════════════════════════
+KATEGORIE: SALATE
+═══════════════════════════════════════════════════
+
+Für ALLE Salate (Caesar Salad, Greek Salad, etc.):
+
+DIALOG 1 - Dressing (Pflicht, Single-Select):
+Hilfstext: "Welches Dressing möchten Sie?"
+( ) Caesar Dressing (inklusive)
+( ) Italian Dressing (inklusive)
+( ) Balsamico (inklusive)
+( ) Ohne Dressing
+
+DIALOG 2 - Extras (Optional, Multi-Select):
+Hilfstext: "Möchten Sie Extras?"
+[ ] Extra Parmesan (+€2.00)
+[ ] Gegrilltes Hähnchen (+€3.50)
+[ ] Avocado (+€2.50)
+[ ] Thunfisch (+€2.00)
+
+
+═══════════════════════════════════════════════════
+KATEGORIE: PIZZABRÖTCHEN & FINGERFOOD
+═══════════════════════════════════════════════════
+
+Für Pizzabrötchen, Chicken Wings, Onion Rings, Mozzarella Sticks:
+
+DIALOG 1 - Dips (Multi-Select):
+Hilfstext: "Welche Dips möchten Sie? (2 inklusive, ab 3. je €0.50)"
+[ ] Knoblauchsauce
+[ ] Kräutersauce
+[ ] Chilisauce
+[ ] BBQ Sauce
+[ ] Sour Cream
+
+Regel: Erste 2 Dips €0.00, ab 3. Dip je €0.50
+
+
+═══════════════════════════════════════════════════
+KATEGORIE: PASTA
+═══════════════════════════════════════════════════
+
+DIALOG 1 - Pasta-Typ (Single-Select):
+Hilfstext: "Welche Pasta möchten Sie?"
+( ) Spaghetti
+( ) Penne
+( ) Tagliatelle
+
+DIALOG 2 - Sauce (Single-Select):
+Hilfstext: "Welche Sauce möchten Sie?"
+( ) Bolognese
+( ) Carbonara
+( ) Napoli
+( ) Aglio e Olio
+
+
+═══════════════════════════════════════════════════
+WICHTIGE REGELN
+═══════════════════════════════════════════════════
+
+1. HIERARCHISCHE STRUKTUR:
+   - Hauptartikel (z.B. "Champion Burger Medium 125g Menü")
+   - Alle Komponenten als KINDER (verschachtelt)
+   - NICHT flach als separate Artikel!
+
+2. NAMENSKONVENTION:
+   ✅ RICHTIG: "Champion Burger Medium 125g Menü"
+   ❌ FALSCH: "Champion Burger Menü Medium"
+   
+   Größe kommt VOR "Menü"!
+
+3. KOMPONENTEN-PRÄFIX:
+   ✅ RICHTIG: "+ Pommes Frites Normal" (ein Plus)
+   ❌ FALSCH: "++ Pommes Frites" (zwei Plus)
+   
+   Removals: "- Ohne Zwiebeln" (Minus)
+
+4. KEIN "Aufpreis" IM NAMEN:
+   ✅ RICHTIG: "+ Twister Fries" (Preis €0.99 im Modifier)
+   ❌ FALSCH: "+ Twister Fries Aufpreis"
+
+5. MENÜ-KOMPONENTEN:
+   - Nur EINE Beilage pro Menü
+   - Nur EIN Getränk pro Menü
+   - Mehrere Saucen möglich
+
+6. GRÖßEN IMMER ANZEIGEN:
+   - Normal 100g (auch wenn "Normal")
+   - Medium 125g
+   - Large 180g
+
+
+═══════════════════════════════════════════════════
+BEISPIEL-OUTPUT AUF KASSENBON
+═══════════════════════════════════════════════════
+
+Champion Burger Medium 125g Menü         M4;2   16,09€
+  + Briochebrötchen                      998;1
+  + Pommes Frites Normal                 POMMES-NORMAL
+  + Coca Cola 0,5l                       COLA-05
+  + Ketchup                              SAUCE-KETCHUP
+  + Extra Bacon                          EXTRA-BACON  2,00€
+  - Ohne Zwiebeln                        REMOVE-ZWIEBELN
+
+
+Caesar Salad (Normal)                    S1;1   9,19€
+  + Caesar Dressing                      DRESSING-CAESAR
+
+
+Pizzabrötchen 6 Stück                    P6;1   5,99€
+  + Knoblauchsauce                       DIP-GARLIC
+  + Kräutersauce                         DIP-HERBS
+
+
+═══════════════════════════════════════════════════
+ARTIKEL-NUMMERN (POS ITEM IDs) 
+═══════════════════════════════════════════════════
+
+Bitte diese Nummern verwenden für Mapping:
+
+BURGER (Hauptartikel):
+M4;1  → Champion Burger Normal 100g
+M4;2  → Champion Burger Medium 125g
+M4;3  → Champion Burger Large 180g
+...
+
+BRÖTCHEN:
+998;1 → Briochebrötchen
+999;1 → Semolinabrötchen
+
+BEILAGEN:
+POMMES-NORMAL → Pommes Frites Normal
+SWEET-POTATO → Sweet Potato Fries
+TWISTER → Twister Fries
+COUNTRY → Country Potatoes
+
+GETRÄNKE:
+COLA-05 → Coca Cola 0,5l
+FANTA-05 → Fanta 0,5l
+SPRITE-05 → Sprite 0,5l
+MEZZO-05 → Mezzo Mix 0,5l
+
+SAUCEN:
+SAUCE-KETCHUP → Ketchup
+SAUCE-MAYO → Mayonnaise
+SAUCE-BBQ → BBQ Sauce
+
+EXTRAS:
+EXTRA-BACON → Extra Bacon
+EXTRA-CHEESE-2 → Extra Käse 2 Scheiben
+EXTRA-EGG → Spiegelei
+
+REMOVALS:
+REMOVE-ZWIEBELN → Ohne Zwiebeln
+REMOVE-GURKEN → Ohne Gurken
+REMOVE-TOMATE → Ohne Tomate
+
+
+═══════════════════════════════════════════════════
+DATENFORMAT (JSON für API)
+═══════════════════════════════════════════════════
+
+{
+  "name": "Champion Burger Medium 125g Menü",
+  "uid": "M4;2",
+  "count": 1,
+  "price": 16.09,
+  "items": [
+    {"uid": "998;1", "name": "+ Briochebrötchen", "count": 1, "price": 0.0},
+    {"uid": "POMMES-NORMAL", "name": "+ Pommes Frites Normal", "count": 1, "price": 0.0},
+    {"uid": "COLA-05", "name": "+ Coca Cola 0,5l", "count": 1, "price": 0.0},
+    {"uid": "SAUCE-KETCHUP", "name": "+ Ketchup", "count": 1, "price": 0.0},
+    {"uid": "EXTRA-BACON", "name": "+ Extra Bacon", "count": 1, "price": 2.0},
+    {"uid": "REMOVE-ZWIEBELN", "name": "- Ohne Zwiebeln", "count": 1, "price": 0.0}
+  ]
+}
+
+
+═══════════════════════════════════════════════════
+PRIORITÄT
+═══════════════════════════════════════════════════
+
+SEHR WICHTIG:
+1. Hierarchische Struktur (Parent-Child, nicht flach)
+2. Größe im Namen VOR "Menü" (z.B. "Medium 125g Menü")
+3. Nur ein Plus "+" nicht zwei "++"
+4. Kein "Aufpreis" im Namen
+5. Nur EINE Beilage + EIN Getränk pro Menü
+
+WICHTIG:
+6. Dialoge für alle Hauptkategorien
+7. Hilftexte für Mitarbeiter
+8. Korrekte Artikel-Nummern (Mapping)
+
+NICE-TO-HAVE:
+9. Touch-optimierte Buttons
+10. Preis-Anzeige bei jeder Option
+
+
+Bitte bestätigt, wenn ihr das umsetzen könnt, oder teilt mir mit, welche Informationen noch fehlen.
+
+ZOZO Burger Team
+23. Januar 2026

@@ -1,0 +1,67 @@
+{
+  "backup_date": "2026-01-08",
+  "status": "PRODUCTION_READY_TESTED",
+  "description": "Finale funktionierende ExpertOrder-Konfiguration für beide Standorte",
+  
+  "base_configuration": {
+    "provider": "expertorder",
+    "base_url": "https://zozo.eocloud.de",
+    "broker_name": "zozo-burger.de",
+    "enabled": true,
+    "test_mode": false
+  },
+  
+  "rellingen": {
+    "location_name": "ZOZO Burger Rellingen",
+    "location_id": "49aff347-a6c3-407c-ad4a-59d5d0852314",
+    "location_slug": "rellingen",
+    "expertorder_api_key": "4bbc443c82674f93e910399ca7931b37b45e55ba",
+    "test_order": "ZOZO-1045",
+    "test_status": "SUCCESS - Sent to ExpertOrder",
+    "test_date": "2026-01-08 11:29:23"
+  },
+  
+  "henstedt_ulzburg": {
+    "location_name": "ZOZO Burger Henstedt-Ulzburg",
+    "location_id": "422cac42-cfdf-4869-b2cb-0b09aa24d02c",
+    "location_slug": "henstedt-ulzburg",
+    "expertorder_api_key": "90dd43e5c58b7c2a8ddd1eb4916ae8196d8e1073",
+    "test_status": "CONFIGURED - Same config as Rellingen"
+  },
+  
+  "api_details": {
+    "endpoint": "PUT /api/v1/osp",
+    "full_url": "https://zozo.eocloud.de/api/v1/osp",
+    "authentication": "API_KEY header",
+    "payload_version": 0,
+    "required_email_format": "Valid email or fallback to noreply@zozo-burger.de"
+  },
+  
+  "critical_fixes_applied": [
+    "Email field must be valid email (not null or empty string)",
+    "Version must be 0 (not 1)",
+    "Base URL is https://zozo.eocloud.de (not s1.eocloud.de/c102285)",
+    "Broker name is zozo-burger.de",
+    "pos_config structure: flat (not nested in credentials)"
+  ],
+  
+  "removed_pos_systems": [
+    "Cash-X connector removed from service registry"
+  ],
+  
+  "database_structure": {
+    "collection": "locations",
+    "field": "pos_config",
+    "format": {
+      "provider": "expertorder",
+      "enabled": true,
+      "api_key": "[location-specific]",
+      "base_url": "https://zozo.eocloud.de",
+      "broker_name": "zozo-burger.de",
+      "test_mode": false
+    }
+  },
+  
+  "restore_command": "python /app/setup_final_expertorder_only.py",
+  "test_command": "python /app/test_order_rellingen.py"
+}
