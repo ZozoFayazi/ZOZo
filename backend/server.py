@@ -661,8 +661,6 @@ async def resolve_failed_order(order_id: str, admin: dict = Depends(get_current_
 
 
 # Menu
-ERSETZEN Sie es mit diesem Code:
-
 @api_router.get("/menu")
 async def get_menu(location_id: str = Query(...)):
     """Get menu for a specific location with categories"""
