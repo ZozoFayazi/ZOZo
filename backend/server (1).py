@@ -155,9 +155,10 @@ class OrderItem(BaseModel):
 class CustomerInfo(BaseModel):
     name: str
     phone: str
-    address: str
-    postal_code: str
-    city: str
+    email: Optional[str] = None
+    address: Optional[str] = None  # Not required for pickup orders
+    postal_code: Optional[str] = None  # Not required for pickup orders
+    city: Optional[str] = None  # Not required for pickup orders
     notes: Optional[str] = None
 
 class OrderCreate(BaseModel):
