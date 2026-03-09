@@ -860,9 +860,9 @@ class ExpertOrderConnector(BasePOSConnector):
                 "phone": order_data.get('customer_phone', ''),
                 "email": order_data.get('customer_email') or 'noreply@zozo-burger.de',  # Must be valid email
                 "name": order_data.get('customer_name', ''),
-                "street": street,  # Required
-                "zip": zip_code,  # Required
-                "location": location  # Required (city)
+                "street": street or 'Abholung',  # Required - use 'Abholung' for pickup orders
+                "zip": zip_code or '25462',  # Required - use location's zip for pickup
+                "location": location or 'Rellingen'  # Required (city) - use location's city for pickup
             },
             "payment": {
                 "type": payment_type,  # Required - Integer: 0=cash, 1=card, 3=online
