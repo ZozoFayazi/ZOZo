@@ -661,6 +661,8 @@ async def resolve_failed_order(order_id: str, admin: dict = Depends(get_current_
 
 
 # Menu
+ERSETZEN Sie es mit diesem Code:
+
 @api_router.get("/menu")
 async def get_menu(location_id: str = Query(...)):
     """Get menu for a specific location with categories"""
@@ -689,17 +691,63 @@ async def get_menu(location_id: str = Query(...)):
         "active": True
     }).to_list(length=1000)
     
+    # Transform items to include sizes array for frontend compatibility
+    def transform_menu_item(item):
+        """Transform menu item to include sizes array from price_medium/price_large"""
+        transformed = serialize_doc([item])[0] if item else {}
+        
+        # Check if item has size-based pricing (price_medium/price_large)
+        price_medium = item.get('price_medium')
+        price_large = item.get('price_large')
+        has_sizes = item.get('has_sizes', False)
+        size_labels = item.get('size_labels', {})
+        
+        # If item has size pricing but no sizes array, create one
+        if (price_medium is not None or price_large is not None) and not transformed.get('sizes'):
+            sizes = []
+            if price_medium is not None:
+                sizes.append({
+                    "id": "medium",
+                    "name": size_labels.get('medium', 'Medium'),
+                    "price": float(price_medium) if price_medium else 0,
+                    "price_normal": float(price_medium) if price_medium else 0
+                })
+            if price_large is not None:
+                sizes.append({
+                    "id": "large", 
+                    "name": size_labels.get('large', 'Large'),
+                    "price": float(price_large) if price_large else 0,
+                    "price_normal": float(price_large) if price_large else 0
+                })
+            if sizes:
+                transformed['sizes'] = sizes
+                transformed['has_sizes'] = True
+        
+        # Also set a default price for items without sizes (use price_normal or first size price)
+        if not transformed.get('price') and not transformed.get('price_normal'):
+            if item.get('price_normal'):
+                transformed['price'] = float(item.get('price_normal'))
+                transformed['price_normal'] = float(item.get('price_normal'))
+            elif price_medium:
+                transformed['price'] = float(price_medium)
+                transformed['price_normal'] = float(price_medium)
+            elif price_large:
+                transformed['price'] = float(price_large)
+                transformed['price_normal'] = float(price_large)
+        
+        return transformed
+    
     # Organize items by category
     result = []
     for category in categories:
         cat_id = str(category['_id'])
-        items = [item for item in menu_items if str(item['category_id']) == cat_id]
+        items = [transform_menu_item(item) for item in menu_items if str(item['category_id']) == cat_id]
         if items:
             result.append({
                 "id": cat_id,
                 "name": category['name'],
                 "slug": category['slug'],
-                "items": serialize_doc(items)
+                "items": items
             })
     
     return result
