@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root, .dark {
+    --background: 240 6% 4%; /* #0D0D0F */
+    --foreground: 0 0% 96%; /* #F5F5F5 */
+    --card: 240 6% 6%; /* #121214 */
+    --card-foreground: 0 0% 96%;
+    --popover: 240 6% 6%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 351 100% 35%; /* #B00020 */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 5% 16%; /* #2A2A2E */
+    --secondary-foreground: 0 0% 96%;
+    --muted: 240 4% 14%; /* #232326 */
+    --muted-foreground: 0 0% 72%; /* #B6B6B6 */
+    --accent: 240 5% 8%;  /* #1A1A1C */
+    --accent-foreground: 0 0% 96%;
+    --destructive: 358 76% 60%; /* #E5484D */
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 14%;
+    --input: 240 5% 14%;
+    --ring: 351 100% 35%;
+    --radius: 0.6rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Chivo', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}
+
+@layer components {
+  /* Custom scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
+  }
+}
+
+
+@layer components {
+  /* Enhanced Toast Notifications */
+  [data-sonner-toast] {
+    @apply bg-card border-border;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  
+  [data-sonner-toast][data-type="success"] {
+    @apply border-green-500/30;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(18, 18, 20, 0.95));
+  }
+  
+  [data-sonner-toast][data-type="error"] {
+    @apply border-red-500/30;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(18, 18, 20, 0.95));
+  }
+  
+  [data-sonner-toast][data-type="info"] {
+    @apply border-blue-500/30;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(18, 18, 20, 0.95));
+  }
+  
+  [data-sonner-toast] [data-title] {
+    @apply font-semibold text-base;
+  }
+  
+  [data-sonner-toast] [data-description] {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* Selection Color */
+  ::selection {
+    @apply bg-primary/30 text-primary-foreground;
+  }
+
+  /* Focus Visible Enhancement */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+}
+
+
+  /* Enhanced Focus for Interactive Elements */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="button"]:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Skip to main content link (hidden until focused) */
+  .skip-to-main {
+    @apply fixed top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-[9999] -translate-y-full focus:translate-y-0 transition-transform;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    * {
+      border-width: 2px !important;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+

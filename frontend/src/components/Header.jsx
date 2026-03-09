@@ -1,0 +1,326 @@
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { ShoppingCart, Menu, X, MapPin, ChevronDown } from 'lucide-react';
+import CartDrawer from './CartDrawer';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { useFeatures } from '../contexts/FeatureContext';
+
+function Header({ cart, cartTotal, removeFromCart, updateCartItemQuantity, clearCart, selectedLocation, cartOpen, setCartOpen }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const { isFeatureEnabled } = useFeatures();
+
+  const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const isActive = (path) => location.pathname === path;
+
+  return (
+    <>
+      <header className="sticky top-0 z-50 glass border-b border-border/50" role="banner">
+        <nav className="container-custom" role="navigation" aria-label="Hauptnavigation">
+          <div className="flex items-center justify-between h-20 py-4">
+            {/* LEFT: Primary Navigation Links */}
+            <div className="hidden md:flex items-center space-x-8 flex-1">
+              <Link
+                to="/"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                HOME
+              </Link>
+              <Link
+                to="/menu"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/menu') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                SPEISEKARTE
+              </Link>
+              <Link
+                to="/burger-builder"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/burger-builder') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                BURGER BUILDER
+              </Link>
+              <Link
+                to="/locations"
+                className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                  isActive('/locations') ? 'text-primary' : 'text-foreground/70'
+                }`}
+              >
+                STANDORTE
+              </Link>
+              {isFeatureEnabled('order_tracking') && (
+                <Link
+                  to="/order-tracking"
+                  className={`text-sm font-medium tracking-wide transition-all hover:text-primary ${
+                    isActive('/order-tracking') ? 'text-primary' : 'text-foreground/70'
+                  }`}
+                >
+                  BESTELLSTATUS
+                </Link>
+              )}
+            </div>
+
+            {/* CENTER: Logo */}
+            <Link 
+              to="/" 
+              className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 md:relative md:left-auto md:transform-none group" 
+              data-testid="header-logo"
+              aria-label="ZOZO Burger - Zur Startseite"
+            >
+              <div className="relative">
+                <img
+                  src="https://customer-assets.emergentagent.com/job_custom-burger-maker/artifacts/crcay6aj_IMG_8154.jpeg"
+                  alt="ZOZO Burger"
+                  className="h-12 md:h-16 w-auto object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-lg"
+                  style={{ filter: 'drop-shadow(0 0 10px rgba(220, 38, 38, 0.2))' }}
+                />
+              </div>
+            </Link>
+
+            {/* RIGHT: Secondary Nav, Location & Cart */}
+            <div className="hidden md:flex items-center space-x-6 flex-1 justify-end">
+              {/* More dropdown for secondary features */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-sm font-medium tracking-wide transition-all hover:text-primary text-foreground/70 flex items-center gap-1">
+                  MEHR <ChevronDown className="h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {isFeatureEnabled('burger_builder') && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/burger-builder" className="flex items-center gap-2 cursor-pointer">
+                        🍔 Burger Builder
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  {isFeatureEnabled('rewards') && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/rewards" className="flex items-center gap-2 cursor-pointer">
+                        🎁 Belohnungen
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  {isFeatureEnabled('group_orders') && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/start-group-order" className="flex items-center gap-2 cursor-pointer">
+                        👥 Gruppenbestellung
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Location Badge */}
+              {selectedLocation && (
+                <Link 
+                  to="/locations"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-accent rounded-lg border border-border/50 hover:bg-accent/80 transition-colors"
+                >
+                  <MapPin className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-xs font-medium">{selectedLocation.name.replace('ZOZO Burger ', '')}</span>
+                </Link>
+              )}
+
+              {/* Cart Button - Prominent */}
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-primary/20"
+                data-testid="cart-open-button"
+                aria-label={`Warenkorb öffnen, ${cartItemCount} Artikel`}
+              >
+                <ShoppingCart className="h-5 w-5" aria-hidden="true" />
+                {cartItemCount > 0 && (
+                  <span className="font-semibold" aria-label={`${cartItemCount} Artikel im Warenkorb`}>
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Mobile: Cart & Menu */}
+            <div className="md:hidden flex items-center space-x-2 ml-auto">
+              {/* Mobile Cart */}
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative p-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all"
+                data-testid="cart-button"
+                aria-label={`Warenkorb ${cartItemCount > 0 ? `mit ${cartItemCount} Artikel${cartItemCount !== 1 ? 'n' : ''}` : 'leer'}`}
+              >
+                <ShoppingCart className="h-5 w-5" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-foreground text-background text-xs font-bold flex items-center justify-center rounded-full">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-3 hover:bg-secondary rounded-lg transition-colors"
+                aria-label={mobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Menu - Simplified with clear hierarchy */}
+          {mobileMenuOpen && (
+            <div id="mobile-menu" className="md:hidden py-4 border-t border-border animate-slide-up-fade">
+              <div className="flex flex-col space-y-1">
+                {/* Primary Navigation */}
+                <div className="px-2 pb-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 pb-2">
+                    Navigation
+                  </p>
+                  <Link
+                    to="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    🏠 Home
+                  </Link>
+                  <Link
+                    to="/menu"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/menu') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    📋 Speisekarte
+                  </Link>
+                  <Link
+                    to="/burger-builder"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/burger-builder') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    🍔 Burger Builder
+                  </Link>
+                  <Link
+                    to="/locations"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                      isActive('/locations') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    📍 Standorte
+                  </Link>
+                  {isFeatureEnabled('order_tracking') && (
+                    <Link
+                      to="/order-tracking"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                        isActive('/order-tracking') 
+                          ? 'text-primary bg-primary/10' 
+                          : 'text-foreground/80 hover:bg-accent active:bg-accent/80'
+                      }`}
+                    >
+                      📦 Bestellstatus
+                    </Link>
+                  )}
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-border my-2"></div>
+
+                {/* Secondary Features */}
+                <div className="px-2 pt-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 pb-2">
+                    Weitere Features
+                  </p>
+                  {isFeatureEnabled('burger_builder') && (
+                    <Link
+                      to="/burger-builder"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                        isActive('/burger-builder') 
+                          ? 'text-primary bg-primary/10' 
+                          : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
+                      }`}
+                    >
+                      🍔 Burger Builder
+                    </Link>
+                  )}
+                  {isFeatureEnabled('rewards') && (
+                    <Link
+                      to="/rewards"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                        isActive('/rewards') 
+                          ? 'text-primary bg-primary/10' 
+                          : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
+                    }`}
+                  >
+                    🎁 Belohnungen
+                  </Link>
+                  )}
+                  {isFeatureEnabled('group_orders') && (
+                    <Link
+                      to="/start-group-order"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`py-3 px-4 text-base font-medium transition-all rounded-lg active:scale-95 ${
+                        isActive('/start-group-order') 
+                          ? 'text-primary bg-primary/10' 
+                          : 'text-foreground/60 hover:bg-accent active:bg-accent/80'
+                      }`}
+                    >
+                      👥 Gruppenbestellung
+                    </Link>
+                  )}
+                </div>
+
+                {/* Location Badge */}
+                {selectedLocation && (
+                  <div className="px-4 pt-4 border-t border-border mt-2">
+                    <div className="flex items-center space-x-2 py-2 text-xs text-muted-foreground">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span>{selectedLocation.name}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </nav>
+      </header>
+
+      {/* Cart Drawer */}
+      <CartDrawer
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        cart={cart}
+        cartTotal={cartTotal}
+        removeFromCart={removeFromCart}
+        updateCartItemQuantity={updateCartItemQuantity}
+        clearCart={clearCart}
+        selectedLocation={selectedLocation}
+      />
+    </>
+  );
+}
+
+export default Header;
