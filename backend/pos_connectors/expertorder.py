@@ -769,7 +769,7 @@ class ExpertOrderConnector(BasePOSConnector):
                     main_item["items"].append({
                         "uid": f"EXTRA-{extra_name[:20].replace(' ', '-').upper()}",
                         "name": f"+ {extra_name}",
-                        "count": 1,
+                        "count": item.get('quantity', 1),  # Match parent item quantity
                         "price": float(extra_price)
                     })
                 
@@ -779,7 +779,7 @@ class ExpertOrderConnector(BasePOSConnector):
                     main_item["items"].append({
                         "uid": f"REMOVE-{removal[:20].replace(' ', '-').upper()}",
                         "name": f"- Ohne {removal}",
-                        "count": 1,
+                        "count": item.get('quantity', 1),  # Match parent item quantity
                         "price": 0.0
                     })
                 
